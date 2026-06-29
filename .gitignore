@@ -1,0 +1,12 @@
+# Verifikations-Screenshots / temporäre Render
+_shot_*.png
+_pres*
+*_debug.html
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db

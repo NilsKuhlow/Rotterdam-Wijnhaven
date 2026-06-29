@@ -1,0 +1,3679 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Wijnhaven, Feldjournal</title>
+<meta name="description" content="Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, vom Witte Huis bis CasaNova.">
+<meta name="theme-color" content="#F4F1EA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Wijnhaven">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231A1209'/%3E%3Cg stroke='%23C4622D' stroke-width='2.5' stroke-linecap='round' fill='none'%3E%3Cpath d='M50 85 Q34 79 14 64'/%3E%3Cpath d='M50 85 Q30 74 16 55'/%3E%3Cpath d='M50 85 Q32 68 22 46'/%3E%3Cpath d='M50 85 Q38 62 34 38'/%3E%3Cpath d='M50 85 Q46 60 44 34'/%3E%3Cpath d='M50 85 Q54 60 56 34'/%3E%3Cpath d='M50 85 Q62 62 66 38'/%3E%3Cpath d='M50 85 Q68 68 78 46'/%3E%3Cpath d='M50 85 Q70 74 84 55'/%3E%3Cpath d='M50 85 Q66 79 86 64'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Hanken+Grotesk:wght@300;400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Hanken+Grotesk:wght@300;400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap"></noscript>
+<!-- Map figure-ground is inlined in the SVG below (placeholder until the hand-drawn Schwarzplan is ready) -->
+
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════ */
+:root {
+  /* ── Feldjournal palette: paper, ink, one brick accent ── */
+  --paper:    #F4F1EA;   /* main background, warm journal paper */
+  --ink:      #14130F;   /* text + dark UI elements */
+  --brick:    #9E3B2E;   /* sole accent, used sparingly (stamp / route) */
+  --steel:    #3C4A52;   /* secondary data tone (Maas) */
+  --white:    #ffffff;
+  --off:      #ECE8DF;   /* slightly deeper paper for cards / galleries */
+  --border:   #DAD4C7;   /* paper-toned hairline */
+  --muted:    #8A8678;   /* secondary text on paper */
+  --dim:      #4A463C;   /* body text on paper */
+  /* legacy Siena aliases remapped onto the new palette */
+  --terra:    #9E3B2E;
+  --cream:    #F4F1EA;
+  --sand:     #ECE8DF;
+  --siena:    #9E3B2E;
+  --gold:     #9E3B2E;
+  --drawer-h: 0;
+  /* --map-h is set to window.innerHeight by JS below (most accurate on mobile).
+     CSS fallback chain: dvh (modern mobile) → vh (older browsers). */
+  --map-h: 100dvh;   /* dynamic viewport height, always equals visible area */
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { width:100%; overflow-x:hidden; }
+
+body {
+  font-family:'Hanken Grotesk',sans-serif;
+  font-weight:400;
+  background:var(--paper);   /* paper base, editorial field journal */
+  color:var(--ink);
+}
+
+/* ═══════════════════════════════════════════
+   LOADER
+═══════════════════════════════════════════ */
+#loader {
+  position:fixed; inset:0;
+  display:grid; place-items:center;
+  background:var(--paper);
+  z-index:1000;
+  opacity:1;
+  transition:opacity 1.1s ease, transform 1.3s cubic-bezier(.22,1,.36,1);
+}
+#loader.out  { opacity:0; pointer-events:none; transform:scale(1.06); }
+#loader.gone { display:none; }
+
+/* ── Halo / Glow bloom ── */
+.loader-glow {
+  position:fixed;
+  width:min(92vw,560px); aspect-ratio:1;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(158,59,46,.07) 0%, rgba(158,59,46,.025) 42%, transparent 66%);
+  top:50%; left:50%; transform:translate(-50%,-54%);
+  pointer-events:none;
+  animation:glowPulse 2.6s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,100% { opacity:.55; transform:translate(-50%,-54%) scale(1);    }
+  50%     { opacity:1;   transform:translate(-50%,-54%) scale(1.14); }
+}
+
+.loader-inner {
+  display:flex; flex-direction:column; align-items:center; gap:1.8rem;
+  transform:translateY(-2vh);
+  width:min(78vw,480px);
+  position:relative;
+}
+.campo-wrap { width:100%; aspect-ratio:1.7/1; }
+
+/* ── Fan segments ── */
+.segment {
+  fill:none; stroke:var(--terra); stroke-width:1.5; stroke-linecap:round;
+  stroke-dasharray:320; stroke-dashoffset:320;
+  animation:drawSeg 1.8s cubic-bezier(.6,0,.15,1) forwards;
+}
+.segment:nth-child(1)  { animation-delay:.10s }
+.segment:nth-child(2)  { animation-delay:.22s }
+.segment:nth-child(3)  { animation-delay:.34s }
+.segment:nth-child(4)  { animation-delay:.46s }
+.segment:nth-child(5)  { animation-delay:.58s }
+.segment:nth-child(6)  { animation-delay:.70s }
+.segment:nth-child(7)  { animation-delay:.82s }
+.segment:nth-child(8)  { animation-delay:.94s }
+.segment:nth-child(9)  { animation-delay:1.06s }
+.segment:nth-child(10) { animation-delay:1.18s }
+@keyframes drawSeg {
+  0%  { stroke-dashoffset:320; opacity:0;  }
+  15% { opacity:.8; }
+  100%{ stroke-dashoffset:0;   opacity:1;  }
+}
+
+/* ── Closing arc ── */
+.campo-arc {
+  fill:none; stroke:rgba(196,98,45,.3); stroke-width:1; stroke-linecap:round;
+  stroke-dasharray:700; stroke-dashoffset:700;
+  animation:drawArc 1.1s ease forwards;
+  animation-delay:1.35s;
+}
+@keyframes drawArc { to { stroke-dashoffset:0; } }
+
+/* ── Centre dot ── */
+.center-dot {
+  fill:var(--terra);
+  opacity:0;
+  transform-origin:300px 320px;
+  animation:dotIn .55s cubic-bezier(.34,1.56,.64,1) forwards;
+  animation-delay:1.5s;
+}
+@keyframes dotIn {
+  0%   { opacity:0; transform:scale(0); }
+  100% { opacity:1; transform:scale(1); }
+}
+
+/* ── Divider ── */
+.loader-line {
+  height:1px; width:100%; align-self:stretch;
+  background:linear-gradient(90deg,transparent,rgba(196,98,45,.4),transparent);
+  transform:scaleX(0); transform-origin:left center; opacity:0;
+  animation:lineGrow .65s ease forwards;
+  animation-delay:1.55s;
+}
+@keyframes lineGrow {
+  0%  { transform:scaleX(0); opacity:0; }
+  20% { opacity:1; }
+  100%{ transform:scaleX(1); opacity:1; }
+}
+
+/* ── Title, per-character reveal ── */
+.loader-title {
+  font-family:'Fraunces',serif; font-weight:300;
+  font-size:clamp(2.4rem,9vw,4.4rem); letter-spacing:.12em;
+  color:var(--ink);
+  display:flex; gap:0;
+  padding-right:.22em; /* compensate trailing letter-spacing */
+}
+.loader-title .char {
+  display:inline-block;
+  opacity:0; transform:translateY(26px);
+  animation:charIn .72s cubic-bezier(.22,1,.36,1) forwards;
+}
+.loader-title .char:nth-child(1) { animation-delay:1.60s }
+.loader-title .char:nth-child(2) { animation-delay:1.69s }
+.loader-title .char:nth-child(3) { animation-delay:1.78s }
+.loader-title .char:nth-child(4) { animation-delay:1.87s }
+.loader-title .char:nth-child(5) { animation-delay:1.96s }
+.loader-title .char:nth-child(6) { animation-delay:2.05s }
+.loader-title .char:nth-child(7) { animation-delay:2.14s }
+.loader-title .char:nth-child(8) { animation-delay:2.23s }
+.loader-title .char:nth-child(9) { animation-delay:2.32s }
+@keyframes charIn { to { opacity:1; transform:none; } }
+
+/* ── Subtitle ── */
+.loader-sub {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:400;
+  font-size:.58rem; letter-spacing:.45em; text-transform:uppercase;
+  color:var(--terra); margin:0;
+  opacity:0;
+  animation:subIn .9s ease forwards;
+  animation-delay:2.3s;
+}
+@keyframes subIn {
+  0%   { opacity:0; letter-spacing:.65em; }
+  100% { opacity:.8; letter-spacing:.45em; }
+}
+/* ── Authors ── */
+.loader-authors {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:400;
+  font-size:.5rem; letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(20,19,15,.4); margin:.1rem 0 0;
+  opacity:0;
+  animation:charIn .7s ease forwards;
+  animation-delay:2.65s;
+}
+
+/* ═══════════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════════ */
+#progress-bar {
+  position:fixed; top:0; left:0; height:1px;
+  background:var(--ink); z-index:200; pointer-events:none;
+  width:0;
+}
+
+/* ═══════════════════════════════════════════
+   SMART-TRACK BUTTON  (top-right, over map)
+   Hidden during intro, shown once map appears
+═══════════════════════════════════════════ */
+#track-btn {
+  position:fixed; top:.85rem; right:1rem; z-index:200;
+  display:flex; align-items:center; gap:.45rem;
+  padding:.45rem .9rem .45rem .65rem;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-radius:2rem;
+  font-family:'Hanken Grotesk',sans-serif; font-size:.58rem;
+  font-weight:500; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink); cursor:pointer;
+  opacity:0; pointer-events:none;
+  transition:opacity .4s, background .25s, border-color .25s, color .25s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;   /* removes 300 ms tap delay on iOS Safari */
+  user-select:none;
+}
+#track-btn.show  { opacity:1; pointer-events:auto; }
+#track-btn.active {
+  background:var(--ink); border-color:var(--ink); color:var(--white);
+}
+#track-btn.acquiring {
+  background:var(--white);
+  border-color:var(--terra); color:var(--terra);
+}
+/* icon: circle with dot */
+.t-icon {
+  width:15px; height:15px; border-radius:50%;
+  border:1.5px solid currentColor;
+  display:grid; place-items:center;
+  position:relative; flex-shrink:0;
+}
+.t-icon::after {
+  content:''; width:4px; height:4px;
+  border-radius:50%; background:currentColor;
+}
+/* pulse ring when active */
+#track-btn.active .t-icon::before {
+  content:''; position:absolute; inset:-3px; border-radius:50%;
+  border:1px solid currentColor;
+  animation:tPulse 1.5s ease-out infinite;
+}
+@keyframes tPulse {
+  0%  { transform:scale(1);   opacity:.7; }
+  100%{ transform:scale(2.6); opacity:0;  }
+}
+
+/* toast below button */
+#track-toast {
+  position:fixed; top:3.4rem; right:1rem; z-index:200;
+  background:var(--ink); color:var(--white);
+  font-family:'Hanken Grotesk',sans-serif; font-size:.62rem; font-weight:400; letter-spacing:.02em;
+  padding:.45rem .95rem; border-radius:.6rem;
+  max-width:56vw; text-align:right;
+  opacity:0; pointer-events:none; transition:opacity .28s;
+}
+#track-toast.show { opacity:1; }
+
+/* ── Map interaction hint (appears briefly when track mode activates) ── */
+#map-hint {
+  position:fixed; top:50%; left:50%;
+  z-index:300; pointer-events:none;
+  display:none;
+}
+#map-hint.show {
+  display:block;
+  animation:mapHintPop 3.2s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes mapHintPop {
+  0%   { opacity:0; transform:translate(-50%,-50%) scale(.82); }
+  16%  { opacity:1; transform:translate(-50%,-50%) scale(1);   }
+  70%  { opacity:1; transform:translate(-50%,-50%) scale(1);   }
+  100% { opacity:0; transform:translate(-50%,-50%) scale(.93); }
+}
+.map-hint-inner {
+  background:rgba(10,10,10,.84);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:1.3rem;
+  padding:1.2rem 2rem 1.1rem;
+  display:flex; flex-direction:column; align-items:center; gap:.8rem;
+  min-width:200px;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);
+}
+.map-hint-icons {
+  display:flex; align-items:center; gap:1.5rem;
+}
+.map-hint-divider {
+  width:1px; height:30px;
+  background:rgba(255,255,255,.18);
+}
+.hint-icon { display:block; }
+.map-hint-label {
+  font-family:'Hanken Grotesk',sans-serif;
+  font-size:.62rem; font-weight:500;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(255,255,255,.5);
+  text-align:center;
+}
+.map-hint-text {
+  font-family:'Hanken Grotesk',sans-serif;
+  font-size:.82rem; font-weight:400;
+  letter-spacing:.01em;
+  color:rgba(255,255,255,.9);
+  text-align:center;
+}
+
+/* Return-to-location button, appears when user manually pans in track mode */
+#return-btn {
+  position:fixed;
+  bottom:8rem; right:1rem; z-index:199;
+  display:flex; align-items:center; gap:.42rem;
+  padding:.42rem .85rem .42rem .6rem;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-radius:2rem;
+  font-family:'Hanken Grotesk',sans-serif; font-size:.58rem;
+  font-weight:500; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink); cursor:pointer;
+  opacity:0; pointer-events:none;
+  transform:translateY(6px) scale(.95);
+  transition:opacity .3s, transform .35s cubic-bezier(.22,1,.36,1);
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+#return-btn.show {
+  opacity:1; pointer-events:auto;
+  transform:translateY(0) scale(1);
+}
+.r-icon { flex-shrink:0; display:block; }
+
+/* Transparent overlay that captures touch in track mode.
+   touch-action:none tells the browser at CSS level to skip
+   scroll/zoom, no preventDefault() needed. z-index sits
+   above the map (5) and journey content, below the drawer (50). */
+#map-touch-layer {
+  position:fixed; inset:0; z-index:48;
+  touch-action:none;
+  display:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#map-touch-layer.active { display:block; }
+
+/* ═══════════════════════════════════════════
+   MAP INFO CARD  (track-mode tap-on-stop)
+   Bottom sheet that slides up when the user
+   taps a stop dot on the map.
+═══════════════════════════════════════════ */
+#map-info-card {
+  position:fixed;
+  bottom:0; left:0; right:0;
+  z-index:55;                        /* above drawer(50) + touch-layer(48) */
+  background:var(--white);
+  border-top:2px solid var(--ink);
+  border-radius:1rem 1rem 0 0;
+  box-shadow:0 -6px 40px rgba(0,0,0,.14);
+  transform:translateY(100%);
+  transition:transform .42s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;
+  will-change:transform;
+}
+#map-info-card.show {
+  transform:translateY(0);
+  pointer-events:auto;
+}
+.mic-handle {
+  width:36px; height:4px;
+  background:var(--border);
+  border-radius:2px;
+  margin:.65rem auto 0;
+}
+.mic-body {
+  padding:.75rem 6vw max(1.4rem,env(safe-area-inset-bottom));
+}
+.mic-header {
+  display:flex; align-items:flex-start;
+  justify-content:space-between; gap:1rem;
+  margin-bottom:.65rem;
+}
+.mic-meta { flex:1; min-width:0; }
+.mic-num {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:600;
+  font-size:.58rem; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--terra); margin-bottom:.25rem;
+}
+.mic-name {
+  font-family:'Fraunces',serif; font-weight:600;
+  font-size:1.4rem; line-height:1.1; color:var(--ink);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.mic-sub {
+  font-family:'Fraunces',serif; font-style:italic;
+  font-size:.82rem; color:var(--muted); margin-top:.1rem;
+}
+.mic-close {
+  width:30px; height:30px; border-radius:50%;
+  background:var(--sand); border:none; color:var(--ink);
+  font-size:.8rem; cursor:pointer; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+  margin-top:.1rem;
+}
+.mic-divider {
+  height:1px; background:var(--border);
+  margin:.55rem 0 .65rem;
+}
+.mic-facts {
+  display:flex; gap:.5rem; flex-wrap:wrap;
+  margin-bottom:.8rem;
+}
+.mic-fact {
+  background:var(--sand); border-radius:.35rem;
+  padding:.32rem .65rem;
+}
+.mic-fact-lbl {
+  font-family:'Hanken Grotesk',sans-serif;
+  font-size:.46rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); line-height:1; margin-bottom:.18rem;
+}
+.mic-fact-val {
+  font-family:'Hanken Grotesk',sans-serif;
+  font-size:.68rem; font-weight:600; color:var(--ink); line-height:1;
+}
+.mic-cta {
+  width:100%; padding:.78rem 1.5rem;
+  background:var(--ink); color:var(--white);
+  border:none; border-bottom:2px solid var(--terra);
+  border-radius:2rem;
+  font-family:'Hanken Grotesk',sans-serif; font-size:.6rem;
+  font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transition:opacity .15s;
+}
+.mic-cta:active { opacity:.82; }
+
+/* ═══════════════════════════════════════════
+   NAV CRUMB  (top bar, always in DOM, two
+   independently animated halves)
+═══════════════════════════════════════════ */
+#nav-crumb {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:.85rem 1.2rem;
+  display:flex; align-items:center; justify-content:space-between;
+  pointer-events:none;
+  /* no opacity here, children control their own visibility */
+}
+/* crumb-left removed, stop name shown in drawer instead */
+#crumb-stop { display:none; }
+
+/* ═══════════════════════════════════════════
+   INTRO  (full viewport, normal flow)
+═══════════════════════════════════════════ */
+.intro {
+  height:100vh;
+  background:var(--paper);
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:0 7vw clamp(7rem, 18vh, 13rem);
+  position:relative; overflow:hidden;
+  z-index:10;
+  will-change:transform, opacity;
+}
+
+/* ── Dual radial glow ── */
+.intro-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 68% 12%, rgba(158,59,46,.06)  0%, transparent 55%),
+    radial-gradient(ellipse at 12% 88%, rgba(60,74,82,.05) 0%, transparent 50%);
+}
+
+/* ── Faint architectural grid (draughting paper) ── */
+.intro-grid {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(20,19,15,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,19,15,.035) 1px, transparent 1px);
+  background-size:62px 62px;
+}
+
+/* ── Ghost headline, typographic texture ── */
+.intro-ghost {
+  position:absolute;
+  bottom:-.10em; left:-.01em;
+  font-family:'Fraunces',serif; font-weight:300; font-style:italic;
+  font-size:clamp(42vw,54vw,58rem);
+  line-height:1; letter-spacing:-.03em;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(20,19,15,.05);
+  pointer-events:none; user-select:none;
+  opacity:0;
+  animation:introFade 1.4s ease forwards;
+  animation-delay:3.5s;
+}
+
+/* ── Kicker ── */
+.intro-kicker {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
+  font-size:.6rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--terra); margin-bottom:.55rem; position:relative;
+  opacity:0; transform:translateY(14px);
+  animation:introUp .7s cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay:3.65s;
+}
+
+/* ── Main heading ── */
+.intro h1 {
+  font-family:'Fraunces',serif; font-weight:300;
+  font-size:clamp(4.8rem,19vw,8.5rem); line-height:.86; letter-spacing:-.02em;
+  color:var(--ink); position:relative;
+  opacity:0; transform:translateY(20px);
+  animation:introUp .95s cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay:3.8s;
+}
+.intro h1 em { font-style:italic; color:var(--terra); }
+
+/* ── Terra-cotta accent bar ── */
+.intro-accent {
+  width:0; height:2px;
+  background:var(--terra);
+  margin-top:1.5rem; position:relative;
+  animation:accentGrow .8s ease forwards;
+  animation-delay:4.05s;
+}
+@keyframes accentGrow { to { width:clamp(2.4rem,5.5vw,3.8rem); } }
+
+/* ── Subtitle ── */
+.intro-sub {
+  font-family:'Fraunces',serif; font-style:italic;
+  color:rgba(20,19,15,.6); font-size:.95rem;
+  margin-top:.85rem; line-height:1.75; position:relative;
+  opacity:0; transform:translateY(12px);
+  animation:introUp .8s cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay:4.05s;
+}
+
+/* ── Authors ── */
+.intro-authors {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:400;
+  font-size:.54rem; letter-spacing:.18em; text-transform:uppercase;
+  color:rgba(20,19,15,.7);
+  margin-top:1.8rem;
+  opacity:0; transform:translateY(10px);
+  animation:introUp .7s cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay:4.2s;
+  z-index:2;
+}
+
+/* ── Scroll cue ── */
+.scroll-cue {
+  position:absolute; bottom:2.5rem;
+  left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:.5rem;
+  color:rgba(20,19,15,.55); font-size:.55rem; letter-spacing:.2em; text-transform:uppercase;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
+  white-space:nowrap;
+  z-index:2;
+  opacity:0;
+  animation:introFade .9s ease forwards;
+  animation-delay:4.45s;
+}
+.scroll-line {
+  width:1px; height:44px;
+  background:linear-gradient(to bottom, transparent, var(--terra));
+  animation:cueDown 1.8s cubic-bezier(.45,0,.55,1) infinite;
+}
+@keyframes cueDown {
+  0%,100% { transform:translateY(0);    opacity:.4; }
+  55%     { transform:translateY(11px); opacity:1;  }
+}
+@keyframes introUp  { 0%{opacity:0;transform:translateY(18px)} 100%{opacity:1;transform:none} }
+@keyframes introFade{ 0%{opacity:0} 100%{opacity:1} }
+
+/* ═══════════════════════════════════════════
+   MAP PANEL , fixed, full width, top portion
+   Hidden during intro, revealed on scroll
+═══════════════════════════════════════════ */
+#map-panel {
+  position:fixed;
+  top:0; left:0;
+  width:100vw;
+  height:100vh;         /* base fallback: older browsers */
+  height:100dvh;        /* CSS-only dynamic viewport (Safari 15.4+, Chrome 108+) */
+  height:var(--map-h);  /* JS-set value (window.innerHeight) takes precedence */
+  background:var(--paper);
+  overflow:hidden;        /* clip SVG to exact panel bounds */
+  z-index:5;
+
+  /* start state: invisible, lifted slightly, scaled up, pure transform+opacity for GPU compositing */
+  opacity:0;
+  transform:translate3d(0, -3%, 0) scale(1.04);
+  will-change:transform, opacity;
+  pointer-events:none;
+  transition:
+    opacity   .6s ease,
+    transform .95s cubic-bezier(.22,1,.36,1);
+}
+#map-panel.map-intro {
+  opacity:1;
+  transform:translate3d(0, 0, 0) scale(1);
+  pointer-events:auto;
+}
+
+/* wrapper must fill the full panel so SVG height:100% resolves correctly */
+#map-svg-wrap { width:100%; height:100%; }
+
+#map-panel svg { width:100%; height:100%; }
+
+/* ═══════════════════════════════════════════
+   JOURNEY , invisible scroll space
+   Sits immediately after the intro section.
+   Height = 5 stops × 100vh
+   No margin, no padding, drawer is fixed.
+═══════════════════════════════════════════ */
+#journey {
+  height:calc(7 * 100vh);
+  position:relative;
+  /* background matches paper so it's invisible */
+  background:transparent;
+}
+
+/* ═══════════════════════════════════════════
+   DRAWER , fixed, flush below map
+   Slides down from map bottom when active
+═══════════════════════════════════════════ */
+#drawer {
+  position:fixed;
+  bottom:0; left:0; right:0; width:100%;
+  z-index:50;
+  /* hidden: slide up behind map */
+  transform:translateY(-100%);
+  opacity:0;
+  pointer-events:none;
+  transition:
+    transform .4s cubic-bezier(.77,0,.175,1),
+    opacity   .3s ease;
+}
+#drawer.open {
+  transform:translateY(0);
+  opacity:1;
+  pointer-events:auto;
+}
+.drawer-inner {
+  background:var(--white);
+  border-top:2px solid var(--ink);
+  padding:1.1rem 6vw max(1.1rem, env(safe-area-inset-bottom));
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  box-shadow:0 -1px 0 var(--border), 0 8px 40px rgba(0,0,0,.07);
+  cursor:pointer;
+  min-height:var(--drawer-h);
+}
+.drawer-left { display:flex; flex-direction:column; gap:.2rem; flex:1; min-width:0; }
+.drawer-num  {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:600;
+  font-size:.6rem; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--terra); line-height:1;
+}
+.drawer-name {
+  font-family:'Fraunces',serif; font-weight:600;
+  font-size:1.45rem; line-height:1.1; color:var(--ink);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.drawer-sub {
+  font-family:'Fraunces',serif; font-style:italic;
+  font-size:.8rem; color:var(--muted);
+}
+.drawer-btn {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
+  font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--white); background:var(--ink);
+  padding:.65rem 1.2rem; border-radius:2rem;
+  white-space:nowrap; flex-shrink:0;
+  border:none;
+  border-bottom:1.5px solid var(--terra);
+}
+
+/* stop counter, merged into drawer-num, no longer needed as overlay */
+#stop-counter { display:none; }
+
+/* ═══════════════════════════════════════════
+   PLACES BUTTON, frosted pill in nav bar
+   Shows when a stop is active (nav-crumb.show)
+═══════════════════════════════════════════ */
+#places-btn {
+  display:flex; align-items:center; gap:.45rem;
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(0,0,0,.07);
+  border-radius:2rem;
+  padding:.35rem .85rem .35rem .75rem;
+  box-shadow:0 2px 12px rgba(0,0,0,.1);
+  cursor:pointer;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
+  font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink);
+  opacity:0; pointer-events:none;
+  transition:opacity .4s, box-shadow .2s;
+  -webkit-tap-highlight-color:transparent;
+  white-space:nowrap;
+}
+#nav-crumb.show #places-btn {
+  opacity:1; pointer-events:auto;
+}
+#places-btn:hover { box-shadow:0 4px 18px rgba(0,0,0,.15); }
+#places-btn svg   { flex-shrink:0; }
+
+/* ═══════════════════════════════════════════
+   PLACES PANEL, bottom sheet overlay
+═══════════════════════════════════════════ */
+#places-panel {
+  position:fixed; inset:0; z-index:200;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  pointer-events:none; opacity:0;
+  transition:opacity .3s ease;
+}
+#places-panel.open {
+  pointer-events:auto; opacity:1;
+}
+.pp-backdrop {
+  position:absolute; inset:0;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+}
+.pp-sheet {
+  position:relative; z-index:1;
+  background:var(--white);
+  border-radius:1.4rem 1.4rem 0 0;
+  max-height:82vh; overflow:hidden;
+  display:flex; flex-direction:column;
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.77,0,.175,1);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+#places-panel.open .pp-sheet { transform:translateY(0); }
+.pp-handle-zone {
+  width:100%; padding:.7rem 0 .3rem;
+  display:flex; justify-content:center;
+  flex-shrink:0; touch-action:none; cursor:grab;
+}
+.pp-handle-zone:active { cursor:grabbing; }
+.pp-drag-handle {
+  width:40px; height:4px;
+  background:rgba(0,0,0,.13); border-radius:2px;
+}
+.pp-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.2rem 1.4rem .9rem;
+  flex-shrink:0;
+  border-bottom:1px solid var(--border);
+}
+.pp-title {
+  font-family:'Fraunces',serif; font-weight:600;
+  font-size:1.25rem; color:var(--ink);
+  margin:0;
+}
+.pp-close {
+  width:32px; height:32px; border-radius:50%;
+  background:rgba(0,0,0,.06); border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.8rem; color:var(--muted);
+  -webkit-tap-highlight-color:transparent;
+  flex-shrink:0;
+}
+.pp-close:hover { background:rgba(0,0,0,.11); }
+.pp-scroll {
+  overflow-y:auto; flex:1;
+  -webkit-overflow-scrolling:touch;
+}
+/* Section headers (Route / Weitere Orte) */
+.pp-section-title {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:600;
+  font-size:.5rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--terra);
+  padding:.9rem 1.4rem .4rem;
+}
+/* Individual place row */
+.pp-item {
+  width:100%; display:flex; align-items:center; gap:.9rem;
+  padding:.85rem 1.4rem;
+  border:none; background:transparent; cursor:pointer; text-align:left;
+  border-bottom:1px solid rgba(0,0,0,.045);
+  -webkit-tap-highlight-color:transparent;
+  transition:background .15s;
+}
+.pp-item:hover, .pp-item:active { background:rgba(0,0,0,.035); }
+.pp-item.pp-active { background:rgba(212,115,61,.07); }
+.pp-num {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:600;
+  font-size:.55rem; letter-spacing:.1em;
+  color:var(--white); background:var(--terra);
+  border-radius:.5rem; padding:.2rem .45rem;
+  flex-shrink:0; min-width:2rem; text-align:center;
+  line-height:1.5;
+}
+.pp-num.pp-extra {
+  background:rgba(0,0,0,.12); color:var(--muted);
+}
+.pp-info { flex:1; min-width:0; text-align:left; }
+.pp-name {
+  font-family:'Fraunces',serif; font-weight:600;
+  font-size:1.05rem; color:var(--ink); line-height:1.2;
+  display:block;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.pp-sub {
+  font-family:'Fraunces',serif; font-style:italic;
+  font-size:.8rem; color:var(--muted); display:block;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.pp-chevron {
+  color:var(--muted); font-size:.85rem; flex-shrink:0; opacity:.5;
+}
+
+/* ═══════════════════════════════════════════
+   JOURNEY SCROLL HINT
+   Floats above the drawer on first journey entry.
+═══════════════════════════════════════════ */
+#journey-hint {
+  position:fixed;
+  bottom:5.8rem;   /* clears the drawer (~80px) + safe-area breathing room */
+  left:50%; transform:translateX(-50%);
+  z-index:48; pointer-events:none;
+  display:none;
+}
+#journey-hint.show {
+  display:block;
+  animation:journeyHintPop 2.8s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes journeyHintPop {
+  0%   { opacity:0; transform:translateX(-50%) translateY(6px); }
+  18%  { opacity:1; transform:translateX(-50%) translateY(0);   }
+  72%  { opacity:1; transform:translateX(-50%) translateY(0);   }
+  100% { opacity:0; transform:translateX(-50%) translateY(4px); }
+}
+.journey-hint-inner {
+  background:rgba(10,10,10,.78);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:2rem;
+  padding:.4rem 1rem .4rem .85rem;
+  display:flex; align-items:center; gap:.55rem;
+  white-space:nowrap;
+}
+.journey-hint-inner svg { flex-shrink:0; animation:jhBounce 1.1s ease-in-out infinite; }
+@keyframes jhBounce {
+  0%,100% { transform:translateY(0); }
+  50%     { transform:translateY(3px); }
+}
+.journey-hint-inner span {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
+  font-size:.58rem; letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(255,255,255,.85);
+}
+
+/* ═══════════════════════════════════════════
+   PHOTO COUNTER , "1 / 5" overlay in gallery
+═══════════════════════════════════════════ */
+#gal-counter {
+  position:absolute; top:.55rem; right:.65rem; z-index:3;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
+  font-size:.58rem; letter-spacing:.08em;
+  color:rgba(255,255,255,.9);
+  background:rgba(0,0,0,.42);
+  backdrop-filter:blur(6px);
+  padding:.22rem .55rem;
+  border-radius:1rem;
+  pointer-events:none;
+  display:none;
+}
+
+/* ═══════════════════════════════════════════
+   OUTRO
+═══════════════════════════════════════════ */
+.outro {
+  background:var(--paper);
+  padding:14vh 8vw;
+  text-align:center;
+  position:relative; z-index:60;
+  border-top:1px solid var(--border);
+}
+.outro h2 {
+  font-family:'Fraunces',serif; font-weight:300; font-style:italic;
+  font-size:clamp(1.7rem,6vw,2.8rem);
+  color:var(--ink); line-height:1.3; margin-bottom:1.1rem;
+}
+.outro p { font-family:'Hanken Grotesk',sans-serif; font-size:.8rem; color:rgba(20,19,15,.55); line-height:1.9; font-weight:400; }
+.outro-dot { width:4px; height:4px; border-radius:50%; background:var(--terra); margin:2.5rem auto 0; }
+
+/* ═══════════════════════════════════════════
+   MAP SVG  styles
+═══════════════════════════════════════════ */
+.city-block  { fill:var(--ink); stroke:none; }   /* Schwarzplan: solid ink figure on paper ground */
+.water-fill  { fill:#3C4A52; opacity:.10; }       /* Maas / harbour basins */
+.piazza-fill { fill:var(--brick); opacity:.16; }
+.street      { fill:none; stroke:#d8d2c4; stroke-width:3.5; }
+.route-future{ fill:none; stroke:var(--ink); stroke-width:1.5; stroke-dasharray:5 5; opacity:.16; }
+.route-trail { fill:none; stroke:var(--brick); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:.9; }
+.stop-ring   { fill:none; stroke:var(--ink); stroke-width:1; opacity:.18; }
+.stop-dot    { fill:var(--ink); cursor:pointer; }
+.stop-dot.visited    { fill:#9a9484; opacity:.85; }
+.stop-dot.active-dot { fill:var(--brick); filter:drop-shadow(0 0 5px rgba(158,59,46,.7)); }
+.lbl-district{ font-family:'Fraunces',serif; font-style:italic; font-size:11px; fill:rgba(0,0,0,.45); letter-spacing:.1em;
+               stroke:#fff; stroke-width:2.5px; paint-order:stroke fill; }
+.lbl-street  { font-family:'Hanken Grotesk',sans-serif; font-size:9px; fill:#888;
+               stroke:#fff; stroke-width:2.5px; paint-order:stroke fill; }
+.lbl-piazza  { font-family:'Hanken Grotesk',sans-serif; font-size:9px; fill:#444; font-weight:600;
+               stroke:#fff; stroke-width:2.5px; paint-order:stroke fill; }
+.plan-note   { font-family:'Spline Sans Mono',monospace; font-size:9px; fill:rgba(20,19,15,.32); letter-spacing:.12em; text-transform:uppercase; text-anchor:end; }
+.stop-lbl    { font-family:'Hanken Grotesk',sans-serif; font-size:9px; fill:#111; font-weight:700;
+               stroke:#fff; stroke-width:3px;   paint-order:stroke fill; }
+@keyframes ripple-anim {
+  0%   { r:10; opacity:.5 }
+  100% { r:28; opacity:0  }
+}
+
+/* ═══════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════ */
+#backdrop {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.5); backdrop-filter:blur(4px);
+  z-index:300; opacity:0; pointer-events:none; transition:opacity .35s;
+}
+#backdrop.open { opacity:1; pointer-events:auto; }
+
+#modal {
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  width:100%; height:100%;
+  background:var(--white); z-index:301;
+  transform:translateX(100%);
+  transition:transform .45s cubic-bezier(.77,0,.175,1);
+  overflow-y:auto; display:flex; flex-direction:column;
+}
+#modal.open { transform:translateX(0); }
+
+/* ── Drag handle, visual swipe-down indicator ── */
+.modal-handle-zone {
+  width:100%; padding:.7rem 0 0;
+  display:flex; justify-content:center; align-items:center;
+  flex-shrink:0;
+  touch-action:none;          /* we own this touch, no browser scroll */
+  -webkit-user-select:none; user-select:none;
+  cursor:grab;
+}
+.modal-handle-zone:active { cursor:grabbing; }
+.modal-drag-handle {
+  width:40px; height:4px;
+  background:rgba(0,0,0,.15); border-radius:2px;
+}
+/* Spring-back animation after an aborted swipe */
+#modal.swipe-snap {
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1) !important;
+}
+
+.modal-close {
+  position:absolute; top:1rem; right:1rem;
+  width:34px; height:34px; border-radius:50%;
+  background:var(--ink); border:none; color:var(--white);
+  font-size:1rem; cursor:pointer; z-index:5;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* Share button, mirrors close button on the left */
+.modal-share {
+  position:absolute; top:1rem; left:1rem;
+  width:34px; height:34px; border-radius:50%;
+  background:var(--ink); border:none; color:var(--white);
+  cursor:pointer; z-index:5;
+  display:flex; align-items:center; justify-content:center;
+}
+.modal-share:active { opacity:.65; }
+
+/* ── Photo swipe hint, centered over the gallery ── */
+#photo-hint {
+  position:absolute; top:50%; left:50%;
+  z-index:4; pointer-events:none; display:none;
+}
+#photo-hint.show {
+  display:block;
+  animation:photoHintPop 2.8s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes photoHintPop {
+  0%   { opacity:0; transform:translate(-50%,-50%) scale(.82); }
+  18%  { opacity:1; transform:translate(-50%,-50%) scale(1);   }
+  72%  { opacity:1; transform:translate(-50%,-50%) scale(1);   }
+  100% { opacity:0; transform:translate(-50%,-50%) scale(.93); }
+}
+.photo-hint-inner {
+  background:rgba(0,0,0,.60);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:2rem;
+  padding:.55rem 1.3rem .55rem 1rem;
+  display:flex; align-items:center; gap:.65rem;
+  white-space:nowrap;
+}
+.photo-hint-inner span {
+  font-family:'Hanken Grotesk',sans-serif;
+  font-size:.76rem; font-weight:400; letter-spacing:.02em;
+  color:rgba(255,255,255,.92);
+}
+
+/* Gallery */
+.modal-gallery { position:relative; width:100%; height:52vw; min-height:200px; max-height:280px; overflow:hidden; background:var(--sand); flex-shrink:0; }
+.gallery-slides { display:flex; height:100%; transition:transform .45s cubic-bezier(.77,0,.175,1); }
+.gallery-slide  { min-width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.slide-bg    { position:absolute; inset:0; }
+.slide-icon  { position:absolute; font-size:3.5rem; opacity:.2; }
+.slide-cap   { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,.6)); padding:2rem 1.2rem .8rem; font-family:'Fraunces',serif; font-style:italic; font-size:.82rem; color:rgba(255,255,255,.9); }
+.gallery-nav { position:absolute; bottom:.65rem; left:50%; transform:translateX(-50%); display:flex; gap:.4rem; z-index:2; }
+.gal-pip     { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.35); cursor:pointer; transition:background .2s, transform .2s; }
+.gal-pip.on  { background:#fff; transform:scale(1.3); }
+.gal-arr     { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.3); border:none; color:white; width:32px; height:32px; border-radius:50%; font-size:.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:2; }
+.gal-arr.prev{ left:.6rem; }
+.gal-arr.next{ right:.6rem; }
+.gal-progress { position:absolute; bottom:0; left:0; right:0; height:3px; background:rgba(255,255,255,.18); z-index:3; overflow:hidden; }
+.gal-progress-fill { height:100%; background:rgba(255,255,255,.82); width:0%; animation:galProg 4s linear forwards; }
+@keyframes galProg { from{width:0%} to{width:100%} }
+
+
+.modal-num   { font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--terra); margin-bottom:.4rem; }
+.modal-title { font-family:'Fraunces',serif; font-weight:600; font-size:2rem; line-height:1.02; color:var(--ink); }
+.modal-sub   { font-family:'Fraunces',serif; font-style:italic; font-size:.9rem; color:var(--muted); display:block; margin-top:.25rem; }
+.modal-rule  { width:28px; height:1.5px; background:var(--terra); margin:1.2rem 0; }
+.modal-text  { font-family:'Hanken Grotesk',sans-serif; font-size:.82rem; line-height:1.95; color:var(--dim); margin-bottom:.9rem; font-weight:400; }
+.modal-facts { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-top:1.4rem; }
+.fact        { background:var(--off); padding:.75rem .9rem; border-left:2px solid var(--terra); }
+.fact-lbl    { font-family:'Hanken Grotesk',sans-serif; font-size:.55rem; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:.2rem; }
+.fact-val    { font-family:'Fraunces',serif; font-size:1rem; color:var(--ink); }
+
+/* Modal body, generous padding, never clipped */
+.modal-body  { padding: 1.8rem 1.5rem 3.5rem 1.5rem; }
+
+/* GPS dot on SVG map */
+#gps-halo { animation: gpsPulse 2s ease-out infinite; }
+@keyframes gpsPulse {
+  0%   { r:10; opacity:.6; }
+  100% { r:28; opacity:0;  }
+}
+
+/* ═══════════════════════════════════════════
+   IMPRESSUM
+═══════════════════════════════════════════ */
+.impressum {
+  background:var(--white);
+  border-top:1px solid var(--border);
+  padding:5vh 8vw 6vh;
+  position:relative; z-index:60;
+}
+.impressum-heading {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:600;
+  font-size:.6rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:1.8rem;
+}
+.impressum-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:1.4rem 2rem;
+  margin-bottom:2rem;
+}
+.impressum-block dt {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
+  font-size:.55rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:.3rem;
+}
+.impressum-block dd {
+  font-family:'Fraunces',serif; font-size:.95rem;
+  color:var(--dim); line-height:1.55; margin:0;
+}
+.impressum-block dd a {
+  color:var(--terra); text-decoration:none;
+}
+.impressum-block dd a:hover { text-decoration:underline; }
+.impressum-note {
+  font-family:'Hanken Grotesk',sans-serif; font-size:.72rem; font-weight:400;
+  color:var(--muted); line-height:1.75;
+  border-top:1px solid var(--border); padding-top:1.4rem;
+  max-width:56ch;
+}
+
+/* ═══════════════════════════════════════════
+   SCAN LINE , terra-cotta stripe sweeping
+   down the screen during the map reveal
+═══════════════════════════════════════════ */
+#scan-line {
+  position:fixed; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,
+    transparent       0%,
+    var(--terra)     22%,
+    rgba(255,255,255,.6) 50%,
+    var(--terra)     78%,
+    transparent     100%);
+  z-index:15; pointer-events:none;
+  opacity:0; transform:translateY(-2px);
+}
+#scan-line.sweep { animation:scanSweep 1.05s cubic-bezier(.38,0,.58,1) forwards; }
+@keyframes scanSweep {
+  0%   { transform:translateY(-2px); opacity:0; }
+  4%   { opacity:1; }
+  86%  { opacity:.8; }
+  100% { transform:translateY(calc(var(--map-h) + 2px)); opacity:0; }
+}
+
+/* ═══════════════════════════════════════════
+   LANGUAGE SWITCH  (right side of top nav bar)
+   Lives inside #nav-crumb. Fades in independently
+   via .show, pointer-events work even when parent
+   has pointer-events:none (child can override).
+═══════════════════════════════════════════ */
+#lang-switch {
+  display:flex; align-items:center; gap:.15rem;
+  opacity:0; pointer-events:none;
+  transition:opacity .5s;
+}
+#lang-switch.show { opacity:1; pointer-events:auto; }
+.lang-btn {
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
+  font-size:.5rem; letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(20,19,15,.42); background:none; border:none;
+  cursor:pointer;
+  /* Larger tap target on mobile */
+  padding:.5rem .38rem;
+  min-width:2.4rem; text-align:center;
+  transition:color .2s;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.lang-btn.active  { color:var(--brick); }
+.lang-btn:hover   { color:rgba(20,19,15,.75); }
+.lang-sep {
+  color:rgba(20,19,15,.2); font-size:.4rem;
+  pointer-events:none; user-select:none;
+}
+/* light context, when map / white-bg is showing */
+#lang-switch.light .lang-btn        { color:rgba(0,0,0,.3); text-shadow:none; }
+#lang-switch.light .lang-btn.active { color:var(--terra); }
+#lang-switch.light .lang-btn:hover  { color:rgba(0,0,0,.7); }
+#lang-switch.light .lang-sep        { color:rgba(0,0,0,.15); }
+
+/* ═══════════════════════════════════════════
+   MOBILE: impressum grid stacks vertically
+═══════════════════════════════════════════ */
+@media (max-width:600px){
+  .impressum-grid { grid-template-columns:1fr; }
+}
+
+/* ═══════════════════════════════════════════
+   REDUCED MOTION , disable all animations
+═══════════════════════════════════════════ */
+@media (prefers-reduced-motion:reduce){
+  *, *::before, *::after {
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-glow"></div>
+  <div class="loader-inner">
+    <svg class="campo-wrap" viewBox="0 0 600 360" aria-hidden="true">
+      <path class="segment" d="M300 320 Q184 286 58 236"/>
+      <path class="segment" d="M300 320 Q200 278 88 206"/>
+      <path class="segment" d="M300 320 Q220 270 126 174"/>
+      <path class="segment" d="M300 320 Q244 260 176 144"/>
+      <path class="segment" d="M300 320 Q272 248 244 118"/>
+      <path class="segment" d="M300 320 Q328 248 356 118"/>
+      <path class="segment" d="M300 320 Q356 260 424 144"/>
+      <path class="segment" d="M300 320 Q380 270 474 174"/>
+      <path class="segment" d="M300 320 Q400 278 512 206"/>
+      <path class="segment" d="M300 320 Q416 286 542 236"/>
+      <path class="campo-arc"  d="M58 236 C 148 48 452 48 542 236"/>
+      <circle class="center-dot" cx="300" cy="320" r="3.5"/>
+    </svg>
+    <div class="loader-line"></div>
+    <h1 class="loader-title">
+      <span class="char">W</span><span class="char">I</span><span class="char">J</span><span class="char">N</span><span class="char">H</span><span class="char">A</span><span class="char">V</span><span class="char">E</span><span class="char">N</span>
+    </h1>
+    <p class="loader-sub">Feldjournal · WiSe 2026/27</p>
+    <p class="loader-authors">Nils Kuhlow · Kai-Lars Ehrich</p>
+  </div>
+</div>
+
+<!-- CHROME -->
+<div id="progress-bar"></div>
+<button id="track-btn" onclick="toggleTrack()">
+  <span class="t-icon"></span>
+  <span id="track-label">Smart-Track</span>
+</button>
+<div id="track-toast"></div>
+
+<!-- Map interaction hint, appears briefly on first GPS track activation -->
+<div id="map-hint" aria-hidden="true">
+  <div class="map-hint-inner">
+    <div class="map-hint-icons">
+      <!-- Pinch-to-zoom icon -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:.4rem;">
+        <svg class="hint-icon" width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- finger 1 -->
+          <ellipse cx="11" cy="29" rx="3.2" ry="3.5" fill="white" opacity=".72"/>
+          <line x1="11" y1="25.5" x2="7.5" y2="14" stroke="white" stroke-width="2.2" stroke-linecap="round" opacity=".72"/>
+          <!-- finger 2 -->
+          <ellipse cx="27" cy="29" rx="3.2" ry="3.5" fill="white" opacity=".72"/>
+          <line x1="27" y1="25.5" x2="30.5" y2="14" stroke="white" stroke-width="2.2" stroke-linecap="round" opacity=".72"/>
+          <!-- spread arrow left -->
+          <path d="M5 17 L7.5 14 L10.5 16.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- spread arrow right -->
+          <path d="M33 17 L30.5 14 L27.5 16.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <span class="map-hint-label" id="hintLabelZoom">Zoomen</span>
+      </div>
+      <div class="map-hint-divider"></div>
+      <!-- Pan/drag icon -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:.4rem;">
+        <svg class="hint-icon" width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- center finger -->
+          <ellipse cx="19" cy="21" rx="3.4" ry="3.8" fill="white" opacity=".72"/>
+          <!-- up -->
+          <line x1="19" y1="17" x2="19" y2="9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M16 12 L19 9 L22 12" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- right -->
+          <line x1="22.5" y1="21" x2="30" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M27 18 L30 21 L27 24" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- left -->
+          <line x1="15.5" y1="21" x2="8" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M11 18 L8 21 L11 24" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <span class="map-hint-label" id="hintLabelPan">Bewegen</span>
+      </div>
+    </div>
+    <p class="map-hint-text" id="mapHintText">Frei auf der Karte navigieren</p>
+  </div>
+</div>
+
+<button id="return-btn" onclick="returnToGps()" aria-label="Zurück zum Standort">
+  <svg class="r-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+    <circle cx="7" cy="7" r="3.5"/>
+    <line x1="7" y1="0"  x2="7" y2="2.5"/>
+    <line x1="7" y1="11.5" x2="7" y2="14"/>
+    <line x1="0"  y1="7" x2="2.5" y2="7"/>
+    <line x1="11.5" y1="7" x2="14" y2="7"/>
+  </svg>
+  <span data-i18n="return_btn">Standort</span>
+</button>
+<div id="nav-crumb">
+  <button id="places-btn" onclick="openPlaces()" aria-label="Alle Orte anzeigen">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <rect x="1" y="2.5" width="12" height="1.5" rx=".75" fill="currentColor"/>
+      <rect x="1" y="6.25" width="12" height="1.5" rx=".75" fill="currentColor"/>
+      <rect x="1" y="10"   width="12" height="1.5" rx=".75" fill="currentColor"/>
+    </svg>
+    <span id="placesBtnLabel">Orte</span>
+  </button>
+  <nav id="lang-switch" aria-label="Sprache wählen / Language">
+    <button class="lang-btn active" data-lang="de" aria-label="Deutsch">DE</button>
+    <span class="lang-sep" aria-hidden="true">·</span>
+    <button class="lang-btn" data-lang="nl" aria-label="Nederlands">NL</button>
+    <span class="lang-sep" aria-hidden="true">·</span>
+    <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
+  </nav>
+</div>
+<div id="stop-counter"></div>
+
+<!-- INTRO -->
+<section class="intro">
+  <div class="intro-bg"></div>
+  <div class="intro-grid"></div>
+  <span class="intro-ghost" aria-hidden="true">Wijnhaven</span>
+  <span class="intro-kicker">Feldjournal · Rotterdam · Nederland</span>
+  <h1>Wijn<em>haven</em></h1>
+  <div class="intro-accent"></div>
+  <p class="intro-sub">Sieben Bauten am Wasser,<br>ein Reisetagebuch aus Rotterdam</p>
+  <div class="intro-authors">Nils Kuhlow &amp; Kai-Lars Ehrich</div>
+  <div class="scroll-cue">
+    <span>Scrollen</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MAP (fixed) -->
+<div id="map-panel">
+  <!-- SVG schematic (scroll mode) -->
+  <div id="map-svg-wrap">
+  <svg id="mapSvg" viewBox="240 108 380 285" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <!-- ════════ PLACEHOLDER Schwarzplan (Wijnhaven / Oude Haven, Rotterdam) ════════
+         Stilisierter Platzhalter im 1000×750-Raster. Wird später durch den
+         selbstgezeichneten Schwarzplan ersetzt (Drop-in: diese Gruppe tauschen,
+         danach gpsToSvg + VB neu kalibrieren). -->
+    <g class="plan-layer">
+      <!-- Wasser: Nieuwe Maas + Hafenbecken -->
+      <path class="water-fill" d="M0,648 L1000,582 L1000,750 L0,750 Z"/>
+      <rect class="water-fill" x="356" y="286" width="116" height="150" rx="5"/>
+      <rect class="water-fill" x="244" y="452" width="210" height="80"  rx="5"/>
+      <rect class="water-fill" x="600" y="250" width="150" height="70"  rx="5"/>
+
+      <!-- Baublöcke (Figur) -->
+      <g class="city-block">
+        <rect x="150" y="120" width="78"  height="54" rx="2"/>
+        <rect x="244" y="120" width="120" height="54" rx="2"/>
+        <rect x="386" y="120" width="70"  height="40" rx="2"/>
+        <rect x="486" y="120" width="58"  height="40" rx="2"/>
+        <rect x="150" y="196" width="78"  height="70" rx="2"/>
+        <rect x="244" y="196" width="92"  height="70" rx="2"/>
+        <rect x="700" y="120" width="150" height="62" rx="2"/>
+        <rect x="700" y="200" width="92"  height="64" rx="2"/>
+        <rect x="812" y="200" width="60"  height="64" rx="2"/>
+        <!-- 0 Witte Huis: schlanker Turm am Oude Haven -->
+        <rect x="414" y="214" width="32"  height="64" rx="1"/>
+        <!-- 2 Markthal: großer gerundeter Bogenblock -->
+        <rect x="572" y="132" width="86"  height="60" rx="24"/>
+        <!-- Kontext Blaak -->
+        <rect x="150" y="296" width="92"  height="64" rx="2"/>
+        <rect x="150" y="382" width="92"  height="78" rx="2"/>
+        <rect x="492" y="300" width="92"  height="58" rx="2"/>
+        <rect x="600" y="340" width="120" height="70" rx="2"/>
+        <rect x="752" y="340" width="92"  height="70" rx="2"/>
+        <!-- 3 Red Apple: Wohnturm auf Wijnhaveneiland -->
+        <rect x="548" y="324" width="26"  height="74" rx="1"/>
+        <!-- 4 Wijnhaven-Türme: Doppelturm -->
+        <rect x="452" y="384" width="24"  height="58" rx="1"/>
+        <rect x="482" y="380" width="24"  height="62" rx="1"/>
+        <!-- 5 EY: Büroblock -->
+        <rect x="368" y="448" width="46"  height="46" rx="2"/>
+        <rect x="300" y="392" width="64"  height="50" rx="2"/>
+        <!-- 6 CasaNova: Pavillon am Wasser -->
+        <rect x="284" y="528" width="34"  height="28" rx="2"/>
+        <rect x="600" y="448" width="110" height="56" rx="2"/>
+        <rect x="752" y="448" width="92"  height="56" rx="2"/>
+      </g>
+
+      <!-- 1 Kubuswoningen: gekippte Würfel über dem Blaak -->
+      <g class="city-block">
+        <rect x="506" y="186" width="22" height="22" rx="1" transform="rotate(45 517 197)"/>
+        <rect x="528" y="186" width="22" height="22" rx="1" transform="rotate(45 539 197)"/>
+        <rect x="517" y="206" width="22" height="22" rx="1" transform="rotate(45 528 217)"/>
+        <rect x="495" y="206" width="22" height="22" rx="1" transform="rotate(45 506 217)"/>
+      </g>
+
+      <text class="plan-note" x="826" y="724">Platzhalter · voorlopig</text>
+    </g>
+
+    <!-- Full dim route (future path) -->
+    <polyline class="route-future" points="430,250 520,200 610,165 560,360 470,410 390,470 300,545" fill="none"/>
+
+    <!-- Live trail (drawn by JS as you scroll) -->
+    <path class="route-trail" id="routeTrail" d=""/>
+
+    <!-- Traveller dot -->
+    <circle id="traveller" cx="430" cy="250" r="7"
+      fill="var(--brick)"
+      filter="drop-shadow(0 0 5px rgba(158,59,46,.9))"
+      opacity="0"/>
+
+    <!-- Ripple rings per stop -->
+    <circle id="rp0" cx="430" cy="250" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp1" cx="520" cy="200" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp2" cx="610" cy="165" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp3" cx="560" cy="360" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp4" cx="470" cy="410" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp5" cx="390" cy="470" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp6" cx="300" cy="545" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+
+    <!-- Stop rings (outer) -->
+    <circle class="stop-ring" cx="430" cy="250" r="14"/>
+    <circle class="stop-ring" cx="520" cy="200" r="14"/>
+    <circle class="stop-ring" cx="610" cy="165" r="14"/>
+    <circle class="stop-ring" cx="560" cy="360" r="14"/>
+    <circle class="stop-ring" cx="470" cy="410" r="14"/>
+    <circle class="stop-ring" cx="390" cy="470" r="14"/>
+    <circle class="stop-ring" cx="300" cy="545" r="14"/>
+
+    <!-- Clickable stop dots -->
+    <circle class="stop-dot" id="dot0" cx="430" cy="250" r="8" onclick="dotTap(0)"/>
+    <circle class="stop-dot" id="dot1" cx="520" cy="200" r="8" onclick="dotTap(1)"/>
+    <circle class="stop-dot" id="dot2" cx="610" cy="165" r="8" onclick="dotTap(2)"/>
+    <circle class="stop-dot" id="dot3" cx="560" cy="360" r="8" onclick="dotTap(3)"/>
+    <circle class="stop-dot" id="dot4" cx="470" cy="410" r="8" onclick="dotTap(4)"/>
+    <circle class="stop-dot" id="dot5" cx="390" cy="470" r="8" onclick="dotTap(5)"/>
+    <circle class="stop-dot" id="dot6" cx="300" cy="545" r="8" onclick="dotTap(6)"/>
+
+    <!-- Stop number labels -->
+    <text class="stop-lbl" x="441" y="245">① Witte Huis</text>
+    <text class="stop-lbl" x="531" y="195">② Kubuswoningen</text>
+    <text class="stop-lbl" x="621" y="160">③ Markthal</text>
+    <text class="stop-lbl" x="571" y="355">④ Red Apple</text>
+    <text class="stop-lbl" x="481" y="405">⑤ Wijnhaven</text>
+    <text class="stop-lbl" x="311" y="465">⑥ EY</text>
+    <text class="stop-lbl" x="311" y="540">⑦ CasaNova</text>
+
+    <!-- GPS position dot (track mode) -->
+    <g id="gps-group" opacity="0">
+      <circle id="gps-acc"   cx="0" cy="0" r="22" fill="rgba(60,74,82,.12)" stroke="rgba(60,74,82,.3)" stroke-width="1"/>
+      <circle id="gps-halo"  cx="0" cy="0" r="10" fill="rgba(60,74,82,.22)"/>
+      <circle id="gps-outer" cx="0" cy="0" r="8"  fill="var(--paper)" filter="drop-shadow(0 1px 3px rgba(0,0,0,.35))"/>
+      <circle id="gps-inner" cx="0" cy="0" r="5"  fill="#3C4A52"/>
+    </g>
+  </svg>
+  </div><!-- /map-svg-wrap -->
+</div><!-- /map-panel -->
+
+<!-- Touch-capture overlay, only active in track mode (touch-action:none prevents scroll) -->
+<div id="map-touch-layer"></div>
+
+<!-- Map Info Card, slides up when user taps a stop dot in track mode -->
+<div id="map-info-card" role="dialog" aria-modal="true" aria-label="Stationsinformation">
+  <div class="mic-handle"></div>
+  <div class="mic-body">
+    <div class="mic-header">
+      <div class="mic-meta">
+        <div class="mic-num" id="mic-num">Station 01</div>
+        <div class="mic-name" id="mic-name">—</div>
+        <div class="mic-sub"  id="mic-sub">—</div>
+      </div>
+      <button class="mic-close" onclick="closeInfoCard()" aria-label="Schließen">✕</button>
+    </div>
+    <div class="mic-divider"></div>
+    <div class="mic-facts" id="mic-facts"></div>
+    <button class="mic-cta" id="mic-cta">Mehr erfahren →</button>
+  </div>
+</div>
+
+<!-- JOURNEY (scroll space only, no visible content) -->
+<div id="journey"></div>
+
+<!-- DRAWER (fixed below map) -->
+<div id="drawer">
+  <div class="drawer-inner" onclick="openModal(activeStop)">
+    <div class="drawer-left">
+      <div class="drawer-num"  id="drawer-num">Station 01</div>
+      <div class="drawer-name" id="drawer-name">—</div>
+      <div class="drawer-sub"  id="drawer-sub">—</div>
+    </div>
+    <div class="drawer-btn">Mehr erfahren →</div>
+  </div>
+</div>
+
+
+<!-- PLACES PANEL, bottom sheet -->
+<div id="places-panel" role="dialog" aria-modal="true" aria-labelledby="ppTitle">
+  <div class="pp-backdrop" onclick="closePlaces()"></div>
+  <div class="pp-sheet">
+    <div class="pp-handle-zone" id="ppHandleZone">
+      <div class="pp-drag-handle" aria-hidden="true"></div>
+    </div>
+    <div class="pp-header">
+      <h3 class="pp-title" id="ppTitle">Orte in Wijnhaven</h3>
+      <button class="pp-close" onclick="closePlaces()" aria-label="Schließen">✕</button>
+    </div>
+    <div class="pp-scroll" id="ppScroll">
+      <!-- dynamically rendered by renderPlacesList() -->
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY SCROLL HINT -->
+<div id="journey-hint" aria-hidden="true">
+  <div class="journey-hint-inner">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+      <path d="M6.5 1 L6.5 10" stroke="rgba(255,255,255,.85)" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M3 7.5 L6.5 11 L10 7.5" stroke="rgba(255,255,255,.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span id="journeyHintText">Scrollen</span>
+  </div>
+</div>
+
+<!-- OUTRO -->
+<div class="outro">
+  <h2>La città è un libro.<br>Leggerla è già viaggiare.</h2>
+  <p>Wijnhaven ist kein Einzelbauwerk, sondern eine Wasserkante, die man liest, indem man sie geht. Sieben Einträge, ein Quartier.</p>
+  <div class="outro-dot"></div>
+</div>
+
+<!-- IMPRESSUM -->
+<section class="impressum">
+  <p class="impressum-heading">Impressum</p>
+  <div class="impressum-grid">
+    <dl class="impressum-block">
+      <dt data-i18n="imp_responsible">Verantwortlich</dt>
+      <dd>Nils Kuhlow &amp; Kai-Lars Ehrich</dd>
+    </dl>
+    <dl class="impressum-block">
+      <dt data-i18n="imp_institution">Institution</dt>
+      <dd>Hochschule Wismar<br>Fakultät Gestaltung · Architektur</dd>
+    </dl>
+    <dl class="impressum-block">
+      <dt data-i18n="imp_contact">Kontakt</dt>
+      <dd><a href="mailto:Nils@Kuhlow.eu">Nils@Kuhlow.eu</a></dd>
+    </dl>
+    <dl class="impressum-block">
+      <dt data-i18n="imp_course">Lehrveranstaltung</dt>
+      <dd>WPM Stadt + Raum<br>WiSe 2026/27</dd>
+    </dl>
+  </div>
+  <p class="impressum-note" data-i18n="imp_note">
+    Diese Website ist ein nicht-kommerzielles Hochschulprojekt und dient ausschließlich akademischen Zwecken.
+    Alle verwendeten Inhalte sind urheberrechtlich geschützt. Eine kommerzielle Nutzung ist nicht gestattet.
+  </p>
+</section>
+
+<!-- SCAN LINE, terra-cotta stripe during map reveal -->
+<div id="scan-line" aria-hidden="true"></div>
+
+<!-- Language switch moved into #nav-crumb (top bar) -->
+
+<!-- MODAL -->
+<div id="backdrop" onclick="closeModal()"></div>
+<div id="modal">
+  <!-- Drag handle, grab here and pull down to close -->
+  <div class="modal-handle-zone" id="modalHandleZone">
+    <div class="modal-drag-handle" aria-hidden="true"></div>
+  </div>
+  <button class="modal-close" onclick="closeModal()" aria-label="Schließen">✕</button>
+  <button class="modal-share" id="shareBtn" onclick="shareStop()" aria-label="Teilen">
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M7.5 1 L7.5 9.5"/>
+      <path d="M4.5 3.5 L7.5 1 L10.5 3.5"/>
+      <path d="M4 7 L2 7 L2 13 L13 13 L13 7 L11 7"/>
+    </svg>
+  </button>
+  <div class="modal-gallery">
+    <div class="gallery-slides" id="galSlides"></div>
+    <div class="gallery-nav"    id="galNav"></div>
+    <span id="gal-counter" aria-live="polite"></span>
+    <button class="gal-arr prev" onclick="galStep(-1)">‹</button>
+    <button class="gal-arr next" onclick="galStep(+1)">›</button>
+    <div class="gal-progress" id="galProgress" style="display:none"><div class="gal-progress-fill" id="galProgressFill"></div></div>
+    <!-- Photo swipe hint, shown once per session when gallery has multiple photos -->
+    <div id="photo-hint" aria-hidden="true">
+      <div class="photo-hint-inner">
+        <svg width="38" height="22" viewBox="0 0 38 22" fill="none" aria-hidden="true">
+          <!-- left arrow -->
+          <path d="M6 11 L1 11" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M3.5 8.5 L1 11 L3.5 13.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- finger -->
+          <rect x="12" y="3" width="14" height="16" rx="7" fill="white" opacity=".8"/>
+          <!-- right arrow -->
+          <path d="M32 11 L37 11" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M34.5 8.5 L37 11 L34.5 13.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="photoHintText">Fotos wischen</span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-body" id="modalBody"></div>
+</div>
+
+<script>
+/* ── ALL STATE VARS – declared first with var to avoid TDZ errors ── */
+var activeStop    = -1;
+var mapShown      = false;
+var trackActive   = false;
+var watchId       = null;
+var toastTmr      = null;
+var galIdx        = 0;
+var galLen        = 0;
+var _galAutoTimer = null;
+var mapUserPanned = false; /* true when user manually panned/zoomed in track mode */
+var lastGpsLat    = null;  /* most recent GPS fix, for "return to location" */
+var lastGpsLon    = null;
+var snapTimer     = null;
+var snapping      = false;
+
+
+/* ═══════════════════════════════
+   LOADER
+═══════════════════════════════ */
+(function(){
+  const el = document.getElementById('loader');
+  function dismiss(){
+    el.classList.add('out');
+    el.addEventListener('transitionend', () => el.classList.add('gone'), { once:true });
+    setTimeout(() => el.classList.add('gone'), 1500); // fallback
+  }
+  setTimeout(dismiss, 3400);
+  setTimeout(() => { el.classList.add('out'); el.classList.add('gone'); }, 7000); // hard fallback
+  /* Lang switch appears after loader fades out */
+  setTimeout(() => document.getElementById('lang-switch').classList.add('show'), 4300);
+})();
+
+/* ═══════════════════════════════
+   DATA
+═══════════════════════════════ */
+/* ── 7 Wijnhaven-Einträge. Steckbrief-Werte sind öffentlich recherchiert;
+      Reportage-Absätze (paras) und voices sind PLATZHALTER (Ich-Perspektive),
+      werden nach der Reise durch eigene Beobachtungen/Interviews ersetzt.
+      slides: Farbverlauf-Platzhalter bis eigene Fotos vorliegen. ── */
+const STOPS = [
+  {
+    num:"01", name:"Witte Huis", sub:"Willem Molenbroek · 1898",
+    entryDate:"26.10.2026", entryTime:"09:14",
+    paras:[
+      `Wir beginnen am Oude Haven. Das <em>Witte Huis</em> steht hell und schmal zwischen den Neubauten, ein Hochhaus von 1898, das aussieht, als hätte es sich aus einem anderen Jahrhundert hierher verirrt. Aus der Nähe spürt man, wie ungewöhnlich kühn dieser Turm für seine Zeit war.`,
+      `Bemerkenswert ist, dass es das Bombardement von 1940, das fast die gesamte Innenstadt auslöschte, überstanden hat. Es wirkt heute wie ein Anker: der Punkt, von dem aus sich die zerstörte und neu erfundene Stadt lesen lässt.`
+    ],
+    voices:[{quote:"Für uns ist das der Anfang von Rotterdam, alles andere kam danach.", who:"Passantin am Oude Haven"}],
+    steckbrief:{
+      architekt:"Willem Molenbroek",
+      fertigstellung:"1898",
+      flaeche:"ca. 10 Geschosse, rund 43 m Höhe",
+      kosten:"nicht überliefert",
+      einbindung:"Kopfbau am Oude Haven, Auftakt der Route, Solitär zwischen Nachkriegsbauten",
+      konzept:"Frühes Hochhaus nach US-Vorbild, Jugendstil-Dekor an Stahlskelett",
+      programm:"Kontor- und Bürohaus, heute gemischt",
+      konstruktion:"Stahlskelett mit Backstein- und Natursteinfassade, glasierte Keramik"
+    },
+    facts:[{l:"Fertigstellung",v:"1898"},{l:"Höhe",v:"ca. 43 m · 10 Geschosse"},{l:"Stil",v:"Jugendstil"},{l:"Besonderheit",v:"Überstand 1940"}],
+    sources:["Stadsarchief Rotterdam","Rijksmonument-Register"],
+    slides:[
+      {bg:"linear-gradient(150deg,#4a443c,#14130f)",icon:"",cap:"Witte Huis am Oude Haven (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#6b5a4a,#1d1a16)",icon:"",cap:"Fassadendetail, glasierte Keramik (Platzhalter)"}
+    ]
+  },
+  {
+    num:"02", name:"Kubuswoningen", sub:"Piet Blom · 1978–1984",
+    entryDate:"26.10.2026", entryTime:"10:05",
+    paras:[
+      `Ein paar Schritte weiter kippt die Welt um 45 Grad. Piet Bloms <em>Kubuswoningen</em> sitzen wie aufgestellte Würfel auf ihren Pfeilern und überbauen die Straße, als wären sie ein Wald aus Häusern. Man läuft buchstäblich unter dem Wohnen hindurch.`,
+      `In der Kijk-Kubus, der begehbaren Musterwohnung, merkt man schnell, wie radikal die Idee ist: kaum eine senkrechte Wand, jedes Möbelstück eine Verhandlung mit der Geometrie. Strukturalismus zum Anfassen.`
+    ],
+    voices:[{quote:"Man gewöhnt sich an die schrägen Wände. Nach zwei Wochen denkt man nicht mehr daran.", who:"Bewohner, Overblaak"}],
+    steckbrief:{
+      architekt:"Piet Blom",
+      fertigstellung:"1978–1984",
+      flaeche:"38 Würfelhäuser + 2 Superkuben, je ca. 100 m²",
+      kosten:"nicht öffentlich beziffert",
+      einbindung:"Überbauung der Blaak als bewohnte Brücke, verbindet Oude Haven und Bibliothek",
+      konzept:"„Wohnen als Dach über der Stadt“, Haus als Baum, Siedlung als Wald",
+      programm:"Wohnungen, Läden, Schauwohnung (Kijk-Kubus)",
+      konstruktion:"Gekippte Holz-Kuben auf sechseckigen Betonpfeilern"
+    },
+    facts:[{l:"Fertigstellung",v:"1984"},{l:"Anzahl",v:"38 Würfel + 2 Superkuben"},{l:"Idee",v:"Haus als Baum"},{l:"Typ",v:"Strukturalismus"}],
+    sources:["Piet Blom, Werkverzeichnis","Museum Rotterdam"],
+    model:{src:"models/kubuswoningen.glb", poster:""},
+    slides:[
+      {bg:"linear-gradient(150deg,#7a4a32,#1d1410)",icon:"",cap:"Gekippte Würfel über dem Blaak (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#3a342e,#14130f)",icon:"",cap:"Blick aus der Kijk-Kubus (Platzhalter)"}
+    ]
+  },
+  {
+    num:"03", name:"Markthal", sub:"MVRDV · 2014",
+    entryDate:"26.10.2026", entryTime:"11:20",
+    paras:[
+      `Die <em>Markthal</em> ist ein Hufeisen aus Wohnungen, das sich über eine offene Markthalle spannt. Von außen ein grauer Bogen, innen ein Farbrausch: die 11.000 m² große Deckenkunst <em>Hoorn des Overvloeds</em> wölbt sich über Käse, Blumen und Fischständen.`,
+      `Spannend ist die Doppelnatur. Hier wohnen Menschen direkt über dem Markt, mit Fenstern, die in die Halle blicken. Markt und Wohnen, sonst getrennt, werden in einem einzigen Baukörper kurzgeschlossen.`
+    ],
+    voices:[{quote:"Morgens ist es ruhig, ab elf wird es laut. Man lebt mit dem Markt.", who:"Bewohnerin, Markthal"}],
+    steckbrief:{
+      architekt:"MVRDV",
+      fertigstellung:"2014",
+      flaeche:"ca. 100.000 m² BGF, 228 Wohnungen",
+      kosten:"rund 175 Mio. €",
+      einbindung:"Stadtbaustein am Blaak, Scharnier zwischen Bahnhofszone und Oude Haven",
+      konzept:"Markthalle als öffentlicher Raum, von Wohnungen als Bogen überspannt",
+      programm:"Markt, Gastronomie, 228 Wohnungen, Tiefgarage, Supermarkt",
+      konstruktion:"Bogenförmiger Stahlbeton, Glasfassaden an den Stirnseiten"
+    },
+    facts:[{l:"Fertigstellung",v:"2014"},{l:"Wohnungen",v:"228"},{l:"Deckenkunst",v:"11.000 m²"},{l:"Kosten",v:"ca. 175 Mio. €"}],
+    sources:["MVRDV Projektdokumentation","Gemeente Rotterdam"],
+    model:{src:"models/markthal.glb", poster:""},
+    slides:[
+      {bg:"linear-gradient(150deg,#8a5230,#1d1410)",icon:"",cap:"Wohnbogen über der Markthalle (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#4a443c,#14130f)",icon:"",cap:"Hoorn des Overvloeds, Deckenkunst (Platzhalter)"}
+    ]
+  },
+  {
+    num:"04", name:"Red Apple", sub:"KCAP / Jan des Bouvrie · 2009",
+    entryDate:"26.10.2026", entryTime:"12:40",
+    paras:[
+      `Über die Brücke auf das <em>Wijnhaveneiland</em>. Der <em>Red Apple</em> markiert die Inselspitze mit einem schlanken Wohnturm, dessen rote Aluminium-Lamellen bei jedem Schritt ihre Dichte zu ändern scheinen.`,
+      `Der Turm steht auf einem niedrigeren Riegel, der den Block schließt. Aus der Distanz ein Signal, aus der Nähe ein präzise gefügtes Stück Fassade. Rot ist hier kein Zufall, sondern Adresse.`
+    ],
+    voices:[{quote:"Den roten Turm sieht man vom anderen Ufer. Das ist unser Wegweiser.", who:"Student, Wijnhaveneiland"}],
+    steckbrief:{
+      architekt:"KCAP Architects&Planners, Interieur Jan des Bouvrie",
+      fertigstellung:"2009",
+      flaeche:"ca. 124 m Höhe, rund 40 Geschosse",
+      kosten:"nicht öffentlich beziffert",
+      einbindung:"Hochpunkt an der Spitze des Wijnhaveneilands, Block mit niedrigem Sockelriegel",
+      konzept:"Vertikale Adresse als Auftakt der Halbinsel, markante rote Hülle",
+      programm:"Wohnungen, Gewerbe im Sockel, Tiefgarage",
+      konstruktion:"Stahlbeton, vorgehängte rote Aluminium-Lamellen"
+    },
+    facts:[{l:"Fertigstellung",v:"2009"},{l:"Höhe",v:"ca. 124 m"},{l:"Fassade",v:"Rote Aluminium-Lamellen"},{l:"Lage",v:"Wijnhaveneiland"}],
+    sources:["KCAP Projektarchiv","Hoogbouw Rotterdam"],
+    slides:[
+      {bg:"linear-gradient(150deg,#9e3b2e,#1d1410)",icon:"",cap:"Red Apple, Inselspitze (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#6b3a30,#14130f)",icon:"",cap:"Lamellenfassade aus der Nähe (Platzhalter)"}
+    ]
+  },
+  {
+    num:"05", name:"Wijnhaven-Türme", sub:"Masterplan KCAP & Barcode Architecten",
+    entryDate:"26.10.2026", entryTime:"13:30",
+    paras:[
+      `Das <em>Wijnhaveneiland</em> selbst ist das eigentliche Thema: eine Nachkriegs-Halbinsel, die in den letzten zwei Jahrzehnten neu verdichtet wurde. Türme unterschiedlicher Höhe stehen auf einem gemeinsamen Raster und lassen schmale Gassen und Höfe frei.`,
+      `Man merkt, dass hier nicht ein einzelnes Haus, sondern eine Spielregel entworfen wurde. Der Masterplan gibt das Maß vor, die einzelnen Architekten füllen es. Dichte ohne Monotonie, das ist die Wette dieses Quartiers.`
+    ],
+    voices:[{quote:"Erst kam der Plan, dann die Türme, einer nach dem anderen.", who:"Mitarbeiter Stadtplanung Rotterdam"}],
+    steckbrief:{
+      architekt:"Masterplan KCAP, u.a. Barcode Architecten",
+      fertigstellung:"ab ca. 2000, fortlaufend",
+      flaeche:"Halbinsel zwischen Wijnhaven und Scheepmakershaven",
+      kosten:"Quartiersentwicklung, nicht einzeln beziffert",
+      einbindung:"Verdichtung einer Nachkriegsinsel, Hochpunkte auf gemeinsamem Raster",
+      konzept:"Flexibler Masterplan: Maß und Korn vorgegeben, Bauten variabel",
+      programm:"Wohnen, Büro, Gewerbe, öffentliche Erdgeschosse",
+      konstruktion:"Hochhausensemble in Stahlbeton, unterschiedliche Fassaden"
+    },
+    facts:[{l:"Entwicklung",v:"ab ca. 2000"},{l:"Prinzip",v:"Masterplan + Einzelbauten"},{l:"Lage",v:"Wijnhaveneiland"},{l:"Ziel",v:"Dichte ohne Monotonie"}],
+    sources:["KCAP Masterplan Wijnhaveneiland","Gemeente Rotterdam, Stadsontwikkeling"],
+    slides:[
+      {bg:"linear-gradient(150deg,#3c4a52,#14130f)",icon:"",cap:"Türme auf gemeinsamem Raster (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#4a443c,#14130f)",icon:"",cap:"Gasse zwischen den Hochpunkten (Platzhalter)"}
+    ]
+  },
+  {
+    num:"06", name:"EY Netherlands", sub:"Bürohaus am Wijnhaven",
+    entryDate:"26.10.2026", entryTime:"14:15",
+    paras:[
+      `Der <em>EY</em>-Bau zeigt die andere Seite des Quartiers: das Arbeiten. Eine ruhige, klar gerasterte Bürofassade, die sich bewusst zurücknimmt und dem Wasser den Vortritt lässt.`,
+      `Interessant ist das Erdgeschoss, der Punkt, an dem das große Bürohaus den öffentlichen Raum berührt. Hier entscheidet sich, ob ein Quartier am Feierabend lebt oder verstummt. (Architekt und Jahr vor Ort prüfen.)`
+    ],
+    voices:[{quote:"Mittags ist hier viel los, abends wird es schnell still.", who:"Angestellter, Wijnhaven"}],
+    steckbrief:{
+      architekt:"vor Ort zu verifizieren",
+      fertigstellung:"vor Ort zu verifizieren",
+      flaeche:"Bürohochhaus am Wijnhaven",
+      kosten:"nicht öffentlich beziffert",
+      einbindung:"Büroadresse im Wohn-/Arbeitsmix der Halbinsel, Bezug zum Wasser",
+      konzept:"Zurückhaltende Rasterfassade, Sockel als Schwelle zum öffentlichen Raum",
+      programm:"Büro, Erdgeschossnutzung",
+      konstruktion:"Stahlbeton, vorgehängte Fassade (vor Ort prüfen)"
+    },
+    facts:[{l:"Nutzung",v:"Büro"},{l:"Lage",v:"Wijnhaven"},{l:"Thema",v:"Arbeiten am Wasser"},{l:"Status",v:"Daten vor Ort prüfen"}],
+    sources:["Recherche vor Ort","Gemeente Rotterdam"],
+    slides:[
+      {bg:"linear-gradient(150deg,#3c4a52,#14130f)",icon:"",cap:"EY am Wijnhaven (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#4a443c,#14130f)",icon:"",cap:"Erdgeschoss zum öffentlichen Raum (Platzhalter)"}
+    ]
+  },
+  {
+    num:"07", name:"CasaNova", sub:"Pavillon am Wasser",
+    entryDate:"26.10.2026", entryTime:"15:00",
+    paras:[
+      `Am Ende kehren wir ans Wasser zurück. <em>CasaNova</em> ist kein Hochhaus, sondern ein leichter Pavillon am Kai, der Punkt, an dem die Architektur Pause macht und der Stadtraum selbst zur Bühne wird.`,
+      `Von hier aus liegt die ganze Route noch einmal im Blick: der weiße Turm von 1898, die gekippten Würfel, der Bogen der Markthal, das rote Signal auf der Insel. Sieben Bauten, ein Quartier, eine Wasserkante.`
+    ],
+    voices:[{quote:"Bei Sonne sitzt hier halb Rotterdam am Wasser.", who:"Kellner, CasaNova"}],
+    steckbrief:{
+      architekt:"vor Ort zu verifizieren",
+      fertigstellung:"vor Ort zu verifizieren",
+      flaeche:"Pavillon / Gastronomie am Kai",
+      kosten:"nicht öffentlich beziffert",
+      einbindung:"Abschluss der Route am Wasser, Aufenthaltsort und Aussichtspunkt",
+      konzept:"Leichter Baukörper als Gegenpol zu den Hochpunkten, Vorrang für den Außenraum",
+      programm:"Gastronomie, Terrasse",
+      konstruktion:"Leichtbau, große Verglasung (vor Ort prüfen)"
+    },
+    facts:[{l:"Typ",v:"Pavillon"},{l:"Nutzung",v:"Gastronomie"},{l:"Lage",v:"Am Wasser"},{l:"Rolle",v:"Abschluss der Route"}],
+    sources:["Recherche vor Ort"],
+    slides:[
+      {bg:"linear-gradient(150deg,#4a443c,#14130f)",icon:"",cap:"CasaNova am Kai (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#3c4a52,#14130f)",icon:"",cap:"Blick zurück auf die Route (Platzhalter)"}
+    ]
+  }
+];
+
+/* ═══════════════════════════════════════════
+   ASSET PRELOADER
+   Fires immediately while the loader animation
+   plays (~4 s). Creates Image objects for every
+   slide so the browser fetches and caches them
+   in the background, gallery + map open instantly.
+═══════════════════════════════════════════ */
+(function preloadAll(){
+  /* 1. All slide images */
+  STOPS.forEach(function(stop){
+    stop.slides.forEach(function(slide){
+      var m = slide.bg.match(/url\('([^']+)'\)/);
+      if (!m) return;
+      var img = new Image();
+      img.src = m[1];
+    });
+  });
+  /* 2. Map SVG (belt-and-suspenders alongside the <link rel=preload>) */
+  fetch('NOLLI_PLAN_FINAL.svg', { priority: 'high' }).catch(function(){});
+})();
+
+/* ═══════════════════════════════
+   EXTRA PLACES
+   Not part of the route, shown in the places panel
+   alongside the route stops but don't affect the map trail.
+   Add entries here with the same shape as STOPS objects.
+   Example entry (remove the comment syntax to activate):
+   {
+     name:"Oratorio di San Bernardino",
+     sub:"Gotische Kapelle neben dem Dom",
+     paras:["Textabsatz 1 …", "Textabsatz 2 …"],
+     facts:[{l:"Erbaut",v:"15. Jhd."},{l:"Stil",v:"Gotik"}],
+     slides:[{bg:"url('img/OratoriodiSanBernardino.jpg') center/cover no-repeat",icon:"",cap:"Oratorio di San Bernardino, Außenansicht"},{bg:"url('img/OratoriodiSanBernardino2.jpg') center/cover no-repeat",icon:"",cap:"Renaissancefresken, Sodoma und Beccafumi"}]
+   }
+═══════════════════════════════ */
+const EXTRA_PLACES = [];  // Wijnhaven: keine zusätzlichen Orte in Phase A (Route = 7 Einträge)
+
+/* ═══════════════════════════════
+   ROUTE
+═══════════════════════════════ */
+const TRAIL = [
+  "M430,250",
+  "M430,250 L520,200",
+  "M430,250 L520,200 L610,165",
+  "M430,250 L520,200 L610,165 L560,360",
+  "M430,250 L520,200 L610,165 L560,360 L470,410",
+  "M430,250 L520,200 L610,165 L560,360 L470,410 L390,470",
+  "M430,250 L520,200 L610,165 L560,360 L470,410 L390,470 L300,545",
+];
+
+const WAYPOINTS = [
+  {x:430, y:250},   // 0 Witte Huis
+  {x:520, y:200},   // 1 Kubuswoningen
+  {x:610, y:165},   // 2 Markthal
+  {x:560, y:360},   // 3 Red Apple
+  {x:470, y:410},   // 4 Wijnhaven-Türme
+  {x:390, y:470},   // 5 EY Netherlands
+  {x:300, y:545},   // 6 CasaNova
+];
+
+const VB = [
+  "240 108 380 285",   // 0
+  "330 58 380 285",    // 1
+  "420 23 380 285",    // 2
+  "370 218 380 285",   // 3
+  "280 268 380 285",   // 4
+  "200 328 380 285",   // 5
+  "110 403 380 285",   // 6
+];
+
+/* ═══════════════════════════════
+   HELPERS
+═══════════════════════════════ */
+function lerpVB(a, b, t){
+  const pa = a.trim().split(/\s+/).map(Number);
+  const pb = b.trim().split(/\s+/).map(Number);
+  return pa.map((v,i) => v + (pb[i]-v)*t).join(' ');
+}
+
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+
+/* ═══════════════════════════════
+   MAP INTRO ANIMATION
+   Called once when map first appears.
+   Zooms out from Stop-0 zoom level to give a "reveal" feel,
+   then settles back to Stop-0 view.
+═══════════════════════════════ */
+function triggerMapIntro(){
+  if (mapShown) return;
+  mapShown = true;
+
+  /* Snap scroll to the exact start of the journey section and kill momentum.
+     overflow:hidden trick stops native iOS/Android touch inertia; scrollTo
+     then positions at journeyTop; rAF restores scrollability. */
+  document.body.style.overflow = 'hidden';
+  window.scrollTo(0, getJourneyTop());
+  requestAnimationFrame(function(){ document.body.style.overflow = ''; });
+
+  const map = document.getElementById('map-panel');
+  const svg = document.getElementById('mapSvg');
+
+  /* ── Fire the scan-line sweep ── */
+  const sl = document.getElementById('scan-line');
+  sl.classList.remove('sweep');
+  void sl.offsetWidth;          /* force reflow to restart animation */
+  sl.classList.add('sweep');
+
+  /* Start from a tighter zoom (closer into stop 0) */
+  const zoomIn = "444 44 160 120";  /* zoomed on stop 0 */
+  const target  = VB[0];             /* normal stop-0 view */
+
+  svg.setAttribute('viewBox', zoomIn);
+  map.classList.add('map-intro'); /* trigger CSS clip-path + scale + fade */
+
+  /* After clip-path reveal settles (~1.05s), animate viewBox to normal */
+  setTimeout(() => {
+    animVB(zoomIn, target, 900);
+  }, 400);
+
+  /* Immediately activate stop 0 so drawer + sketch appear as map reveals.
+     Set _fromScroll so activate() doesn't fight the animVB above. */
+  activate._fromScroll = true;
+  activate(0, 0);
+  activate._fromScroll = false;
+}
+
+/* Generation counter, increment to cancel any running animVB */
+var _animVBGen = 0;
+function cancelAnimVB(){ _animVBGen++; }
+
+/* Animate viewBox from → to over `dur` ms.
+   Automatically cancels any previously running animation. */
+function animVB(from, to, dur){
+  _animVBGen++;
+  var gen = _animVBGen;
+  const svg = document.getElementById('mapSvg');
+  const t0  = performance.now();
+  (function tick(now){
+    if (_animVBGen !== gen) return;      /* cancelled, bail immediately */
+    const t = Math.min((now - t0) / dur, 1);
+    const e = t < .5 ? 2*t*t : -1+(4-2*t)*t;
+    svg.setAttribute('viewBox', lerpVB(from, to, e));
+    if (t < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+
+/* Animate viewBox from current to target */
+function animVBfromCurrent(target, dur){
+  const svg = document.getElementById('mapSvg');
+  const vb  = svg.viewBox.baseVal;
+  const from = `${vb.x} ${vb.y} ${vb.width} ${vb.height}`;
+  animVB(from, target, dur || 650);
+}
+
+/* ═══════════════════════════════
+   TRAVELLER DOT
+═══════════════════════════════ */
+function moveTraveller(globalT){
+  const trav = document.getElementById('traveller');
+  trav.style.opacity = '1';
+
+  /* clamp to [0, 3.9999] so we always have a "next" point */
+  const t       = Math.max(0, Math.min(6.9999, globalT));
+  const fromIdx = Math.floor(t);
+  const frac    = t - fromIdx;
+  /* ease-in-out so dot decelerates near stops */
+  const ef      = frac < .5 ? 2*frac*frac : -1+(4-2*frac)*frac;
+  const a       = WAYPOINTS[fromIdx];
+  const b       = WAYPOINTS[fromIdx + 1];
+  trav.setAttribute('cx', a.x + (b.x - a.x) * ef);
+  trav.setAttribute('cy', a.y + (b.y - a.y) * ef);
+}
+
+/* ═══════════════════════════════
+   ACTIVATE STOP
+═══════════════════════════════ */
+function activate(idx, globalT){
+  /* Always move traveller */
+  if (globalT !== undefined) moveTraveller(globalT);
+
+  /* Dot states */
+  for (let i = 0; i < 7; i++){
+    const d = document.getElementById('dot'+i);
+    d.classList.toggle('visited',    i < idx);
+    d.classList.toggle('active-dot', i === idx);
+    d.setAttribute('r', i === idx ? '9' : '7');
+  }
+
+  /* Ensure drawer is open whenever activate() is called (defensive guard) */
+  document.getElementById('drawer').classList.add('open');
+
+  /* Heavy updates only on stop change */
+  if (idx === activeStop) {
+    /* ViewBox follows traveller continuously.
+       Use (globalT - idx) so frac stays in [0,1] even when hysteresis holds
+       idx at N while globalT has already crossed into N+1 territory.
+       Without this fix: Math.floor(globalT) = N+1 → frac resets to ~0 →
+       viewport snaps back to VB[N] causing the visible dot-jump. */
+    if (globalT !== undefined){
+      const frac = Math.max(0, Math.min(1, globalT - idx));
+      const next = idx < 6 ? VB[idx+1] : VB[6];
+      document.getElementById('mapSvg')
+        .setAttribute('viewBox', lerpVB(VB[idx], next, frac));
+    }
+    return;
+  }
+
+  activeStop = idx;
+
+  /* Trail */
+  document.getElementById('routeTrail').setAttribute('d', TRAIL[idx]);
+
+  /* Ripples */
+  for (let i = 0; i < 7; i++){
+    const r = document.getElementById('rp'+i);
+    r.style.animation = 'none'; r.style.opacity = '0';
+  }
+  const ar = document.getElementById('rp'+idx);
+  ar.style.opacity = '1'; void ar.offsetWidth;
+  ar.style.animation = 'ripple-anim 1.9s ease-out infinite';
+
+  /* Crumb */
+  const crumb = document.getElementById('nav-crumb');
+  crumb.classList.add('show');
+  var _cs = document.getElementById('crumb-stop'); if (_cs) _cs.textContent = STOPS[idx].name;
+
+  /* Drawer, combined label: "STATION 01, 01/08" */
+  document.getElementById('drawer-num').textContent  = (LANG[currentLang]||LANG.de).modal_station + ' 0' + (idx+1) + ' \u00b7 0' + (idx+1) + ' / 07';
+  document.getElementById('drawer-name').textContent = STOPS[idx].name;
+  document.getElementById('drawer-sub').textContent  = STOPS[idx].sub;
+  document.getElementById('drawer').classList.add('open');
+
+  /* Journey scroll hint, show once on very first stop entry */
+  if (idx === 0) showJourneyHint();
+
+  /* ViewBox, only animate programmatically (dotTap/scrollToStop).
+     During scroll  lerpVB already drives the viewBox continuously.
+     During GPS tracking moveGpsDot() drives the viewBox, skip too. */
+  if (!activate._fromScroll && !activate._fromGps) animVBfromCurrent(VB[idx], 650);
+}
+
+function resetMap(){
+  activeStop = -1;
+  document.getElementById('routeTrail').setAttribute('d', '');
+  document.getElementById('traveller').style.opacity = '0';
+  for (let i = 0; i < 7; i++){
+    document.getElementById('dot'+i).classList.remove('visited','active-dot');
+    document.getElementById('dot'+i).setAttribute('r','7');
+    const r = document.getElementById('rp'+i);
+    r.style.animation = 'none'; r.style.opacity = '0';
+  }
+  document.getElementById('nav-crumb').classList.remove('show');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+/* ═══════════════════════════════
+   MOBILE VIEWPORT FIX
+   100vh ≠ visible viewport on iOS Safari (large viewport includes hidden address bar).
+   window.innerHeight always equals actual visible pixels, set as CSS var.
+   Runs immediately + on resize (handles orientation change + Chrome's address-bar
+   collapse which resizes the viewport).
+═══════════════════════════════ */
+function updateMapH(){
+  document.documentElement.style.setProperty('--map-h', window.innerHeight + 'px');
+}
+updateMapH();
+
+/* ═══════════════════════════════
+   SCROLL ENGINE
+   Layout reads (offsetHeight, getBoundingClientRect) are cached and
+   only invalidated on resize, avoids forced layout on every frame.
+═══════════════════════════════ */
+const _introEl     = document.querySelector('.intro');
+const _mapEl       = document.getElementById('map-panel');
+const _journeyEl   = document.getElementById('journey');
+const _progressBar = document.getElementById('progress-bar');
+const _langSwitch  = document.getElementById('lang-switch');
+const _drawerEl    = document.getElementById('drawer');
+var   _introH    = null;
+var   _journeyTop= null;
+window.addEventListener('resize', function(){
+  updateMapH();           /* keep map height accurate on orientation change */
+  _introH = null; _journeyTop = null;
+}, { passive:true });
+function getIntroH(){
+  if (_introH === null) _introH = _introEl.offsetHeight;
+  return _introH;
+}
+function getJourneyTop(){
+  if (_journeyTop === null)
+    _journeyTop = _journeyEl.getBoundingClientRect().top + window.scrollY;
+  return _journeyTop;
+}
+
+function onScroll(){
+  const sy      = window.scrollY;
+  const dh      = document.documentElement.scrollHeight - innerHeight;
+  const introEl = _introEl;
+  const introH  = getIntroH();
+  const map     = _mapEl;
+
+  /* Progress bar */
+  _progressBar.style.width = (sy / dh * 100) + '%';
+
+  /* Lang-switch: switch to light style when map is showing */
+  _langSwitch.classList.toggle('light', sy > introH * 0.82);
+
+  /* Track button visibility */
+  updateTrackBtn(sy, introH);
+
+  /* In track mode, don't drive the SVG map from scroll */
+  if (trackActive) return;
+
+  /* ── Intro parallax exit ──
+     Fade + subtle upward drift as user scrolls out of intro.
+     Starts at 45 % of intro height, nearly gone by 90 %.
+     translate3d forces GPU compositing layer, no repaints on scroll. */
+  if (sy < introH) {
+    const prog = Math.max(0, (sy - introH * 0.45) / (introH * 0.50));
+    introEl.style.opacity   = Math.max(0, 1 - prog * 1.1).toFixed(3);
+    introEl.style.transform = `translate3d(0,${-(sy * 0.07)}px,0)`;
+  } else {
+    introEl.style.opacity   = '0';
+    introEl.style.transform = 'translate3d(0,0,0)';
+  }
+
+  /* Map visibility, fade in at 70 % of intro to avoid white-gap flash.
+     Keep stop logic gated until near the actual intro end so that a hard
+     swipe from the landing page cannot advance the first dot before the
+     momentum-killing snap in triggerMapIntro() fires. */
+  if (sy < introH * 0.70) {
+    map.classList.remove('map-intro');
+    map.style.pointerEvents = 'none';
+    resetMap();
+    return;
+  }
+
+  /* Show map visually as soon as 70 % is crossed */
+  map.classList.add('map-intro');
+
+  /* But don't drive stops or snap scroll until we're close to journey start */
+  if (!mapShown && sy < introH - 60) return;
+
+  /* First time crossing into journey: snap + momentum kill */
+  if (!mapShown) triggerMapIntro();
+
+  /* Compute globalT from scroll position within #journey */
+  const journeyTop = getJourneyTop();
+  const scrollInJ  = sy - journeyTop;
+  const totalH     = 7 * innerHeight;
+  /* 0 = start of stop 0, 4.999 = end of stop 4 */
+  /* Past all stops → reveal outro + impressum by collapsing fixed UI panels.
+     Reset activeStop so scrolling back re-triggers a full activate() call. */
+  if (scrollInJ >= totalH) {
+    _drawerEl.classList.remove('open');
+    activeStop = -1;
+    return;
+  }
+
+  const globalT = Math.max(0, Math.min(6.999, (scrollInJ / totalH) * 7));
+  const rawIdx  = Math.floor(globalT);
+  const frac    = globalT - rawIdx;
+
+  /* Hysteresis (backward only): if the user scrolls slightly back past a stop
+     boundary, keep the current stop active to prevent flickering.
+     Forward direction has no delay, stops activate the moment you scroll in. */
+  let stopIdx = rawIdx;
+  if (activeStop >= 0) {
+    if (rawIdx === activeStop - 1 && frac > 0.92) stopIdx = activeStop; // just crossed back
+  }
+  stopIdx = Math.max(0, Math.min(6, stopIdx));
+
+  activate(stopIdx, globalT);
+}
+
+/* RAF-throttled scroll, fires at most once per animation frame.
+   _fromScroll flag tells activate() not to run the 650ms viewBox animation
+   (the lerpVB path already provides smooth continuous following). */
+var _scrollRaf = null;
+window.addEventListener('scroll', function(){
+  if (_scrollRaf) return;
+  _scrollRaf = requestAnimationFrame(function(){
+    activate._fromScroll = true;
+    onScroll();
+    activate._fromScroll = false;
+    _scrollRaf = null;
+  });
+}, { passive:true });
+onScroll();
+
+/* ═══════════════════════════════
+   SCROLL TO STOP
+═══════════════════════════════ */
+function scrollToStop(idx){
+  const journey    = document.getElementById('journey');
+  const journeyTop = journey.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({ top: journeyTop + idx * innerHeight, behavior:'smooth' });
+}
+
+/* ═══════════════════════════════
+   BUG-FIX: dotTap was missing
+   Clicking a map dot scrolls to that stop
+═══════════════════════════════ */
+function dotTap(idx){ scrollToStop(idx); }
+
+/* ═══════════════════════════════
+   LANGUAGE SWITCH
+═══════════════════════════════ */
+const LANG = {
+  de: {
+    loaderSub: 'Feldjournal · WiSe 2026/27',
+    kicker:    'Feldjournal · Rotterdam · Nederland',
+    subHtml:   'Sieben Bauten am Wasser,<br>ein Reisetagebuch aus Rotterdam',
+    scrollCue: 'Scrollen',
+    drawerBtn: 'Eintrag öffnen →',
+    outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
+    outroP:    'Wijnhaven ist kein Einzelbauwerk, sondern eine Wasserkante, die man liest, indem man sie geht. Sieben Einträge, ein Quartier.',
+    impressum:      'Impressum',
+    imp_responsible: 'Verantwortlich',
+    imp_institution: 'Institution',
+    imp_contact:     'Kontakt',
+    imp_course:      'Lehrveranstaltung',
+    imp_note:        'Diese Website ist ein nicht-kommerzielles Hochschulprojekt und dient ausschließlich akademischen Zwecken. Alle Inhalte sind urheberrechtlich geschützt. Eine kommerzielle Nutzung ist nicht gestattet.',
+    modal_station: 'Eintrag',
+    modal_of:      'von',
+    hintZoom:      'Zoomen',
+    hintPan:       'Bewegen',
+    hintTrack:     'Frei auf der Karte navigieren',
+    hintPhoto:     'Fotos wischen',
+    hintJourney:   'Scrollen',
+    ppTitle:       'Orte in Wijnhaven',
+    ppRoute:       'Route',
+    ppExtra:       'Weitere Orte',
+    placesBtnLbl:  'Orte',
+    shareCopied:   'Link kopiert ✓',
+    stopSubs: [
+      'Willem Molenbroek · 1898',
+      'Piet Blom · 1978–84',
+      'MVRDV · 2014',
+      'KCAP / Jan des Bouvrie · 2009',
+      'Masterplan KCAP & Barcode',
+      'Bürohaus am Wijnhaven',
+      'Pavillon am Wasser'
+    ],
+    stopFacts: [
+      ['Fertigstellung','Höhe','Stil','Besonderheit'],
+      ['Fertigstellung','Anzahl','Idee','Typ'],
+      ['Fertigstellung','Wohnungen','Deckenkunst','Kosten'],
+      ['Fertigstellung','Höhe','Fassade','Lage'],
+      ['Entwicklung','Prinzip','Lage','Ziel'],
+      ['Nutzung','Lage','Thema','Status'],
+      ['Typ','Nutzung','Lage','Rolle']
+    ],
+    stopParas: [
+      [`Wir beginnen am Oude Haven. Das <em>Witte Huis</em> steht hell und schmal zwischen den Neubauten, ein Hochhaus von 1898, das aussieht, als hätte es sich aus einem anderen Jahrhundert hierher verirrt. Aus der Nähe spürt man, wie ungewöhnlich kühn dieser Turm für seine Zeit war.`,`Bemerkenswert ist, dass es das Bombardement von 1940, das fast die gesamte Innenstadt auslöschte, überstanden hat. Es wirkt heute wie ein Anker: der Punkt, von dem aus sich die zerstörte und neu erfundene Stadt lesen lässt.`],
+      [`Ein paar Schritte weiter kippt die Welt um 45 Grad. Piet Bloms <em>Kubuswoningen</em> sitzen wie aufgestellte Würfel auf ihren Pfeilern und überbauen die Straße, als wären sie ein Wald aus Häusern. Man läuft buchstäblich unter dem Wohnen hindurch.`,`In der Kijk-Kubus, der begehbaren Musterwohnung, merkt man schnell, wie radikal die Idee ist: kaum eine senkrechte Wand, jedes Möbelstück eine Verhandlung mit der Geometrie. Strukturalismus zum Anfassen.`],
+      [`Die <em>Markthal</em> ist ein Hufeisen aus Wohnungen, das sich über eine offene Markthalle spannt. Von außen ein grauer Bogen, innen ein Farbrausch: die 11.000 m² große Deckenkunst <em>Hoorn des Overvloeds</em> wölbt sich über Käse, Blumen und Fischständen.`,`Spannend ist die Doppelnatur. Hier wohnen Menschen direkt über dem Markt, mit Fenstern, die in die Halle blicken. Markt und Wohnen, sonst getrennt, werden in einem einzigen Baukörper kurzgeschlossen.`],
+      [`Über die Brücke auf das <em>Wijnhaveneiland</em>. Der <em>Red Apple</em> markiert die Inselspitze mit einem schlanken Wohnturm, dessen rote Aluminium-Lamellen bei jedem Schritt ihre Dichte zu ändern scheinen.`,`Der Turm steht auf einem niedrigeren Riegel, der den Block schließt. Aus der Distanz ein Signal, aus der Nähe ein präzise gefügtes Stück Fassade. Rot ist hier kein Zufall, sondern Adresse.`],
+      [`Das <em>Wijnhaveneiland</em> selbst ist das eigentliche Thema: eine Nachkriegs-Halbinsel, die in den letzten zwei Jahrzehnten neu verdichtet wurde. Türme unterschiedlicher Höhe stehen auf einem gemeinsamen Raster und lassen schmale Gassen und Höfe frei.`,`Man merkt, dass hier nicht ein einzelnes Haus, sondern eine Spielregel entworfen wurde. Der Masterplan gibt das Maß vor, die einzelnen Architekten füllen es. Dichte ohne Monotonie, das ist die Wette dieses Quartiers.`],
+      [`Der <em>EY</em>-Bau zeigt die andere Seite des Quartiers: das Arbeiten. Eine ruhige, klar gerasterte Bürofassade, die sich bewusst zurücknimmt und dem Wasser den Vortritt lässt.`,`Interessant ist das Erdgeschoss, der Punkt, an dem das große Bürohaus den öffentlichen Raum berührt. Hier entscheidet sich, ob ein Quartier am Feierabend lebt oder verstummt. (Architekt und Jahr vor Ort prüfen.)`],
+      [`Am Ende kehren wir ans Wasser zurück. <em>CasaNova</em> ist kein Hochhaus, sondern ein leichter Pavillon am Kai, der Punkt, an dem die Architektur Pause macht und der Stadtraum selbst zur Bühne wird.`,`Von hier aus liegt die ganze Route noch einmal im Blick: der weiße Turm von 1898, die gekippten Würfel, der Bogen der Markthal, das rote Signal auf der Insel. Sieben Bauten, ein Quartier, eine Wasserkante.`]
+    ],
+    extraSubs: [], extraFacts: [], extraParas: []
+  },
+  nl: {
+    loaderSub: 'Veldjournaal · WiSe 2026/27',
+    kicker:    'Veldjournaal · Rotterdam · Nederland',
+    subHtml:   'Zeven gebouwen aan het water,<br>een reisdagboek uit Rotterdam',
+    scrollCue: 'Scroll',
+    drawerBtn: 'Notitie openen →',
+    outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
+    outroP:    'Wijnhaven is geen los gebouw, maar een waterrand die je leest door haar te lopen. Zeven notities, één wijk.',
+    impressum:      'Colofon',
+    imp_responsible: 'Verantwoordelijk',
+    imp_institution: 'Instelling',
+    imp_contact:     'Contact',
+    imp_course:      'Vak',
+    imp_note:        'Deze website is een niet-commercieel hogeschoolproject en dient uitsluitend academische doeleinden. Alle inhoud is auteursrechtelijk beschermd. Commercieel gebruik is niet toegestaan.',
+    modal_station: 'Notitie',
+    modal_of:      'van',
+    hintZoom:      'Zoomen',
+    hintPan:       'Verplaatsen',
+    hintTrack:     'Vrij over de kaart navigeren',
+    hintPhoto:     'Foto’s vegen',
+    hintJourney:   'Scroll',
+    ppTitle:       'Plekken in Wijnhaven',
+    ppRoute:       'Route',
+    ppExtra:       'Overige plekken',
+    placesBtnLbl:  'Plekken',
+    shareCopied:   'Link gekopieerd ✓',
+    stopSubs: [
+      'Willem Molenbroek · 1898',
+      'Piet Blom · 1978–84',
+      'MVRDV · 2014',
+      'KCAP / Jan des Bouvrie · 2009',
+      'Masterplan KCAP & Barcode',
+      'Kantoor aan de Wijnhaven',
+      'Paviljoen aan het water'
+    ],
+    stopFacts: [
+      ['Oplevering','Hoogte','Stijl','Bijzonderheid'],
+      ['Oplevering','Aantal','Idee','Type'],
+      ['Oplevering','Woningen','Plafondkunst','Kosten'],
+      ['Oplevering','Hoogte','Gevel','Locatie'],
+      ['Ontwikkeling','Principe','Locatie','Doel'],
+      ['Gebruik','Locatie','Thema','Status'],
+      ['Type','Gebruik','Locatie','Rol']
+    ],
+    stopParas: [
+      [`We beginnen aan de Oude Haven. Het <em>Witte Huis</em> staat licht en smal tussen de nieuwbouw, een hoogbouw uit 1898 die lijkt te zijn verdwaald uit een andere eeuw. Van dichtbij voel je hoe ongewoon gedurfd deze toren voor zijn tijd was.`,`Opvallend is dat het het bombardement van 1940, dat bijna de hele binnenstad uitwiste, heeft overleefd. Het werkt vandaag als een anker: het punt van waaruit je de verwoeste en opnieuw uitgevonden stad kunt lezen.`],
+      [`Een paar stappen verder kantelt de wereld 45 graden. Piet Bloms <em>Kubuswoningen</em> staan als opgezette kubussen op hun pijlers en overbouwen de straat, als een bos van huizen. Je loopt letterlijk onder het wonen door.`,`In de Kijk-Kubus, de te bezichtigen modelwoning, merk je hoe radicaal het idee is: nauwelijks een verticale wand, elk meubelstuk een onderhandeling met de geometrie. Structuralisme om aan te raken.`],
+      [`De <em>Markthal</em> is een hoefijzer van woningen dat zich over een open markthal spant. Van buiten een grijze boog, vanbinnen een kleurexplosie: de 11.000 m² grote plafondkunst <em>Hoorn des Overvloeds</em> welft zich boven kaas, bloemen en viskramen.`,`Boeiend is de dubbele natuur. Hier wonen mensen direct boven de markt, met ramen die de hal in kijken. Markt en wonen, normaal gescheiden, worden in één gebouw kortgesloten.`],
+      [`Over de brug naar het <em>Wijnhaveneiland</em>. De <em>Red Apple</em> markeert de punt van het eiland met een slanke woontoren waarvan de rode aluminium lamellen bij elke stap van dichtheid lijken te veranderen.`,`De toren staat op een lagere schijf die het bouwblok sluit. Op afstand een signaal, van dichtbij een precies gevoegd stuk gevel. Rood is hier geen toeval, maar adres.`],
+      [`Het <em>Wijnhaveneiland</em> zelf is het eigenlijke thema: een naoorlogs schiereiland dat de laatste twee decennia opnieuw is verdicht. Torens van verschillende hoogte staan op een gemeenschappelijk raster en laten smalle stegen en hoven vrij.`,`Je merkt dat hier niet één gebouw, maar een spelregel is ontworpen. Het masterplan geeft de maat, de afzonderlijke architecten vullen die in. Dichtheid zonder eentonigheid, dat is de inzet van deze wijk.`],
+      [`Het <em>EY</em>-gebouw toont de andere kant van de wijk: het werken. Een rustige, helder gerasterde kantoorgevel die zich bewust terugtrekt en het water voorrang geeft.`,`Interessant is de begane grond, het punt waar het grote kantoor de openbare ruimte raakt. Hier valt de beslissing of een wijk ’s avonds leeft of verstomt. (Architect en jaar ter plaatse controleren.)`],
+      [`Aan het einde keren we terug naar het water. <em>CasaNova</em> is geen hoogbouw, maar een licht paviljoen aan de kade, het punt waar de architectuur pauzeert en de stadsruimte zelf het podium wordt.`,`Vanaf hier ligt de hele route nog eens in het zicht: de witte toren van 1898, de gekantelde kubussen, de boog van de Markthal, het rode signaal op het eiland. Zeven gebouwen, één wijk, één waterrand.`]
+    ],
+    extraSubs: [], extraFacts: [], extraParas: []
+  },
+  en: {
+    loaderSub: 'Field Journal · Winter 2026/27',
+    kicker:    'Field Journal · Rotterdam · Netherlands',
+    subHtml:   'Seven buildings on the water,<br>a travel diary from Rotterdam',
+    scrollCue: 'Scroll',
+    drawerBtn: 'Open entry →',
+    outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
+    outroP:    'Wijnhaven is not a single building but a waterfront you read by walking it. Seven entries, one district.',
+    impressum:      'Imprint',
+    imp_responsible: 'Responsible',
+    imp_institution: 'Institution',
+    imp_contact:     'Contact',
+    imp_course:      'Course',
+    imp_note:        'This website is a non-commercial university project for academic purposes only. All content is protected by copyright. Commercial use is not permitted.',
+    modal_station: 'Entry',
+    modal_of:      'of',
+    hintZoom:      'Zoom',
+    hintPan:       'Move',
+    hintTrack:     'Navigate the map freely',
+    hintPhoto:     'Swipe photos',
+    hintJourney:   'Scroll',
+    ppTitle:       'Places in Wijnhaven',
+    ppRoute:       'Route',
+    ppExtra:       'Other places',
+    placesBtnLbl:  'Places',
+    shareCopied:   'Link copied ✓',
+    stopSubs: [
+      'Willem Molenbroek · 1898',
+      'Piet Blom · 1978–84',
+      'MVRDV · 2014',
+      'KCAP / Jan des Bouvrie · 2009',
+      'Masterplan KCAP & Barcode',
+      'Office on the Wijnhaven',
+      'Pavilion on the water'
+    ],
+    stopFacts: [
+      ['Completed','Height','Style','Notable'],
+      ['Completed','Number','Idea','Type'],
+      ['Completed','Dwellings','Ceiling art','Cost'],
+      ['Completed','Height','Facade','Location'],
+      ['Development','Principle','Location','Aim'],
+      ['Use','Location','Theme','Status'],
+      ['Type','Use','Location','Role']
+    ],
+    stopParas: [
+      [`We start at the Oude Haven. The <em>Witte Huis</em> stands pale and slender among the new builds, a high-rise from 1898 that looks as if it strayed here from another century. Up close you sense how unusually bold this tower was for its time.`,`Remarkably, it survived the 1940 bombing that erased almost the entire inner city. Today it works like an anchor: the point from which the destroyed and reinvented city can be read.`],
+      [`A few steps on, the world tilts 45 degrees. Piet Blom's <em>Kubuswoningen</em> sit like upended cubes on their piers, building over the street as if they were a forest of houses. You literally walk beneath the act of dwelling.`,`In the Kijk-Kubus, the show home you can enter, you quickly grasp how radical the idea is: barely a vertical wall, every piece of furniture a negotiation with geometry. Structuralism you can touch.`],
+      [`The <em>Markthal</em> is a horseshoe of apartments arching over an open market hall. Grey arc from outside, a burst of colour within: the 11,000 m² ceiling artwork <em>Horn of Plenty</em> vaults over cheese, flowers and fish stalls.`,`Its dual nature is what intrigues. People live directly above the market, with windows that look into the hall. Market and dwelling, usually kept apart, are short-circuited within a single building.`],
+      [`Across the bridge onto the <em>Wijnhaveneiland</em>. The <em>Red Apple</em> marks the tip of the island with a slender residential tower whose red aluminium fins seem to change density with every step.`,`The tower rests on a lower slab that closes the block. A signal from afar, a precisely jointed piece of facade up close. Red here is no accident, but an address.`],
+      [`The <em>Wijnhaveneiland</em> itself is the real subject: a post-war peninsula re-densified over the past two decades. Towers of varying height stand on a shared grid, leaving narrow lanes and courtyards open.`,`You notice that what was designed here is not a single building but a set of rules. The masterplan sets the measure, the individual architects fill it in. Density without monotony, that is this district's wager.`],
+      [`The <em>EY</em> building shows the other side of the district: work. A calm, clearly gridded office facade that deliberately steps back and gives the water priority.`,`The ground floor is the interesting part, the point where the large office meets public space. Here it is decided whether a district lives after hours or falls silent. (Verify architect and year on site.)`],
+      [`At the end we return to the water. <em>CasaNova</em> is not a high-rise but a light pavilion on the quay, the point where the architecture pauses and the urban space itself becomes the stage.`,`From here the whole route comes back into view: the white tower of 1898, the tilted cubes, the arc of the Markthal, the red signal on the island. Seven buildings, one district, one waterfront.`]
+    ],
+    extraSubs: [], extraFacts: [], extraParas: []
+  }
+};
+
+let currentLang = 'de';
+
+function setLang(lang){
+  const t = LANG[lang];
+  if (!t) return;                   /* unknown lang → bail out */
+  currentLang = lang;
+
+  /* ── Button active states ── */
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  });
+
+  /* ── Helper: set text/html safely ── */
+  function setText(sel, val, html){
+    var el = document.querySelector(sel);
+    if (!el) return;
+    if (html) el.innerHTML = val; else el.textContent = val;
+  }
+
+  /* ── Intro ── */
+  setText('.loader-sub',    t.loaderSub);
+  setText('.intro-kicker',  t.kicker);
+  setText('.intro-sub',     t.subHtml, true);
+  setText('.scroll-cue span', t.scrollCue);
+
+  /* ── Journey ── */
+  setText('.drawer-btn', t.drawerBtn);
+
+  /* ── Outro ── */
+  setText('.outro h2',  t.outroH2, true);
+  setText('.outro p',   t.outroP);
+
+  /* ── Impressum ── */
+  setText('.impressum-heading', t.impressum);
+
+  /* All data-i18n elements (dt labels, note, …) */
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+
+  /* ── Patch stop subtitles in data array ── */
+  for (var i = 0; i < t.stopSubs.length; i++){
+    if (STOPS[i]) STOPS[i].sub = t.stopSubs[i];
+  }
+
+  /* ── Patch paragraph texts in data array ── */
+  if (t.stopParas) {
+    for (var i = 0; i < STOPS.length; i++) {
+      if (t.stopParas[i]) STOPS[i].paras = t.stopParas[i];
+    }
+  }
+
+  /* ── Patch fact labels in data array ── */
+  if (t.stopFacts) {
+    for (var i = 0; i < STOPS.length; i++) {
+      if (t.stopFacts[i]) {
+        for (var j = 0; j < STOPS[i].facts.length; j++) {
+          if (t.stopFacts[i][j] !== undefined) STOPS[i].facts[j].l = t.stopFacts[i][j];
+        }
+      }
+    }
+  }
+
+  /* ── Patch EXTRA_PLACES subtitles, paragraphs and fact labels ── */
+  if (t.extraSubs) {
+    for (var i = 0; i < EXTRA_PLACES.length; i++) {
+      if (t.extraSubs[i]) EXTRA_PLACES[i].sub = t.extraSubs[i];
+    }
+  }
+  if (t.extraParas) {
+    for (var i = 0; i < EXTRA_PLACES.length; i++) {
+      if (t.extraParas[i]) EXTRA_PLACES[i].paras = t.extraParas[i];
+    }
+  }
+  if (t.extraFacts) {
+    for (var i = 0; i < EXTRA_PLACES.length; i++) {
+      if (t.extraFacts[i]) {
+        for (var j = 0; j < EXTRA_PLACES[i].facts.length; j++) {
+          if (t.extraFacts[i][j] !== undefined) EXTRA_PLACES[i].facts[j].l = t.extraFacts[i][j];
+        }
+      }
+    }
+  }
+
+  /* ── Live-update visible drawer ── */
+  var ds = document.getElementById('drawer-sub');
+  if (ds && activeStop >= 0) ds.textContent = t.stopSubs[activeStop];
+
+  /* ── Live-update drawer station label ── */
+  var dn = document.getElementById('drawer-num');
+  if (dn && activeStop >= 0) dn.textContent = t.modal_station + ' 0' + (activeStop + 1) + ' · 0' + (activeStop + 1) + ' / 07';
+
+  /* ── Update hint overlay texts (so language switch works mid-session) ── */
+  var hintZoomEl = document.getElementById('hintLabelZoom');
+  var hintPanEl  = document.getElementById('hintLabelPan');
+  var hintTextEl = document.getElementById('mapHintText');
+  if (hintZoomEl && t.hintZoom) hintZoomEl.textContent = t.hintZoom;
+  if (hintPanEl  && t.hintPan)  hintPanEl.textContent  = t.hintPan;
+  if (hintTextEl && t.hintTrack) hintTextEl.textContent = t.hintTrack;
+  var photoHintEl   = document.getElementById('photoHintText');
+  if (photoHintEl && t.hintPhoto) photoHintEl.textContent = t.hintPhoto;
+  var journeyHintEl = document.getElementById('journeyHintText');
+  if (journeyHintEl && t.hintJourney) journeyHintEl.textContent = t.hintJourney;
+
+  /* ── Live-update open modal if visible ── */
+  var modal = document.getElementById('modal');
+  if (modal && modal.classList.contains('open') && activeStop >= 0) {
+    var s = STOPS[activeStop];
+    var mn = modal.querySelector('.modal-num');
+    if (mn) mn.textContent = t.modal_station + ' ' + s.num + ' ' + t.modal_of + ' 07';
+    var msub = modal.querySelector('.modal-sub');
+    if (msub) msub.textContent = s.sub;
+    /* Rebuild paragraphs */
+    var parasEl = modal.querySelectorAll('.modal-text');
+    if (parasEl.length && s.paras) {
+      parasEl.forEach(function(el, pi){ if (s.paras[pi] !== undefined) el.innerHTML = s.paras[pi]; });
+    }
+    /* Update fact labels */
+    var facts = modal.querySelectorAll('.fact');
+    var sf = s.facts;
+    for (var k = 0; k < facts.length; k++) {
+      if (sf[k]) facts[k].querySelector('.fact-lbl').textContent = sf[k].l;
+    }
+  }
+  /* ── Update places button label ── */
+  var pbl = document.getElementById('placesBtnLabel');
+  if (pbl && t.placesBtnLbl) pbl.textContent = t.placesBtnLbl;
+  /* ── Re-render places panel list if it's open ── */
+  var pp = document.getElementById('places-panel');
+  if (pp && pp.classList.contains('open')) renderPlacesList();
+}
+
+/* ── Wire lang buttons via addEventListener (reliable cross-browser) ── */
+document.querySelectorAll('.lang-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){ setLang(btn.getAttribute('data-lang')); });
+});
+
+/* ═══════════════════════════════
+   SCROLL SNAP (JS-based)
+   – Fires 550 ms after scroll ends
+   – Skips if user is still scrolling
+   – Skips past midpoint of last stop
+     so outro/impressum is reachable
+═══════════════════════════════ */
+(function(){
+  var snapTimer = null;
+  var snapping  = false;
+  window.addEventListener('scroll', function(){
+    if (snapping) return;
+    /* Capture position at the moment the scroll event fires */
+    var capturedSy = window.scrollY;
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(function(){
+      if (trackActive) return;
+      var sy = window.scrollY;
+
+      /* Still scrolling? Position changed since timer was armed → skip */
+      if (Math.abs(sy - capturedSy) > 10) return;
+
+      var introH = getIntroH();
+      if (sy < introH) return;
+
+      var journeyTop = getJourneyTop();
+      var scrollInJ  = sy - journeyTop;
+      if (scrollInJ < 0) return;
+
+      /* Past the midpoint of the last stop → user is heading to outro/impressum.
+         Do NOT snap back to stop 7. */
+      if (scrollInJ >= 7.5 * innerHeight) return;
+
+      var nearestIdx = Math.round(scrollInJ / innerHeight);
+      nearestIdx = Math.max(0, Math.min(7, nearestIdx));
+      var targetY = journeyTop + nearestIdx * innerHeight;
+
+      /* Already close enough – skip to avoid tiny jitter snaps */
+      if (Math.abs(sy - targetY) < 40) return;
+
+      snapping = true;
+      window.scrollTo({ top: targetY, behavior:'smooth' });
+      setTimeout(function(){ snapping = false; }, 800);
+    }, 550);
+  }, { passive:true });
+})();
+
+/* ═══════════════════════════════
+   TRACK BUTTON VISIBILITY
+═══════════════════════════════ */
+function updateTrackBtn(sy, introH){
+  const btn = document.getElementById('track-btn');
+  if (sy > introH - 60) btn.classList.add('show');
+  else btn.classList.remove('show');
+}
+
+/* ═══════════════════════════════
+   SMART-TRACK + LEAFLET
+═══════════════════════════════ */
+
+/* Real GPS coords of each stop, matches STOPS[] order */
+/* Reale GPS-Koordinaten (Näherung, vor Ort per Pin verfeinern) */
+const STOP_COORDS = [
+  [51.9201, 4.4889], /* 0 Witte Huis (Oude Haven)        */
+  [51.9203, 4.4905], /* 1 Kubuswoningen (Overblaak)      */
+  [51.9203, 4.4869], /* 2 Markthal (Blaak)               */
+  [51.9168, 4.4889], /* 3 Red Apple (Wijnhaveneiland)    */
+  [51.9160, 4.4900], /* 4 Wijnhaven-Türme                */
+  [51.9155, 4.4885], /* 5 EY Netherlands (Wijnhaven)     */
+  [51.9150, 4.4870], /* 6 CasaNova (am Wasser)           */
+];
+
+/* Route as real GPS polyline */
+
+/* GPS state vars declared at top */
+
+function showToast(msg, dur){
+  const t = document.getElementById('track-toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTmr);
+  if (dur) toastTmr = setTimeout(()=>t.classList.remove('show'), dur);
+}
+function hideToast(){ clearTimeout(toastTmr); document.getElementById('track-toast').classList.remove('show'); }
+
+/* ── Journey scroll hint ──────────────────────────────────────────── */
+var _journeyHintTmr = null;
+function showJourneyHint(){
+  if (sessionStorage.getItem('journeyHintSeen')) return;
+  var el = document.getElementById('journey-hint');
+  if (!el) return;
+  clearTimeout(_journeyHintTmr);
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  _journeyHintTmr = setTimeout(function(){
+    el.classList.remove('show');
+    sessionStorage.setItem('journeyHintSeen', '1');
+  }, 2900);
+}
+
+/* ── Map interaction hint ─────────────────────────────────────────── */
+/* ── Photo swipe hint ─────────────────────────────── */
+var _photoHintTmr = null;
+function showPhotoHint(){
+  if (sessionStorage.getItem('photoHintSeen')) return;
+  var el = document.getElementById('photo-hint');
+  if (!el) return;
+  clearTimeout(_photoHintTmr);
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  _photoHintTmr = setTimeout(function(){
+    el.classList.remove('show');
+    sessionStorage.setItem('photoHintSeen', '1');
+  }, 2900);
+}
+
+/* ── Share current stop via Web Share API (clipboard fallback) ── */
+function shareStop(){
+  var s = activeStop >= 0 ? STOPS[activeStop] : null;
+  var lang = LANG[currentLang] || LANG.de;
+  var shareData = {
+    title: s ? ('Wijnhaven · ' + s.name) : 'Wijnhaven Feldjournal',
+    text:  s ? s.sub : 'Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam.',
+    url:   'https://wijnhaven.com'
+  };
+  if (navigator.share) {
+    navigator.share(shareData).catch(function(){/* user cancelled, ignore */});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(shareData.url)
+      .then(function(){ showToast(lang.shareCopied || 'Link kopiert \u2713', 2500); })
+      .catch(function(){ showToast('wijnhaven.com', 3500); });
+  } else {
+    showToast('wijnhaven.com', 3500);
+  }
+}
+
+var _mapHintTmr = null;
+function showMapHint(){
+  /* Show only once per session, regular users won't be nagged */
+  if (sessionStorage.getItem('mapHintSeen')) return;
+  var el = document.getElementById('map-hint');
+  if (!el) return;
+  clearTimeout(_mapHintTmr);
+  el.classList.remove('show');
+  void el.offsetWidth; /* force reflow so animation restarts cleanly */
+  el.classList.add('show');
+  _mapHintTmr = setTimeout(function(){
+    el.classList.remove('show');
+    sessionStorage.setItem('mapHintSeen', '1');
+  }, 3300);
+}
+
+/* Initialize Leaflet map once */
+function haversine(a, b){
+  const R=6371000, toRad=x=>x*Math.PI/180;
+  const dLat=toRad(b[0]-a[0]), dLon=toRad(b[1]-a[1]);
+  const s = Math.sin(dLat/2)*Math.sin(dLat/2)
+          + Math.cos(toRad(a[0]))*Math.cos(toRad(b[0]))
+          * Math.sin(dLon/2)*Math.sin(dLon/2);
+  return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
+}
+
+function nearestStop(lat, lon){
+  let best=0, bestD=Infinity;
+  STOP_COORDS.forEach((c,i)=>{ const d=haversine([lat,lon],c); if(d<bestD){bestD=d;best=i;} });
+  return { idx:best, dist:Math.round(bestD) };
+}
+
+/* Project real GPS coords onto SVG coordinate space.
+   Calibrated with two anchors verified against all 8 WAYPOINTS:
+     Campo  (43.3185, 11.3318) → SVG (614, 438)
+     Mercato(43.3174, 11.3329) → SVG (680, 560)
+   Anker: Witte Huis (51.9201, 4.4889) → (430,250);
+          CasaNova   (51.9150, 4.4870) → (300,545).
+   Beim Einsetzen des echten Schwarzplans neu kalibrieren. */
+function gpsToSvg(lat, lon) {
+  var x = 430 + (lon - 4.4889) * 68400;
+  var y = 250 - (lat - 51.9201) * 57800;
+  return { x: x, y: y };
+}
+
+function moveGpsDot(lat, lon) {
+  /* Always store last known fix so returnToGps() can re-center */
+  lastGpsLat = lat; lastGpsLon = lon;
+
+  var pt = gpsToSvg(lat, lon);
+  var ids = ['gps-acc','gps-halo','gps-outer','gps-inner'];
+  ids.forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) { el.setAttribute('cx', pt.x); el.setAttribute('cy', pt.y); }
+  });
+  document.getElementById('gps-group').style.opacity = '1';
+
+  /* Auto-pan only when user hasn't manually moved the map */
+  if (mapUserPanned) return;
+
+  var svg = document.getElementById('mapSvg');
+  var vb  = svg.viewBox.baseVal;
+  var w = vb.width, h = vb.height;
+  var tx = pt.x - w/2, ty = pt.y - h/2;
+  tx = Math.max(0, Math.min(1000-w, tx));
+  ty = Math.max(0, Math.min(750-h, ty));
+  animVB(vb.x+' '+vb.y+' '+vb.width+' '+vb.height, tx+' '+ty+' '+w+' '+h, 600);
+}
+
+function onGeoSuccess(pos){
+  if (!trackActive) return;
+  var lat=pos.coords.latitude, lon=pos.coords.longitude;
+  var btn = document.getElementById('track-btn');
+  btn.classList.remove('acquiring'); btn.classList.add('active');
+  document.getElementById('track-label').textContent = 'Smart-Track AN';
+
+  /* Move GPS dot on SVG map */
+  moveGpsDot(lat, lon);
+
+  /* Nearest stop logic */
+  var near = nearestStop(lat, lon);
+  var idx=near.idx, dist=near.dist;
+  if (dist < 800){
+    showToast('Nächste Station: '+STOPS[idx].name+' · '+dist+' m', 4000);
+    /* 50 m threshold, accounts for real-world GPS accuracy (typ. ±10-30 m) */
+    if (dist < 50 && idx !== activeStop) {
+      activate._fromGps = true;   /* suppress lerpVB, GPS already drives viewBox */
+      activate(idx);
+      activate._fromGps = false;
+    }
+  } else {
+    showToast((dist/1000).toFixed(1)+' km von Wijnhaven entfernt', 4000);
+  }
+}
+
+function onGeoError(err){
+  /* stopTrack() calls hideToast(), so we must call it FIRST,
+     then showToast() so the error message stays visible. */
+  stopTrack();
+  const msgs = {
+    1: 'GPS-Zugriff verweigert, Standort in den Einstellungen erlauben',
+    2: 'Standort nicht verfügbar',
+    3: 'GPS-Zeitüberschreitung, erneut versuchen'
+  };
+  showToast(msgs[err.code] || 'GPS-Fehler', 5000);
+}
+
+function returnToGps(){
+  stopMapInertia();    /* kill momentum before animating back */
+  closeInfoCard();     /* dismiss stop card if open */
+  mapUserPanned = false;
+  document.getElementById('return-btn').classList.remove('show');
+  if (lastGpsLat === null) return;
+  var pt = gpsToSvg(lastGpsLat, lastGpsLon);
+  /* Snap back to standard track zoom (320 × 240 SVG units) */
+  var w = 320, h = 240;
+  var tx = Math.max(0, Math.min(1000-w, pt.x - w/2));
+  var ty = Math.max(0, Math.min(750-h,  pt.y - h/2));
+  animVBfromCurrent(tx+' '+ty+' '+w+' '+h, 500);
+}
+
+function stopTrack(){
+  trackActive = false;
+  if (watchId !== null){ navigator.geolocation.clearWatch(watchId); watchId=null; }
+  const btn=document.getElementById('track-btn');
+  btn.classList.remove('active','acquiring');
+  document.getElementById('track-label').textContent='Smart-Track';
+  /* Hide GPS dot */
+  var g=document.getElementById('gps-group'); if(g) g.style.opacity='0';
+  /* Reset map-pan state + hide touch overlay + close card */
+  mapUserPanned = false;
+  closeInfoCard();
+  document.getElementById('return-btn').classList.remove('show');
+  document.getElementById('map-touch-layer').classList.remove('active');
+  hideToast();
+}
+
+function toggleTrack(){
+  if (trackActive){ stopTrack(); return; }
+  if (!('geolocation' in navigator)){ showToast('GPS nicht verfügbar',3000); return; }
+
+  trackActive = true;
+  document.getElementById('map-touch-layer').classList.add('active');
+  const btn=document.getElementById('track-btn');
+  btn.classList.add('acquiring');
+  document.getElementById('track-label').textContent='Orten…';
+  showToast('Standort wird ermittelt…');
+  showMapHint(); /* brief gesture hint on first activation */
+
+  /* Two-stage fast-first-fix:
+     1) Low-accuracy (WiFi/cell) gives a position in < 1 s — dot appears instantly.
+     2) High-accuracy GPS watch then refines the position continuously.
+     Sequential calls (not simultaneous) avoid the Safari double-request bug. */
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      onGeoSuccess(pos);         /* show dot immediately */
+      startHighAccuracyWatch();  /* then refine with GPS */
+    },
+    function(){
+      startHighAccuracyWatch();  /* fast fix failed → go straight to GPS */
+    },
+    { enableHighAccuracy: false, maximumAge: 30000, timeout: 4000 }
+  );
+}
+
+function startHighAccuracyWatch(){
+  if (!trackActive) return;      /* user stopped tracking before GPS kicked in */
+  watchId = navigator.geolocation.watchPosition(onGeoSuccess, onGeoError, {
+    enableHighAccuracy: true,
+    timeout: 20000,
+    maximumAge: 0
+  });
+}
+
+/* ═══════════════════════════════════════════
+   MAP TOUCH PAN + PINCH-ZOOM
+   Active only when trackActive = true.
+   Single-finger: pan. Two-finger: pinch-zoom.
+   Moving away from GPS position shows "Standort" return button.
+═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   MAP INFO CARD
+   Opens when user taps a stop dot in track mode.
+   Zooms map to the stop and slides up a compact bottom-sheet.
+═══════════════════════════════════════════════════════════════ */
+var _infoCardStop = -1;
+
+function openInfoCard(idx){
+  var s = STOPS[idx];
+  if (!s) return;
+  _infoCardStop = idx;
+
+  var t = LANG[currentLang] || LANG.de;
+  document.getElementById('mic-num').textContent =
+    (t.modal_station || 'Station') + ' ' + s.num;
+  document.getElementById('mic-name').textContent = s.name;
+  document.getElementById('mic-sub').textContent  = s.sub;
+
+  /* Show first 2 facts as chips */
+  document.getElementById('mic-facts').innerHTML = s.facts.slice(0, 2).map(function(f){
+    return '<div class="mic-fact">' +
+           '<div class="mic-fact-lbl">' + f.l + '</div>' +
+           '<div class="mic-fact-val">' + f.v + '</div>' +
+           '</div>';
+  }).join('');
+
+  /* CTA wires to full modal for this stop */
+  document.getElementById('mic-cta').onclick = function(){ openModal(idx); };
+
+  document.getElementById('map-info-card').classList.add('show');
+
+  /* Show return-btn, map will move away from GPS position */
+  document.getElementById('return-btn').classList.add('show');
+
+  /* Animate map to center on the tapped stop (keep current zoom level) */
+  stopMapInertia();
+  var wp = WAYPOINTS[idx];
+  var svgEl = document.getElementById('mapSvg');
+  var vb = svgEl.viewBox.baseVal;
+  var w = vb.width, h = vb.height;
+  var tx = Math.max(0, Math.min(1000 - w, wp.x - w / 2));
+  var ty = Math.max(0, Math.min(750  - h, wp.y - h / 2));
+  animVBfromCurrent(tx + ' ' + ty + ' ' + w + ' ' + h, 420);
+}
+
+function closeInfoCard(){
+  document.getElementById('map-info-card').classList.remove('show');
+  _infoCardStop = -1;
+}
+
+/* Find the stop index whose dot is within TAP_R SVG-units of (sx, sy).
+   Returns -1 if none close enough. Uses WAYPOINTS which match dot CX/CY. */
+/* Adaptive tap radius: always ~60 screen-px regardless of zoom level.
+   vbW = current viewBox width, rectW = layer width in CSS pixels.
+   svgPerPx = SVG units per screen pixel at current zoom → radius in SVG units. */
+function findNearestStop(sx, sy, vbW, rectW){
+  var svgPerPx = vbW / rectW;
+  var tapR     = 60 * svgPerPx;          /* 60 px → SVG units */
+  var bestD    = tapR * tapR;
+  var best     = -1;
+  for (var i = 0; i < WAYPOINTS.length; i++){
+    var dx = WAYPOINTS[i].x - sx, dy = WAYPOINTS[i].y - sy;
+    var d2 = dx * dx + dy * dy;
+    if (d2 < bestD){ bestD = d2; best = i; }
+  }
+  return best;
+}
+
+/* ── stopMapInertia: exposed so returnToGps() can kill momentum before animating ── */
+var stopMapInertia = function(){};
+
+(function(){
+  /* ═══════════════════════════════════════════════════════════════
+     MAP TOUCH  –  pan + pinch-zoom + momentum (inertia)
+     Active only while #map-touch-layer has class .active.
+
+     Technique:
+       • Single-finger drag  → pan (translate viewBox origin)
+       • Two-finger pinch    → zoom + pan simultaneously;
+                               the SVG point under the finger midpoint
+                               stays fixed as fingers spread/shrink
+       • Lift fingers        → inertia: velocity decays with friction
+                               until the map glides to a stop
+       • Bare tap (no move)  → restore GPS auto-follow
+  ═══════════════════════════════════════════════════════════════ */
+  var layer = document.getElementById('map-touch-layer');
+  var svg   = document.getElementById('mapSvg');
+
+  var CANVAS_W = 1000, CANVAS_H = 750;
+  var MIN_VB_W = 80,   MAX_VB_W = 900;
+  var FRICTION  = 0.92;   /* velocity multiplier per frame (~60 fps) */
+  var VEL_STOP  = 0.003;  /* SVG-units/ms below which inertia stops   */
+  var VEL_ALPHA = 0.6;    /* EMA weight for velocity smoothing         */
+
+  /* ── gesture state ── */
+  var _t0 = null, _t1 = null;  /* touch start positions (client px)   */
+  var _vb0 = null;              /* viewBox snapshot at gesture start    */
+  var _d0  = 0;                 /* initial pinch distance               */
+  var _anchor = null;           /* SVG-space midpoint anchor for pinch  */
+  var _didMove = false;
+
+  /* ── velocity state (SVG units / ms) ── */
+  var _velX = 0, _velY = 0;
+  var _prevCX = 0, _prevCY = 0;
+  var _prevT  = 0;
+
+  /* ── inertia RAF ── */
+  var _inertiaId = 0;
+
+  /* ─────────────────── helpers ─────────────────── */
+  function clamp(v, lo, hi){ return v < lo ? lo : v > hi ? hi : v; }
+
+  function touchDist(a, b){
+    var dx = a.clientX - b.clientX, dy = a.clientY - b.clientY;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+
+  function getVB(){
+    var b = svg.viewBox.baseVal;
+    return { x: b.x, y: b.y, w: b.width, h: b.height };
+  }
+
+  /* Write a clamped viewBox. Returns the clamped {x,y,w,h}. */
+  function applyVB(x, y, w, h){
+    var aspect = _vb0 ? _vb0.h / _vb0.w : (CANVAS_H / CANVAS_W);
+    w = clamp(w, MIN_VB_W, MAX_VB_W);
+    h = clamp(h, MIN_VB_W * aspect, MAX_VB_W * aspect);
+    x = clamp(x, 0, Math.max(0, CANVAS_W - w));
+    y = clamp(y, 0, Math.max(0, CANVAS_H - h));
+    svg.setAttribute('viewBox',
+      x.toFixed(2)+' '+y.toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2));
+    return { x:x, y:y, w:w, h:h };
+  }
+
+  /* ─────────────────── inertia ─────────────────── */
+  stopMapInertia = function(){ _inertiaId++; };
+
+  function startInertia(){
+    stopMapInertia();
+    var id = ++_inertiaId;
+    var vb = getVB();
+    var ix = vb.x, iy = vb.y, iw = vb.w, ih = vb.h;
+    var vx = _velX, vy = _velY;
+    var last = performance.now();
+
+    (function tick(now){
+      if (_inertiaId !== id) return;
+      var dt = Math.min(now - last, 32);  /* cap at 2 frames to avoid jump on tab-switch */
+      last = now;
+
+      /* Per-frame friction (frame-rate independent) */
+      var f = Math.pow(FRICTION, dt / 16.667);
+      vx *= f; vy *= f;
+      if (Math.abs(vx) < VEL_STOP && Math.abs(vy) < VEL_STOP) return;
+
+      ix += vx * dt;
+      iy += vy * dt;
+      ix = clamp(ix, 0, Math.max(0, CANVAS_W - iw));
+      iy = clamp(iy, 0, Math.max(0, CANVAS_H - ih));
+      svg.setAttribute('viewBox',
+        ix.toFixed(2)+' '+iy.toFixed(2)+' '+iw.toFixed(2)+' '+ih.toFixed(2));
+      requestAnimationFrame(tick);
+    })(last);
+  }
+
+  /* ─────────────────── touchstart ─────────────────── */
+  layer.addEventListener('touchstart', function(e){
+    e.preventDefault();      /* iOS Safari: must call before any touchmove */
+    cancelAnimVB();          /* kill GPS glide animation */
+    stopMapInertia();        /* kill any running momentum */
+    closeInfoCard();         /* dismiss card on new gesture */
+    mapUserPanned = true;
+    _didMove   = false;
+    _velX = _velY = 0;
+    _vb0 = getVB();
+
+    if (e.touches.length === 1){
+      _t0 = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+      _t1 = null;
+      _anchor = null;
+      _prevCX = _t0.clientX;
+      _prevCY = _t0.clientY;
+      _prevT  = performance.now();
+
+    } else if (e.touches.length >= 2){
+      _t0 = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+      _t1 = { clientX: e.touches[1].clientX, clientY: e.touches[1].clientY };
+      _d0 = touchDist(_t0, _t1);
+      /* Compute the SVG-space point that sits under the finger midpoint.
+         This point stays fixed as the fingers spread/shrink/move. */
+      var rect = layer.getBoundingClientRect();
+      var mx = (_t0.clientX + _t1.clientX) / 2;
+      var my = (_t0.clientY + _t1.clientY) / 2;
+      _anchor = {
+        x: _vb0.x + (mx - rect.left) / rect.width  * _vb0.w,
+        y: _vb0.y + (my - rect.top)  / rect.height * _vb0.h
+      };
+    }
+  }, { passive: false });
+
+  /* ─────────────────── touchmove ─────────────────── */
+  layer.addEventListener('touchmove', function(e){
+    if (!_vb0) return;
+    e.preventDefault();
+
+    /* Only count as a real move if finger travelled > 10 px, filters out
+       natural finger tremor so short taps still trigger the info card. */
+    if (!_didMove && _t0){
+      var mdx = e.touches[0].clientX - _t0.clientX;
+      var mdy = e.touches[0].clientY - _t0.clientY;
+      if (mdx*mdx + mdy*mdy > 100) _didMove = true;  /* 10 px threshold */
+    }
+
+    var rect = layer.getBoundingClientRect();
+    var now  = performance.now();
+
+    if (e.touches.length === 1 && _t0 && !_t1){
+      /* ── PAN ── */
+      var cx = e.touches[0].clientX;
+      var cy = e.touches[0].clientY;
+
+      /* Translate viewBox opposite to drag direction */
+      var dxSvg = (cx - _t0.clientX) * (_vb0.w / rect.width);
+      var dySvg = (cy - _t0.clientY) * (_vb0.h / rect.height);
+      applyVB(_vb0.x - dxSvg, _vb0.y - dySvg, _vb0.w, _vb0.h);
+
+      /* Velocity: EMA-smoothed, SVG-units/ms */
+      var dt = now - _prevT;
+      if (dt > 4){
+        var rawVX = -(cx - _prevCX) * (_vb0.w / rect.width) / dt;
+        var rawVY = -(cy - _prevCY) * (_vb0.h / rect.height) / dt;
+        _velX = VEL_ALPHA * rawVX + (1 - VEL_ALPHA) * _velX;
+        _velY = VEL_ALPHA * rawVY + (1 - VEL_ALPHA) * _velY;
+        _prevCX = cx; _prevCY = cy;
+        _prevT  = now;
+      }
+
+    } else if (e.touches.length >= 2 && _t0 && _t1 && _anchor){
+      /* ── PINCH-ZOOM + simultaneous PAN ──
+         The SVG anchor point (captured at touchstart) must stay
+         visually fixed under the current finger midpoint. */
+      var d1    = touchDist(e.touches[0], e.touches[1]);
+      var scale = _d0 / Math.max(d1, 1);
+      var newW  = _vb0.w * scale;
+      var newH  = _vb0.h * scale;
+
+      /* Current midpoint in screen-fractional coords */
+      var mx2 = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      var my2 = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      var fracX = (mx2 - rect.left) / rect.width;
+      var fracY = (my2 - rect.top)  / rect.height;
+
+      /* Anchor must appear at (fracX, fracY) of new viewBox */
+      applyVB(_anchor.x - fracX * newW,
+              _anchor.y - fracY * newH,
+              newW, newH);
+    }
+
+    /* Show return button on first real movement */
+    if (!document.getElementById('return-btn').classList.contains('show')){
+      document.getElementById('return-btn').classList.add('show');
+    }
+  }, { passive: false });
+
+  /* ─────────────────── touchend ─────────────────── */
+  layer.addEventListener('touchend', function(e){
+    if (e.touches.length === 1){
+      /* Pinch released one finger → re-anchor for continued single-finger pan */
+      _vb0    = getVB();
+      _t0     = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+      _t1     = null;
+      _anchor = null;
+      _velX = _velY = 0;
+      _prevCX = _t0.clientX; _prevCY = _t0.clientY;
+      _prevT  = performance.now();
+      _didMove = false;
+
+    } else if (e.touches.length === 0){
+      /* All fingers lifted */
+      if (!_didMove){
+        /* ── TAP: check whether a stop dot was tapped ── */
+        var didOpenCard = false;
+        if (_t0){
+          var rect2 = layer.getBoundingClientRect();
+          var vb2   = getVB();
+          var svgX  = vb2.x + (_t0.clientX - rect2.left) / rect2.width  * vb2.w;
+          var svgY  = vb2.y + (_t0.clientY - rect2.top)  / rect2.height * vb2.h;
+          var hitIdx = findNearestStop(svgX, svgY, vb2.w, rect2.width);
+          if (hitIdx >= 0){
+            openInfoCard(hitIdx);   /* zoom to stop + show info card */
+            didOpenCard = true;
+          }
+        }
+        if (!didOpenCard){
+          /* Plain tap on empty map → restore GPS auto-follow */
+          mapUserPanned = false;
+          document.getElementById('return-btn').classList.remove('show');
+        }
+      } else if (_t0 && !_t1){
+        /* Pan gesture ended → launch momentum */
+        startInertia();
+      }
+      _t0 = _t1 = _vb0 = _anchor = null;
+    }
+  }, { passive: true });
+
+})();
+
+/* Swipe gallery */
+(function(){
+  const modal = document.getElementById('modal');
+  let tx=0,ty=0,drag=false;
+  modal.addEventListener('touchstart',e=>{
+    const g=e.target.closest('.modal-gallery'); if(!g)return;
+    tx=e.touches[0].clientX; ty=e.touches[0].clientY; drag=false;
+  },{passive:true});
+  modal.addEventListener('touchmove',e=>{
+    const g=e.target.closest('.modal-gallery'); if(!g)return;
+    const dx=e.touches[0].clientX-tx, dy=e.touches[0].clientY-ty;
+    if(!drag&&Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>8) drag=true;
+  },{passive:true});
+  modal.addEventListener('touchend',e=>{
+    const g=e.target.closest('.modal-gallery'); if(!g||!drag)return;
+    const dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>40) galStep(dx<0?1:-1);
+    drag=false;
+  },{passive:true});
+})();
+
+/* ═══════════════════════════════════════════
+   MODAL SWIPE-DOWN TO CLOSE
+   Touch starts on .modal-handle-zone only →
+   no conflict with gallery swipe (horizontal)
+   or modal-body vertical scroll.
+═══════════════════════════════════════════ */
+(function initSwipeClose(){
+  var modal    = document.getElementById('modal');
+  var backdrop = document.getElementById('backdrop');
+  var handle   = document.getElementById('modalHandleZone');
+
+  var startY    = 0;
+  var startTime = 0;
+  var active    = false;    /* gesture in progress */
+  var CLOSE_PX  = 110;     /* px dragged down to trigger close */
+  var CLOSE_VEL = 0.45;    /* px/ms velocity threshold */
+
+  /* ── touchstart: only on the handle zone ── */
+  handle.addEventListener('touchstart', function(e){
+    if (!modal.classList.contains('open')) return;
+    active    = true;
+    startY    = e.touches[0].clientY;
+    startTime = Date.now();
+    /* Disable CSS transition while finger is down for 1:1 tracking */
+    modal.classList.remove('swipe-snap');
+    modal.style.transition = 'none';
+  }, { passive: true });
+
+  /* ── touchmove: follow finger downward only ── */
+  document.addEventListener('touchmove', function(e){
+    if (!active) return;
+    var dy = Math.max(0, e.touches[0].clientY - startY); /* clamp at 0, no upward drag */
+    /* Rubber-band resistance beyond 200 px so it doesn't fly away */
+    var disp = dy < 200 ? dy : 200 + (dy - 200) * 0.25;
+    modal.style.transform  = 'translateY(' + disp + 'px)';
+    /* Fade backdrop proportionally */
+    if (backdrop) backdrop.style.opacity = Math.max(0, 1 - disp / 300);
+  }, { passive: true });
+
+  /* ── touchend: decide close or spring back ── */
+  document.addEventListener('touchend', function(e){
+    if (!active) return;
+    active = false;
+
+    var dy       = Math.max(0, e.changedTouches[0].clientY - startY);
+    var velocity = dy / Math.max(1, Date.now() - startTime);  /* px/ms */
+    var shouldClose = dy > CLOSE_PX || velocity > CLOSE_VEL;
+
+    if (shouldClose) {
+      /* 1. Animate the modal downward off-screen */
+      modal.style.transition = 'transform .26s ease-in, opacity .26s ease-in';
+      modal.style.transform  = 'translateY(105%)';
+      modal.style.opacity    = '0';
+
+      setTimeout(function(){
+        /* 2. Disable transition, jump to right-hidden position (matches CSS default) */
+        modal.style.transition = 'none';
+        modal.style.transform  = 'translateX(100%)';
+        modal.style.opacity    = '';
+        if (backdrop) backdrop.style.opacity = '';
+
+        /* 3. Call regular close (removes .open class, stops gallery etc.) */
+        closeModal();
+
+        /* 4. Restore inline overrides → CSS takes over cleanly next open */
+        requestAnimationFrame(function(){
+          modal.style.transition = '';
+          modal.style.transform  = '';
+        });
+      }, 270);
+
+    } else {
+      /* Spring back to original position */
+      modal.classList.add('swipe-snap');
+      modal.style.transform = '';           /* CSS .open rule: translateX(0) */
+      if (backdrop) backdrop.style.opacity = '';
+      modal.addEventListener('transitionend', function cleanup(){
+        modal.classList.remove('swipe-snap');
+        modal.style.transition = '';
+        modal.removeEventListener('transitionend', cleanup);
+      });
+    }
+  }, { passive: true });
+
+  /* Cancel if touch is interrupted (call, notification, etc.) */
+  document.addEventListener('touchcancel', function(){
+    if (!active) return;
+    active = false;
+    modal.classList.add('swipe-snap');
+    modal.style.transform = '';
+    if (backdrop) backdrop.style.opacity = '';
+    modal.addEventListener('transitionend', function cleanup(){
+      modal.classList.remove('swipe-snap');
+      modal.style.transition = '';
+      modal.removeEventListener('transitionend', cleanup);
+    });
+  }, { passive: true });
+})();
+
+/* galIdx/galLen at top */
+
+/* ═══════════════════════════════════════════
+   PLACES PANEL
+   openPlaces()   , renders list + opens sheet
+   closePlaces()  , closes sheet
+   openExtraPlace(placeObj), opens modal with extra
+                              place content (no route num)
+   renderPlacesList(), builds the scrollable list HTML;
+                        called each open so language is fresh
+═══════════════════════════════════════════ */
+function renderPlacesList(){
+  var t    = LANG[currentLang] || LANG.de;
+  var subs = t.stopSubs || [];
+  var html = '';
+
+  /* ── Route stops ── */
+  html += '<div class="pp-section-title" id="ppRouteLabel">' + (t.ppRoute || 'Route') + '</div>';
+  STOPS.forEach(function(s, i){
+    var sub = subs[i] || s.sub;
+    var isActive = (i === activeStop) ? ' pp-active' : '';
+    html += '<button class="pp-item' + isActive + '" onclick="closePlaces();openModal(' + i + ');" aria-label="' + s.name + '">'
+          + '<span class="pp-num">' + s.num + '</span>'
+          + '<span class="pp-info">'
+          +   '<span class="pp-name">' + s.name + '</span>'
+          +   '<span class="pp-sub">'  + sub    + '</span>'
+          + '</span>'
+          + '<span class="pp-chevron" aria-hidden="true">›</span>'
+          + '</button>';
+  });
+
+  /* ── Extra places (non-route) ── */
+  if (EXTRA_PLACES.length > 0) {
+    html += '<div class="pp-section-title" id="ppExtraLabel">' + (t.ppExtra || 'Weitere Orte') + '</div>';
+    EXTRA_PLACES.forEach(function(p, j){
+      html += '<button class="pp-item" onclick="closePlaces();openExtraPlace(' + j + ');" aria-label="' + p.name + '">'
+            + '<span class="pp-num pp-extra">+</span>'
+            + '<span class="pp-info">'
+            +   '<span class="pp-name">' + p.name + '</span>'
+            +   '<span class="pp-sub">'  + p.sub  + '</span>'
+            + '</span>'
+            + '<span class="pp-chevron" aria-hidden="true">›</span>'
+            + '</button>';
+    });
+  }
+
+  document.getElementById('ppScroll').innerHTML = html;
+
+  /* Update panel title + button label in current language */
+  var titleEl = document.getElementById('ppTitle');
+  if (titleEl) titleEl.textContent = t.ppTitle || 'Orte in Wijnhaven';
+}
+
+function openPlaces(){
+  renderPlacesList();
+  document.getElementById('places-panel').classList.add('open');
+  document.body.style.overflow = 'hidden'; /* prevent background scroll */
+}
+
+function closePlaces(){
+  document.getElementById('places-panel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* Modal for extra places (not on route), reuses the same modal UI
+   but without a "Station X von 08" counter */
+function openExtraPlace(j){
+  var p = EXTRA_PLACES[j];
+  if (!p) return;
+  /* reuse openModal with a sentinel that skips the route-stop logic */
+  openModal(-99, p);
+}
+
+/* Swipe-down to close the places panel */
+(function initSwipePlaces(){
+  var panel  = document.getElementById('places-panel');
+  var sheet  = panel ? panel.querySelector('.pp-sheet') : null;
+  var handle = document.getElementById('ppHandleZone');
+  if (!panel || !sheet || !handle) return;
+  var startY = 0, active = false, CLOSE_PX = 90, CLOSE_VEL = 0.4;
+
+  handle.addEventListener('touchstart', function(e){
+    if (!panel.classList.contains('open')) return;
+    active = true; startY = e.touches[0].clientY;
+    sheet.style.transition = 'none';
+  }, { passive:true });
+
+  document.addEventListener('touchmove', function(e){
+    if (!active) return;
+    var dy = Math.max(0, e.touches[0].clientY - startY);
+    var disp = dy < 160 ? dy : 160 + (dy - 160) * 0.25;
+    sheet.style.transform = 'translateY(' + disp + 'px)';
+  }, { passive:true });
+
+  document.addEventListener('touchend', function(e){
+    if (!active) return; active = false;
+    var dy = Math.max(0, e.changedTouches[0].clientY - startY);
+    var vel = dy / Math.max(1, Date.now() - (e.timeStamp - dy));
+    if (dy > CLOSE_PX) {
+      sheet.style.transition = '';
+      closePlaces();
+      requestAnimationFrame(function(){ sheet.style.transform = ''; });
+    } else {
+      sheet.style.transition = 'transform .35s cubic-bezier(.34,1.56,.64,1)';
+      sheet.style.transform = '';
+      sheet.addEventListener('transitionend', function cleanup(){
+        sheet.style.transition = ''; sheet.removeEventListener('transitionend', cleanup);
+      });
+    }
+  }, { passive:true });
+})();
+
+/* ── Feldjournal: lokalisierte Beschriftungen für Eintrags-Bausteine ── */
+const JL = {
+  de:{voices:'Stimme vom Ort',steckbrief:'Steckbrief',sources:'Quellen',model:'3D-Modell',modelHint:'Ziehen zum Drehen',modelSoon:'3D-Modell folgt'},
+  nl:{voices:'Stem ter plaatse',steckbrief:'Profiel',sources:'Bronnen',model:'3D-model',modelHint:'Sleep om te draaien',modelSoon:'3D-model volgt'},
+  en:{voices:'Voice on site',steckbrief:'Fact sheet',sources:'Sources',model:'3D model',modelHint:'Drag to rotate',modelSoon:'3D model coming'}
+};
+const SB_LABELS = {
+  de:{architekt:'Architekt',fertigstellung:'Fertigstellung',flaeche:'Fläche / Maß',kosten:'Kosten',einbindung:'Städtebauliche Einbindung',konzept:'Konzeptioneller Ansatz',programm:'Raumprogramm',konstruktion:'Konstruktion'},
+  nl:{architekt:'Architect',fertigstellung:'Oplevering',flaeche:'Oppervlak / maat',kosten:'Kosten',einbindung:'Stedenbouwkundige inbedding',konzept:'Concept',programm:'Programma',konstruktion:'Constructie'},
+  en:{architekt:'Architect',fertigstellung:'Completed',flaeche:'Area / size',kosten:'Cost',einbindung:'Urban integration',konzept:'Concept',programm:'Programme',konstruktion:'Construction'}
+};
+
+function openModal(idx, _placeObj){
+  const s = _placeObj || ((idx >= 0 && idx < 7) ? STOPS[idx] : STOPS[activeStop]);
+  if (!s) return;
+  galIdx = 0; galLen = s.slides.length;
+
+  const t = LANG[currentLang] || LANG.de;
+  const jlang = JL[currentLang] ? currentLang : 'de';
+  const jl = JL[jlang], sbl = SB_LABELS[jlang];
+
+  document.getElementById('galSlides').innerHTML = s.slides.map(sl => `
+    <div class="gallery-slide">
+      <div class="slide-bg" style="background:${sl.bg}"></div>
+    </div>`).join('');
+
+  document.getElementById('galNav').innerHTML = s.slides.map((_,i) =>
+    `<div class="gal-pip${i===0?' on':''}" onclick="galTo(${i})"></div>`).join('');
+
+  /* Show "Eintrag X von 07" only for route stops, not extra places */
+  const numLine = _placeObj
+    ? ''
+    : `<div class="modal-num">${t.modal_station} ${s.num} ${t.modal_of} 07</div>`;
+
+  /* Tagebuch-Stempel: Datum · Uhrzeit */
+  const stampLine = (s.entryDate && s.entryTime)
+    ? `<div class="entry-stamp">${s.entryDate} · ${s.entryTime}</div>` : '';
+
+  /* Stimme vom Ort (Interview-Schnipsel) */
+  const voicesHtml = (s.voices && s.voices.length)
+    ? `<div class="voices"><div class="jl-head">${jl.voices}</div>` +
+      s.voices.map(v=>`<blockquote class="voice">&bdquo;${v.quote}&ldquo;<cite>${v.who}</cite></blockquote>`).join('') +
+      `</div>` : '';
+
+  /* Steckbrief (Pflichtangaben) */
+  const sb = s.steckbrief;
+  const sbOrder = ['architekt','fertigstellung','flaeche','kosten','einbindung','konzept','programm','konstruktion'];
+  const sbRows = sb ? sbOrder.filter(k=>sb[k]).map(k=>
+      `<div class="sb-row"><dt>${sbl[k]}</dt><dd>${sb[k]}</dd></div>`).join('') : '';
+  const sbHtml = sbRows
+    ? `<div class="steckbrief"><div class="jl-head">${jl.steckbrief}</div><dl class="sb-list">${sbRows}</dl></div>` : '';
+
+  /* Interaktives 3D-Modell (optional) */
+  const modelHtml = (s.model && s.model.src)
+    ? `<div class="model-block"><div class="jl-head">${jl.model}</div>
+        <model-viewer class="mv" src="${s.model.src}" ${s.model.poster?`poster="${s.model.poster}"`:''}
+          camera-controls auto-rotate auto-rotate-delay="2500" rotation-per-second="18deg"
+          touch-action="pan-y" interaction-prompt="none" shadow-intensity="0.5" exposure="1.05" loading="lazy">
+          <div slot="poster" class="mv-poster">${jl.modelSoon}</div>
+        </model-viewer>
+        <div class="model-hint">${jl.modelHint}</div></div>` : '';
+
+  /* Quellenangaben */
+  const sourcesHtml = (s.sources && s.sources.length)
+    ? `<div class="sources"><span class="jl-head-inline">${jl.sources}</span> ${s.sources.join(' · ')}</div>` : '';
+
+  document.getElementById('modalBody').innerHTML = `
+    ${stampLine}
+    ${numLine}
+    <div class="modal-title">${s.name}</div>
+    <span class="modal-sub">${s.sub}</span>
+    <div class="modal-rule"></div>
+    ${s.paras.map(p=>`<p class="modal-text">${p}</p>`).join('')}
+    ${voicesHtml}
+    <div class="modal-facts">
+      ${s.facts.map(f=>`<div class="fact"><div class="fact-lbl">${f.l}</div><div class="fact-val">${f.v}</div></div>`).join('')}
+    </div>
+    ${modelHtml}
+    ${sbHtml}
+    ${sourcesHtml}`;
+
+  /* Hide navigation when there's only one slide */
+  const singleSlide = galLen <= 1;
+  document.querySelectorAll('.gal-arr').forEach(a => a.style.display = singleSlide ? 'none' : '');
+  document.getElementById('galNav').style.display = singleSlide ? 'none' : '';
+  /* Photo counter */
+  var cnt = document.getElementById('gal-counter');
+  if (cnt) { cnt.style.display = singleSlide ? 'none' : 'block'; cnt.textContent = '1 / ' + galLen; }
+
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('backdrop').classList.add('open');
+  galTo(0, true);
+  startGalAuto();
+  /* Show swipe hint only when there are multiple photos to swipe between */
+  if (galLen > 1) showPhotoHint();
+}
+
+function closeModal(){
+  stopGalAuto();
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('open');
+}
+
+function startGalAuto(){
+  stopGalAuto();
+  if (galLen <= 1) return;
+  document.getElementById('galProgress').style.display = '';
+  _restartProgressAnim();
+  _galAutoTimer = setInterval(function(){
+    galTo(galIdx + 1, true);
+  }, 4000);
+}
+function stopGalAuto(){
+  if (_galAutoTimer){ clearInterval(_galAutoTimer); _galAutoTimer = null; }
+  var bar = document.getElementById('galProgress');
+  if (bar) bar.style.display = 'none';
+}
+function _restartProgressAnim(){
+  var fill = document.getElementById('galProgressFill');
+  if (!fill) return;
+  /* Re-trigger CSS animation by replacing the element */
+  var clone = fill.cloneNode(true);
+  fill.parentNode.replaceChild(clone, fill);
+}
+
+function galTo(i, _auto){
+  galIdx = ((i % galLen) + galLen) % galLen;
+  document.getElementById('galSlides').style.transform = `translateX(-${galIdx*100}%)`;
+  document.querySelectorAll('.gal-pip').forEach((p,j) => p.classList.toggle('on', j===galIdx));
+  /* Photo counter */
+  var cnt = document.getElementById('gal-counter');
+  if (cnt && galLen > 1) cnt.textContent = (galIdx + 1) + ' / ' + galLen;
+  /* On manual interaction, reset the countdown so each new slide gets a full 4 s */
+  if (!_auto && _galAutoTimer !== null) startGalAuto();
+  else if (!_auto) {} // no timer running, nothing to reset
+  else _restartProgressAnim(); // auto advance, just restart the bar
+}
+function galStep(d){ galTo(galIdx + d); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('places-panel').classList.contains('open')) closePlaces();
+    else closeModal();
+  }
+  if (e.key === 'ArrowRight') galStep(1);
+  if (e.key === 'ArrowLeft')  galStep(-1);
+});
+
+/* ══════════════════════════════════════════
+   DEBUG MODE  (?debug in URL)
+   Simulates a GPS walk through the route.
+   Activate: add ?debug to the URL.
+   Use the floating debug panel to control.
+══════════════════════════════════════════ */
+(function(){
+  if (!/[?&]debug/.test(location.search)) return;
+
+  /* Simulated walking route through all 8 stops in order.
+     Each cluster of coords brings the user into the stop's 50 m radius,
+     then walks to the next one. Matches STOPS[] indices 0-7. */
+  const SIM_ROUTE = [
+    /*, STOP 0: Banca Monte dei Paschi / Piazza Salimbeni, */
+    [43.3220, 11.3306],
+    [43.3218, 11.3304],
+    [43.3216, 11.3303], /* ★ stop 0, within 50 m */
+    [43.3214, 11.3301],
+    /* walk west toward Fontebranda */
+    [43.3210, 11.3294],
+    [43.3205, 11.3284],
+    [43.3199, 11.3272],
+    /*, STOP 1: Fontebranda, */
+    [43.3197, 11.3265],
+    [43.3195, 11.3261], /* ★ stop 1, within 50 m */
+    [43.3193, 11.3260],
+    /* walk south-east toward Battistero */
+    [43.3191, 11.3265],
+    [43.3188, 11.3272],
+    [43.3185, 11.3278],
+    /*, STOP 2: Battistero di San Giovanni, */
+    [43.3183, 11.3281],
+    [43.3182, 11.3282], /* ★ stop 2, within 50 m */
+    [43.3181, 11.3282],
+    /* walk south (Duomo is very close) */
+    [43.3180, 11.3280],
+    [43.3178, 11.3278],
+    /*, STOP 3: Duomo di Siena, */
+    [43.3177, 11.3277],
+    [43.3176, 11.3276], /* ★ stop 3, within 50 m */
+    [43.3175, 11.3276],
+    /* walk east toward Campo */
+    [43.3176, 11.3285],
+    [43.3178, 11.3295],
+    [43.3181, 11.3307],
+    /*, STOP 4: Piazza del Campo, */
+    [43.3184, 11.3315],
+    [43.3185, 11.3318], /* ★ stop 4, within 50 m */
+    [43.3184, 11.3320],
+    /* walk south (Palazzo Pubblico is immediately adjacent) */
+    [43.3184, 11.3322],
+    /*, STOP 5: Palazzo Pubblico, */
+    [43.3184, 11.3323], /* ★ stop 5, within 50 m */
+    [43.3183, 11.3324],
+    /* walk south-east toward Mercato */
+    [43.3181, 11.3326],
+    [43.3178, 11.3327],
+    [43.3176, 11.3328],
+    /*, STOP 6: Piazza del Mercato, */
+    [43.3175, 11.3329],
+    [43.3174, 11.3329], /* ★ stop 6, within 50 m */
+    [43.3173, 11.3329],
+    /* walk north toward Piccolomini */
+    [43.3176, 11.3330],
+    [43.3181, 11.3331],
+    [43.3187, 11.3331],
+    /*, STOP 7: Palazzo Piccolomini, */
+    [43.3192, 11.3332],
+    [43.3194, 11.3332], /* ★ stop 7, within 50 m */
+  ];
+
+  let simIdx = 0;
+  let simTimer = null;
+  let simRunning = false;
+
+  /* Inject debug UI */
+  const panel = document.createElement('div');
+  panel.style.cssText = `
+    position:fixed; bottom:6rem; left:50%; transform:translateX(-50%);
+    z-index:9999; background:#1A1209; border-radius:2rem;
+    display:flex; align-items:center; gap:.5rem; padding:.5rem .9rem;
+    font-family:'Hanken Grotesk',sans-serif; font-size:.6rem; letter-spacing:.12em;
+    color:#E8D5B0; text-transform:uppercase; box-shadow:0 4px 20px rgba(0,0,0,.4);
+    white-space:nowrap;
+  `;
+  panel.innerHTML = `
+    <span style="color:#C49A3C;">⬤</span>
+    <span>Debug-GPS</span>
+    <button id="dbg-start" style="background:#C4622D;color:white;border:none;border-radius:1rem;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">▶ Start</button>
+    <button id="dbg-step"  style="background:rgba(255,255,255,.1);color:#E8D5B0;border:1px solid rgba(255,255,255,.2);border-radius:1rem;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">Schritt</button>
+    <button id="dbg-reset" style="background:rgba(255,255,255,.1);color:#E8D5B0;border:1px solid rgba(255,255,255,.2);border-radius:1rem;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">↺</button>
+    <span id="dbg-pos" style="color:#9A8878;"></span>
+  `;
+  document.body.appendChild(panel);
+
+  function simFakePos(lat, lon) {
+    /* Fake a GeolocationPosition-like object */
+    onGeoSuccess({ coords: { latitude: lat, longitude: lon, accuracy: 10 } });
+    const pt = SIM_ROUTE[simIdx];
+    document.getElementById('dbg-pos').textContent =
+      `${simIdx+1}/${SIM_ROUTE.length} · ${pt[0].toFixed(4)}, ${pt[1].toFixed(4)}`;
+  }
+
+  function simStep() {
+    if (simIdx >= SIM_ROUTE.length) { simIdx = 0; }
+    const [lat, lon] = SIM_ROUTE[simIdx];
+    /* Activate track mode if not already on */
+    if (!trackActive) {
+      trackActive = true;
+      document.getElementById('map-touch-layer').classList.add('active');
+      var btn = document.getElementById('track-btn');
+      btn.classList.remove('acquiring'); btn.classList.add('active');
+      document.getElementById('track-label').textContent = 'Smart-Track AN';
+    }
+    simFakePos(lat, lon);
+    simIdx++;
+  }
+
+  function simStartAuto() {
+    if (simRunning) {
+      clearInterval(simTimer); simRunning = false;
+      document.getElementById('dbg-start').textContent = '▶ Start';
+      return;
+    }
+    simRunning = true;
+    document.getElementById('dbg-start').textContent = '⏸ Pause';
+    simStep(); /* immediate first step */
+    simTimer = setInterval(simStep, 2500); /* move every 2.5s */
+  }
+
+  document.getElementById('dbg-start').onclick = simStartAuto;
+  document.getElementById('dbg-step').onclick  = simStep;
+  document.getElementById('dbg-reset').onclick = function(){
+    clearInterval(simTimer); simRunning = false;
+    simIdx = 0;
+    document.getElementById('dbg-start').textContent = '▶ Start';
+    document.getElementById('dbg-pos').textContent = 'Zurückgesetzt';
+  };
+
+})();
+</script>
+
+<script>
+/* ── Service Worker registration ── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js')
+      .then(function (reg) {
+        /* SW registered, check for updates when a new version is deployed */
+        reg.addEventListener('updatefound', function () {
+          var newWorker = reg.installing;
+          newWorker.addEventListener('statechange', function () {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              /* New version available, reload silently so the user always
+                 gets the latest content without needing to manually refresh */
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        });
+      })
+      .catch(function (err) {
+        /* SW registration failed, site still works, just without offline support */
+        console.warn('Service Worker nicht registriert:', err);
+      });
+
+    /* When a new SW takes control, reload the page to apply updates */
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      window.location.reload();
+    });
+  });
+}
+</script>
+</body>
+</html>
+
