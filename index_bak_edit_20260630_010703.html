@@ -1672,117 +1672,180 @@ var snapping      = false;
       slides: Farbverlauf-Platzhalter bis eigene Fotos vorliegen. ── */
 const STOPS = [
   {
-    num:"01", name:"Witte Huis", sub:"Willem Molenbroek · 1897-1898",
+    num:"01", name:"Witte Huis", sub:"Willem Molenbroek · 1898",
     entryDate:"26.10.2026", entryTime:"09:14",
     paras:[
-      "Wir stehen am Rand der Oude Haven, wo Geldersekade und Wijnhaven aufeinandertreffen, und blicken an einem Turm hinauf, der 1898 als erstes Hochhaus Europas galt. Het Witte Huis trägt seinen Namen zu Recht: die Fassade ist ab dem zweiten Geschoss mit rund hunderttausend weiß glasierten Steinen verkleidet, die das Licht hell zurückwerfen. Auffallend ist, wie nüchtern das tragende Gerüst und wie üppig die Haut: Willem Molenbroek setzte amerikanische Hochhausideen in eine traditionelle, massive Stapelbauweise um, getragen von zwei dicken Innenwänden um ein zentrales Treppenhaus.",
-      "Mit etwa 43 Metern und zehn bis elf Geschossen, je nachdem, wie man die Etagen unter dem schrägen Dach zählt, überragte der Bau seine Umgebung deutlich. In die Bögen über den Fensterreihen sind Jugendstil-Mosaike mit Pflanzenmotiven gesetzt, am östlichen Giebel steht der Schriftzug Het Witte Huis. Die 127.900 Gulden Baukosten lagen über dem ursprünglichen Plan, der Grundriss wuchs von 15 mal 20 auf rund 20 mal 20 Meter; gegründet ist alles auf rund tausend Holzpfählen im weichen Rotterdamer Boden.",
-      "Bemerkenswert bleibt, dass dieses Haus das Bombardement von 1940 überstand, als das Zentrum Rotterdams in Trümmer fiel. So steht es heute als Solitär und Rijksmonument zwischen jüngerer Bebauung, genutzt als Bürohaus mit einem Café im Erdgeschoss. Die Materialfrage notieren wir uns für den Ortstermin: die niederländischen Denkmalquellen sprechen von Stahl, Backstein und Zement ohne Beton, eine anglophone Quelle dagegen von einem Eisen-, Stahl- und Betongerüst, das vor Ort zu prüfen ist."
+      `Wir beginnen am Oude Haven. Das <em>Witte Huis</em> steht hell und schmal zwischen den Neubauten, ein Hochhaus von 1898, das aussieht, als hätte es sich aus einem anderen Jahrhundert hierher verirrt. Aus der Nähe spürt man, wie ungewöhnlich kühn dieser Turm für seine Zeit war.`,
+      `Bemerkenswert ist, dass es das Bombardement von 1940, das fast die gesamte Innenstadt auslöschte, überstanden hat. Es wirkt heute wie ein Anker: der Punkt, von dem aus sich die zerstörte und neu erfundene Stadt lesen lässt.`
     ],
-    steckbrief:{ architekt:"Willem Molenbroek, im Auftrag der Brüder Gerrit und Herman van der Schuyt (Bauunternehmer J.H. Stelwagen)", fertigstellung:"1898 (Grundsteinlegung 21. Juni 1897, Eröffnung 8. September 1898, Bauzeit 1897-1898)", flaeche:"Höhe rund 43 m (Quellen nennen 42 bis 43 m, populäre Quellen bis 45 m); zehn bis elf Geschosse je nach Zählweise der drei Etagen unter dem schrägen Dach; Grundriss etwa 20 x 20 m (von ursprünglich 15 x 20 m vergrößert). Fassade ab dem zweiten Geschoss mit etwa 100.000 weiß glasierten Steinen verkleidet; gegründet auf rund 1000 Holzpfählen.", kosten:"127.900 Gulden (belegt; teurer als ursprünglich geplant)", einbindung:"Markant an der Oude Haven zwischen Geldersekade und Wijnhaven gelegen, am historischen Hafenrand Rotterdams. Als eines der wenigen Gebäude im Zentrum überstand es das Bombardement von 1940 und steht heute als Solitär inmitten der Nachkriegsbebauung.", konzept:"Von amerikanischen Hochhäusern inspirierter eklektischer Büroturm mit Art-Nouveau-Details, konzipiert als gemeinschaftlich vermietbares Kontorhaus. Galt bei Fertigstellung als erstes Hochhaus (hoogbouw) bzw. höchstes Bürogebäude Europas.", programm:"Ursprünglich Büros zur Einzelvermietung (Sitz der N.V. het Witte Huis). Heute gemischt genutzt: Büros sowie ein Café/Grand Café im Erdgeschoss.", konstruktion:"Traditionelle Stapelbauweise (massiv) mit zwei tragenden Innenwänden und zentralem Treppenhaus, gegründet auf rund 1000 Holzpfählen. Material laut Rijksmonument und NL-Quellen Stahl, Backstein und Zement; kein Beton, Holz aus Brandschutzgründen nicht zugelassen (Rijksmonument nennt zudem eine eiserne Konstruktion im Treppenhaus). Untergeschoss in Naturstein, Obergeschosse in weiß glasiertem Backstein. (Hinweis: die englische Wikipedia spricht abweichend von Eisen, Stahl und Beton.)", resuemee:"Ein frühes europäisches Hochhaus von hohem typologischem Rang: die üppige Jugendstil-Keramikhaut auf nüchternem Kontorgerüst macht den Bau zum gebauten Bindeglied zwischen historistischem Repräsentationswillen und moderner Büronutzung. Sein Überstehen von 1940 verleiht ihm zusätzlich Zeugnischarakter." },
-    facts:[{l:"Baujahr",v:"1897-1898"}, {l:"Höhe",v:"ca. 43 m"}, {l:"Geschosse",v:"10-11"}, {l:"Baukosten",v:"127.900 Gulden"}],
-    sources:["https://nl.wikipedia.org/wiki/Witte_Huis_(Rotterdam)", "https://en.wikipedia.org/wiki/Witte_Huis", "https://rijksmonumenten.nl/monument/334003/witte-huis/rotterdam/", "https://erfgoedbekeken.nl/het-witte-huis-rotterdam/", "https://structurae.net/en/structures/witte-huis", "https://www.monumenten.nl/monument/334003", "https://www.architectuurgids.nl/project/list_projects_of_architect/arc_id/1034/prj_id/188"],
+    voices:[{quote:"Für uns ist das der Anfang von Rotterdam, alles andere kam danach.", who:"Passantin am Oude Haven"}],
+    steckbrief:{
+      architekt:"Willem Molenbroek",
+      fertigstellung:"1898",
+      flaeche:"ca. 10 Geschosse, rund 43 m Höhe",
+      kosten:"nicht überliefert",
+      einbindung:"Kopfbau am Oude Haven, Auftakt der Route, Solitär zwischen Nachkriegsbauten",
+      konzept:"Frühes Hochhaus nach US-Vorbild, Jugendstil-Dekor an Stahlskelett",
+      programm:"Kontor- und Bürohaus, heute gemischt",
+      konstruktion:"Stahlskelett mit Backstein- und Natursteinfassade, glasierte Keramik"
+    },
+    facts:[{l:"Fertigstellung",v:"1898"},{l:"Höhe",v:"ca. 43 m · 10 Geschosse"},{l:"Stil",v:"Jugendstil"},{l:"Besonderheit",v:"Überstand 1940"}],
+    sources:["Stadsarchief Rotterdam","Rijksmonument-Register"],
     slides:[
-      {bg:"#0A0A0A",cap:"Witte Huis · eigene Aufnahme folgt"},
-      {bg:"#0A0A0A",cap:"Witte Huis · Detail folgt"}
+      {bg:"#0A0A0A",icon:"",cap:"Witte Huis am Oude Haven (Platzhalter)"},
+      {bg:"#0A0A0A",icon:"",cap:"Fassadendetail, glasierte Keramik (Platzhalter)"}
     ]
   },
   {
-    num:"02", name:"Kubuswoningen", sub:"Piet Blom · 1977-1984",
+    num:"02", name:"Kubuswoningen", sub:"Piet Blom · 1978–1984",
     entryDate:"26.10.2026", entryTime:"10:05",
     paras:[
-      "Wir stehen am Overblaak, dort wo die Stadt über ihre eigene Verkehrsachse hinweggebaut wurde. Was von der Straße zunächst wie ein Gewimmel gelber Körper wirkt, ordnet sich beim Näherkommen: 38 um 45 Grad gekippte Würfel, jeder auf einem sechseckigen Pfeiler, dazu zwei größere Superkuben am Rand. Piet Blom nannte das Ensemble den Blaakse Bos, den Blaaker Wald, und der Vergleich trägt: Die Pfeiler lesen sich als Stämme, die Würfel als Kronen, der Raum darunter bleibt der Stadt.",
-      "Auffallend ist, wie konsequent hier das Leitbild Wonen als dak durchgehalten wird. Unter uns läuft die mehrspurige Blaak samt Metrotunnel, darüber spannt sich eine Fußgängerebene, die Altstadt und Oude Haven verbindet. Die Wohnungen kehren der Straße den Rücken zu und öffnen sich nach oben, bis in die pyramidale Spitze. Drei Ebenen auf rund 100 Quadratmetern, von denen ein Teil durch die geneigten Wände eher Geste als Nutzfläche bleibt.",
-      "Die Kijk-Kubus lässt sich als Schauwohnung betreten, und erst dort wird die Konstruktionslogik körperlich: ein Holzskelett über dem betonierten Pfeiler, alles aus der Mitte heraus gedacht. Es ist ein Vor-Recherche-Eindruck, den wir vor Ort noch schärfen wollen, doch schon jetzt zeichnet sich ab, dass dieser Bau weniger Wohnhaus als städtebauliche These ist."
+      `Ein paar Schritte weiter kippt die Welt um 45 Grad. Piet Bloms <em>Kubuswoningen</em> sitzen wie aufgestellte Würfel auf ihren Pfeilern und überbauen die Straße, als wären sie ein Wald aus Häusern. Man läuft buchstäblich unter dem Wohnen hindurch.`,
+      `In der Kijk-Kubus, der begehbaren Musterwohnung, merkt man schnell, wie radikal die Idee ist: kaum eine senkrechte Wand, jedes Möbelstück eine Verhandlung mit der Geometrie. Strukturalismus zum Anfassen.`
     ],
-    steckbrief:{ architekt:"Piet Blom (1934-1999), aufbauend auf seinem frühen Strukturalismus und der Haarlemmer Houttuinen-Studie; erste gebaute Vorläufer 1974-1977 in Helmond am Speelhuis.", fertigstellung:"Erste Pläne/Konsultation um 1978 (Idee der überbauten Blaak seit 1977); Bauausführung ab März 1982, Fertigstellung 1984.", flaeche:"Pro Paalwohnung rund 100 m2 auf drei Ebenen (ArchDaily nennt 106 m2); etwa ein Viertel der Fläche ist durch die geneigten Wände nur eingeschränkt nutzbar. Der Würfel ist um 45 Grad gekippt auf einen sechseckigen Pfeiler gesetzt.", kosten:"nicht öffentlich beziffert (in den gesichteten Quellen keine belegbaren Baukosten)", einbindung:"Das Ensemble überbaut als bewohnte Brücke die mehrspurige Verkehrsachse Blaak und den darunterliegenden Metrotunnel der Station Blaak und verbindet die Altstadt mit der Oude Haven. Die aufgeständerte Dachpromenade führt Fußgänger über den Verkehr hinweg.", konzept:"Strukturalistisches Leitbild Wonen als dak (Wohnen als Dach): Jede Paalwohnung steht wie ein Baum auf einem Stamm, die Gesamtheit bildet den Blaakse Bos, einen städtischen Wald, über dem öffentlichen Erdgeschoss. Der gekippte Würfel trennt Wohnen klar von der Straße darunter.", programm:"38 Wohn-Kubussen (Paalwohnungen) und 2 größere Superkuben (Südseite ursprünglich Academie van Bouwkunst, später Stayokay-Hostel; Nordseite gewerblich, nie ganz vollendet); im Sockel sowie in weiteren Bedrijfskubussen Läden und Gewerbe. Die Kijk-Kubus ist als öffentliche Schauwohnung zugänglich. Jeder Kubus: Straßenebene Wohnen/Küche, Mittelebene Schlafen/Bad, Spitze als pyramidaler Raum (loofhut).", konstruktion:"Sechseckiger Pfeiler (pyloon) aus drei Stahlbeton-Säulen, verbunden durch sechs gemauerte Zellenwände; darauf der um 45 Grad gekippte Würfel als Holzskelettbau, gedämmt mit Mineralwolle und beplankt mit Faserzement-/Holzfaserplatten. Die Präzision der Gründung war wegen Blaak und Metrotunnel kritisch.", resuemee:"Die Kubuswoningen sind ein Schlüsselwerk des niederländischen Strukturalismus: Sie lösen die städtebauliche Aufgabe der überbauten Verkehrsschneise nicht ingenieurhaft-neutral, sondern als bewohnten Wald mit eigener öffentlicher Topografie. Der Preis ist eine zwiespältige Wohnlichkeit (geneigte Wände, Flächenverluste), doch als Stadtbaustein und Identitätsanker ist das Ensemble bis heute außergewöhnlich präzise gesetzt." },
-    facts:[{l:"Wohnkubus",v:"38 + 2 Superkuben"}, {l:"Bauzeit",v:"1982-1984"}, {l:"Fläche/Wohnung",v:"ca. 100 m2, 3 Ebenen"}, {l:"Architekt",v:"Piet Blom"}],
-    sources:["https://www.archdaily.com/482339/ad-classics-kubuswoningen-piet-blom", "https://nl.wikipedia.org/wiki/Kubuswoningen_(Rotterdam)", "https://en.wikipedia.org/wiki/Cube_house", "https://www.metalocus.es/en/news/residential-urban-forest-heart-rotterdam-kubuswoningen-piet-blom", "https://www.kubuswoning.nl/en/", "https://architecturalvisits.com/en/kubuswoning-kijk-kubus/"],
+    voices:[{quote:"Man gewöhnt sich an die schrägen Wände. Nach zwei Wochen denkt man nicht mehr daran.", who:"Bewohner, Overblaak"}],
+    steckbrief:{
+      architekt:"Piet Blom",
+      fertigstellung:"1978–1984",
+      flaeche:"38 Würfelhäuser + 2 Superkuben, je ca. 100 m²",
+      kosten:"nicht öffentlich beziffert",
+      einbindung:"Überbauung der Blaak als bewohnte Brücke, verbindet Oude Haven und Bibliothek",
+      konzept:"„Wohnen als Dach über der Stadt“, Haus als Baum, Siedlung als Wald",
+      programm:"Wohnungen, Läden, Schauwohnung (Kijk-Kubus)",
+      konstruktion:"Gekippte Holz-Kuben auf sechseckigen Betonpfeilern"
+    },
+    facts:[{l:"Fertigstellung",v:"1984"},{l:"Anzahl",v:"38 Würfel + 2 Superkuben"},{l:"Idee",v:"Haus als Baum"},{l:"Typ",v:"Strukturalismus"}],
+    sources:["Piet Blom, Werkverzeichnis","Museum Rotterdam"],
     model:{src:"models/kubuswoningen.glb", poster:""},
     slides:[
-      {bg:"#0A0A0A",cap:"Kubuswoningen · eigene Aufnahme folgt"},
-      {bg:"#0A0A0A",cap:"Kubuswoningen · Detail folgt"}
+      {bg:"#0A0A0A",icon:"",cap:"Gekippte Würfel über dem Blaak (Platzhalter)"},
+      {bg:"#0A0A0A",icon:"",cap:"Blick aus der Kijk-Kubus (Platzhalter)"}
     ]
   },
   {
-    num:"03", name:"Markthal", sub:"MVRDV · 2009-2014",
+    num:"03", name:"Markthal", sub:"MVRDV · 2014",
     entryDate:"26.10.2026", entryTime:"11:20",
     paras:[
-      "Wir stehen am Binnenrotte, dort wo der offene Markt am Blaak seit jeher die Stadt teilt, und blicken in einen Bogen, der zugleich Haus und Halle ist. Auffallend ist die doppelte Lesart des Bauwerks: Von außen liest es sich als grauer, hufeisenförmiger Wohnblock, von innen öffnet sich ein stützenfreier Raum, über den sich die bedruckte Innenschale wölbt. Die beiden Stirnseiten sind mit einer kabelvorgespannten Glasfassade geschlossen, 34 Meter hoch und 42 Meter breit, sodass der Markt nach außen sichtbar bleibt.",
-      "Im Inneren überspannt das Werk Hoorn des Overvloeds von Arno Coenen und Iris Roskam rund 11.000 Quadratmeter, ausgeführt auf etwa 4.000 Aluminium-Akustikpaneelen. Wir notieren die städtebauliche Pointe: Der Wohnbau selbst, 228 Wohnungen stark, wird zum Dach des öffentlichen Raums, während sich darunter rund 96 Marktstände und unter Straßenniveau ein Parkhaus für über 1.200 Fahrzeuge schichten.",
-      "Zu klären bleibt vor Ort, wie der Übergang vom lauten Markt zum stillen Wohnen tatsächlich funktioniert und ob der Bogen den angrenzenden Stadtraum, Cube-Houses und Bibliothek, wirklich fasst. Die Zahlen zu Kosten und Flächen tragen wir mit, sie sind hier ein Gerüst, kein Urteil. Das Urteil bilden wir an der Schwelle, dort wo MVRDV Infrastruktur und Wohnen in eine einzige Geste zwingt."
+      `Die <em>Markthal</em> ist ein Hufeisen aus Wohnungen, das sich über eine offene Markthalle spannt. Von außen ein grauer Bogen, innen ein Farbrausch: die 11.000 m² große Deckenkunst <em>Hoorn des Overvloeds</em> wölbt sich über Käse, Blumen und Fischständen.`,
+      `Spannend ist die Doppelnatur. Hier wohnen Menschen direkt über dem Markt, mit Fenstern, die in die Halle blicken. Markt und Wohnen, sonst getrennt, werden in einem einzigen Baukörper kurzgeschlossen.`
     ],
-    steckbrief:{ architekt:"MVRDV (Winy Maas, Jacob van Rijs, Nathalie de Vries), Rotterdam; Bauherr/Entwickler Provast, Den Haag; Tragwerksplanung Royal HaskoningDHV, Glasfassade Octatube", fertigstellung:"Eröffnung 1. Oktober 2014 (Bauzeit ab Oktober 2009; Projekt-/Planungsbeginn 2004)", flaeche:"Gesamtfläche rund 100.000 m2; Wohnbogen ca. 40 m Scheitelhöhe, Glasfassaden als vorgespanntes Stahlkabelnetz 34 m hoch und 42 m breit; 11 Geschosse (4 unterirdisch); 228 Wohnungen", kosten:"rund 175 bis 178 Mio. Euro (175 Mio. laut MVRDV, 178 Mio. laut Wikipedia)", einbindung:"Städtebaulich besetzt das Bauwerk die offene Marktfläche Binnenrotte am Blaak, an der Nahtstelle zwischen mittelalterlichem Stadtkern und Wiederaufbaugebiet. Es schließt die bis dahin ungefasste Brache und schafft mit dem aufgespannten Bogen ein neues Stadttor neben Cube-Houses und Bibliothek.", konzept:"MVRDV verschmilzt Wohnen und öffentliche Markthalle zu einem Hybrid: Ein hufeisenförmiger Wohnbogen überspannt die offene, an beiden Stirnseiten verglaste Markthalle. Der Wohnungsbau wird selbst zum Dach und Gewölbe des öffentlichen Raums.", programm:"Offene Markthalle mit rund 96 Frischmarktständen und Ladeneinheiten, dazu Gastronomie (horeca) und Einzelhandel; 228 Wohnungen (102 Miet- und 126 Eigentumswohnungen, darunter 24 Penthouses), Supermarkt sowie viergeschossiges Tiefgaragenparkhaus mit über 1.200 Stellplätzen.", konstruktion:"Wohnbogen als tragende Brücke über der stützenfreien Halle; die beiden Stirnseiten sind mit einer vorgespannten Stahlkabel-Glasfassade geschlossen (kabelnetzartig wie eine Tennisschlägerbespannung, 26 vertikale und 22 horizontale Kabel, 34 m hoch, 42 m breit), seinerzeit die größte ihrer Art in Europa. Innenschale aus rund 4.000 Aluminium-Akustikpaneelen, bedruckt mit dem Kunstwerk.", resuemee:"Ein präzedenzloser Stadtbaustein, der Infrastruktur, Wohnen und öffentlichen Markt in einer einzigen Geste vereint. Die Stärke liegt im Typus selbst: Der Wohnbau wird zum bewohnten Gewölbe und macht den Markt zum überdachten Stadtraum, ohne ihn zu privatisieren." },
-    facts:[{l:"Wohnungen",v:"228"}, {l:"Scheitelhöhe",v:"ca. 40 m"}, {l:"Deckenkunst",v:"11.000 m2"}, {l:"Stellplätze",v:"über 1.200"}],
-    sources:["https://www.mvrdv.com/projects/115/markthal", "https://en.wikipedia.org/wiki/Market_Hall_(Rotterdam)", "https://archello.com/project/markthal-rotterdam", "https://www.archdaily.com/553933/markthal-rotterdam-mvrdv", "https://www.provast.nl/en/project/markthal-rotterdam/", "https://www.designboom.com/art/arno-coenen-rotterdam-markthal-digital-mega-mural-horn-of-plenty-05-29-2014/"],
+    voices:[{quote:"Morgens ist es ruhig, ab elf wird es laut. Man lebt mit dem Markt.", who:"Bewohnerin, Markthal"}],
+    steckbrief:{
+      architekt:"MVRDV",
+      fertigstellung:"2014",
+      flaeche:"ca. 100.000 m² BGF, 228 Wohnungen",
+      kosten:"rund 175 Mio. €",
+      einbindung:"Stadtbaustein am Blaak, Scharnier zwischen Bahnhofszone und Oude Haven",
+      konzept:"Markthalle als öffentlicher Raum, von Wohnungen als Bogen überspannt",
+      programm:"Markt, Gastronomie, 228 Wohnungen, Tiefgarage, Supermarkt",
+      konstruktion:"Bogenförmiger Stahlbeton, Glasfassaden an den Stirnseiten"
+    },
+    facts:[{l:"Fertigstellung",v:"2014"},{l:"Wohnungen",v:"228"},{l:"Deckenkunst",v:"11.000 m²"},{l:"Kosten",v:"ca. 175 Mio. €"}],
+    sources:["MVRDV Projektdokumentation","Gemeente Rotterdam"],
     model:{src:"models/markthal.glb", poster:""},
     slides:[
-      {bg:"#0A0A0A",cap:"Markthal · eigene Aufnahme folgt"},
-      {bg:"#0A0A0A",cap:"Markthal · Detail folgt"}
+      {bg:"#0A0A0A",icon:"",cap:"Wohnbogen über der Markthalle (Platzhalter)"},
+      {bg:"#0A0A0A",icon:"",cap:"Hoorn des Overvloeds, Deckenkunst (Platzhalter)"}
     ]
   },
   {
-    num:"04", name:"Red Apple", sub:"KCAP / Kees Christiaanse · 2009",
+    num:"04", name:"Red Apple", sub:"KCAP / Jan des Bouvrie · 2009",
     entryDate:"26.10.2026", entryTime:"12:40",
     paras:[
-      "Wir stehen an der östlichen Spitze des Wijnhaveneilands, dort wo die Innenstadt in die Nieuwe Maas übergeht. Der Red Apple setzt hier eine klare Marke: ein schlanker Wohnturm von rund 124 Metern, dem ein niedrigerer, fünfeckiger Kopblok angegliedert ist. Auffallend ist, wie der Kopfbau über den Sockel auskragt und dem Ensemble eine Spannung gibt, die über den bloßen Hochhaustyp hinausreicht.",
-      "Die rote Hülle trägt den Namen zu Recht. Eloxierte Aluminium-Lamellen ziehen vertikale Linien über die Fassade, durchsetzt mit französischen Balkonen. Nach oben öffnet sich das Raster, der Turm wirkt dadurch leichter, je höher der Blick wandert. Im Sockel liegen Gewerbe und Gastronomie, darüber Büros, daneben ein Parkhaus: ein vertikal geschichtetes Programm, das hier 231 Wohnungen trägt.",
-      "Der Bau ist, das wird vor Ort lesbar, als Auftakt gedacht gewesen. KCAP unter Kees Christiaanse hat ihn 2009 fertiggestellt, mit der Absicht, das ehemalige Hafen- und Büroquartier zu einem dichten Wohngebiet umzubauen. Wir notieren die Zahlen als Vor-Recherche und prüfen Höhe und Wohnungsschlüssel vor Ort: die Quellen schwanken leicht zwischen 124 und 127 Metern."
+      `Über die Brücke auf das <em>Wijnhaveneiland</em>. Der <em>Red Apple</em> markiert die Inselspitze mit einem schlanken Wohnturm, dessen rote Aluminium-Lamellen bei jedem Schritt ihre Dichte zu ändern scheinen.`,
+      `Der Turm steht auf einem niedrigeren Riegel, der den Block schließt. Aus der Distanz ein Signal, aus der Nähe ein präzise gefügtes Stück Fassade. Rot ist hier kein Zufall, sondern Adresse.`
     ],
-    steckbrief:{ architekt:"KCAP Architects & Planners, Rotterdam (Gründer Kees Christiaanse), Projektarchitekt Rob Hoekstra; Innenarchitektur Jan des Bouvrie. Hauptauftragnehmer Aannemersbedrijf Boele & van Eesteren (J.P. van Eesteren), Bauträger Proper-Stok / Wohnungsgesellschaft Havensteder.", fertigstellung:"2005 bis 2009 (Fertigstellung 2009)", flaeche:"Turm rund 124 m hoch, 40 Geschosse; angegliederter, fünfeckiger Kopblok rund 53 m mit 8 Geschossen. Bruttogeschossfläche etwa 35.000 m². Hinweis: niederländische Quellen (top010, langejan) nennen 127 m, die international überwiegend belegte Zahl ist 124 m (407 ft, Wikipedia/KCAP).", kosten:"nicht öffentlich beziffert", einbindung:"Östliche Spitze des Wijnhaveneilands zwischen Innenstadt und Nieuwe Maas, an der Wijnbrugstraat nahe der Wijnbrug, auf drei Seiten von Wasser umgeben. Der Bau war als Auftakt gedacht, das ehemalige Hafen- und Büroquartier des Wijnhaveneilands zu einem dichten innerstädtischen Wohngebiet umzubauen.", konzept:"Schlanke Wohnscheibe mit auskragendem Kopfbau: Der pentagonale Kopblok ragt über den Sockel und gibt dem Ensemble seine markante Silhouette. Nach oben öffnet und verschmälert sich die Fassade, wodurch der Turm trotz hoher Dichte schlank wirkt.", programm:"231 Wohnungen (rund 79 im Kopblok, rund 150 im Turm), dazu Büroflächen (etwa 3.900 m² über mehrere Geschosse im Kopblok), Einzelhandel und Gastronomie im Sockel (etwa 1.600 m² Gewerbe im Erdgeschoss) sowie ein Parkhaus mit 338 Stellplätzen in Keller und acht Sockelgeschossen.", konstruktion:"Hybrides Tragwerk: Der Kopblok hat lastabtragende Ortbeton-Wände und breite Plattendecken, die Auskragung wird von geschosshohen Stahl-Fachwerkträgern getragen; der Turm ist in Kletterschalung aus Beton ausgeführt. Charakteristisch sind die roten, eloxierten Aluminium-Lamellen und -Paneele der Fassade, durchsetzt mit französischen Balkonen, die sich nach oben verbreitern beziehungsweise öffnen und dem Bau seinen Namen geben.", resuemee:"Ein präzise gesetzter Solitär, der Dichte, gemischte Nutzung und eine unverwechselbare rote Hülle verbindet und so das Wijnhaveneiland als innerstädtisches Wohnquartier programmatisch eröffnet. Die Staffelung von Turm und auskragendem Kopblok zeigt, wie KCAP Hochdichte städtebaulich gliedert." },
-    facts:[{l:"Höhe",v:"ca. 124 m"}, {l:"Geschosse",v:"40 (Turm)"}, {l:"Wohnungen",v:"231"}, {l:"Fertig",v:"2009"}],
-    sources:["https://en.wikipedia.org/wiki/The_Red_Apple", "https://www.kcap.eu/projects/6/red-apple-rotterdam", "https://world-architects.com/en/kcap-rotterdam/project/the-red-apple", "https://nieuws.top010.nl/the-red-apple-rotterdam.htm", "https://architizer.com/projects/the-red-apple/", "https://divisare.com/projects/114648-kcap-architects-planners-rob-hoekstra-the-red-apple", "https://www.langejan.com/woontorens-rotterdam/the-red-apple~MSams16J/", "https://demargaretha.nl/blog/post/12610/de-bouwtechnieken-en-infrastructuur-van-the-red-apple-in-rotterdam/", "https://www.jpvaneesteren.nl/projecten/red-apple-rotterdam"],
+    voices:[{quote:"Den roten Turm sieht man vom anderen Ufer. Das ist unser Wegweiser.", who:"Student, Wijnhaveneiland"}],
+    steckbrief:{
+      architekt:"KCAP Architects&Planners, Interieur Jan des Bouvrie",
+      fertigstellung:"2009",
+      flaeche:"ca. 124 m Höhe, rund 40 Geschosse",
+      kosten:"nicht öffentlich beziffert",
+      einbindung:"Hochpunkt an der Spitze des Wijnhaveneilands, Block mit niedrigem Sockelriegel",
+      konzept:"Vertikale Adresse als Auftakt der Halbinsel, markante rote Hülle",
+      programm:"Wohnungen, Gewerbe im Sockel, Tiefgarage",
+      konstruktion:"Stahlbeton, vorgehängte rote Aluminium-Lamellen"
+    },
+    facts:[{l:"Fertigstellung",v:"2009"},{l:"Höhe",v:"ca. 124 m"},{l:"Fassade",v:"Rote Aluminium-Lamellen"},{l:"Lage",v:"Wijnhaveneiland"}],
+    sources:["KCAP Projektarchiv","Hoogbouw Rotterdam"],
     slides:[
-      {bg:"#0A0A0A",cap:"Red Apple · eigene Aufnahme folgt"},
-      {bg:"#0A0A0A",cap:"Red Apple · Detail folgt"}
+      {bg:"#0A0A0A",icon:"",cap:"Red Apple, Inselspitze (Platzhalter)"},
+      {bg:"#0A0A0A",icon:"",cap:"Lamellenfassade aus der Nähe (Platzhalter)"}
     ]
   },
   {
-    num:"05", name:"Wijnhaveneiland", sub:"Masterplan KCAP · ab 1993",
+    num:"05", name:"Wijnhaven-Türme", sub:"Masterplan KCAP & Barcode Architecten",
     entryDate:"26.10.2026", entryTime:"13:30",
     paras:[
-      "Wir stehen auf der dreieckigen Halbinsel zwischen Wijnhaven und Scheepmakershaven, dort wo Rotterdam nach dem Krieg ein nüchternes Büroquartier in das alte Hafenraster setzte. Auffallend ist, dass hier kein einzelner Entwurf das Bild bestimmt, sondern eine Spielregel: Kees Christiaanse und KCAP formulierten ab 1993 im Auftrag der Stadt ein dynamisches Transformationsmodell, das Eigentümern erlaubte, Volumen nach Grundstücksgröße aufzustocken, je höher, desto schlanker der Turm.",
-      "Aus dieser Logik wuchs ein Ensemble schlanker Hochhäuser zwischen etwa 74 und 124 Metern. Wir lesen die Chronologie an den Türmen ab: Harbour Village und der Waterstadtoren markieren den Anfang, der rote, nach oben verjüngte Red Apple von 2009 setzt mit 124 Metern den städtebaulichen Akzent am Kopf der Insel, später folgen The Muse und der dreieckige CasaNova mit gemeinsamen Dachgärten.",
-      "Bemerkenswert ist die Spannung zwischen Dichte und Erdgeschoss: Das Quartier verdichtet sich vertikal zu einer markanten Silhouette, während der Straßenraum, trotz Gastronomie und Hotels, in mehreren Quellen als wenig belebt beschrieben wird. Diesen Eindruck prüfen wir vor Ort, statt ihn hier als Tatsache zu behaupten."
+      `Das <em>Wijnhaveneiland</em> selbst ist das eigentliche Thema: eine Nachkriegs-Halbinsel, die in den letzten zwei Jahrzehnten neu verdichtet wurde. Türme unterschiedlicher Höhe stehen auf einem gemeinsamen Raster und lassen schmale Gassen und Höfe frei.`,
+      `Man merkt, dass hier nicht ein einzelnes Haus, sondern eine Spielregel entworfen wurde. Der Masterplan gibt das Maß vor, die einzelnen Architekten füllen es. Dichte ohne Monotonie, das ist die Wette dieses Quartiers.`
     ],
-    steckbrief:{ architekt:"Masterplan: KCAP Architects&Planners (Kees Christiaanse), im Auftrag der Gemeente Rotterdam. Einzelbauten u.a. KCAP mit Jan des Bouvrie (Red Apple, 2009), Barcode Architects (The Muse 2020, CasaNova 2022/23), HM Architecten / Will M. Weerkamp, Henk Duijzer (Waterstadtoren).", fertigstellung:"Masterplan ab 1993 (Bearbeitung 1992-2002); Realisierung der Türme gestaffelt 2002-2023.", flaeche:"Dreieckige Halbinsel zwischen Wijnhaven und Scheepmakershaven. Türme ca. 74-124 m, realisiert u.a. 85 m (Harbour Village, zwei Türme, 2002), 108-109 m (Waterstadtoren, 2004), 88 m (Scheepmakerstoren, 2008), 124 m / 40 Geschosse (Red Apple, 2009), 110 m / 35 Geschosse (CasaNova), 74-75 m (The Muse, 2020).", kosten:"nicht öffentlich beziffert", einbindung:"Nachkriegs-Wiederaufbaugebiet im Maritiem District, nach dem Van-Traa-Basisplan als Büroquartier zwischen Blaak, Leuvehaven und Boompjes konzipiert. Die Nachverdichtung fügt eine Hochhauszone in das historische Hafenraster ein, mit Blickachsen zur Maas.", konzept:"Dynamisches Transformationsmodell statt fixem Bebauungsplan: Grundeigentümer durften Volumen nach Grundstücksgröße aufstocken (max. ca. 22 m3 Bauvolumen je m2 Grund, Kappung bei rund 50.000 m2). Leitregel (Schlankheitsregel): je höher gebaut wird, desto schlanker muss der Turm werden, mit gedeckelter Turmgeschossfläche (rund 580 m2), wodurch ein dichtes, schlankes Hochhausensemble entsteht.", programm:"Überwiegend Wohnen (rund 641 Einheiten allein in den frühen fünf Türmen, z.B. CasaNova mit ca. 116 Wohnungen), ergänzt durch Büro, Einzelhandel, Gastronomie, Hotel und gemeinschaftliche Dachgärten/Co-Working in den jüngeren Türmen (CasaNova/The Muse teilen einen rund 1.600 m2 großen Dachgarten).", konstruktion:"Hochhäuser in Stahlbeton; markante Fassaden, beim Red Apple tragende Struktur mit roten Aluminium-Paneelen, die nach oben schmaler werden und vertikale Linien betonen; bei CasaNova eine dreieckige Form mit Natursteinfassade.", resuemee:"Ein frühes, einflussreiches Beispiel regelbasierter Verdichtung: nicht ein Entwurf, sondern ein Spielregel-Set erzeugt das Stadtbild. Das ergibt eine dichte, vielfältige Hochhaussilhouette, deren Straßenraum jedoch oft als wenig belebt beschrieben wird." },
-    facts:[{l:"Masterplan",v:"KCAP / Kees Christiaanse"}, {l:"Plan ab",v:"1993"}, {l:"Höhen",v:"ca. 74-124 m"}, {l:"Leitregel",v:"höher = schlanker"}],
-    sources:["https://www.gebiedsontwikkeling.nu/artikelen/wijnhaven-rotterdam/", "https://wederopbouwrotterdam.nl/en/articles/wijnhavenkwartier", "https://www.kcap.eu/projects/6/the-red-apple", "https://en.wikipedia.org/wiki/The_Red_Apple", "https://nieuws.top010.nl/kcap-kees-christiaanse.htm", "https://nl.wikipedia.org/wiki/Waterstadtoren", "https://en.wikipedia.org/wiki/CasaNova_(Rotterdam)", "https://barcodearchitects.com/projects/the-muse/", "https://barcodearchitects.com/projects/casanova/", "https://www.designboom.com/architecture/barcode-architects-casanova-tower-rotterdam-netherlands-09-15-2023/"],
+    voices:[{quote:"Erst kam der Plan, dann die Türme, einer nach dem anderen.", who:"Mitarbeiter Stadtplanung Rotterdam"}],
+    steckbrief:{
+      architekt:"Masterplan KCAP, u.a. Barcode Architecten",
+      fertigstellung:"ab ca. 2000, fortlaufend",
+      flaeche:"Halbinsel zwischen Wijnhaven und Scheepmakershaven",
+      kosten:"Quartiersentwicklung, nicht einzeln beziffert",
+      einbindung:"Verdichtung einer Nachkriegsinsel, Hochpunkte auf gemeinsamem Raster",
+      konzept:"Flexibler Masterplan: Maß und Korn vorgegeben, Bauten variabel",
+      programm:"Wohnen, Büro, Gewerbe, öffentliche Erdgeschosse",
+      konstruktion:"Hochhausensemble in Stahlbeton, unterschiedliche Fassaden"
+    },
+    facts:[{l:"Entwicklung",v:"ab ca. 2000"},{l:"Prinzip",v:"Masterplan + Einzelbauten"},{l:"Lage",v:"Wijnhaveneiland"},{l:"Ziel",v:"Dichte ohne Monotonie"}],
+    sources:["KCAP Masterplan Wijnhaveneiland","Gemeente Rotterdam, Stadsontwikkeling"],
     slides:[
-      {bg:"#0A0A0A",cap:"Wijnhaveneiland · eigene Aufnahme folgt"},
-      {bg:"#0A0A0A",cap:"Wijnhaveneiland · Detail folgt"}
+      {bg:"#0A0A0A",icon:"",cap:"Türme auf gemeinsamem Raster (Platzhalter)"},
+      {bg:"#0A0A0A",icon:"",cap:"Gasse zwischen den Hochpunkten (Platzhalter)"}
     ]
   },
   {
-    num:"06", name:"EY Netherlands", sub:"Philip Johnson / Alan Ritchie · 2005",
+    num:"06", name:"EY Netherlands", sub:"Bürohaus am Wijnhaven",
     entryDate:"26.10.2026", entryTime:"14:15",
     paras:[
-      "Wir stehen am Boompjes, der Uferpromenade zwischen Willems- und Erasmusbrücke, und schauen auf einen Turm, der sich bewusst nicht in den Vordergrund drängt. Boompjes 258, der EY-Turm, ist ein spätes Werk aus dem Büro Philip Johnsons, ausgeführt mit Alan Ritchie und vor Ort betreut von den Rotterdamer 01-10 Architecten. Auffallend ist, wie diszipliniert die gerasterte Lochfassade die rund 75 bis 78 Meter und 21 Geschosse gliedert, ohne ikonische Geste.",
-      "Die Geschichte des Hauses erklärt seine Zurückhaltung. 1998 lag ein Vorschlag für einen sehr hohen Wohnturm auf dem alten Gebäude der Nederlandsche Bank vor; auf Wunsch der Stadt wurde daraus eine maßvollere Lösung, zwei schlankere Türme von je etwa 75 Metern statt eines Solitärs. Der EY-Turm, 2005 fertiggestellt, war der erste davon. Direkt benachbart steht noch die denkmalgeschützte Bijbank der Nederlandsche Bank von 1955, ein stiller Verweis auf die Bankgeschichte dieses Ufers.",
-      "Städtebaulich sitzt das Haus am östlichen Saum des Wijnhavengebiets, dort wo die Boompjes-Front zur Maas hin Halt gibt. Die Südfassade nimmt das Flusslicht auf, darunter liegt eine Tiefgarage. Wir notieren als offene Frage für den Ortstermin, wie sich der heutige Multi-Tenant-Betrieb, seit der Sanierung 2017 als RIV offices vermietet, zur ursprünglichen EY-Adresse verhält, die EY bis heute führt."
+      `Der <em>EY</em>-Bau zeigt die andere Seite des Quartiers: das Arbeiten. Eine ruhige, klar gerasterte Bürofassade, die sich bewusst zurücknimmt und dem Wasser den Vortritt lässt.`,
+      `Interessant ist das Erdgeschoss, der Punkt, an dem das große Bürohaus den öffentlichen Raum berührt. Hier entscheidet sich, ob ein Quartier am Feierabend lebt oder verstummt. (Architekt und Jahr vor Ort prüfen.)`
     ],
-    steckbrief:{ architekt:"Entwurf: Philip Johnson / Alan Ritchie Architects (New York), federführend Alan Ritchie. Technische Ausarbeitung, Genehmigung und Bauleitung: 01-10 Architecten (heute Eentien Architecten), Rotterdam. Einzelne Gebäudedatenbanken nennen abweichend Brouwer Steketee Architecten als ausführendes Büro.", fertigstellung:"2005 (Projektzeitraum 1998-2005; Ursprung im 1998 gewonnenen Auswahlverfahren zur Neubebauung des Areals der ehemaligen Nederlandsche Bank an den Boompjes)", flaeche:"BGF (BVO) rund 19.500 m2; Höhe ca. 75 m nach Architekten-/Stadtquellen, 78 m nach Gebäudedatenbanken; 21 oberirdische Geschosse", kosten:"nicht öffentlich beziffert", einbindung:"Maritiem District am Boompjes, der Uferpromenade zwischen Verlengde Willemsbrug und Erasmusbrug, mit Südfront zur Maas. Das Areal grenzt an das östliche Ende des Wijnhavengebiets und an die denkmalgeschützte Bijbank der Nederlandsche Bank (1955).", konzept:"Aus einem 1998er Vorschlag für einen sehr hohen Wohnturm auf dem alten Bankgebäude (nach mehreren Quellen bis 200 m) entwickelte sich auf Wunsch der Stadt eine reduzierte Lösung: zunächst ein Mixed-Use-Turm von rund 100 m, schließlich zwei separate, schlankere Türme von je rund 75 m statt eines Solitärs. Der EY-Turm war der erste der beiden; der zweite Turm 'Hoog aan de Maas' blieb unrealisiert.", programm:"Büroturm; Hauptmieter und Namensgeber war Ernst & Young (EY). Tiefgarage unter dem verbreiterten Terwenakker. Nach Sanierung 2017 als Multi-Tenant-Bürohaus (RIV offices) vermietet; EY führt Boompjes 258 weiterhin als Rotterdamer Standort.", konstruktion:"Büroturm mit massivem Kern und vorgehängter Fassade; charakteristisch die für Johnson/Ritchie typische, klar gerasterte Lochfassade. Genaue Tragwerks- und Materialangaben nicht in den eingesehenen Quellen detailliert.", resuemee:"Ein spätes, eher zurückhaltendes Werk aus dem Büro Philip Johnsons, das den städtischen Maßstabswunsch über die ikonische Geste stellt: kein Solitär-Hochhaus, sondern ein in die Boompjes-Front eingepasster, ruhiger Büroturm an einem geschichtsträchtigen Bankareal." },
-    facts:[{l:"Adresse",v:"Boompjes 258, 3011 XZ Rotterdam"}, {l:"Architekt",v:"Johnson / Ritchie · 01-10"}, {l:"Fertig",v:"2005"}, {l:"Höhe / Geschosse",v:"ca. 75-78 m · 21 OG"}],
-    sources:["https://www.eentien.nl/projecten/boompjes-kantoortoren-ernst-young/", "https://www.skyscrapercenter.com/building/ernst-young/5437", "https://www.emporis.com/buildings/102020/ernst-young-rotterdam-netherlands", "https://internationalfacade.com/projects/item/97", "http://www.architectuurgids.nl/project/list_projects_of_architect/arc_id/1386/prj_id/19", "https://wederopbouwrotterdam.nl/en/articles/bijbank-nederlandsche-bank", "https://commons.wikimedia.org/wiki/Category:Boompjes_258_(Rotterdam)", "https://www.ey.com/en_nl/locations/netherlands"],
+    voices:[{quote:"Mittags ist hier viel los, abends wird es schnell still.", who:"Angestellter, Wijnhaven"}],
+    steckbrief:{
+      architekt:"vor Ort zu verifizieren",
+      fertigstellung:"vor Ort zu verifizieren",
+      flaeche:"Bürohochhaus am Wijnhaven",
+      kosten:"nicht öffentlich beziffert",
+      einbindung:"Büroadresse im Wohn-/Arbeitsmix der Halbinsel, Bezug zum Wasser",
+      konzept:"Zurückhaltende Rasterfassade, Sockel als Schwelle zum öffentlichen Raum",
+      programm:"Büro, Erdgeschossnutzung",
+      konstruktion:"Stahlbeton, vorgehängte Fassade (vor Ort prüfen)"
+    },
+    facts:[{l:"Nutzung",v:"Büro"},{l:"Lage",v:"Wijnhaven"},{l:"Thema",v:"Arbeiten am Wasser"},{l:"Status",v:"Daten vor Ort prüfen"}],
+    sources:["Recherche vor Ort","Gemeente Rotterdam"],
     slides:[
-      {bg:"#0A0A0A",cap:"EY Netherlands · eigene Aufnahme folgt"},
-      {bg:"#0A0A0A",cap:"EY Netherlands · Detail folgt"}
+      {bg:"#0A0A0A",icon:"",cap:"EY am Wijnhaven (Platzhalter)"},
+      {bg:"#0A0A0A",icon:"",cap:"Erdgeschoss zum öffentlichen Raum (Platzhalter)"}
     ]
   },
   {
-    num:"07", name:"CasaNova", sub:"Barcode Architects · 2018-2023",
+    num:"07", name:"CasaNova", sub:"Pavillon am Wasser",
     entryDate:"26.10.2026", entryTime:"15:00",
     paras:[
-      "Wir stehen an der Spitze der Wijnhaven, dort wo das Becken sich zur Oude Haven hin öffnet, und blicken an einem dreieckigen Turm hinauf. CasaNova steht nicht einfach auf dem Kai, der Baukörper scheint sich nach unten zu verjüngen: die untersten Geschosse ziehen sich ein, sodass das Hochhaus wie ein auf der Spitze balancierter Bleistift wirkt. Was wir vor uns haben, ist kein Gastronomie-Paviljoen, sondern ein 110 Meter hohes Wohnhochhaus von Barcode Architects, 2023 fertiggestellt.",
-      "Auffallend ist die Fassade. Handbearbeitete Paneele aus rotbraunem Naturstein geben dem Turm ein Relief, das sich im wandernden Tageslicht ständig neu liest, warm und handwerklich, nicht glatt und anonym. Die dreieckige Grundform ist kein Selbstzweck: sie folgt den Sichtachsen des städtebaulichen Rahmens und hält den Blick zwischen den Nachbartürmen frei. CasaNova ist im Verbund mit dem benachbarten Turm The Muse gedacht, beide teilen sich ein viergeschossiges Podium.",
-      "Über dem fünften Geschoss liegt, für uns vom Kai aus nicht sichtbar, ein gemeinschaftlicher Dachgarten von rund 1.600 Quadratmetern. Im Sockel sind gewerbliche Nutzungen untergebracht, die die Ecke am Wasser beleben sollen. Städtebaulich liest sich der Turm als Scharnier: er fasst die Wijnhaven-Spitze und knüpft eine Verbindung von der Oude Haven über Leuvehaven und Markthal bis zum Museumpark."
+      `Am Ende kehren wir ans Wasser zurück. <em>CasaNova</em> ist kein Hochhaus, sondern ein leichter Pavillon am Kai, der Punkt, an dem die Architektur Pause macht und der Stadtraum selbst zur Bühne wird.`,
+      `Von hier aus liegt die ganze Route noch einmal im Blick: der weiße Turm von 1898, die gekippten Würfel, der Bogen der Markthal, das rote Signal auf der Insel. Sieben Bauten, ein Quartier, eine Wasserkante.`
     ],
-    steckbrief:{ architekt:"Barcode Architects (Rotterdam); Tragwerk Pieters Bouwtechniek, Installationen ABT, Bau SBB Ontwikkelen en Bouwen, Dachgarten Jeroen Hamers", fertigstellung:"2023 (Bauzeit 2018 bis 2022/2023; Projektentwicklung ab 2013/2017)", flaeche:"ca. 22.000 m2 BGF; Höhe 110 m; 35 Geschosse; mit ca. 116 Wohnungen das 28.-höchste Gebäude der Niederlande", kosten:"nicht öffentlich beziffert", einbindung:"Wijnhaven 65 im Maritiem District, an der Spitze der Wijnhaven nahe Oude Haven. Der Turm besetzt und aktiviert die Ecke der Wijnhaven und schafft eine neue Verbindung zwischen Oude Haven und Markthal über Leuvehaven und Witte de Withstraat bis zum Museumpark. Teil des städtebaulichen Rahmens (KCAP-Plan) am Wasser.", konzept:"Dreieckiger Baukörper als Antwort auf die städtebaulichen Sichtachsen und Volumenvorgaben; im Verbund mit dem Nachbarturm The Muse entworfen. Auffällig: die untersten vier Geschosse verjüngen sich nach unten, sodass der Turm wie ein auf der Spitze balancierter Bleistift bzw. eine Skulptur auf einem Sockel wirkt.", programm:"Wohnhochhaus (ca. 116 Wohnungen) mit gewerblicher/kommerzieller Nutzung im Sockel; gemeinschaftliche Einrichtungen mit dem Verbund (The Muse): 1.600 m2 Dachgarten über dem 5. Geschoss des verbindenden Podiums, Gemeinschaftsküche, Gästezimmer, Coworking, Fitness, Tiefgarage.", konstruktion:"Stahlbeton-Tragwerk; Fassade aus handbearbeiteten, rotbraunen Naturstein-Paneelen, die dem Turm einen handwerklichen, warmen Charakter und ein im Tageslicht wechselndes Relief geben.", resuemee:"Architektonisch überzeugend als skulpturaler, dreieckiger Solitär, der sich aus den Sichtachsen des Masterplans herleitet und mit The Muse ein städtebauliches Ensemble bildet. Die nach unten verjüngte Basis ist ein prägnanter, riskanter Gestus, der die Ecke am Wasser markant fasst, statt sie aufzulösen." },
-    facts:[{l:"Architekt",v:"Barcode Architects"}, {l:"Fertigstellung",v:"2023"}, {l:"Höhe / Geschosse",v:"110 m · 35 Etagen"}, {l:"Wohnungen",v:"ca. 116"}],
-    sources:["https://en.wikipedia.org/wiki/CasaNova_(Rotterdam)", "https://barcodearchitects.com/projects/casanova/", "https://www.archdaily.com/1006805/casanova-building-barcode-architects", "https://www.pietersbouwtechniek.nl/projecten/casanova", "https://www.wilmawonen.nl/nl/projecten/opgeleverd/4/casanova", "https://www.skyscrapercenter.com/building/casanova/32907", "https://www.designboom.com/architecture/barcode-architects-casanova-tower-rotterdam-netherlands-09-15-2023/", "https://worldarchitecture.org/architecture-news/fzezv/barcode-architects-completes-casanova-high-rise-tower-with-sculptural-facade-in-rotterdam.html"],
+    voices:[{quote:"Bei Sonne sitzt hier halb Rotterdam am Wasser.", who:"Kellner, CasaNova"}],
+    steckbrief:{
+      architekt:"vor Ort zu verifizieren",
+      fertigstellung:"vor Ort zu verifizieren",
+      flaeche:"Pavillon / Gastronomie am Kai",
+      kosten:"nicht öffentlich beziffert",
+      einbindung:"Abschluss der Route am Wasser, Aufenthaltsort und Aussichtspunkt",
+      konzept:"Leichter Baukörper als Gegenpol zu den Hochpunkten, Vorrang für den Außenraum",
+      programm:"Gastronomie, Terrasse",
+      konstruktion:"Leichtbau, große Verglasung (vor Ort prüfen)"
+    },
+    facts:[{l:"Typ",v:"Pavillon"},{l:"Nutzung",v:"Gastronomie"},{l:"Lage",v:"Am Wasser"},{l:"Rolle",v:"Abschluss der Route"}],
+    sources:["Recherche vor Ort"],
     slides:[
-      {bg:"#0A0A0A",cap:"CasaNova · eigene Aufnahme folgt"},
-      {bg:"#0A0A0A",cap:"CasaNova · Detail folgt"}
+      {bg:"#0A0A0A",icon:"",cap:"CasaNova am Kai (Platzhalter)"},
+      {bg:"#0A0A0A",icon:"",cap:"Blick zurück auf die Route (Platzhalter)"}
     ]
   }
 ];
@@ -2224,31 +2287,31 @@ const LANG = {
     placesBtnLbl:  'Orte',
     shareCopied:   'Link kopiert',
     stopSubs: [
-      "Willem Molenbroek · 1897-1898",
-      "Piet Blom · 1977-1984",
-      "MVRDV · 2009-2014",
-      "KCAP / Kees Christiaanse · 2009",
-      "Masterplan KCAP · ab 1993",
-      "Philip Johnson / Alan Ritchie · 2005",
-      "Barcode Architects · 2018-2023"
+      'Willem Molenbroek · 1898',
+      'Piet Blom · 1978–84',
+      'MVRDV · 2014',
+      'KCAP / Jan des Bouvrie · 2009',
+      'Masterplan KCAP & Barcode',
+      'Bürohaus am Wijnhaven',
+      'Pavillon am Wasser'
     ],
     stopFacts: [
-      ["Baujahr","Höhe","Geschosse","Baukosten"],
-      ["Wohnkubus","Bauzeit","Fläche/Wohnung","Architekt"],
-      ["Wohnungen","Scheitelhöhe","Deckenkunst","Stellplätze"],
-      ["Höhe","Geschosse","Wohnungen","Fertig"],
-      ["Masterplan","Plan ab","Höhen","Leitregel"],
-      ["Adresse","Architekt","Fertig","Höhe / Geschosse"],
-      ["Architekt","Fertigstellung","Höhe / Geschosse","Wohnungen"]
+      ['Fertigstellung','Höhe','Stil','Besonderheit'],
+      ['Fertigstellung','Anzahl','Idee','Typ'],
+      ['Fertigstellung','Wohnungen','Deckenkunst','Kosten'],
+      ['Fertigstellung','Höhe','Fassade','Lage'],
+      ['Entwicklung','Prinzip','Lage','Ziel'],
+      ['Nutzung','Lage','Thema','Status'],
+      ['Typ','Nutzung','Lage','Rolle']
     ],
     stopParas: [
-      ["Wir stehen am Rand der Oude Haven, wo Geldersekade und Wijnhaven aufeinandertreffen, und blicken an einem Turm hinauf, der 1898 als erstes Hochhaus Europas galt. Het Witte Huis trägt seinen Namen zu Recht: die Fassade ist ab dem zweiten Geschoss mit rund hunderttausend weiß glasierten Steinen verkleidet, die das Licht hell zurückwerfen. Auffallend ist, wie nüchtern das tragende Gerüst und wie üppig die Haut: Willem Molenbroek setzte amerikanische Hochhausideen in eine traditionelle, massive Stapelbauweise um, getragen von zwei dicken Innenwänden um ein zentrales Treppenhaus.","Mit etwa 43 Metern und zehn bis elf Geschossen, je nachdem, wie man die Etagen unter dem schrägen Dach zählt, überragte der Bau seine Umgebung deutlich. In die Bögen über den Fensterreihen sind Jugendstil-Mosaike mit Pflanzenmotiven gesetzt, am östlichen Giebel steht der Schriftzug Het Witte Huis. Die 127.900 Gulden Baukosten lagen über dem ursprünglichen Plan, der Grundriss wuchs von 15 mal 20 auf rund 20 mal 20 Meter; gegründet ist alles auf rund tausend Holzpfählen im weichen Rotterdamer Boden.","Bemerkenswert bleibt, dass dieses Haus das Bombardement von 1940 überstand, als das Zentrum Rotterdams in Trümmer fiel. So steht es heute als Solitär und Rijksmonument zwischen jüngerer Bebauung, genutzt als Bürohaus mit einem Café im Erdgeschoss. Die Materialfrage notieren wir uns für den Ortstermin: die niederländischen Denkmalquellen sprechen von Stahl, Backstein und Zement ohne Beton, eine anglophone Quelle dagegen von einem Eisen-, Stahl- und Betongerüst, das vor Ort zu prüfen ist."],
-      ["Wir stehen am Overblaak, dort wo die Stadt über ihre eigene Verkehrsachse hinweggebaut wurde. Was von der Straße zunächst wie ein Gewimmel gelber Körper wirkt, ordnet sich beim Näherkommen: 38 um 45 Grad gekippte Würfel, jeder auf einem sechseckigen Pfeiler, dazu zwei größere Superkuben am Rand. Piet Blom nannte das Ensemble den Blaakse Bos, den Blaaker Wald, und der Vergleich trägt: Die Pfeiler lesen sich als Stämme, die Würfel als Kronen, der Raum darunter bleibt der Stadt.","Auffallend ist, wie konsequent hier das Leitbild Wonen als dak durchgehalten wird. Unter uns läuft die mehrspurige Blaak samt Metrotunnel, darüber spannt sich eine Fußgängerebene, die Altstadt und Oude Haven verbindet. Die Wohnungen kehren der Straße den Rücken zu und öffnen sich nach oben, bis in die pyramidale Spitze. Drei Ebenen auf rund 100 Quadratmetern, von denen ein Teil durch die geneigten Wände eher Geste als Nutzfläche bleibt.","Die Kijk-Kubus lässt sich als Schauwohnung betreten, und erst dort wird die Konstruktionslogik körperlich: ein Holzskelett über dem betonierten Pfeiler, alles aus der Mitte heraus gedacht. Es ist ein Vor-Recherche-Eindruck, den wir vor Ort noch schärfen wollen, doch schon jetzt zeichnet sich ab, dass dieser Bau weniger Wohnhaus als städtebauliche These ist."],
-      ["Wir stehen am Binnenrotte, dort wo der offene Markt am Blaak seit jeher die Stadt teilt, und blicken in einen Bogen, der zugleich Haus und Halle ist. Auffallend ist die doppelte Lesart des Bauwerks: Von außen liest es sich als grauer, hufeisenförmiger Wohnblock, von innen öffnet sich ein stützenfreier Raum, über den sich die bedruckte Innenschale wölbt. Die beiden Stirnseiten sind mit einer kabelvorgespannten Glasfassade geschlossen, 34 Meter hoch und 42 Meter breit, sodass der Markt nach außen sichtbar bleibt.","Im Inneren überspannt das Werk Hoorn des Overvloeds von Arno Coenen und Iris Roskam rund 11.000 Quadratmeter, ausgeführt auf etwa 4.000 Aluminium-Akustikpaneelen. Wir notieren die städtebauliche Pointe: Der Wohnbau selbst, 228 Wohnungen stark, wird zum Dach des öffentlichen Raums, während sich darunter rund 96 Marktstände und unter Straßenniveau ein Parkhaus für über 1.200 Fahrzeuge schichten.","Zu klären bleibt vor Ort, wie der Übergang vom lauten Markt zum stillen Wohnen tatsächlich funktioniert und ob der Bogen den angrenzenden Stadtraum, Cube-Houses und Bibliothek, wirklich fasst. Die Zahlen zu Kosten und Flächen tragen wir mit, sie sind hier ein Gerüst, kein Urteil. Das Urteil bilden wir an der Schwelle, dort wo MVRDV Infrastruktur und Wohnen in eine einzige Geste zwingt."],
-      ["Wir stehen an der östlichen Spitze des Wijnhaveneilands, dort wo die Innenstadt in die Nieuwe Maas übergeht. Der Red Apple setzt hier eine klare Marke: ein schlanker Wohnturm von rund 124 Metern, dem ein niedrigerer, fünfeckiger Kopblok angegliedert ist. Auffallend ist, wie der Kopfbau über den Sockel auskragt und dem Ensemble eine Spannung gibt, die über den bloßen Hochhaustyp hinausreicht.","Die rote Hülle trägt den Namen zu Recht. Eloxierte Aluminium-Lamellen ziehen vertikale Linien über die Fassade, durchsetzt mit französischen Balkonen. Nach oben öffnet sich das Raster, der Turm wirkt dadurch leichter, je höher der Blick wandert. Im Sockel liegen Gewerbe und Gastronomie, darüber Büros, daneben ein Parkhaus: ein vertikal geschichtetes Programm, das hier 231 Wohnungen trägt.","Der Bau ist, das wird vor Ort lesbar, als Auftakt gedacht gewesen. KCAP unter Kees Christiaanse hat ihn 2009 fertiggestellt, mit der Absicht, das ehemalige Hafen- und Büroquartier zu einem dichten Wohngebiet umzubauen. Wir notieren die Zahlen als Vor-Recherche und prüfen Höhe und Wohnungsschlüssel vor Ort: die Quellen schwanken leicht zwischen 124 und 127 Metern."],
-      ["Wir stehen auf der dreieckigen Halbinsel zwischen Wijnhaven und Scheepmakershaven, dort wo Rotterdam nach dem Krieg ein nüchternes Büroquartier in das alte Hafenraster setzte. Auffallend ist, dass hier kein einzelner Entwurf das Bild bestimmt, sondern eine Spielregel: Kees Christiaanse und KCAP formulierten ab 1993 im Auftrag der Stadt ein dynamisches Transformationsmodell, das Eigentümern erlaubte, Volumen nach Grundstücksgröße aufzustocken, je höher, desto schlanker der Turm.","Aus dieser Logik wuchs ein Ensemble schlanker Hochhäuser zwischen etwa 74 und 124 Metern. Wir lesen die Chronologie an den Türmen ab: Harbour Village und der Waterstadtoren markieren den Anfang, der rote, nach oben verjüngte Red Apple von 2009 setzt mit 124 Metern den städtebaulichen Akzent am Kopf der Insel, später folgen The Muse und der dreieckige CasaNova mit gemeinsamen Dachgärten.","Bemerkenswert ist die Spannung zwischen Dichte und Erdgeschoss: Das Quartier verdichtet sich vertikal zu einer markanten Silhouette, während der Straßenraum, trotz Gastronomie und Hotels, in mehreren Quellen als wenig belebt beschrieben wird. Diesen Eindruck prüfen wir vor Ort, statt ihn hier als Tatsache zu behaupten."],
-      ["Wir stehen am Boompjes, der Uferpromenade zwischen Willems- und Erasmusbrücke, und schauen auf einen Turm, der sich bewusst nicht in den Vordergrund drängt. Boompjes 258, der EY-Turm, ist ein spätes Werk aus dem Büro Philip Johnsons, ausgeführt mit Alan Ritchie und vor Ort betreut von den Rotterdamer 01-10 Architecten. Auffallend ist, wie diszipliniert die gerasterte Lochfassade die rund 75 bis 78 Meter und 21 Geschosse gliedert, ohne ikonische Geste.","Die Geschichte des Hauses erklärt seine Zurückhaltung. 1998 lag ein Vorschlag für einen sehr hohen Wohnturm auf dem alten Gebäude der Nederlandsche Bank vor; auf Wunsch der Stadt wurde daraus eine maßvollere Lösung, zwei schlankere Türme von je etwa 75 Metern statt eines Solitärs. Der EY-Turm, 2005 fertiggestellt, war der erste davon. Direkt benachbart steht noch die denkmalgeschützte Bijbank der Nederlandsche Bank von 1955, ein stiller Verweis auf die Bankgeschichte dieses Ufers.","Städtebaulich sitzt das Haus am östlichen Saum des Wijnhavengebiets, dort wo die Boompjes-Front zur Maas hin Halt gibt. Die Südfassade nimmt das Flusslicht auf, darunter liegt eine Tiefgarage. Wir notieren als offene Frage für den Ortstermin, wie sich der heutige Multi-Tenant-Betrieb, seit der Sanierung 2017 als RIV offices vermietet, zur ursprünglichen EY-Adresse verhält, die EY bis heute führt."],
-      ["Wir stehen an der Spitze der Wijnhaven, dort wo das Becken sich zur Oude Haven hin öffnet, und blicken an einem dreieckigen Turm hinauf. CasaNova steht nicht einfach auf dem Kai, der Baukörper scheint sich nach unten zu verjüngen: die untersten Geschosse ziehen sich ein, sodass das Hochhaus wie ein auf der Spitze balancierter Bleistift wirkt. Was wir vor uns haben, ist kein Gastronomie-Paviljoen, sondern ein 110 Meter hohes Wohnhochhaus von Barcode Architects, 2023 fertiggestellt.","Auffallend ist die Fassade. Handbearbeitete Paneele aus rotbraunem Naturstein geben dem Turm ein Relief, das sich im wandernden Tageslicht ständig neu liest, warm und handwerklich, nicht glatt und anonym. Die dreieckige Grundform ist kein Selbstzweck: sie folgt den Sichtachsen des städtebaulichen Rahmens und hält den Blick zwischen den Nachbartürmen frei. CasaNova ist im Verbund mit dem benachbarten Turm The Muse gedacht, beide teilen sich ein viergeschossiges Podium.","Über dem fünften Geschoss liegt, für uns vom Kai aus nicht sichtbar, ein gemeinschaftlicher Dachgarten von rund 1.600 Quadratmetern. Im Sockel sind gewerbliche Nutzungen untergebracht, die die Ecke am Wasser beleben sollen. Städtebaulich liest sich der Turm als Scharnier: er fasst die Wijnhaven-Spitze und knüpft eine Verbindung von der Oude Haven über Leuvehaven und Markthal bis zum Museumpark."]
+      [`Wir beginnen am Oude Haven. Das <em>Witte Huis</em> steht hell und schmal zwischen den Neubauten, ein Hochhaus von 1898, das aussieht, als hätte es sich aus einem anderen Jahrhundert hierher verirrt. Aus der Nähe spürt man, wie ungewöhnlich kühn dieser Turm für seine Zeit war.`,`Bemerkenswert ist, dass es das Bombardement von 1940, das fast die gesamte Innenstadt auslöschte, überstanden hat. Es wirkt heute wie ein Anker: der Punkt, von dem aus sich die zerstörte und neu erfundene Stadt lesen lässt.`],
+      [`Ein paar Schritte weiter kippt die Welt um 45 Grad. Piet Bloms <em>Kubuswoningen</em> sitzen wie aufgestellte Würfel auf ihren Pfeilern und überbauen die Straße, als wären sie ein Wald aus Häusern. Man läuft buchstäblich unter dem Wohnen hindurch.`,`In der Kijk-Kubus, der begehbaren Musterwohnung, merkt man schnell, wie radikal die Idee ist: kaum eine senkrechte Wand, jedes Möbelstück eine Verhandlung mit der Geometrie. Strukturalismus zum Anfassen.`],
+      [`Die <em>Markthal</em> ist ein Hufeisen aus Wohnungen, das sich über eine offene Markthalle spannt. Von außen ein grauer Bogen, innen ein Farbrausch: die 11.000 m² große Deckenkunst <em>Hoorn des Overvloeds</em> wölbt sich über Käse, Blumen und Fischständen.`,`Spannend ist die Doppelnatur. Hier wohnen Menschen direkt über dem Markt, mit Fenstern, die in die Halle blicken. Markt und Wohnen, sonst getrennt, werden in einem einzigen Baukörper kurzgeschlossen.`],
+      [`Über die Brücke auf das <em>Wijnhaveneiland</em>. Der <em>Red Apple</em> markiert die Inselspitze mit einem schlanken Wohnturm, dessen rote Aluminium-Lamellen bei jedem Schritt ihre Dichte zu ändern scheinen.`,`Der Turm steht auf einem niedrigeren Riegel, der den Block schließt. Aus der Distanz ein Signal, aus der Nähe ein präzise gefügtes Stück Fassade. Rot ist hier kein Zufall, sondern Adresse.`],
+      [`Das <em>Wijnhaveneiland</em> selbst ist das eigentliche Thema: eine Nachkriegs-Halbinsel, die in den letzten zwei Jahrzehnten neu verdichtet wurde. Türme unterschiedlicher Höhe stehen auf einem gemeinsamen Raster und lassen schmale Gassen und Höfe frei.`,`Man merkt, dass hier nicht ein einzelnes Haus, sondern eine Spielregel entworfen wurde. Der Masterplan gibt das Maß vor, die einzelnen Architekten füllen es. Dichte ohne Monotonie, das ist die Wette dieses Quartiers.`],
+      [`Der <em>EY</em>-Bau zeigt die andere Seite des Quartiers: das Arbeiten. Eine ruhige, klar gerasterte Bürofassade, die sich bewusst zurücknimmt und dem Wasser den Vortritt lässt.`,`Interessant ist das Erdgeschoss, der Punkt, an dem das große Bürohaus den öffentlichen Raum berührt. Hier entscheidet sich, ob ein Quartier am Feierabend lebt oder verstummt. (Architekt und Jahr vor Ort prüfen.)`],
+      [`Am Ende kehren wir ans Wasser zurück. <em>CasaNova</em> ist kein Hochhaus, sondern ein leichter Pavillon am Kai, der Punkt, an dem die Architektur Pause macht und der Stadtraum selbst zur Bühne wird.`,`Von hier aus liegt die ganze Route noch einmal im Blick: der weiße Turm von 1898, die gekippten Würfel, der Bogen der Markthal, das rote Signal auf der Insel. Sieben Bauten, ein Quartier, eine Wasserkante.`]
     ],
     extraSubs: [], extraFacts: [], extraParas: []
   },
@@ -3366,9 +3429,9 @@ const JL = {
   en:{voices:'Voice on site',steckbrief:'Fact sheet',sources:'Sources',model:'3D model',modelHint:'Drag to rotate',modelSoon:'3D model coming'}
 };
 const SB_LABELS = {
-  de:{architekt:'Architekt',fertigstellung:'Fertigstellung',flaeche:'Fläche / Maß',kosten:'Kosten',einbindung:'Städtebauliche Einbindung',konzept:'Konzeptioneller Ansatz',programm:'Raumprogramm',konstruktion:'Konstruktion',resuemee:'Resümee / Bewertung'},
-  nl:{architekt:'Architect',fertigstellung:'Oplevering',flaeche:'Oppervlak / maat',kosten:'Kosten',einbindung:'Stedenbouwkundige inbedding',konzept:'Concept',programm:'Programma',konstruktion:'Constructie',resuemee:'Résumé / oordeel'},
-  en:{architekt:'Architect',fertigstellung:'Completed',flaeche:'Area / size',kosten:'Cost',einbindung:'Urban integration',konzept:'Concept',programm:'Programme',konstruktion:'Construction',resuemee:'Résumé / assessment'}
+  de:{architekt:'Architekt',fertigstellung:'Fertigstellung',flaeche:'Fläche / Maß',kosten:'Kosten',einbindung:'Städtebauliche Einbindung',konzept:'Konzeptioneller Ansatz',programm:'Raumprogramm',konstruktion:'Konstruktion'},
+  nl:{architekt:'Architect',fertigstellung:'Oplevering',flaeche:'Oppervlak / maat',kosten:'Kosten',einbindung:'Stedenbouwkundige inbedding',konzept:'Concept',programm:'Programma',konstruktion:'Constructie'},
+  en:{architekt:'Architect',fertigstellung:'Completed',flaeche:'Area / size',kosten:'Cost',einbindung:'Urban integration',konzept:'Concept',programm:'Programme',konstruktion:'Construction'}
 };
 
 function openModal(idx, _placeObj){
@@ -3405,7 +3468,7 @@ function openModal(idx, _placeObj){
 
   /* Steckbrief (Pflichtangaben) */
   const sb = s.steckbrief;
-  const sbOrder = ['architekt','fertigstellung','flaeche','kosten','einbindung','konzept','programm','konstruktion','resuemee'];
+  const sbOrder = ['architekt','fertigstellung','flaeche','kosten','einbindung','konzept','programm','konstruktion'];
   const sbRows = sb ? sbOrder.filter(k=>sb[k]).map(k=>
       `<div class="sb-row"><dt>${sbl[k]}</dt><dd>${sb[k]}</dd></div>`).join('') : '';
   const sbHtml = sbRows
