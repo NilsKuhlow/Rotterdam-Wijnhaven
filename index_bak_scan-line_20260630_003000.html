@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Wijnhaven, Feldjournal</title>
 <meta name="description" content="Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, vom Witte Huis bis CasaNova.">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#F4F1EA">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Wijnhaven">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.svg">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23FFFFFF'/%3E%3Cg transform='translate(50 52)' fill='none' stroke='%230A0A0A' stroke-width='3.4' stroke-linejoin='round'%3E%3Crect x='-19' y='-19' width='38' height='38' transform='rotate(45)'/%3E%3C/g%3E%3Crect x='42' y='44' width='16' height='16' transform='rotate(45 50 52)' fill='%23FFED29'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23F4F1EA'/%3E%3Cg transform='translate(50 52)' fill='none' stroke='%2314130F' stroke-width='3.4' stroke-linejoin='round'%3E%3Crect x='-19' y='-19' width='38' height='38' transform='rotate(45)'/%3E%3C/g%3E%3Cg transform='translate(50 52)' fill='none' stroke='%239E3B2E' stroke-width='2.2' stroke-linejoin='round'%3E%3Crect x='-9' y='-9' width='18' height='18' transform='rotate(45)'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Quiet Precision: Markenschrift ist Helvetica Neue (auf Apple-Geräten systemeigen, daher
@@ -130,7 +130,7 @@ body {
 
 /* ── Fan segments ── */
 .segment {
-  fill:none; stroke:var(--ink-1); stroke-width:2; stroke-linecap:square;
+  fill:none; stroke:var(--terra); stroke-width:1.5; stroke-linecap:round;
   stroke-dasharray:320; stroke-dashoffset:320;
   animation:drawSeg 1.8s cubic-bezier(.6,0,.15,1) forwards;
 }
@@ -161,10 +161,10 @@ body {
 
 /* ── Centre dot ── */
 .center-dot {
-  fill:var(--accent);
+  fill:var(--terra);
   opacity:0;
-  transform-origin:300px 180px;
-  animation:dotIn .55s cubic-bezier(0.2,0,0,1) forwards;
+  transform-origin:300px 320px;
+  animation:dotIn .55s cubic-bezier(.34,1.56,.64,1) forwards;
   animation-delay:1.5s;
 }
 @keyframes dotIn {
@@ -237,8 +237,8 @@ body {
    PROGRESS BAR
 ═══════════════════════════════════════════ */
 #progress-bar {
-  position:fixed; top:0; left:0; height:3px;
-  background:var(--accent); z-index:200; pointer-events:none;
+  position:fixed; top:0; left:0; height:1px;
+  background:var(--ink); z-index:200; pointer-events:none;
   width:0;
 }
 
@@ -325,6 +325,7 @@ body {
   background:rgba(10,10,10,.84);
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
+  border:1px solid rgba(255,255,255,.13);
   border-radius:0;
   padding:1.2rem 2rem 1.1rem;
   display:flex; flex-direction:column; align-items:center; gap:.8rem;
@@ -440,8 +441,8 @@ body {
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .mic-sub {
-  font-family:var(--font-sans); font-style:normal;
-  font-size:.82rem; color:var(--ink-3); margin-top:.1rem;
+  font-family:var(--font-display); font-style:italic;
+  font-size:.82rem; color:var(--muted); margin-top:.1rem;
 }
 .mic-close {
   width:30px; height:30px; border-radius:50%;
@@ -700,7 +701,7 @@ body {
 .drawer-left { display:flex; flex-direction:column; gap:.2rem; flex:1; min-width:0; }
 .drawer-num  {
   font-family:var(--font-sans); font-weight:600;
-  font-size:.6rem; letter-spacing:.18em; text-transform:uppercase;
+  font-size:.6rem; letter-spacing:.15em; text-transform:uppercase;
   color:var(--terra); line-height:1;
 }
 .drawer-name {
@@ -709,8 +710,8 @@ body {
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .drawer-sub {
-  font-family:var(--font-sans); font-style:normal; font-weight:400;
-  font-size:.8rem; color:var(--ink-3);
+  font-family:var(--font-display); font-style:italic;
+  font-size:.8rem; color:var(--muted);
 }
 .drawer-btn {
   font-family:var(--font-sans); font-weight:500;
@@ -826,6 +827,7 @@ body {
   width:100%; display:flex; align-items:center; gap:.9rem;
   padding:.85rem 1.4rem;
   border:none; background:transparent; cursor:pointer; text-align:left;
+  border-bottom:1px solid rgba(0,0,0,.045);
   -webkit-tap-highlight-color:transparent;
   transition:background .15s;
 }
@@ -850,8 +852,8 @@ body {
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .pp-sub {
-  font-family:var(--font-sans); font-style:normal;
-  font-size:.8rem; color:var(--ink-3); display:block;
+  font-family:var(--font-display); font-style:italic;
+  font-size:.8rem; color:var(--muted); display:block;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .pp-chevron {
@@ -882,6 +884,7 @@ body {
 .journey-hint-inner {
   background:rgba(10,10,10,.78);
   backdrop-filter:none;
+  border:1px solid rgba(255,255,255,.12);
   border-radius:0;
   padding:.4rem 1rem .4rem .85rem;
   display:flex; align-items:center; gap:.55rem;
@@ -936,16 +939,16 @@ body {
    MAP SVG  styles
 ═══════════════════════════════════════════ */
 .city-block  { fill:var(--ink); stroke:none; }   /* Schwarzplan: solid ink figure on paper ground */
-.water-fill  { fill:#EBEBEB; }       /* Maas / harbour basins */
+.water-fill  { fill:#3C4A52; opacity:.10; }       /* Maas / harbour basins */
 .piazza-fill { fill:var(--brick); opacity:.16; }
-.street      { fill:none; stroke:var(--paper-3); stroke-width:3.5; }
+.street      { fill:none; stroke:#d8d2c4; stroke-width:3.5; }
 .route-future{ fill:none; stroke:var(--ink); stroke-width:1.5; stroke-dasharray:5 5; opacity:.16; }
 .route-trail { fill:none; stroke:var(--ink-1); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:.9; }
 .stop-ring   { fill:none; stroke:var(--ink); stroke-width:1; opacity:.18; }
 .stop-dot    { fill:var(--ink); cursor:pointer; }
-.stop-dot.visited    { fill:var(--ink-4); opacity:.9; }
+.stop-dot.visited    { fill:#9a9484; opacity:.85; }
 .stop-dot.active-dot { fill:var(--accent); }
-.lbl-district{ font-family:var(--font-display); font-style:normal; font-size:11px; fill:rgba(0,0,0,.45); letter-spacing:.1em;
+.lbl-district{ font-family:var(--font-display); font-style:italic; font-size:11px; fill:rgba(0,0,0,.45); letter-spacing:.1em;
                stroke:#fff; stroke-width:2.5px; paint-order:stroke fill; }
 .lbl-street  { font-family:var(--font-sans); font-size:9px; fill:#888;
                stroke:#fff; stroke-width:2.5px; paint-order:stroke fill; }
@@ -1034,6 +1037,7 @@ body {
 .photo-hint-inner {
   background:rgba(0,0,0,.60);
   backdrop-filter:none; -webkit-backdrop-filter:none;
+  border:1px solid rgba(255,255,255,.12);
   border-radius:0;
   padding:.55rem 1.3rem .55rem 1rem;
   display:flex; align-items:center; gap:.65rem;
@@ -1051,7 +1055,7 @@ body {
 .gallery-slide  { min-width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
 .slide-bg    { position:absolute; inset:0; }
 .slide-icon  { position:absolute; font-size:3.5rem; opacity:.2; }
-.slide-cap   { position:absolute; bottom:0; left:0; right:0; background:transparent; padding:2rem 1.2rem .8rem; font-family:var(--font-sans); font-style:normal; font-size:.82rem; color:rgba(255,255,255,.9); }
+.slide-cap   { position:absolute; bottom:0; left:0; right:0; background:transparent; padding:2rem 1.2rem .8rem; font-family:var(--font-display); font-style:italic; font-size:.82rem; color:rgba(255,255,255,.9); }
 .gallery-nav { position:absolute; bottom:.65rem; left:50%; transform:translateX(-50%); display:flex; gap:.4rem; z-index:2; }
 .gal-pip     { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.35); cursor:pointer; transition:background .2s, transform .2s; }
 .gal-pip.on  { background:#fff; transform:scale(1.3); }
@@ -1063,14 +1067,14 @@ body {
 @keyframes galProg { from{width:0%} to{width:100%} }
 
 
-.modal-num   { font-family:var(--font-sans); font-weight:600; font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--terra); margin-bottom:.4rem; }
+.modal-num   { font-family:var(--font-sans); font-weight:600; font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--terra); margin-bottom:.4rem; }
 .modal-title { font-family:var(--font-display); font-weight:600; font-size:2rem; line-height:1.02; color:var(--ink); }
 .modal-sub   { font-family:var(--font-sans); font-style:normal; font-weight:400; font-size:.9rem; color:var(--ink-3); display:block; margin-top:.3rem; }
 .modal-rule  { width:0; height:0; background:transparent; margin:1.4rem 0; }
 .modal-text  { font-family:var(--font-sans); font-size:.82rem; line-height:1.95; color:var(--dim); margin-bottom:.9rem; font-weight:400; }
 .modal-facts { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-top:1.4rem; }
 .fact        { background:var(--paper-1); padding:.9rem 1rem; }
-.fact-lbl    { font-family:var(--font-sans); font-size:.55rem; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-3); margin-bottom:.2rem; }
+.fact-lbl    { font-family:var(--font-sans); font-size:.55rem; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:.2rem; }
 .fact-val    { font-family:var(--font-display); font-size:1rem; color:var(--ink); }
 
 /* ── Feldjournal-Bausteine im Eintrag ── */
@@ -1084,8 +1088,8 @@ body {
 }
 .voices { margin:1.6rem 0 .4rem; padding-top:1.2rem; border-top:1px solid var(--border); }
 .voice {
-  font-family:var(--font-display); font-style:italic; font-weight:300; font-size:1.3rem; line-height:1.4;
-  color:var(--ink-1); background:var(--paper-1); padding:1.4rem 1.5rem; margin-bottom:.6rem;
+  font-family:var(--font-display); font-style:italic; font-size:1.15rem; line-height:1.5;
+  color:var(--ink); padding-left:1rem; border-left:2px solid var(--brick); margin-bottom:.6rem;
 }
 .voice cite {
   display:block; margin-top:.5rem; font-family:var(--font-sans); font-style:normal;
@@ -1176,8 +1180,13 @@ body {
    down the screen during the map reveal
 ═══════════════════════════════════════════ */
 #scan-line {
-  position:fixed; top:0; left:0; right:0; height:3px;
-  background:var(--accent);
+  position:fixed; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,
+    transparent       0%,
+    var(--terra)     22%,
+    rgba(255,255,255,.6) 50%,
+    var(--terra)     78%,
+    transparent     100%);
   z-index:15; pointer-events:none;
   opacity:0; transform:translateY(-2px);
 }
@@ -1213,7 +1222,7 @@ body {
   -webkit-tap-highlight-color:transparent;
   user-select:none;
 }
-.lang-btn.active  { color:var(--ink-1); }
+.lang-btn.active  { color:var(--brick); }
 .lang-btn:hover   { color:rgba(20,19,15,.75); }
 .lang-sep {
   color:rgba(20,19,15,.2); font-size:.4rem;
@@ -1221,7 +1230,7 @@ body {
 }
 /* light context, when map / white-bg is showing */
 #lang-switch.light .lang-btn        { color:rgba(0,0,0,.3); text-shadow:none; }
-#lang-switch.light .lang-btn.active { color:var(--ink-1); }
+#lang-switch.light .lang-btn.active { color:var(--terra); }
 #lang-switch.light .lang-btn:hover  { color:rgba(0,0,0,.7); }
 #lang-switch.light .lang-sep        { color:rgba(0,0,0,.15); }
 
@@ -1250,14 +1259,19 @@ body {
 <div id="loader">
   <div class="loader-glow"></div>
   <div class="loader-inner">
-    <!-- Wijnhaven-Marke: gekipptes Quadrat (Kubuswoningen-Verweis), zeichnet sich ein -->
     <svg class="campo-wrap" viewBox="0 0 600 360" aria-hidden="true">
-      <path class="segment" d="M300 86 L394 180"/>
-      <path class="segment" d="M394 180 L300 274"/>
-      <path class="segment" d="M300 274 L206 180"/>
-      <path class="segment" d="M206 180 L300 86"/>
-      <path class="campo-arc" d="M300 134 L346 180 L300 226 L254 180 Z"/>
-      <circle class="center-dot" cx="300" cy="180" r="7"/>
+      <path class="segment" d="M300 320 Q184 286 58 236"/>
+      <path class="segment" d="M300 320 Q200 278 88 206"/>
+      <path class="segment" d="M300 320 Q220 270 126 174"/>
+      <path class="segment" d="M300 320 Q244 260 176 144"/>
+      <path class="segment" d="M300 320 Q272 248 244 118"/>
+      <path class="segment" d="M300 320 Q328 248 356 118"/>
+      <path class="segment" d="M300 320 Q356 260 424 144"/>
+      <path class="segment" d="M300 320 Q380 270 474 174"/>
+      <path class="segment" d="M300 320 Q400 278 512 206"/>
+      <path class="segment" d="M300 320 Q416 286 542 236"/>
+      <path class="campo-arc"  d="M58 236 C 148 48 452 48 542 236"/>
+      <circle class="center-dot" cx="300" cy="320" r="3.5"/>
     </svg>
     <div class="loader-line"></div>
     <h1 class="loader-title">
@@ -1376,51 +1390,51 @@ body {
     <g class="plan-layer">
       <!-- Wasser: Nieuwe Maas + Hafenbecken -->
       <path class="water-fill" d="M0,648 L1000,582 L1000,750 L0,750 Z"/>
-      <rect class="water-fill" x="356" y="286" width="116" height="150"/>
-      <rect class="water-fill" x="244" y="452" width="210" height="80" />
-      <rect class="water-fill" x="600" y="250" width="150" height="70" />
+      <rect class="water-fill" x="356" y="286" width="116" height="150" rx="5"/>
+      <rect class="water-fill" x="244" y="452" width="210" height="80"  rx="5"/>
+      <rect class="water-fill" x="600" y="250" width="150" height="70"  rx="5"/>
 
       <!-- Baublöcke (Figur) -->
       <g class="city-block">
-        <rect x="150" y="120" width="78"  height="54"/>
-        <rect x="244" y="120" width="120" height="54"/>
-        <rect x="386" y="120" width="70"  height="40"/>
-        <rect x="486" y="120" width="58"  height="40"/>
-        <rect x="150" y="196" width="78"  height="70"/>
-        <rect x="244" y="196" width="92"  height="70"/>
-        <rect x="700" y="120" width="150" height="62"/>
-        <rect x="700" y="200" width="92"  height="64"/>
-        <rect x="812" y="200" width="60"  height="64"/>
+        <rect x="150" y="120" width="78"  height="54" rx="2"/>
+        <rect x="244" y="120" width="120" height="54" rx="2"/>
+        <rect x="386" y="120" width="70"  height="40" rx="2"/>
+        <rect x="486" y="120" width="58"  height="40" rx="2"/>
+        <rect x="150" y="196" width="78"  height="70" rx="2"/>
+        <rect x="244" y="196" width="92"  height="70" rx="2"/>
+        <rect x="700" y="120" width="150" height="62" rx="2"/>
+        <rect x="700" y="200" width="92"  height="64" rx="2"/>
+        <rect x="812" y="200" width="60"  height="64" rx="2"/>
         <!-- 0 Witte Huis: schlanker Turm am Oude Haven -->
-        <rect x="414" y="214" width="32"  height="64"/>
+        <rect x="414" y="214" width="32"  height="64" rx="1"/>
         <!-- 2 Markthal: großer gerundeter Bogenblock -->
-        <rect x="572" y="132" width="86"  height="60"/>
+        <rect x="572" y="132" width="86"  height="60" rx="24"/>
         <!-- Kontext Blaak -->
-        <rect x="150" y="296" width="92"  height="64"/>
-        <rect x="150" y="382" width="92"  height="78"/>
-        <rect x="492" y="300" width="92"  height="58"/>
-        <rect x="600" y="340" width="120" height="70"/>
-        <rect x="752" y="340" width="92"  height="70"/>
+        <rect x="150" y="296" width="92"  height="64" rx="2"/>
+        <rect x="150" y="382" width="92"  height="78" rx="2"/>
+        <rect x="492" y="300" width="92"  height="58" rx="2"/>
+        <rect x="600" y="340" width="120" height="70" rx="2"/>
+        <rect x="752" y="340" width="92"  height="70" rx="2"/>
         <!-- 3 Red Apple: Wohnturm auf Wijnhaveneiland -->
-        <rect x="548" y="324" width="26"  height="74"/>
+        <rect x="548" y="324" width="26"  height="74" rx="1"/>
         <!-- 4 Wijnhaven-Türme: Doppelturm -->
-        <rect x="452" y="384" width="24"  height="58"/>
-        <rect x="482" y="380" width="24"  height="62"/>
+        <rect x="452" y="384" width="24"  height="58" rx="1"/>
+        <rect x="482" y="380" width="24"  height="62" rx="1"/>
         <!-- 5 EY: Büroblock -->
-        <rect x="368" y="448" width="46"  height="46"/>
-        <rect x="300" y="392" width="64"  height="50"/>
+        <rect x="368" y="448" width="46"  height="46" rx="2"/>
+        <rect x="300" y="392" width="64"  height="50" rx="2"/>
         <!-- 6 CasaNova: Pavillon am Wasser -->
-        <rect x="284" y="528" width="34"  height="28"/>
-        <rect x="600" y="448" width="110" height="56"/>
-        <rect x="752" y="448" width="92"  height="56"/>
+        <rect x="284" y="528" width="34"  height="28" rx="2"/>
+        <rect x="600" y="448" width="110" height="56" rx="2"/>
+        <rect x="752" y="448" width="92"  height="56" rx="2"/>
       </g>
 
       <!-- 1 Kubuswoningen: gekippte Würfel über dem Blaak -->
       <g class="city-block">
-        <rect x="506" y="186" width="22" height="22" transform="rotate(45 517 197)"/>
-        <rect x="528" y="186" width="22" height="22" transform="rotate(45 539 197)"/>
-        <rect x="517" y="206" width="22" height="22" transform="rotate(45 528 217)"/>
-        <rect x="495" y="206" width="22" height="22" transform="rotate(45 506 217)"/>
+        <rect x="506" y="186" width="22" height="22" rx="1" transform="rotate(45 517 197)"/>
+        <rect x="528" y="186" width="22" height="22" rx="1" transform="rotate(45 539 197)"/>
+        <rect x="517" y="206" width="22" height="22" rx="1" transform="rotate(45 528 217)"/>
+        <rect x="495" y="206" width="22" height="22" rx="1" transform="rotate(45 506 217)"/>
       </g>
 
       <text class="plan-note" x="826" y="724">Platzhalter · voorlopig</text>
@@ -1618,7 +1632,7 @@ body {
           <path d="M6 11 L1 11" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
           <path d="M3.5 8.5 L1 11 L3.5 13.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
           <!-- finger -->
-          <rect x="12" y="3" width="14" height="16" fill="white" opacity=".8"/>
+          <rect x="12" y="3" width="14" height="16" rx="7" fill="white" opacity=".8"/>
           <!-- right arrow -->
           <path d="M32 11 L37 11" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
           <path d="M34.5 8.5 L37 11 L34.5 13.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2285,7 +2299,7 @@ const LANG = {
     ppRoute:       'Route',
     ppExtra:       'Weitere Orte',
     placesBtnLbl:  'Orte',
-    shareCopied:   'Link kopiert',
+    shareCopied:   'Link kopiert ✓',
     stopSubs: [
       'Willem Molenbroek · 1898',
       'Piet Blom · 1978–84',
@@ -2340,7 +2354,7 @@ const LANG = {
     ppRoute:       'Route',
     ppExtra:       'Overige plekken',
     placesBtnLbl:  'Plekken',
-    shareCopied:   'Link gekopieerd',
+    shareCopied:   'Link gekopieerd ✓',
     stopSubs: [
       'Willem Molenbroek · 1898',
       'Piet Blom · 1978–84',
@@ -2395,7 +2409,7 @@ const LANG = {
     ppRoute:       'Route',
     ppExtra:       'Other places',
     placesBtnLbl:  'Places',
-    shareCopied:   'Link copied',
+    shareCopied:   'Link copied ✓',
     stopSubs: [
       'Willem Molenbroek · 1898',
       'Piet Blom · 1978–84',
@@ -2695,7 +2709,7 @@ function shareStop(){
     navigator.share(shareData).catch(function(){/* user cancelled, ignore */});
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(shareData.url)
-      .then(function(){ showToast(lang.shareCopied || 'Link kopiert', 2500); })
+      .then(function(){ showToast(lang.shareCopied || 'Link kopiert \u2713', 2500); })
       .catch(function(){ showToast('wijnhaven.com', 3500); });
   } else {
     showToast('wijnhaven.com', 3500);
@@ -3649,18 +3663,18 @@ document.addEventListener('keydown', e => {
   const panel = document.createElement('div');
   panel.style.cssText = `
     position:fixed; bottom:6rem; left:50%; transform:translateX(-50%);
-    z-index:9999; background:var(--ink-1); border-radius:0;
+    z-index:9999; background:#1A1209; border-radius:0;
     display:flex; align-items:center; gap:.5rem; padding:.5rem .9rem;
     font-family:var(--font-sans); font-size:.6rem; letter-spacing:.12em;
-    color:var(--paper-1); text-transform:uppercase; box-shadow:none;
+    color:#E8D5B0; text-transform:uppercase; box-shadow:0 4px 20px rgba(0,0,0,.4);
     white-space:nowrap;
   `;
   panel.innerHTML = `
     <span style="color:#C49A3C;">⬤</span>
     <span>Debug-GPS</span>
-    <button id="dbg-start" style="background:var(--accent);color:var(--accent-fg);border:none;border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">▶ Start</button>
-    <button id="dbg-step"  style="background:rgba(255,255,255,.1);color:var(--paper-1);border:none;border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">Schritt</button>
-    <button id="dbg-reset" style="background:rgba(255,255,255,.1);color:var(--paper-1);border:none;border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">↺</button>
+    <button id="dbg-start" style="background:#C4622D;color:white;border:none;border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">▶ Start</button>
+    <button id="dbg-step"  style="background:rgba(255,255,255,.1);color:#E8D5B0;border:1px solid rgba(255,255,255,.2);border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">Schritt</button>
+    <button id="dbg-reset" style="background:rgba(255,255,255,.1);color:#E8D5B0;border:1px solid rgba(255,255,255,.2);border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">↺</button>
     <span id="dbg-pos" style="color:#9A8878;"></span>
   `;
   document.body.appendChild(panel);

@@ -10,3 +10,6 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# QP verification shots
+_qp*.png

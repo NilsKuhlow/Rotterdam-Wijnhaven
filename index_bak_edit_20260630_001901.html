@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Wijnhaven, Feldjournal</title>
 <meta name="description" content="Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, vom Witte Huis bis CasaNova.">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#F4F1EA">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Wijnhaven">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.svg">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23FFFFFF'/%3E%3Cg transform='translate(50 52)' fill='none' stroke='%230A0A0A' stroke-width='3.4' stroke-linejoin='round'%3E%3Crect x='-19' y='-19' width='38' height='38' transform='rotate(45)'/%3E%3C/g%3E%3Crect x='42' y='44' width='16' height='16' transform='rotate(45 50 52)' fill='%23FFED29'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23F4F1EA'/%3E%3Cg transform='translate(50 52)' fill='none' stroke='%2314130F' stroke-width='3.4' stroke-linejoin='round'%3E%3Crect x='-19' y='-19' width='38' height='38' transform='rotate(45)'/%3E%3C/g%3E%3Cg transform='translate(50 52)' fill='none' stroke='%239E3B2E' stroke-width='2.2' stroke-linejoin='round'%3E%3Crect x='-9' y='-9' width='18' height='18' transform='rotate(45)'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Quiet Precision: Markenschrift ist Helvetica Neue (auf Apple-Geräten systemeigen, daher
@@ -85,7 +85,7 @@
 html, body { width:100%; overflow-x:hidden; }
 
 body {
-  font-family:var(--font-sans);
+  font-family:'Hanken Grotesk',sans-serif;
   font-weight:400;
   background:var(--paper);   /* paper base, editorial field journal */
   color:var(--ink);
@@ -110,7 +110,7 @@ body {
   position:fixed;
   width:min(92vw,560px); aspect-ratio:1;
   border-radius:50%;
-  background:transparent;
+  background:radial-gradient(circle, rgba(158,59,46,.07) 0%, rgba(158,59,46,.025) 42%, transparent 66%);
   top:50%; left:50%; transform:translate(-50%,-54%);
   pointer-events:none;
   animation:glowPulse 2.6s ease-in-out infinite;
@@ -130,7 +130,7 @@ body {
 
 /* ── Fan segments ── */
 .segment {
-  fill:none; stroke:var(--ink-1); stroke-width:2; stroke-linecap:square;
+  fill:none; stroke:var(--terra); stroke-width:1.5; stroke-linecap:round;
   stroke-dasharray:320; stroke-dashoffset:320;
   animation:drawSeg 1.8s cubic-bezier(.6,0,.15,1) forwards;
 }
@@ -152,7 +152,7 @@ body {
 
 /* ── Closing arc ── */
 .campo-arc {
-  fill:none; stroke:var(--ink-4); stroke-width:1; stroke-linecap:round;
+  fill:none; stroke:rgba(196,98,45,.3); stroke-width:1; stroke-linecap:round;
   stroke-dasharray:700; stroke-dashoffset:700;
   animation:drawArc 1.1s ease forwards;
   animation-delay:1.35s;
@@ -161,10 +161,10 @@ body {
 
 /* ── Centre dot ── */
 .center-dot {
-  fill:var(--accent);
+  fill:var(--terra);
   opacity:0;
-  transform-origin:300px 180px;
-  animation:dotIn .55s cubic-bezier(0.2,0,0,1) forwards;
+  transform-origin:300px 320px;
+  animation:dotIn .55s cubic-bezier(.34,1.56,.64,1) forwards;
   animation-delay:1.5s;
 }
 @keyframes dotIn {
@@ -175,7 +175,7 @@ body {
 /* ── Divider ── */
 .loader-line {
   height:1px; width:100%; align-self:stretch;
-  background:var(--paper-3);
+  background:linear-gradient(90deg,transparent,rgba(196,98,45,.4),transparent);
   transform:scaleX(0); transform-origin:left center; opacity:0;
   animation:lineGrow .65s ease forwards;
   animation-delay:1.55s;
@@ -188,7 +188,7 @@ body {
 
 /* ── Title, per-character reveal ── */
 .loader-title {
-  font-family:var(--font-display); font-weight:300;
+  font-family:'Fraunces',serif; font-weight:300;
   font-size:clamp(2.4rem,9vw,4.4rem); letter-spacing:.12em;
   color:var(--ink);
   display:flex; gap:0;
@@ -212,7 +212,7 @@ body {
 
 /* ── Subtitle ── */
 .loader-sub {
-  font-family:var(--font-sans); font-weight:400;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:400;
   font-size:.58rem; letter-spacing:.45em; text-transform:uppercase;
   color:var(--terra); margin:0;
   opacity:0;
@@ -225,7 +225,7 @@ body {
 }
 /* ── Authors ── */
 .loader-authors {
-  font-family:var(--font-sans); font-weight:400;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:400;
   font-size:.5rem; letter-spacing:.2em; text-transform:uppercase;
   color:rgba(20,19,15,.4); margin:.1rem 0 0;
   opacity:0;
@@ -237,8 +237,8 @@ body {
    PROGRESS BAR
 ═══════════════════════════════════════════ */
 #progress-bar {
-  position:fixed; top:0; left:0; height:3px;
-  background:var(--accent); z-index:200; pointer-events:none;
+  position:fixed; top:0; left:0; height:1px;
+  background:var(--ink); z-index:200; pointer-events:none;
   width:0;
 }
 
@@ -252,10 +252,10 @@ body {
   padding:.45rem .9rem .45rem .65rem;
   border:1px solid var(--border);
   background:rgba(255,255,255,.95);
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-  border-radius:0;
-  font-family:var(--font-sans); font-size:.58rem;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-radius:2rem;
+  font-family:'Hanken Grotesk',sans-serif; font-size:.58rem;
   font-weight:500; letter-spacing:.08em; text-transform:uppercase;
   color:var(--ink); cursor:pointer;
   opacity:0; pointer-events:none;
@@ -298,8 +298,8 @@ body {
 #track-toast {
   position:fixed; top:3.4rem; right:1rem; z-index:200;
   background:var(--ink); color:var(--white);
-  font-family:var(--font-sans); font-size:.62rem; font-weight:400; letter-spacing:.02em;
-  padding:.45rem .95rem; border-radius:0;
+  font-family:'Hanken Grotesk',sans-serif; font-size:.62rem; font-weight:400; letter-spacing:.02em;
+  padding:.45rem .95rem; border-radius:.6rem;
   max-width:56vw; text-align:right;
   opacity:0; pointer-events:none; transition:opacity .28s;
 }
@@ -323,13 +323,14 @@ body {
 }
 .map-hint-inner {
   background:rgba(10,10,10,.84);
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-  border-radius:0;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:1.3rem;
   padding:1.2rem 2rem 1.1rem;
   display:flex; flex-direction:column; align-items:center; gap:.8rem;
   min-width:200px;
-  box-shadow:none;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);
 }
 .map-hint-icons {
   display:flex; align-items:center; gap:1.5rem;
@@ -340,14 +341,14 @@ body {
 }
 .hint-icon { display:block; }
 .map-hint-label {
-  font-family:var(--font-sans);
+  font-family:'Hanken Grotesk',sans-serif;
   font-size:.62rem; font-weight:500;
   letter-spacing:.1em; text-transform:uppercase;
   color:rgba(255,255,255,.5);
   text-align:center;
 }
 .map-hint-text {
-  font-family:var(--font-sans);
+  font-family:'Hanken Grotesk',sans-serif;
   font-size:.82rem; font-weight:400;
   letter-spacing:.01em;
   color:rgba(255,255,255,.9);
@@ -362,10 +363,10 @@ body {
   padding:.42rem .85rem .42rem .6rem;
   border:1px solid var(--border);
   background:rgba(255,255,255,.95);
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-  border-radius:0;
-  font-family:var(--font-sans); font-size:.58rem;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-radius:2rem;
+  font-family:'Hanken Grotesk',sans-serif; font-size:.58rem;
   font-weight:500; letter-spacing:.08em; text-transform:uppercase;
   color:var(--ink); cursor:pointer;
   opacity:0; pointer-events:none;
@@ -402,9 +403,9 @@ body {
   bottom:0; left:0; right:0;
   z-index:55;                        /* above drawer(50) + touch-layer(48) */
   background:var(--white);
-  border-top:none;
-  border-radius:0;
-  box-shadow:none;
+  border-top:2px solid var(--ink);
+  border-radius:1rem 1rem 0 0;
+  box-shadow:0 -6px 40px rgba(0,0,0,.14);
   transform:translateY(100%);
   transition:transform .42s cubic-bezier(.22,1,.36,1);
   pointer-events:none;
@@ -417,7 +418,7 @@ body {
 .mic-handle {
   width:36px; height:4px;
   background:var(--border);
-  border-radius:0;
+  border-radius:2px;
   margin:.65rem auto 0;
 }
 .mic-body {
@@ -430,18 +431,18 @@ body {
 }
 .mic-meta { flex:1; min-width:0; }
 .mic-num {
-  font-family:var(--font-sans); font-weight:600;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:600;
   font-size:.58rem; letter-spacing:.15em; text-transform:uppercase;
   color:var(--terra); margin-bottom:.25rem;
 }
 .mic-name {
-  font-family:var(--font-display); font-weight:600;
+  font-family:'Fraunces',serif; font-weight:600;
   font-size:1.4rem; line-height:1.1; color:var(--ink);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .mic-sub {
-  font-family:var(--font-sans); font-style:normal;
-  font-size:.82rem; color:var(--ink-3); margin-top:.1rem;
+  font-family:'Fraunces',serif; font-style:italic;
+  font-size:.82rem; color:var(--muted); margin-top:.1rem;
 }
 .mic-close {
   width:30px; height:30px; border-radius:50%;
@@ -460,24 +461,24 @@ body {
   margin-bottom:.8rem;
 }
 .mic-fact {
-  background:var(--sand); border-radius:0;
+  background:var(--sand); border-radius:.35rem;
   padding:.32rem .65rem;
 }
 .mic-fact-lbl {
-  font-family:var(--font-sans);
+  font-family:'Hanken Grotesk',sans-serif;
   font-size:.46rem; letter-spacing:.1em; text-transform:uppercase;
   color:var(--muted); line-height:1; margin-bottom:.18rem;
 }
 .mic-fact-val {
-  font-family:var(--font-sans);
+  font-family:'Hanken Grotesk',sans-serif;
   font-size:.68rem; font-weight:600; color:var(--ink); line-height:1;
 }
 .mic-cta {
   width:100%; padding:.78rem 1.5rem;
   background:var(--ink); color:var(--white);
   border:none; border-bottom:2px solid var(--terra);
-  border-radius:0;
-  font-family:var(--font-sans); font-size:.6rem;
+  border-radius:2rem;
+  font-family:'Hanken Grotesk',sans-serif; font-size:.6rem;
   font-weight:500; letter-spacing:.1em; text-transform:uppercase;
   cursor:pointer; -webkit-tap-highlight-color:transparent;
   transition:opacity .15s;
@@ -515,14 +516,16 @@ body {
 .intro-bg {
   position:absolute; inset:0;
   background:
-    none;
+    radial-gradient(ellipse at 68% 12%, rgba(158,59,46,.06)  0%, transparent 55%),
+    radial-gradient(ellipse at 12% 88%, rgba(60,74,82,.05) 0%, transparent 50%);
 }
 
 /* ── Faint architectural grid (draughting paper) ── */
 .intro-grid {
   position:absolute; inset:0; pointer-events:none;
   background-image:
-    none;
+    linear-gradient(rgba(20,19,15,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,19,15,.035) 1px, transparent 1px);
   background-size:62px 62px;
 }
 
@@ -530,7 +533,7 @@ body {
 .intro-ghost {
   position:absolute;
   bottom:-.10em; left:-.01em;
-  font-family:var(--font-display); font-weight:300; font-style:italic;
+  font-family:'Fraunces',serif; font-weight:300; font-style:italic;
   font-size:clamp(42vw,54vw,58rem);
   line-height:1; letter-spacing:-.03em;
   color:transparent;
@@ -543,7 +546,7 @@ body {
 
 /* ── Kicker ── */
 .intro-kicker {
-  font-family:var(--font-sans); font-weight:500;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
   font-size:.6rem; letter-spacing:.22em; text-transform:uppercase;
   color:var(--terra); margin-bottom:.55rem; position:relative;
   opacity:0; transform:translateY(14px);
@@ -553,19 +556,19 @@ body {
 
 /* ── Main heading ── */
 .intro h1 {
-  font-family:var(--font-display); font-weight:300;
+  font-family:'Fraunces',serif; font-weight:300;
   font-size:clamp(4.8rem,19vw,8.5rem); line-height:.86; letter-spacing:-.02em;
   color:var(--ink); position:relative;
   opacity:0; transform:translateY(20px);
   animation:introUp .95s cubic-bezier(.22,1,.36,1) forwards;
   animation-delay:3.8s;
 }
-.intro h1 em { font-style:normal; font-weight:200; color:var(--ink-1); }
+.intro h1 em { font-style:italic; color:var(--terra); }
 
 /* ── Terra-cotta accent bar ── */
 .intro-accent {
-  width:0; height:4px;
-  background:var(--accent);
+  width:0; height:2px;
+  background:var(--terra);
   margin-top:1.5rem; position:relative;
   animation:accentGrow .8s ease forwards;
   animation-delay:4.05s;
@@ -574,9 +577,9 @@ body {
 
 /* ── Subtitle ── */
 .intro-sub {
-  font-family:var(--font-sans); font-style:normal; font-weight:300;
-  color:var(--ink-2); font-size:1.05rem;
-  margin-top:1rem; line-height:1.7; position:relative;
+  font-family:'Fraunces',serif; font-style:italic;
+  color:rgba(20,19,15,.6); font-size:.95rem;
+  margin-top:.85rem; line-height:1.75; position:relative;
   opacity:0; transform:translateY(12px);
   animation:introUp .8s cubic-bezier(.22,1,.36,1) forwards;
   animation-delay:4.05s;
@@ -584,7 +587,7 @@ body {
 
 /* ── Authors ── */
 .intro-authors {
-  font-family:var(--font-sans); font-weight:400;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:400;
   font-size:.54rem; letter-spacing:.18em; text-transform:uppercase;
   color:rgba(20,19,15,.7);
   margin-top:1.8rem;
@@ -600,7 +603,7 @@ body {
   left:50%; transform:translateX(-50%);
   display:flex; flex-direction:column; align-items:center; gap:.5rem;
   color:rgba(20,19,15,.55); font-size:.55rem; letter-spacing:.2em; text-transform:uppercase;
-  font-family:var(--font-sans); font-weight:500;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
   white-space:nowrap;
   z-index:2;
   opacity:0;
@@ -609,7 +612,7 @@ body {
 }
 .scroll-line {
   width:1px; height:44px;
-  background:var(--ink-3);
+  background:linear-gradient(to bottom, transparent, var(--terra));
   animation:cueDown 1.8s cubic-bezier(.45,0,.55,1) infinite;
 }
 @keyframes cueDown {
@@ -690,36 +693,36 @@ body {
 }
 .drawer-inner {
   background:var(--white);
-  border-top:none;
+  border-top:2px solid var(--ink);
   padding:1.1rem 6vw max(1.1rem, env(safe-area-inset-bottom));
   display:flex; align-items:center; justify-content:space-between; gap:1rem;
-  box-shadow:none;
+  box-shadow:0 -1px 0 var(--border), 0 8px 40px rgba(0,0,0,.07);
   cursor:pointer;
   min-height:var(--drawer-h);
 }
 .drawer-left { display:flex; flex-direction:column; gap:.2rem; flex:1; min-width:0; }
 .drawer-num  {
-  font-family:var(--font-sans); font-weight:600;
-  font-size:.6rem; letter-spacing:.18em; text-transform:uppercase;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:600;
+  font-size:.6rem; letter-spacing:.15em; text-transform:uppercase;
   color:var(--terra); line-height:1;
 }
 .drawer-name {
-  font-family:var(--font-display); font-weight:600;
+  font-family:'Fraunces',serif; font-weight:600;
   font-size:1.45rem; line-height:1.1; color:var(--ink);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .drawer-sub {
-  font-family:var(--font-sans); font-style:normal; font-weight:400;
-  font-size:.8rem; color:var(--ink-3);
+  font-family:'Fraunces',serif; font-style:italic;
+  font-size:.8rem; color:var(--muted);
 }
 .drawer-btn {
-  font-family:var(--font-sans); font-weight:500;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
   font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;
   color:var(--white); background:var(--ink);
-  padding:.65rem 1.2rem; border-radius:0;
+  padding:.65rem 1.2rem; border-radius:2rem;
   white-space:nowrap; flex-shrink:0;
   border:none;
-
+  border-bottom:1.5px solid var(--terra);
 }
 
 /* stop counter, merged into drawer-num, no longer needed as overlay */
@@ -732,13 +735,13 @@ body {
 #places-btn {
   display:flex; align-items:center; gap:.45rem;
   background:rgba(255,255,255,.88);
-  backdrop-filter:none;
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
   border:1px solid rgba(0,0,0,.07);
-  border-radius:0;
+  border-radius:2rem;
   padding:.35rem .85rem .35rem .75rem;
-  box-shadow:none;
+  box-shadow:0 2px 12px rgba(0,0,0,.1);
   cursor:pointer;
-  font-family:var(--font-sans); font-weight:500;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
   font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;
   color:var(--ink);
   opacity:0; pointer-events:none;
@@ -749,7 +752,7 @@ body {
 #nav-crumb.show #places-btn {
   opacity:1; pointer-events:auto;
 }
-#places-btn:hover { box-shadow:none; }
+#places-btn:hover { box-shadow:0 4px 18px rgba(0,0,0,.15); }
 #places-btn svg   { flex-shrink:0; }
 
 /* ═══════════════════════════════════════════
@@ -767,12 +770,12 @@ body {
 .pp-backdrop {
   position:absolute; inset:0;
   background:rgba(0,0,0,.45);
-  backdrop-filter:none;
+  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
 }
 .pp-sheet {
   position:relative; z-index:1;
   background:var(--white);
-  border-radius:0;
+  border-radius:1.4rem 1.4rem 0 0;
   max-height:82vh; overflow:hidden;
   display:flex; flex-direction:column;
   transform:translateY(100%);
@@ -788,7 +791,7 @@ body {
 .pp-handle-zone:active { cursor:grabbing; }
 .pp-drag-handle {
   width:40px; height:4px;
-  background:rgba(0,0,0,.13); border-radius:0;
+  background:rgba(0,0,0,.13); border-radius:2px;
 }
 .pp-header {
   display:flex; align-items:center; justify-content:space-between;
@@ -797,7 +800,7 @@ body {
   border-bottom:1px solid var(--border);
 }
 .pp-title {
-  font-family:var(--font-display); font-weight:600;
+  font-family:'Fraunces',serif; font-weight:600;
   font-size:1.25rem; color:var(--ink);
   margin:0;
 }
@@ -816,7 +819,7 @@ body {
 }
 /* Section headers (Route / Weitere Orte) */
 .pp-section-title {
-  font-family:var(--font-sans); font-weight:600;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:600;
   font-size:.5rem; letter-spacing:.18em; text-transform:uppercase;
   color:var(--terra);
   padding:.9rem 1.4rem .4rem;
@@ -826,16 +829,17 @@ body {
   width:100%; display:flex; align-items:center; gap:.9rem;
   padding:.85rem 1.4rem;
   border:none; background:transparent; cursor:pointer; text-align:left;
+  border-bottom:1px solid rgba(0,0,0,.045);
   -webkit-tap-highlight-color:transparent;
   transition:background .15s;
 }
 .pp-item:hover, .pp-item:active { background:rgba(0,0,0,.035); }
-.pp-item.pp-active { background:var(--paper-1); }
+.pp-item.pp-active { background:rgba(212,115,61,.07); }
 .pp-num {
-  font-family:var(--font-sans); font-weight:600;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:600;
   font-size:.55rem; letter-spacing:.1em;
-  color:var(--accent-fg); background:var(--accent);
-  border-radius:0; padding:.2rem .45rem;
+  color:var(--white); background:var(--terra);
+  border-radius:.5rem; padding:.2rem .45rem;
   flex-shrink:0; min-width:2rem; text-align:center;
   line-height:1.5;
 }
@@ -844,14 +848,14 @@ body {
 }
 .pp-info { flex:1; min-width:0; text-align:left; }
 .pp-name {
-  font-family:var(--font-display); font-weight:600;
+  font-family:'Fraunces',serif; font-weight:600;
   font-size:1.05rem; color:var(--ink); line-height:1.2;
   display:block;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .pp-sub {
-  font-family:var(--font-sans); font-style:normal;
-  font-size:.8rem; color:var(--ink-3); display:block;
+  font-family:'Fraunces',serif; font-style:italic;
+  font-size:.8rem; color:var(--muted); display:block;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .pp-chevron {
@@ -881,8 +885,9 @@ body {
 }
 .journey-hint-inner {
   background:rgba(10,10,10,.78);
-  backdrop-filter:none;
-  border-radius:0;
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:2rem;
   padding:.4rem 1rem .4rem .85rem;
   display:flex; align-items:center; gap:.55rem;
   white-space:nowrap;
@@ -893,7 +898,7 @@ body {
   50%     { transform:translateY(3px); }
 }
 .journey-hint-inner span {
-  font-family:var(--font-sans); font-weight:500;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
   font-size:.58rem; letter-spacing:.12em; text-transform:uppercase;
   color:rgba(255,255,255,.85);
 }
@@ -903,13 +908,13 @@ body {
 ═══════════════════════════════════════════ */
 #gal-counter {
   position:absolute; top:.55rem; right:.65rem; z-index:3;
-  font-family:var(--font-sans); font-weight:500;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
   font-size:.58rem; letter-spacing:.08em;
   color:rgba(255,255,255,.9);
   background:rgba(0,0,0,.42);
-  backdrop-filter:none;
+  backdrop-filter:blur(6px);
   padding:.22rem .55rem;
-  border-radius:0;
+  border-radius:1rem;
   pointer-events:none;
   display:none;
 }
@@ -925,34 +930,34 @@ body {
   border-top:1px solid var(--border);
 }
 .outro h2 {
-  font-family:var(--font-display); font-weight:300; font-style:italic;
+  font-family:'Fraunces',serif; font-weight:300; font-style:italic;
   font-size:clamp(1.7rem,6vw,2.8rem);
   color:var(--ink); line-height:1.3; margin-bottom:1.1rem;
 }
-.outro p { font-family:var(--font-sans); font-size:.8rem; color:rgba(20,19,15,.55); line-height:1.9; font-weight:400; }
-.outro-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); margin:2.5rem auto 0; }
+.outro p { font-family:'Hanken Grotesk',sans-serif; font-size:.8rem; color:rgba(20,19,15,.55); line-height:1.9; font-weight:400; }
+.outro-dot { width:4px; height:4px; border-radius:50%; background:var(--terra); margin:2.5rem auto 0; }
 
 /* ═══════════════════════════════════════════
    MAP SVG  styles
 ═══════════════════════════════════════════ */
 .city-block  { fill:var(--ink); stroke:none; }   /* Schwarzplan: solid ink figure on paper ground */
-.water-fill  { fill:#EBEBEB; }       /* Maas / harbour basins */
+.water-fill  { fill:#3C4A52; opacity:.10; }       /* Maas / harbour basins */
 .piazza-fill { fill:var(--brick); opacity:.16; }
-.street      { fill:none; stroke:var(--paper-3); stroke-width:3.5; }
+.street      { fill:none; stroke:#d8d2c4; stroke-width:3.5; }
 .route-future{ fill:none; stroke:var(--ink); stroke-width:1.5; stroke-dasharray:5 5; opacity:.16; }
-.route-trail { fill:none; stroke:var(--ink-1); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:.9; }
+.route-trail { fill:none; stroke:var(--brick); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:.9; }
 .stop-ring   { fill:none; stroke:var(--ink); stroke-width:1; opacity:.18; }
 .stop-dot    { fill:var(--ink); cursor:pointer; }
-.stop-dot.visited    { fill:var(--ink-4); opacity:.9; }
-.stop-dot.active-dot { fill:var(--accent); }
-.lbl-district{ font-family:var(--font-display); font-style:normal; font-size:11px; fill:rgba(0,0,0,.45); letter-spacing:.1em;
+.stop-dot.visited    { fill:#9a9484; opacity:.85; }
+.stop-dot.active-dot { fill:var(--brick); filter:drop-shadow(0 0 5px rgba(158,59,46,.7)); }
+.lbl-district{ font-family:'Fraunces',serif; font-style:italic; font-size:11px; fill:rgba(0,0,0,.45); letter-spacing:.1em;
                stroke:#fff; stroke-width:2.5px; paint-order:stroke fill; }
-.lbl-street  { font-family:var(--font-sans); font-size:9px; fill:#888;
+.lbl-street  { font-family:'Hanken Grotesk',sans-serif; font-size:9px; fill:#888;
                stroke:#fff; stroke-width:2.5px; paint-order:stroke fill; }
-.lbl-piazza  { font-family:var(--font-sans); font-size:9px; fill:#444; font-weight:600;
+.lbl-piazza  { font-family:'Hanken Grotesk',sans-serif; font-size:9px; fill:#444; font-weight:600;
                stroke:#fff; stroke-width:2.5px; paint-order:stroke fill; }
-.plan-note   { font-family:var(--font-mono); font-size:9px; fill:rgba(20,19,15,.32); letter-spacing:.12em; text-transform:uppercase; text-anchor:end; }
-.stop-lbl    { font-family:var(--font-sans); font-size:9px; fill:#111; font-weight:700;
+.plan-note   { font-family:'Spline Sans Mono',monospace; font-size:9px; fill:rgba(20,19,15,.32); letter-spacing:.12em; text-transform:uppercase; text-anchor:end; }
+.stop-lbl    { font-family:'Hanken Grotesk',sans-serif; font-size:9px; fill:#111; font-weight:700;
                stroke:#fff; stroke-width:3px;   paint-order:stroke fill; }
 @keyframes ripple-anim {
   0%   { r:10; opacity:.5 }
@@ -964,7 +969,7 @@ body {
 ═══════════════════════════════════════════ */
 #backdrop {
   position:fixed; inset:0;
-  background:var(--ink-1);
+  background:rgba(0,0,0,.5); backdrop-filter:blur(4px);
   z-index:300; opacity:0; pointer-events:none; transition:opacity .35s;
 }
 #backdrop.open { opacity:1; pointer-events:auto; }
@@ -991,7 +996,7 @@ body {
 .modal-handle-zone:active { cursor:grabbing; }
 .modal-drag-handle {
   width:40px; height:4px;
-  background:rgba(0,0,0,.15); border-radius:0;
+  background:rgba(0,0,0,.15); border-radius:2px;
 }
 /* Spring-back animation after an aborted swipe */
 #modal.swipe-snap {
@@ -1033,14 +1038,15 @@ body {
 }
 .photo-hint-inner {
   background:rgba(0,0,0,.60);
-  backdrop-filter:none; -webkit-backdrop-filter:none;
-  border-radius:0;
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:2rem;
   padding:.55rem 1.3rem .55rem 1rem;
   display:flex; align-items:center; gap:.65rem;
   white-space:nowrap;
 }
 .photo-hint-inner span {
-  font-family:var(--font-sans);
+  font-family:'Hanken Grotesk',sans-serif;
   font-size:.76rem; font-weight:400; letter-spacing:.02em;
   color:rgba(255,255,255,.92);
 }
@@ -1051,7 +1057,7 @@ body {
 .gallery-slide  { min-width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
 .slide-bg    { position:absolute; inset:0; }
 .slide-icon  { position:absolute; font-size:3.5rem; opacity:.2; }
-.slide-cap   { position:absolute; bottom:0; left:0; right:0; background:transparent; padding:2rem 1.2rem .8rem; font-family:var(--font-sans); font-style:normal; font-size:.82rem; color:rgba(255,255,255,.9); }
+.slide-cap   { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,.6)); padding:2rem 1.2rem .8rem; font-family:'Fraunces',serif; font-style:italic; font-size:.82rem; color:rgba(255,255,255,.9); }
 .gallery-nav { position:absolute; bottom:.65rem; left:50%; transform:translateX(-50%); display:flex; gap:.4rem; z-index:2; }
 .gal-pip     { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.35); cursor:pointer; transition:background .2s, transform .2s; }
 .gal-pip.on  { background:#fff; transform:scale(1.3); }
@@ -1063,62 +1069,62 @@ body {
 @keyframes galProg { from{width:0%} to{width:100%} }
 
 
-.modal-num   { font-family:var(--font-sans); font-weight:600; font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--terra); margin-bottom:.4rem; }
-.modal-title { font-family:var(--font-display); font-weight:600; font-size:2rem; line-height:1.02; color:var(--ink); }
-.modal-sub   { font-family:var(--font-sans); font-style:normal; font-weight:400; font-size:.9rem; color:var(--ink-3); display:block; margin-top:.3rem; }
-.modal-rule  { width:0; height:0; background:transparent; margin:1.4rem 0; }
-.modal-text  { font-family:var(--font-sans); font-size:.82rem; line-height:1.95; color:var(--dim); margin-bottom:.9rem; font-weight:400; }
+.modal-num   { font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--terra); margin-bottom:.4rem; }
+.modal-title { font-family:'Fraunces',serif; font-weight:600; font-size:2rem; line-height:1.02; color:var(--ink); }
+.modal-sub   { font-family:'Fraunces',serif; font-style:italic; font-size:.9rem; color:var(--muted); display:block; margin-top:.25rem; }
+.modal-rule  { width:28px; height:1.5px; background:var(--terra); margin:1.2rem 0; }
+.modal-text  { font-family:'Hanken Grotesk',sans-serif; font-size:.82rem; line-height:1.95; color:var(--dim); margin-bottom:.9rem; font-weight:400; }
 .modal-facts { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-top:1.4rem; }
-.fact        { background:var(--paper-1); padding:.9rem 1rem; }
-.fact-lbl    { font-family:var(--font-sans); font-size:.55rem; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-3); margin-bottom:.2rem; }
-.fact-val    { font-family:var(--font-display); font-size:1rem; color:var(--ink); }
+.fact        { background:var(--off); padding:.75rem .9rem; border-left:2px solid var(--terra); }
+.fact-lbl    { font-family:'Hanken Grotesk',sans-serif; font-size:.55rem; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:.2rem; }
+.fact-val    { font-family:'Fraunces',serif; font-size:1rem; color:var(--ink); }
 
 /* ── Feldjournal-Bausteine im Eintrag ── */
 .entry-stamp {
-  font-family:var(--font-mono); font-size:.6rem; letter-spacing:.18em;
+  font-family:'Spline Sans Mono',monospace; font-size:.6rem; letter-spacing:.18em;
   text-transform:uppercase; color:var(--muted); margin-bottom:.7rem;
 }
 .jl-head {
-  font-family:var(--font-mono); font-size:.56rem; letter-spacing:.2em;
+  font-family:'Spline Sans Mono',monospace; font-size:.56rem; letter-spacing:.2em;
   text-transform:uppercase; color:var(--brick); margin:0 0 .7rem;
 }
 .voices { margin:1.6rem 0 .4rem; padding-top:1.2rem; border-top:1px solid var(--border); }
 .voice {
-  font-family:var(--font-display); font-style:italic; font-weight:300; font-size:1.3rem; line-height:1.4;
-  color:var(--ink-1); background:var(--paper-1); padding:1.4rem 1.5rem; margin-bottom:.6rem;
+  font-family:'Fraunces',serif; font-style:italic; font-size:1.15rem; line-height:1.5;
+  color:var(--ink); padding-left:1rem; border-left:2px solid var(--brick); margin-bottom:.6rem;
 }
 .voice cite {
-  display:block; margin-top:.5rem; font-family:var(--font-sans); font-style:normal;
+  display:block; margin-top:.5rem; font-family:'Hanken Grotesk',sans-serif; font-style:normal;
   font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
 }
 .steckbrief { margin:1.8rem 0 .4rem; padding-top:1.3rem; border-top:1px solid var(--border); }
 .sb-list { display:flex; flex-direction:column; gap:.7rem; }
 .sb-row  { display:grid; grid-template-columns:8.5rem 1fr; gap:.7rem; align-items:baseline; }
 .sb-row dt {
-  font-family:var(--font-mono); font-size:.56rem; letter-spacing:.08em;
+  font-family:'Spline Sans Mono',monospace; font-size:.56rem; letter-spacing:.08em;
   text-transform:uppercase; color:var(--muted); line-height:1.5;
 }
-.sb-row dd { font-family:var(--font-sans); font-size:.8rem; line-height:1.55; color:var(--dim); }
+.sb-row dd { font-family:'Hanken Grotesk',sans-serif; font-size:.8rem; line-height:1.55; color:var(--dim); }
 .model-block { margin:1.8rem 0 .4rem; padding-top:1.3rem; border-top:1px solid var(--border); }
 .mv {
   width:100%; height:300px; background:var(--off);
-  border:1px solid var(--border); border-radius:0; --poster-color:transparent;
+  border:1px solid var(--border); border-radius:2px; --poster-color:transparent;
 }
 .mv-poster {
   width:100%; height:100%; display:flex; align-items:center; justify-content:center;
-  font-family:var(--font-mono); font-size:.6rem; letter-spacing:.18em;
+  font-family:'Spline Sans Mono',monospace; font-size:.6rem; letter-spacing:.18em;
   text-transform:uppercase; color:var(--muted); background:var(--off);
 }
 .model-hint {
-  font-family:var(--font-mono); font-size:.55rem; letter-spacing:.14em;
+  font-family:'Spline Sans Mono',monospace; font-size:.55rem; letter-spacing:.14em;
   text-transform:uppercase; color:var(--muted); margin-top:.5rem; text-align:center;
 }
 .sources {
   margin:1.6rem 0 .2rem; padding-top:1.1rem; border-top:1px solid var(--border);
-  font-family:var(--font-sans); font-size:.7rem; color:var(--muted); line-height:1.6;
+  font-family:'Hanken Grotesk',sans-serif; font-size:.7rem; color:var(--muted); line-height:1.6;
 }
 .jl-head-inline {
-  font-family:var(--font-mono); font-size:.56rem; letter-spacing:.16em;
+  font-family:'Spline Sans Mono',monospace; font-size:.56rem; letter-spacing:.16em;
   text-transform:uppercase; color:var(--brick); margin-right:.5rem;
 }
 #places-btn { display:none !important; }  /* Phase A: keine Zusatzorte */
@@ -1143,7 +1149,7 @@ body {
   position:relative; z-index:60;
 }
 .impressum-heading {
-  font-family:var(--font-sans); font-weight:600;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:600;
   font-size:.6rem; letter-spacing:.18em; text-transform:uppercase;
   color:var(--muted); margin-bottom:1.8rem;
 }
@@ -1152,12 +1158,12 @@ body {
   margin-bottom:2rem;
 }
 .impressum-block dt {
-  font-family:var(--font-sans); font-weight:500;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
   font-size:.55rem; letter-spacing:.12em; text-transform:uppercase;
   color:var(--muted); margin-bottom:.3rem;
 }
 .impressum-block dd {
-  font-family:var(--font-display); font-size:.95rem;
+  font-family:'Fraunces',serif; font-size:.95rem;
   color:var(--dim); line-height:1.55; margin:0;
 }
 .impressum-block dd a {
@@ -1165,7 +1171,7 @@ body {
 }
 .impressum-block dd a:hover { text-decoration:underline; }
 .impressum-note {
-  font-family:var(--font-sans); font-size:.72rem; font-weight:400;
+  font-family:'Hanken Grotesk',sans-serif; font-size:.72rem; font-weight:400;
   color:var(--muted); line-height:1.75;
   border-top:1px solid var(--border); padding-top:1.4rem;
   max-width:56ch;
@@ -1176,8 +1182,13 @@ body {
    down the screen during the map reveal
 ═══════════════════════════════════════════ */
 #scan-line {
-  position:fixed; top:0; left:0; right:0; height:3px;
-  background:var(--accent);
+  position:fixed; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,
+    transparent       0%,
+    var(--terra)     22%,
+    rgba(255,255,255,.6) 50%,
+    var(--terra)     78%,
+    transparent     100%);
   z-index:15; pointer-events:none;
   opacity:0; transform:translateY(-2px);
 }
@@ -1202,7 +1213,7 @@ body {
 }
 #lang-switch.show { opacity:1; pointer-events:auto; }
 .lang-btn {
-  font-family:var(--font-sans); font-weight:500;
+  font-family:'Hanken Grotesk',sans-serif; font-weight:500;
   font-size:.5rem; letter-spacing:.12em; text-transform:uppercase;
   color:rgba(20,19,15,.42); background:none; border:none;
   cursor:pointer;
@@ -1213,7 +1224,7 @@ body {
   -webkit-tap-highlight-color:transparent;
   user-select:none;
 }
-.lang-btn.active  { color:var(--ink-1); }
+.lang-btn.active  { color:var(--brick); }
 .lang-btn:hover   { color:rgba(20,19,15,.75); }
 .lang-sep {
   color:rgba(20,19,15,.2); font-size:.4rem;
@@ -1221,7 +1232,7 @@ body {
 }
 /* light context, when map / white-bg is showing */
 #lang-switch.light .lang-btn        { color:rgba(0,0,0,.3); text-shadow:none; }
-#lang-switch.light .lang-btn.active { color:var(--ink-1); }
+#lang-switch.light .lang-btn.active { color:var(--terra); }
 #lang-switch.light .lang-btn:hover  { color:rgba(0,0,0,.7); }
 #lang-switch.light .lang-sep        { color:rgba(0,0,0,.15); }
 
@@ -1250,14 +1261,19 @@ body {
 <div id="loader">
   <div class="loader-glow"></div>
   <div class="loader-inner">
-    <!-- Wijnhaven-Marke: gekipptes Quadrat (Kubuswoningen-Verweis), zeichnet sich ein -->
     <svg class="campo-wrap" viewBox="0 0 600 360" aria-hidden="true">
-      <path class="segment" d="M300 86 L394 180"/>
-      <path class="segment" d="M394 180 L300 274"/>
-      <path class="segment" d="M300 274 L206 180"/>
-      <path class="segment" d="M206 180 L300 86"/>
-      <path class="campo-arc" d="M300 134 L346 180 L300 226 L254 180 Z"/>
-      <circle class="center-dot" cx="300" cy="180" r="7"/>
+      <path class="segment" d="M300 320 Q184 286 58 236"/>
+      <path class="segment" d="M300 320 Q200 278 88 206"/>
+      <path class="segment" d="M300 320 Q220 270 126 174"/>
+      <path class="segment" d="M300 320 Q244 260 176 144"/>
+      <path class="segment" d="M300 320 Q272 248 244 118"/>
+      <path class="segment" d="M300 320 Q328 248 356 118"/>
+      <path class="segment" d="M300 320 Q356 260 424 144"/>
+      <path class="segment" d="M300 320 Q380 270 474 174"/>
+      <path class="segment" d="M300 320 Q400 278 512 206"/>
+      <path class="segment" d="M300 320 Q416 286 542 236"/>
+      <path class="campo-arc"  d="M58 236 C 148 48 452 48 542 236"/>
+      <circle class="center-dot" cx="300" cy="320" r="3.5"/>
     </svg>
     <div class="loader-line"></div>
     <h1 class="loader-title">
@@ -1376,51 +1392,51 @@ body {
     <g class="plan-layer">
       <!-- Wasser: Nieuwe Maas + Hafenbecken -->
       <path class="water-fill" d="M0,648 L1000,582 L1000,750 L0,750 Z"/>
-      <rect class="water-fill" x="356" y="286" width="116" height="150"/>
-      <rect class="water-fill" x="244" y="452" width="210" height="80" />
-      <rect class="water-fill" x="600" y="250" width="150" height="70" />
+      <rect class="water-fill" x="356" y="286" width="116" height="150" rx="5"/>
+      <rect class="water-fill" x="244" y="452" width="210" height="80"  rx="5"/>
+      <rect class="water-fill" x="600" y="250" width="150" height="70"  rx="5"/>
 
       <!-- Baublöcke (Figur) -->
       <g class="city-block">
-        <rect x="150" y="120" width="78"  height="54"/>
-        <rect x="244" y="120" width="120" height="54"/>
-        <rect x="386" y="120" width="70"  height="40"/>
-        <rect x="486" y="120" width="58"  height="40"/>
-        <rect x="150" y="196" width="78"  height="70"/>
-        <rect x="244" y="196" width="92"  height="70"/>
-        <rect x="700" y="120" width="150" height="62"/>
-        <rect x="700" y="200" width="92"  height="64"/>
-        <rect x="812" y="200" width="60"  height="64"/>
+        <rect x="150" y="120" width="78"  height="54" rx="2"/>
+        <rect x="244" y="120" width="120" height="54" rx="2"/>
+        <rect x="386" y="120" width="70"  height="40" rx="2"/>
+        <rect x="486" y="120" width="58"  height="40" rx="2"/>
+        <rect x="150" y="196" width="78"  height="70" rx="2"/>
+        <rect x="244" y="196" width="92"  height="70" rx="2"/>
+        <rect x="700" y="120" width="150" height="62" rx="2"/>
+        <rect x="700" y="200" width="92"  height="64" rx="2"/>
+        <rect x="812" y="200" width="60"  height="64" rx="2"/>
         <!-- 0 Witte Huis: schlanker Turm am Oude Haven -->
-        <rect x="414" y="214" width="32"  height="64"/>
+        <rect x="414" y="214" width="32"  height="64" rx="1"/>
         <!-- 2 Markthal: großer gerundeter Bogenblock -->
-        <rect x="572" y="132" width="86"  height="60"/>
+        <rect x="572" y="132" width="86"  height="60" rx="24"/>
         <!-- Kontext Blaak -->
-        <rect x="150" y="296" width="92"  height="64"/>
-        <rect x="150" y="382" width="92"  height="78"/>
-        <rect x="492" y="300" width="92"  height="58"/>
-        <rect x="600" y="340" width="120" height="70"/>
-        <rect x="752" y="340" width="92"  height="70"/>
+        <rect x="150" y="296" width="92"  height="64" rx="2"/>
+        <rect x="150" y="382" width="92"  height="78" rx="2"/>
+        <rect x="492" y="300" width="92"  height="58" rx="2"/>
+        <rect x="600" y="340" width="120" height="70" rx="2"/>
+        <rect x="752" y="340" width="92"  height="70" rx="2"/>
         <!-- 3 Red Apple: Wohnturm auf Wijnhaveneiland -->
-        <rect x="548" y="324" width="26"  height="74"/>
+        <rect x="548" y="324" width="26"  height="74" rx="1"/>
         <!-- 4 Wijnhaven-Türme: Doppelturm -->
-        <rect x="452" y="384" width="24"  height="58"/>
-        <rect x="482" y="380" width="24"  height="62"/>
+        <rect x="452" y="384" width="24"  height="58" rx="1"/>
+        <rect x="482" y="380" width="24"  height="62" rx="1"/>
         <!-- 5 EY: Büroblock -->
-        <rect x="368" y="448" width="46"  height="46"/>
-        <rect x="300" y="392" width="64"  height="50"/>
+        <rect x="368" y="448" width="46"  height="46" rx="2"/>
+        <rect x="300" y="392" width="64"  height="50" rx="2"/>
         <!-- 6 CasaNova: Pavillon am Wasser -->
-        <rect x="284" y="528" width="34"  height="28"/>
-        <rect x="600" y="448" width="110" height="56"/>
-        <rect x="752" y="448" width="92"  height="56"/>
+        <rect x="284" y="528" width="34"  height="28" rx="2"/>
+        <rect x="600" y="448" width="110" height="56" rx="2"/>
+        <rect x="752" y="448" width="92"  height="56" rx="2"/>
       </g>
 
       <!-- 1 Kubuswoningen: gekippte Würfel über dem Blaak -->
       <g class="city-block">
-        <rect x="506" y="186" width="22" height="22" transform="rotate(45 517 197)"/>
-        <rect x="528" y="186" width="22" height="22" transform="rotate(45 539 197)"/>
-        <rect x="517" y="206" width="22" height="22" transform="rotate(45 528 217)"/>
-        <rect x="495" y="206" width="22" height="22" transform="rotate(45 506 217)"/>
+        <rect x="506" y="186" width="22" height="22" rx="1" transform="rotate(45 517 197)"/>
+        <rect x="528" y="186" width="22" height="22" rx="1" transform="rotate(45 539 197)"/>
+        <rect x="517" y="206" width="22" height="22" rx="1" transform="rotate(45 528 217)"/>
+        <rect x="495" y="206" width="22" height="22" rx="1" transform="rotate(45 506 217)"/>
       </g>
 
       <text class="plan-note" x="826" y="724">Platzhalter · voorlopig</text>
@@ -1434,17 +1450,18 @@ body {
 
     <!-- Traveller dot -->
     <circle id="traveller" cx="430" cy="250" r="7"
-      fill="var(--accent)"
+      fill="var(--brick)"
+      filter="drop-shadow(0 0 5px rgba(158,59,46,.9))"
       opacity="0"/>
 
     <!-- Ripple rings per stop -->
-    <circle id="rp0" cx="430" cy="250" r="11" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp1" cx="520" cy="200" r="11" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp2" cx="610" cy="165" r="11" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp3" cx="560" cy="360" r="11" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp4" cx="470" cy="410" r="11" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp5" cx="390" cy="470" r="11" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp6" cx="300" cy="545" r="11" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp0" cx="430" cy="250" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp1" cx="520" cy="200" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp2" cx="610" cy="165" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp3" cx="560" cy="360" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp4" cx="470" cy="410" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp5" cx="390" cy="470" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
+    <circle id="rp6" cx="300" cy="545" r="11" fill="none" stroke="var(--brick)" stroke-width="1.5" opacity="0"/>
 
     <!-- Stop rings (outer) -->
     <circle class="stop-ring" cx="430" cy="250" r="14"/>
@@ -1475,10 +1492,10 @@ body {
 
     <!-- GPS position dot (track mode) -->
     <g id="gps-group" opacity="0">
-      <circle id="gps-acc"   cx="0" cy="0" r="22" fill="rgba(10,10,10,.08)" stroke="rgba(10,10,10,.22)" stroke-width="1"/>
-      <circle id="gps-halo"  cx="0" cy="0" r="10" fill="rgba(10,10,10,.18)"/>
-      <circle id="gps-outer" cx="0" cy="0" r="8"  fill="var(--paper)" />
-      <circle id="gps-inner" cx="0" cy="0" r="5"  fill="#0A0A0A"/>
+      <circle id="gps-acc"   cx="0" cy="0" r="22" fill="rgba(60,74,82,.12)" stroke="rgba(60,74,82,.3)" stroke-width="1"/>
+      <circle id="gps-halo"  cx="0" cy="0" r="10" fill="rgba(60,74,82,.22)"/>
+      <circle id="gps-outer" cx="0" cy="0" r="8"  fill="var(--paper)" filter="drop-shadow(0 1px 3px rgba(0,0,0,.35))"/>
+      <circle id="gps-inner" cx="0" cy="0" r="5"  fill="#3C4A52"/>
     </g>
   </svg>
   </div><!-- /map-svg-wrap -->
@@ -1551,7 +1568,7 @@ body {
 
 <!-- OUTRO -->
 <div class="outro">
-  <h2>De stad is een boek.<br>Haar lezen is al reizen.</h2>
+  <h2>La città è un libro.<br>Leggerla è già viaggiare.</h2>
   <p>Wijnhaven ist kein Einzelbauwerk, sondern eine Wasserkante, die man liest, indem man sie geht. Sieben Einträge, ein Quartier.</p>
   <div class="outro-dot"></div>
 </div>
@@ -1618,7 +1635,7 @@ body {
           <path d="M6 11 L1 11" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
           <path d="M3.5 8.5 L1 11 L3.5 13.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
           <!-- finger -->
-          <rect x="12" y="3" width="14" height="16" fill="white" opacity=".8"/>
+          <rect x="12" y="3" width="14" height="16" rx="7" fill="white" opacity=".8"/>
           <!-- right arrow -->
           <path d="M32 11 L37 11" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
           <path d="M34.5 8.5 L37 11 L34.5 13.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1692,8 +1709,8 @@ const STOPS = [
     facts:[{l:"Fertigstellung",v:"1898"},{l:"Höhe",v:"ca. 43 m · 10 Geschosse"},{l:"Stil",v:"Jugendstil"},{l:"Besonderheit",v:"Überstand 1940"}],
     sources:["Stadsarchief Rotterdam","Rijksmonument-Register"],
     slides:[
-      {bg:"#0A0A0A",icon:"",cap:"Witte Huis am Oude Haven (Platzhalter)"},
-      {bg:"#0A0A0A",icon:"",cap:"Fassadendetail, glasierte Keramik (Platzhalter)"}
+      {bg:"linear-gradient(150deg,#4a443c,#14130f)",icon:"",cap:"Witte Huis am Oude Haven (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#6b5a4a,#1d1a16)",icon:"",cap:"Fassadendetail, glasierte Keramik (Platzhalter)"}
     ]
   },
   {
@@ -1718,8 +1735,8 @@ const STOPS = [
     sources:["Piet Blom, Werkverzeichnis","Museum Rotterdam"],
     model:{src:"models/kubuswoningen.glb", poster:""},
     slides:[
-      {bg:"#0A0A0A",icon:"",cap:"Gekippte Würfel über dem Blaak (Platzhalter)"},
-      {bg:"#0A0A0A",icon:"",cap:"Blick aus der Kijk-Kubus (Platzhalter)"}
+      {bg:"linear-gradient(150deg,#7a4a32,#1d1410)",icon:"",cap:"Gekippte Würfel über dem Blaak (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#3a342e,#14130f)",icon:"",cap:"Blick aus der Kijk-Kubus (Platzhalter)"}
     ]
   },
   {
@@ -1744,8 +1761,8 @@ const STOPS = [
     sources:["MVRDV Projektdokumentation","Gemeente Rotterdam"],
     model:{src:"models/markthal.glb", poster:""},
     slides:[
-      {bg:"#0A0A0A",icon:"",cap:"Wohnbogen über der Markthalle (Platzhalter)"},
-      {bg:"#0A0A0A",icon:"",cap:"Hoorn des Overvloeds, Deckenkunst (Platzhalter)"}
+      {bg:"linear-gradient(150deg,#8a5230,#1d1410)",icon:"",cap:"Wohnbogen über der Markthalle (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#4a443c,#14130f)",icon:"",cap:"Hoorn des Overvloeds, Deckenkunst (Platzhalter)"}
     ]
   },
   {
@@ -1769,8 +1786,8 @@ const STOPS = [
     facts:[{l:"Fertigstellung",v:"2009"},{l:"Höhe",v:"ca. 124 m"},{l:"Fassade",v:"Rote Aluminium-Lamellen"},{l:"Lage",v:"Wijnhaveneiland"}],
     sources:["KCAP Projektarchiv","Hoogbouw Rotterdam"],
     slides:[
-      {bg:"#0A0A0A",icon:"",cap:"Red Apple, Inselspitze (Platzhalter)"},
-      {bg:"#0A0A0A",icon:"",cap:"Lamellenfassade aus der Nähe (Platzhalter)"}
+      {bg:"linear-gradient(150deg,#9e3b2e,#1d1410)",icon:"",cap:"Red Apple, Inselspitze (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#6b3a30,#14130f)",icon:"",cap:"Lamellenfassade aus der Nähe (Platzhalter)"}
     ]
   },
   {
@@ -1794,8 +1811,8 @@ const STOPS = [
     facts:[{l:"Entwicklung",v:"ab ca. 2000"},{l:"Prinzip",v:"Masterplan + Einzelbauten"},{l:"Lage",v:"Wijnhaveneiland"},{l:"Ziel",v:"Dichte ohne Monotonie"}],
     sources:["KCAP Masterplan Wijnhaveneiland","Gemeente Rotterdam, Stadsontwikkeling"],
     slides:[
-      {bg:"#0A0A0A",icon:"",cap:"Türme auf gemeinsamem Raster (Platzhalter)"},
-      {bg:"#0A0A0A",icon:"",cap:"Gasse zwischen den Hochpunkten (Platzhalter)"}
+      {bg:"linear-gradient(150deg,#3c4a52,#14130f)",icon:"",cap:"Türme auf gemeinsamem Raster (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#4a443c,#14130f)",icon:"",cap:"Gasse zwischen den Hochpunkten (Platzhalter)"}
     ]
   },
   {
@@ -1819,8 +1836,8 @@ const STOPS = [
     facts:[{l:"Nutzung",v:"Büro"},{l:"Lage",v:"Wijnhaven"},{l:"Thema",v:"Arbeiten am Wasser"},{l:"Status",v:"Daten vor Ort prüfen"}],
     sources:["Recherche vor Ort","Gemeente Rotterdam"],
     slides:[
-      {bg:"#0A0A0A",icon:"",cap:"EY am Wijnhaven (Platzhalter)"},
-      {bg:"#0A0A0A",icon:"",cap:"Erdgeschoss zum öffentlichen Raum (Platzhalter)"}
+      {bg:"linear-gradient(150deg,#3c4a52,#14130f)",icon:"",cap:"EY am Wijnhaven (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#4a443c,#14130f)",icon:"",cap:"Erdgeschoss zum öffentlichen Raum (Platzhalter)"}
     ]
   },
   {
@@ -1844,8 +1861,8 @@ const STOPS = [
     facts:[{l:"Typ",v:"Pavillon"},{l:"Nutzung",v:"Gastronomie"},{l:"Lage",v:"Am Wasser"},{l:"Rolle",v:"Abschluss der Route"}],
     sources:["Recherche vor Ort"],
     slides:[
-      {bg:"#0A0A0A",icon:"",cap:"CasaNova am Kai (Platzhalter)"},
-      {bg:"#0A0A0A",icon:"",cap:"Blick zurück auf die Route (Platzhalter)"}
+      {bg:"linear-gradient(150deg,#4a443c,#14130f)",icon:"",cap:"CasaNova am Kai (Platzhalter)"},
+      {bg:"linear-gradient(150deg,#3c4a52,#14130f)",icon:"",cap:"Blick zurück auf die Route (Platzhalter)"}
     ]
   }
 ];
@@ -2285,7 +2302,7 @@ const LANG = {
     ppRoute:       'Route',
     ppExtra:       'Weitere Orte',
     placesBtnLbl:  'Orte',
-    shareCopied:   'Link kopiert',
+    shareCopied:   'Link kopiert ✓',
     stopSubs: [
       'Willem Molenbroek · 1898',
       'Piet Blom · 1978–84',
@@ -2340,7 +2357,7 @@ const LANG = {
     ppRoute:       'Route',
     ppExtra:       'Overige plekken',
     placesBtnLbl:  'Plekken',
-    shareCopied:   'Link gekopieerd',
+    shareCopied:   'Link gekopieerd ✓',
     stopSubs: [
       'Willem Molenbroek · 1898',
       'Piet Blom · 1978–84',
@@ -2395,7 +2412,7 @@ const LANG = {
     ppRoute:       'Route',
     ppExtra:       'Other places',
     placesBtnLbl:  'Places',
-    shareCopied:   'Link copied',
+    shareCopied:   'Link copied ✓',
     stopSubs: [
       'Willem Molenbroek · 1898',
       'Piet Blom · 1978–84',
@@ -2695,7 +2712,7 @@ function shareStop(){
     navigator.share(shareData).catch(function(){/* user cancelled, ignore */});
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(shareData.url)
-      .then(function(){ showToast(lang.shareCopied || 'Link kopiert', 2500); })
+      .then(function(){ showToast(lang.shareCopied || 'Link kopiert \u2713', 2500); })
       .catch(function(){ showToast('wijnhaven.com', 3500); });
   } else {
     showToast('wijnhaven.com', 3500);
@@ -3458,7 +3475,7 @@ function openModal(idx, _placeObj){
 
   /* Tagebuch-Stempel: Datum · Uhrzeit */
   const stampLine = (s.entryDate && s.entryTime)
-    ? `<div class="entry-stamp">${s.entryDate} · ${s.entryTime}H</div>` : '';
+    ? `<div class="entry-stamp">${s.entryDate} · ${s.entryTime}</div>` : '';
 
   /* Stimme vom Ort (Interview-Schnipsel) */
   const voicesHtml = (s.voices && s.voices.length)
@@ -3649,18 +3666,18 @@ document.addEventListener('keydown', e => {
   const panel = document.createElement('div');
   panel.style.cssText = `
     position:fixed; bottom:6rem; left:50%; transform:translateX(-50%);
-    z-index:9999; background:var(--ink-1); border-radius:0;
+    z-index:9999; background:#1A1209; border-radius:2rem;
     display:flex; align-items:center; gap:.5rem; padding:.5rem .9rem;
-    font-family:var(--font-sans); font-size:.6rem; letter-spacing:.12em;
-    color:var(--paper-1); text-transform:uppercase; box-shadow:none;
+    font-family:'Hanken Grotesk',sans-serif; font-size:.6rem; letter-spacing:.12em;
+    color:#E8D5B0; text-transform:uppercase; box-shadow:0 4px 20px rgba(0,0,0,.4);
     white-space:nowrap;
   `;
   panel.innerHTML = `
     <span style="color:#C49A3C;">⬤</span>
     <span>Debug-GPS</span>
-    <button id="dbg-start" style="background:var(--accent);color:var(--accent-fg);border:none;border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">▶ Start</button>
-    <button id="dbg-step"  style="background:rgba(255,255,255,.1);color:var(--paper-1);border:none;border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">Schritt</button>
-    <button id="dbg-reset" style="background:rgba(255,255,255,.1);color:var(--paper-1);border:none;border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">↺</button>
+    <button id="dbg-start" style="background:#C4622D;color:white;border:none;border-radius:1rem;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">▶ Start</button>
+    <button id="dbg-step"  style="background:rgba(255,255,255,.1);color:#E8D5B0;border:1px solid rgba(255,255,255,.2);border-radius:1rem;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">Schritt</button>
+    <button id="dbg-reset" style="background:rgba(255,255,255,.1);color:#E8D5B0;border:1px solid rgba(255,255,255,.2);border-radius:1rem;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">↺</button>
     <span id="dbg-pos" style="color:#9A8878;"></span>
   `;
   document.body.appendChild(panel);

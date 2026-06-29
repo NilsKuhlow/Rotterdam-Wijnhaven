@@ -130,7 +130,7 @@ body {
 
 /* ── Fan segments ── */
 .segment {
-  fill:none; stroke:var(--ink-1); stroke-width:2; stroke-linecap:square;
+  fill:none; stroke:var(--terra); stroke-width:1.5; stroke-linecap:round;
   stroke-dasharray:320; stroke-dashoffset:320;
   animation:drawSeg 1.8s cubic-bezier(.6,0,.15,1) forwards;
 }
@@ -161,10 +161,10 @@ body {
 
 /* ── Centre dot ── */
 .center-dot {
-  fill:var(--accent);
+  fill:var(--terra);
   opacity:0;
-  transform-origin:300px 180px;
-  animation:dotIn .55s cubic-bezier(0.2,0,0,1) forwards;
+  transform-origin:300px 320px;
+  animation:dotIn .55s cubic-bezier(.34,1.56,.64,1) forwards;
   animation-delay:1.5s;
 }
 @keyframes dotIn {
@@ -1250,14 +1250,19 @@ body {
 <div id="loader">
   <div class="loader-glow"></div>
   <div class="loader-inner">
-    <!-- Wijnhaven-Marke: gekipptes Quadrat (Kubuswoningen-Verweis), zeichnet sich ein -->
     <svg class="campo-wrap" viewBox="0 0 600 360" aria-hidden="true">
-      <path class="segment" d="M300 86 L394 180"/>
-      <path class="segment" d="M394 180 L300 274"/>
-      <path class="segment" d="M300 274 L206 180"/>
-      <path class="segment" d="M206 180 L300 86"/>
-      <path class="campo-arc" d="M300 134 L346 180 L300 226 L254 180 Z"/>
-      <circle class="center-dot" cx="300" cy="180" r="7"/>
+      <path class="segment" d="M300 320 Q184 286 58 236"/>
+      <path class="segment" d="M300 320 Q200 278 88 206"/>
+      <path class="segment" d="M300 320 Q220 270 126 174"/>
+      <path class="segment" d="M300 320 Q244 260 176 144"/>
+      <path class="segment" d="M300 320 Q272 248 244 118"/>
+      <path class="segment" d="M300 320 Q328 248 356 118"/>
+      <path class="segment" d="M300 320 Q356 260 424 144"/>
+      <path class="segment" d="M300 320 Q380 270 474 174"/>
+      <path class="segment" d="M300 320 Q400 278 512 206"/>
+      <path class="segment" d="M300 320 Q416 286 542 236"/>
+      <path class="campo-arc"  d="M58 236 C 148 48 452 48 542 236"/>
+      <circle class="center-dot" cx="300" cy="320" r="3.5"/>
     </svg>
     <div class="loader-line"></div>
     <h1 class="loader-title">
