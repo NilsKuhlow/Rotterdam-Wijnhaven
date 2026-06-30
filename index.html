@@ -193,7 +193,7 @@ body {
   font-size:.5rem; letter-spacing:.14em; text-transform:uppercase;
   color:var(--ink-3); margin:1.1rem 0 0; min-height:1em; opacity:0;
   display:flex; align-items:center; gap:.45rem;
-  animation:introFade .6s ease forwards; animation-delay:1.05s;
+  animation:introFade .6s ease forwards; animation-delay:0.7s;
 }
 .loader-status::before {
   content:''; width:4px; height:4px; background:var(--accent); flex-shrink:0;
@@ -1784,7 +1784,7 @@ var snapping      = false;
      FILL_DELAY: Fuellung startet erst, wenn der Wuerfel-Umriss gezeichnet ist.
      Die Fuellung laeuft als CSS-Transform-Transition (Compositor), damit sie auch
      waehrend des Ladens fluessig bleibt, statt per-Frame im Hauptthread zu ruckeln. */
-  var t0 = now(), MIN = 2300, MAX = 14000, FILL_DELAY = 720, CREEP_DUR = MIN - FILL_DELAY;
+  var t0 = now(), MIN = 2600, MAX = 14000, FILL_DELAY = 720, CREEP_DUR = MIN - FILL_DELAY;
   var loaded = false, done = false;
 
   /* Status-Zeile: zeigt klein, was gerade laedt (zyklisch, mit ein paar Easter Eggs) */
@@ -1808,7 +1808,7 @@ var snapping      = false;
       setTimeout(function(){ span.textContent = seq[mi % seq.length]; span.style.opacity = '1'; mi++; }, 190);
     }
     show();
-    statusTimer = setInterval(show, 640);
+    statusTimer = setInterval(show, 1150);
   })();
   function stopStatus(){ if (statusTimer){ clearInterval(statusTimer); statusTimer = null; } }
 
