@@ -4308,8 +4308,8 @@ async function _initTour(THREE, GLTFLoader){
   var EYE = 1.7, BOUND = 21, SPEED = 7.2, LOOK = 0.0042;        /* Augenhoehe, Bodengrenze, Tempo, Maus-Empfindlichkeit */
   camera.position.set(0, EYE, 17);
   var yaw = 0, pitch = 0;                                       /* yaw=0 blickt nach -Z */
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xf0f0f0, 1.55));
-  var dir = new THREE.DirectionalLight(0xffffff, 0.45); dir.position.set(20, 44, 18); scene.add(dir);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xeaeaea, 2.05));   /* hell genug, dass farbige (realistische) Fassaden lesen; Schwarz bleibt schwarz */
+  var dir = new THREE.DirectionalLight(0xffffff, 0.6); dir.position.set(20, 44, 18); scene.add(dir);
 
   function applyLook(){
     var cp = Math.cos(pitch);
