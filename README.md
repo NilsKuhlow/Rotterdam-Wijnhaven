@@ -21,9 +21,25 @@ Gruppe 4. Nils Kuhlow & Kai-Lars Ehrich.
 
 - Single-File `index.html` (HTML + CSS + Vanilla-JS), keine Build-Pipeline
 - Karte: inline SVG-Figure-Ground (Platzhalter), scroll-getriebene Kamerafahrt, GPS Smart-Track
-- 3D: `<model-viewer>`, `.glb` in `/models`
+- 3D je Eintrag: `<model-viewer>`, `.glb` in `/models`
+- 3D-Walkthrough (Button „3D" oben links): Three.js, lazy vom CDN, On-Demand-Rendering
 - PWA: `manifest.json` + `sw.js` (offline-fähig)
 - Sprachen: DE / NL / EN
+- Akkuschonend: Animationen + GPS pausieren im Hintergrund, ~30fps-Scroll-Cap, kein Idle-Rendering
+
+## 3D-Walkthrough: eigenes Modell bauen
+
+Der Walkthrough lädt `models/walkthrough.glb`. Das mitgelieferte Beispielmodell zeigt die
+**Namenskonvention** für antippbare Objekte. Beim eigenen Modell (Blender o.ä.) einfach die
+Objekte/Meshes so benennen:
+
+- `building_<N>` → Antippen öffnet Eintrag N (0 = Witte Huis … 6 = CasaNova). Beispiel: `building_2` = Markthal.
+- `person_<id>` → Antippen zeigt das Zitat/Interview aus `TOUR_PEOPLE[id]` (in `index.html`).
+  Beispiel: `person_kai`. Neue Personen einfach in `TOUR_PEOPLE` mit `de/nl/en`-Eintrag ergänzen.
+- `ground`, `scenery_*` → reine Kulisse, nicht antippbar.
+
+Als `.glb` nach `/models/walkthrough.glb` exportieren (Y nach oben, reale Maßstäbe sind ok).
+Das Generator-Skript des Beispiels liegt unter `tools/make_walkthrough.py`.
 
 ## Lokal starten
 

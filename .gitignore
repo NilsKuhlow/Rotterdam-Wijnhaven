@@ -14,3 +14,5 @@ Thumbs.db
 # QP verification shots
 _qp*.png
 _qp*.png
+_t3d*.png
+_*.png
