@@ -546,9 +546,6 @@ body.loaded .scroll-cue { animation:introFade .9s ease forwards; animation-delay
   transform:translate3d(0, 0, 0) scale(1);
   pointer-events:auto;
 }
-#map-panel.map-hidden { opacity:0; pointer-events:none; }
-/* Am Footer angekommen: obere Karten-Steuerung sauber ausblenden */
-body.at-end #track-btn, body.at-end #nav-crumb { opacity:0 !important; pointer-events:none; transition:opacity .3s; }
 
 /* wrapper must fill the full panel so SVG height:100% resolves correctly */
 #map-svg-wrap { width:100%; height:100%; }
@@ -1911,9 +1908,8 @@ function moveTraveller(globalT){
   const trav = document.getElementById('traveller');
   trav.style.opacity = '1';
 
-  /* 7 Wegpunkte = 6 Segmente: auf [0, 5.9999] klemmen, damit es immer
-     einen Folgepunkt WAYPOINTS[fromIdx+1] gibt (sonst Absturz am letzten Stopp). */
-  const t       = Math.max(0, Math.min(5.9999, globalT));
+  /* clamp to [0, 3.9999] so we always have a "next" point */
+  const t       = Math.max(0, Math.min(6.9999, globalT));
   const fromIdx = Math.floor(t);
   const frac    = t - fromIdx;
   /* ease-in-out so dot decelerates near stops */
@@ -2146,18 +2142,6 @@ window.addEventListener('scroll', function(){
   _scrollRaf = requestAnimationFrame(_scrollTick);
 }, { passive:true });
 onScroll();
-
-/* Karte sauber ausblenden, sobald der Colophon (Footer) ins Bild kommt */
-(function(){
-  var colo = document.querySelector('.colophon');
-  if (!colo || !('IntersectionObserver' in window)) return;
-  new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      _mapEl.classList.toggle('map-hidden', e.isIntersecting);
-      document.body.classList.toggle('at-end', e.isIntersecting);   /* obere Steuerung ausblenden */
-    });
-  }, { threshold:0 }).observe(colo);
-})();
 
 /* ═══════════════════════════════
    SCROLL TO STOP
