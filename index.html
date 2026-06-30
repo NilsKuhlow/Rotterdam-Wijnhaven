@@ -97,142 +97,90 @@ body {
 #loader {
   position:fixed; inset:0;
   display:grid; place-items:center;
-  background:var(--paper);
-  z-index:1000;
-  opacity:1;
-  transition:opacity 1.1s ease, transform 1.3s cubic-bezier(.22,1,.36,1);
+  background:var(--paper-0);
+  z-index:1000; overflow:hidden;
+  transition:transform .85s cubic-bezier(.66,0,.2,1);
 }
-#loader.out  { opacity:0; pointer-events:none; transform:scale(1.06); }
+#loader.lift { transform:translateY(-100%); }
 #loader.gone { display:none; }
 
-/* ── Halo / Glow bloom ── */
-.loader-glow {
-  position:fixed;
-  width:min(92vw,560px); aspect-ratio:1;
-  border-radius:50%;
-  background:transparent;
-  top:50%; left:50%; transform:translate(-50%,-54%);
-  pointer-events:none;
-  animation:glowPulse 2.6s ease-in-out infinite;
+/* Gelber Flood fuellt den Bildschirm, danach hebt sich der Loader und gibt die Seite frei */
+.loader-flood {
+  position:absolute; inset:0; background:var(--accent); z-index:5;
+  clip-path:circle(0% at 50% 50%);
+  transition:clip-path .6s cubic-bezier(.5,0,.15,1);
 }
-@keyframes glowPulse {
-  0%,100% { opacity:.55; transform:translate(-50%,-54%) scale(1);    }
-  50%     { opacity:1;   transform:translate(-50%,-54%) scale(1.14); }
-}
+#loader.flood .loader-flood { clip-path:circle(150% at 50% 50%); }
 
 .loader-inner {
-  display:flex; flex-direction:column; align-items:center; gap:1.8rem;
-  transform:translateY(-2vh);
-  width:min(78vw,480px);
-  position:relative;
+  display:flex; flex-direction:column; align-items:center; gap:1.4rem;
+  width:min(74vw,420px); position:relative; z-index:2;
 }
-.campo-wrap { width:100%; aspect-ratio:1.7/1; }
+.campo-wrap { width:38%; max-width:140px; aspect-ratio:1.7/1; }
 
-/* ── Fan segments ── */
 .segment {
-  fill:none; stroke:var(--ink-1); stroke-width:2; stroke-linecap:square;
-  stroke-dasharray:320; stroke-dashoffset:320;
-  animation:drawSeg 1.8s cubic-bezier(.6,0,.15,1) forwards;
+  fill:none; stroke:var(--ink-1); stroke-width:2.5; stroke-linecap:square;
+  stroke-dasharray:200; stroke-dashoffset:200;
+  animation:drawSeg .7s cubic-bezier(.6,0,.15,1) forwards;
 }
-.segment:nth-child(1)  { animation-delay:.10s }
-.segment:nth-child(2)  { animation-delay:.22s }
-.segment:nth-child(3)  { animation-delay:.34s }
-.segment:nth-child(4)  { animation-delay:.46s }
-.segment:nth-child(5)  { animation-delay:.58s }
-.segment:nth-child(6)  { animation-delay:.70s }
-.segment:nth-child(7)  { animation-delay:.82s }
-.segment:nth-child(8)  { animation-delay:.94s }
-.segment:nth-child(9)  { animation-delay:1.06s }
-.segment:nth-child(10) { animation-delay:1.18s }
-@keyframes drawSeg {
-  0%  { stroke-dashoffset:320; opacity:0;  }
-  15% { opacity:.8; }
-  100%{ stroke-dashoffset:0;   opacity:1;  }
-}
+.segment:nth-child(1){animation-delay:.08s}
+.segment:nth-child(2){animation-delay:.18s}
+.segment:nth-child(3){animation-delay:.28s}
+.segment:nth-child(4){animation-delay:.38s}
+@keyframes drawSeg { 0%{stroke-dashoffset:200;opacity:0} 25%{opacity:1} 100%{stroke-dashoffset:0;opacity:1} }
 
-/* ── Closing arc ── */
 .campo-arc {
-  fill:none; stroke:var(--ink-4); stroke-width:1; stroke-linecap:round;
-  stroke-dasharray:700; stroke-dashoffset:700;
-  animation:drawArc 1.1s ease forwards;
-  animation-delay:1.35s;
+  fill:none; stroke:var(--ink-4); stroke-width:1.5; stroke-linejoin:round;
+  stroke-dasharray:300; stroke-dashoffset:300;
+  animation:drawArc .5s ease forwards; animation-delay:.52s;
 }
 @keyframes drawArc { to { stroke-dashoffset:0; } }
 
-/* ── Centre dot ── */
 .center-dot {
-  fill:var(--accent);
-  opacity:0;
-  transform-origin:300px 180px;
-  animation:dotIn .55s cubic-bezier(0.2,0,0,1) forwards;
-  animation-delay:1.5s;
+  fill:var(--accent); opacity:0; transform-origin:300px 180px;
+  animation:dotIn .5s cubic-bezier(.2,0,0,1) forwards; animation-delay:.8s;
 }
-@keyframes dotIn {
-  0%   { opacity:0; transform:scale(0); }
-  100% { opacity:1; transform:scale(1); }
-}
+@keyframes dotIn { 0%{opacity:0;transform:scale(0)} 100%{opacity:1;transform:scale(1)} }
 
-/* ── Divider ── */
 .loader-line {
-  height:1px; width:100%; align-self:stretch;
-  background:var(--paper-3);
-  transform:scaleX(0); transform-origin:left center; opacity:0;
-  animation:lineGrow .65s ease forwards;
-  animation-delay:1.55s;
+  height:1px; width:100%; align-self:stretch; background:var(--paper-3);
+  transform:scaleX(0); transform-origin:center; opacity:0;
+  animation:lineGrow .55s ease forwards; animation-delay:.72s;
 }
-@keyframes lineGrow {
-  0%  { transform:scaleX(0); opacity:0; }
-  20% { opacity:1; }
-  100%{ transform:scaleX(1); opacity:1; }
-}
+@keyframes lineGrow { 0%{transform:scaleX(0);opacity:0} 30%{opacity:1} 100%{transform:scaleX(1);opacity:1} }
 
-/* ── Title, per-character reveal ── */
 .loader-title {
   font-family:var(--font-display); font-weight:300;
-  font-size:clamp(2.4rem,9vw,4.4rem); letter-spacing:.12em;
-  color:var(--ink);
-  display:flex; gap:0;
-  padding-right:.22em; /* compensate trailing letter-spacing */
+  font-size:clamp(2rem,7.5vw,3.4rem); letter-spacing:.1em;
+  color:var(--ink-1); display:flex; gap:0; padding-right:.1em;
 }
 .loader-title .char {
-  display:inline-block;
-  opacity:0; transform:translateY(26px);
-  animation:charIn .72s cubic-bezier(.22,1,.36,1) forwards;
+  display:inline-block; opacity:0; transform:translateY(18px);
+  animation:charIn .5s cubic-bezier(.22,1,.36,1) forwards;
 }
-.loader-title .char:nth-child(1) { animation-delay:1.60s }
-.loader-title .char:nth-child(2) { animation-delay:1.69s }
-.loader-title .char:nth-child(3) { animation-delay:1.78s }
-.loader-title .char:nth-child(4) { animation-delay:1.87s }
-.loader-title .char:nth-child(5) { animation-delay:1.96s }
-.loader-title .char:nth-child(6) { animation-delay:2.05s }
-.loader-title .char:nth-child(7) { animation-delay:2.14s }
-.loader-title .char:nth-child(8) { animation-delay:2.23s }
-.loader-title .char:nth-child(9) { animation-delay:2.32s }
+.loader-title .char:nth-child(1){animation-delay:.86s}
+.loader-title .char:nth-child(2){animation-delay:.92s}
+.loader-title .char:nth-child(3){animation-delay:.98s}
+.loader-title .char:nth-child(4){animation-delay:1.04s}
+.loader-title .char:nth-child(5){animation-delay:1.10s}
+.loader-title .char:nth-child(6){animation-delay:1.16s}
+.loader-title .char:nth-child(7){animation-delay:1.22s}
+.loader-title .char:nth-child(8){animation-delay:1.28s}
+.loader-title .char:nth-child(9){animation-delay:1.34s}
 @keyframes charIn { to { opacity:1; transform:none; } }
 
-/* ── Subtitle ── */
 .loader-sub {
-  font-family:var(--font-sans); font-weight:400;
-  font-size:.58rem; letter-spacing:.45em; text-transform:uppercase;
-  color:var(--terra); margin:0;
-  opacity:0;
-  animation:subIn .9s ease forwards;
-  animation-delay:2.3s;
+  font-family:var(--font-mono); font-weight:400;
+  font-size:.56rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-3); margin:0; opacity:0;
+  animation:introFade .6s ease forwards; animation-delay:1.45s;
 }
-@keyframes subIn {
-  0%   { opacity:0; letter-spacing:.65em; }
-  100% { opacity:.8; letter-spacing:.45em; }
-}
-/* ── Authors ── */
 .loader-authors {
   font-family:var(--font-sans); font-weight:400;
-  font-size:.5rem; letter-spacing:.2em; text-transform:uppercase;
-  color:rgba(20,19,15,.4); margin:.1rem 0 0;
-  opacity:0;
-  animation:charIn .7s ease forwards;
-  animation-delay:2.65s;
+  font-size:.5rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-4); margin:.05rem 0 0; opacity:0;
+  animation:introFade .6s ease forwards; animation-delay:1.6s;
 }
-
 /* ═══════════════════════════════════════════
    PROGRESS BAR
 ═══════════════════════════════════════════ */
@@ -502,123 +450,73 @@ body {
    INTRO  (full viewport, normal flow)
 ═══════════════════════════════════════════ */
 .intro {
-  height:100vh;
-  background:var(--paper);
-  display:flex; flex-direction:column; justify-content:flex-end;
-  padding:0 7vw clamp(7rem, 18vh, 13rem);
-  position:relative; overflow:hidden;
-  z-index:10;
-  will-change:transform, opacity;
+  min-height:100vh; min-height:100dvh;
+  background:var(--paper-0);
+  display:flex; flex-direction:column; justify-content:space-between;
+  padding:clamp(4.5rem,11vh,7rem) 7vw clamp(3.5rem,7vh,5rem);
+  position:relative; overflow:hidden; z-index:10;
 }
-
-/* ── Dual radial glow ── */
-.intro-bg {
-  position:absolute; inset:0;
-  background:
-    none;
-}
-
-/* ── Faint architectural grid (draughting paper) ── */
-.intro-grid {
-  position:absolute; inset:0; pointer-events:none;
-  background-image:
-    none;
-  background-size:62px 62px;
-}
-
-/* ── Ghost headline, typographic texture ── */
-.intro-ghost {
-  position:absolute;
-  bottom:-.10em; left:-.01em;
-  font-family:var(--font-display); font-weight:300; font-style:italic;
-  font-size:clamp(42vw,54vw,58rem);
-  line-height:1; letter-spacing:-.03em;
-  color:transparent;
-  -webkit-text-stroke:1px rgba(20,19,15,.05);
-  pointer-events:none; user-select:none;
-  opacity:0;
-  animation:introFade 1.4s ease forwards;
-  animation-delay:3.5s;
-}
-
-/* ── Kicker ── */
+.intro-top { display:flex; }
 .intro-kicker {
-  font-family:var(--font-sans); font-weight:500;
-  font-size:.6rem; letter-spacing:.22em; text-transform:uppercase;
-  color:var(--terra); margin-bottom:.55rem; position:relative;
-  opacity:0; transform:translateY(14px);
-  animation:introUp .7s cubic-bezier(.22,1,.36,1) forwards;
-  animation-delay:3.65s;
-}
-
-/* ── Main heading ── */
-.intro h1 {
-  font-family:var(--font-display); font-weight:300;
-  font-size:clamp(4.8rem,19vw,8.5rem); line-height:.86; letter-spacing:-.02em;
-  color:var(--ink); position:relative;
-  opacity:0; transform:translateY(20px);
-  animation:introUp .95s cubic-bezier(.22,1,.36,1) forwards;
-  animation-delay:3.8s;
-}
-.intro h1 em { font-style:normal; font-weight:200; color:var(--ink-1); }
-
-/* ── Terra-cotta accent bar ── */
-.intro-accent {
-  width:0; height:4px;
-  background:var(--accent);
-  margin-top:1.5rem; position:relative;
-  animation:accentGrow .8s ease forwards;
-  animation-delay:4.05s;
-}
-@keyframes accentGrow { to { width:clamp(2.4rem,5.5vw,3.8rem); } }
-
-/* ── Subtitle ── */
-.intro-sub {
-  font-family:var(--font-sans); font-style:normal; font-weight:300;
-  color:var(--ink-2); font-size:1.05rem;
-  margin-top:1rem; line-height:1.7; position:relative;
-  opacity:0; transform:translateY(12px);
-  animation:introUp .8s cubic-bezier(.22,1,.36,1) forwards;
-  animation-delay:4.05s;
-}
-
-/* ── Authors ── */
-.intro-authors {
-  font-family:var(--font-sans); font-weight:400;
-  font-size:.54rem; letter-spacing:.18em; text-transform:uppercase;
-  color:rgba(20,19,15,.7);
-  margin-top:1.8rem;
+  font-family:var(--font-mono); font-weight:400;
+  font-size:.6rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--ink-3);
   opacity:0; transform:translateY(10px);
-  animation:introUp .7s cubic-bezier(.22,1,.36,1) forwards;
-  animation-delay:4.2s;
-  z-index:2;
 }
+body.loaded .intro-kicker { animation:introUp .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay:.05s; }
 
-/* ── Scroll cue ── */
+.intro-hero { margin-top:auto; }
+.intro-title {
+  font-family:var(--font-display); font-weight:300;
+  font-size:clamp(4rem,17vw,8rem); line-height:.9; letter-spacing:-.02em;
+  color:var(--ink-1); margin:0;
+  opacity:0; transform:translateY(18px);
+}
+body.loaded .intro-title { animation:introUp .9s cubic-bezier(.22,1,.36,1) forwards; animation-delay:.16s; }
+
+.intro-accent {
+  width:0; height:5px; background:var(--accent); margin:1.3rem 0 0;
+}
+body.loaded .intro-accent { animation:accentGrow .7s ease forwards; animation-delay:.5s; }
+@keyframes accentGrow { to { width:clamp(2.6rem,7vw,4rem); } }
+
+.intro-sub {
+  font-family:var(--font-sans); font-weight:300;
+  font-size:clamp(1rem,3.6vw,1.15rem); line-height:1.6; color:var(--ink-2);
+  margin:1.1rem 0 0; max-width:30ch;
+  opacity:0; transform:translateY(12px);
+}
+body.loaded .intro-sub { animation:introUp .8s cubic-bezier(.22,1,.36,1) forwards; animation-delay:.3s; }
+
+.intro-meta {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.1rem 1.6rem;
+  margin:2.4rem 0 0;
+  opacity:0; transform:translateY(12px);
+}
+body.loaded .intro-meta { animation:introUp .8s cubic-bezier(.22,1,.36,1) forwards; animation-delay:.42s; }
+.intro-meta dt {
+  font-family:var(--font-mono); font-size:.54rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 .25rem;
+}
+.intro-meta dd { font-family:var(--font-sans); font-size:.82rem; color:var(--ink-1); margin:0; line-height:1.4; }
+
 .scroll-cue {
-  position:absolute; bottom:2.5rem;
-  left:50%; transform:translateX(-50%);
-  display:flex; flex-direction:column; align-items:center; gap:.5rem;
-  color:rgba(20,19,15,.55); font-size:.55rem; letter-spacing:.2em; text-transform:uppercase;
-  font-family:var(--font-sans); font-weight:500;
-  white-space:nowrap;
-  z-index:2;
+  display:flex; align-items:center; gap:.7rem; margin-top:2.2rem;
+  color:var(--ink-3); font-size:.55rem; letter-spacing:.2em; text-transform:uppercase;
+  font-family:var(--font-mono); white-space:nowrap;
   opacity:0;
-  animation:introFade .9s ease forwards;
-  animation-delay:4.45s;
 }
+body.loaded .scroll-cue { animation:introFade .9s ease forwards; animation-delay:.6s; }
 .scroll-line {
-  width:1px; height:44px;
-  background:var(--ink-3);
-  animation:cueDown 1.8s cubic-bezier(.45,0,.55,1) infinite;
+  width:36px; height:1px; background:var(--paper-3); position:relative; overflow:hidden;
 }
-@keyframes cueDown {
-  0%,100% { transform:translateY(0);    opacity:.4; }
-  55%     { transform:translateY(11px); opacity:1;  }
+.scroll-line::after {
+  content:''; position:absolute; left:0; top:0; height:100%; width:13px; background:var(--accent);
+  animation:cueSlide 1.9s cubic-bezier(.45,0,.55,1) infinite;
 }
-@keyframes introUp  { 0%{opacity:0;transform:translateY(18px)} 100%{opacity:1;transform:none} }
+@keyframes cueSlide { 0%{transform:translateX(-14px)} 55%{transform:translateX(36px)} 100%{transform:translateX(-14px)} }
+@keyframes introUp  { 0%{opacity:0;transform:translateY(16px)} 100%{opacity:1;transform:none} }
 @keyframes introFade{ 0%{opacity:0} 100%{opacity:1} }
-
 /* ═══════════════════════════════════════════
    MAP PANEL , fixed, full width, top portion
    Hidden during intro, revealed on scroll
@@ -648,6 +546,9 @@ body {
   transform:translate3d(0, 0, 0) scale(1);
   pointer-events:auto;
 }
+#map-panel.map-hidden { opacity:0; pointer-events:none; }
+/* Am Footer angekommen: obere Karten-Steuerung sauber ausblenden */
+body.at-end #track-btn, body.at-end #nav-crumb { opacity:0 !important; pointer-events:none; transition:opacity .3s; }
 
 /* wrapper must fill the full panel so SVG height:100% resolves correctly */
 #map-svg-wrap { width:100%; height:100%; }
@@ -917,22 +818,30 @@ body {
 /* ═══════════════════════════════════════════
    OUTRO
 ═══════════════════════════════════════════ */
-.outro {
-  background:var(--paper);
-  padding:14vh 8vw;
-  text-align:center;
+.colophon {
+  background:var(--paper-0); padding:clamp(5rem,9vh,7rem) 7vw clamp(4rem,7vh,5.5rem);
   position:relative; z-index:60;
-  border-top:1px solid var(--border);
-  content-visibility:auto; contain-intrinsic-size:auto 70vh;  /* skip render until near viewport */
+  content-visibility:auto; contain-intrinsic-size:auto 50vh;
 }
-.outro h2 {
-  font-family:var(--font-display); font-weight:300; font-style:italic;
-  font-size:clamp(1.7rem,6vw,2.8rem);
-  color:var(--ink); line-height:1.3; margin-bottom:1.1rem;
+.colophon-motto {
+  font-family:var(--font-display); font-style:italic; font-weight:300;
+  font-size:clamp(1.3rem,4.6vw,1.9rem); line-height:1.3; color:var(--ink-1);
+  max-width:22ch; margin:0;
 }
-.outro p { font-family:var(--font-sans); font-size:.8rem; color:rgba(20,19,15,.55); line-height:1.9; font-weight:400; }
-.outro-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); margin:2.5rem auto 0; }
-
+.colophon-mark { width:14px; height:14px; background:var(--accent); margin:1.5rem 0 2.4rem; }
+.colophon-credits {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.3rem 2rem; margin:0 0 2.2rem;
+}
+.colophon-credits dt {
+  font-family:var(--font-mono); font-size:.54rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-3); margin:0 0 .25rem;
+}
+.colophon-credits dd { font-family:var(--font-sans); font-size:.82rem; color:var(--ink-1); margin:0; line-height:1.45; }
+.colophon-credits dd a { color:var(--ink-1); text-decoration:none; }
+.colophon-credits dd a:hover { text-decoration:underline; text-underline-offset:3px; }
+.colophon-note {
+  font-family:var(--font-sans); font-size:.66rem; color:var(--ink-3); line-height:1.65; max-width:50ch; margin:0;
+}
 /* ═══════════════════════════════════════════
    MAP SVG  styles
 ═══════════════════════════════════════════ */
@@ -1142,41 +1051,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 /* ═══════════════════════════════════════════
    IMPRESSUM
 ═══════════════════════════════════════════ */
-.impressum {
-  background:var(--white);
-  border-top:1px solid var(--border);
-  padding:5vh 8vw 6vh;
-  position:relative; z-index:60;
-  content-visibility:auto; contain-intrinsic-size:auto 60vh;
-}
-.impressum-heading {
-  font-family:var(--font-sans); font-weight:600;
-  font-size:.6rem; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--muted); margin-bottom:1.8rem;
-}
-.impressum-grid {
-  display:grid; grid-template-columns:1fr 1fr; gap:1.4rem 2rem;
-  margin-bottom:2rem;
-}
-.impressum-block dt {
-  font-family:var(--font-sans); font-weight:500;
-  font-size:.55rem; letter-spacing:.12em; text-transform:uppercase;
-  color:var(--muted); margin-bottom:.3rem;
-}
-.impressum-block dd {
-  font-family:var(--font-display); font-size:.95rem;
-  color:var(--dim); line-height:1.55; margin:0;
-}
-.impressum-block dd a {
-  color:var(--terra); text-decoration:none;
-}
-.impressum-block dd a:hover { text-decoration:underline; }
-.impressum-note {
-  font-family:var(--font-sans); font-size:.72rem; font-weight:400;
-  color:var(--muted); line-height:1.75;
-  border-top:1px solid var(--border); padding-top:1.4rem;
-  max-width:56ch;
-}
+/* Impressum-Stile in .colophon zusammengefuehrt */
 
 /* ═══════════════════════════════════════════
    SCAN LINE , terra-cotta stripe sweeping
@@ -1316,7 +1191,6 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 
 <!-- LOADER -->
 <div id="loader">
-  <div class="loader-glow"></div>
   <div class="loader-inner">
     <!-- Wijnhaven-Marke: gekipptes Quadrat (Kubuswoningen-Verweis), zeichnet sich ein -->
     <svg class="campo-wrap" viewBox="0 0 600 360" aria-hidden="true">
@@ -1334,6 +1208,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     <p class="loader-sub">Feldjournal · WiSe 2026/27</p>
     <p class="loader-authors">Nils Kuhlow · Kai-Lars Ehrich</p>
   </div>
+  <div class="loader-flood" aria-hidden="true"></div>
 </div>
 
 <!-- CHROME -->
@@ -1425,14 +1300,20 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 
 <!-- INTRO -->
 <section class="intro">
-  <div class="intro-bg"></div>
-  <div class="intro-grid"></div>
-  <span class="intro-ghost" aria-hidden="true">Wijnhaven</span>
-  <span class="intro-kicker">Feldjournal · Rotterdam · Nederland</span>
-  <h1>Wijn<em>haven</em></h1>
-  <div class="intro-accent"></div>
-  <p class="intro-sub">Sieben Bauten am Wasser,<br>ein Reisetagebuch aus Rotterdam</p>
-  <div class="intro-authors">Nils Kuhlow &amp; Kai-Lars Ehrich</div>
+  <header class="intro-top">
+    <span class="intro-kicker">Feldjournal · Rotterdam</span>
+  </header>
+  <div class="intro-hero">
+    <h1 class="intro-title">Wijnhaven</h1>
+    <div class="intro-accent"></div>
+    <p class="intro-sub">Sieben Bauten am Wasser. Ein Reisetagebuch durch das Wijnhaven-Quartier.</p>
+  </div>
+  <dl class="intro-meta">
+    <div><dt data-i18n="introLoc">Ort</dt><dd>Wijnhaven, Rotterdam</dd></div>
+    <div><dt data-i18n="introRoute">Route</dt><dd data-i18n="introRouteV">7 Stationen · ca. 3 h</dd></div>
+    <div><dt data-i18n="introSem">Semester</dt><dd>WiSe 2026/27</dd></div>
+    <div><dt data-i18n="introTeam">Autoren</dt><dd>Nils Kuhlow · Kai-Lars Ehrich</dd></div>
+  </dl>
   <div class="scroll-cue">
     <span>Scrollen</span>
     <div class="scroll-line"></div>
@@ -1624,39 +1505,18 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   </div>
 </div>
 
-<!-- OUTRO -->
-<div class="outro">
-  <h2>De stad is een boek.<br>Haar lezen is al reizen.</h2>
-  <p>Wijnhaven ist kein Einzelbauwerk, sondern eine Wasserkante, die man liest, indem man sie geht. Sieben Einträge, ein Quartier.</p>
-  <div class="outro-dot"></div>
-</div>
-
-<!-- IMPRESSUM -->
-<section class="impressum">
-  <p class="impressum-heading">Impressum</p>
-  <div class="impressum-grid">
-    <dl class="impressum-block">
-      <dt data-i18n="imp_responsible">Verantwortlich</dt>
-      <dd>Nils Kuhlow &amp; Kai-Lars Ehrich</dd>
-    </dl>
-    <dl class="impressum-block">
-      <dt data-i18n="imp_institution">Institution</dt>
-      <dd>Hochschule Wismar<br>Fakultät Gestaltung · Architektur</dd>
-    </dl>
-    <dl class="impressum-block">
-      <dt data-i18n="imp_contact">Kontakt</dt>
-      <dd><a href="mailto:Nils@Kuhlow.eu">Nils@Kuhlow.eu</a></dd>
-    </dl>
-    <dl class="impressum-block">
-      <dt data-i18n="imp_course">Lehrveranstaltung</dt>
-      <dd>WPM Stadt + Raum<br>WiSe 2026/27</dd>
-    </dl>
-  </div>
-  <p class="impressum-note" data-i18n="imp_note">
-    Diese Website ist ein nicht-kommerzielles Hochschulprojekt und dient ausschließlich akademischen Zwecken.
-    Alle verwendeten Inhalte sind urheberrechtlich geschützt. Eine kommerzielle Nutzung ist nicht gestattet.
-  </p>
-</section>
+<!-- COLOPHON -->
+<footer class="colophon">
+  <p class="colophon-motto">De stad is een boek. Haar lezen is al reizen.</p>
+  <div class="colophon-mark" aria-hidden="true"></div>
+  <dl class="colophon-credits">
+    <div><dt data-i18n="imp_responsible">Verantwortlich</dt><dd>Nils Kuhlow · Kai-Lars Ehrich</dd></div>
+    <div><dt data-i18n="imp_institution">Institution</dt><dd>Hochschule Wismar · Fakultät Gestaltung</dd></div>
+    <div><dt data-i18n="imp_course">Lehrveranstaltung</dt><dd>WPM Stadt + Raum · WiSe 2026/27</dd></div>
+    <div><dt data-i18n="imp_contact">Kontakt</dt><dd><a href="mailto:Nils@Kuhlow.eu">Nils@Kuhlow.eu</a> · wijnhaven.com</dd></div>
+  </dl>
+  <p class="colophon-note" data-i18n="imp_note">Diese Website ist ein nicht-kommerzielles Hochschulprojekt und dient ausschließlich akademischen Zwecken. Eine kommerzielle Nutzung ist nicht gestattet.</p>
+</footer>
 
 <!-- SCAN LINE, terra-cotta stripe during map reveal -->
 <div id="scan-line" aria-hidden="true"></div>
@@ -1745,16 +1605,24 @@ var snapping      = false;
    LOADER
 ═══════════════════════════════ */
 (function(){
-  const el = document.getElementById('loader');
-  function dismiss(){
-    el.classList.add('out');
-    el.addEventListener('transitionend', () => el.classList.add('gone'), { once:true });
-    setTimeout(() => el.classList.add('gone'), 1500); // fallback
+  var el = document.getElementById('loader');
+  var lang = document.getElementById('lang-switch');
+  function now(){ return (window.performance && performance.now) ? performance.now() : Date.now(); }
+  var t0 = now(), MIN = 1900, MAX = 9000, done = false;
+  function reveal(){
+    if (done) return; done = true;
+    el.classList.add('flood');                 /* gelb fuellt den Schirm */
+    setTimeout(function(){
+      document.body.classList.add('loaded');   /* Landing animiert ein */
+      el.classList.add('lift');                /* Vorhang hoch, Seite erscheint */
+      if (lang) lang.classList.add('show');
+    }, 640);
+    setTimeout(function(){ el.classList.add('gone'); }, 640 + 880);
   }
-  setTimeout(dismiss, 3400);
-  setTimeout(() => { el.classList.add('out'); el.classList.add('gone'); }, 7000); // hard fallback
-  /* Lang switch appears after loader fades out */
-  setTimeout(() => document.getElementById('lang-switch').classList.add('show'), 4300);
+  function whenReady(){ setTimeout(reveal, Math.max(0, MIN - (now() - t0))); }
+  if (document.readyState === 'complete') whenReady();
+  else window.addEventListener('load', whenReady, { once:true });
+  setTimeout(reveal, MAX);                      /* harte Sicherung */
 })();
 
 /* ═══════════════════════════════
@@ -2043,8 +1911,9 @@ function moveTraveller(globalT){
   const trav = document.getElementById('traveller');
   trav.style.opacity = '1';
 
-  /* clamp to [0, 3.9999] so we always have a "next" point */
-  const t       = Math.max(0, Math.min(6.9999, globalT));
+  /* 7 Wegpunkte = 6 Segmente: auf [0, 5.9999] klemmen, damit es immer
+     einen Folgepunkt WAYPOINTS[fromIdx+1] gibt (sonst Absturz am letzten Stopp). */
+  const t       = Math.max(0, Math.min(5.9999, globalT));
   const fromIdx = Math.floor(t);
   const frac    = t - fromIdx;
   /* ease-in-out so dot decelerates near stops */
@@ -2278,6 +2147,18 @@ window.addEventListener('scroll', function(){
 }, { passive:true });
 onScroll();
 
+/* Karte sauber ausblenden, sobald der Colophon (Footer) ins Bild kommt */
+(function(){
+  var colo = document.querySelector('.colophon');
+  if (!colo || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      _mapEl.classList.toggle('map-hidden', e.isIntersecting);
+      document.body.classList.toggle('at-end', e.isIntersecting);   /* obere Steuerung ausblenden */
+    });
+  }, { threshold:0 }).observe(colo);
+})();
+
 /* ═══════════════════════════════
    SCROLL TO STOP
 ═══════════════════════════════ */
@@ -2300,7 +2181,7 @@ const LANG = {
   de: {
     loaderSub: 'Feldjournal · WiSe 2026/27',
     kicker:    'Feldjournal · Rotterdam · Nederland',
-    subHtml:   'Sieben Bauten am Wasser,<br>ein Reisetagebuch aus Rotterdam',
+    subHtml:   'Sieben Bauten am Wasser. Ein Reisetagebuch durch das Wijnhaven-Quartier.',
     scrollCue: 'Scrollen',
     drawerBtn: 'Eintrag öffnen →',
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
@@ -2324,6 +2205,7 @@ const LANG = {
     placesBtnLbl:  'Orte',
     shareCopied:   'Link kopiert',
     tour3dHint:    'Ziehen zum Umsehen · Gebäude und Personen antippen',
+    introLoc: 'Ort', introRoute: 'Route', introRouteV: '7 Stationen · ca. 3 h', introSem: 'Semester', introTeam: 'Autoren',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
       "Piet Blom · 1977-1984",
@@ -2365,7 +2247,7 @@ const LANG = {
   nl: {
     loaderSub: 'Veldjournaal · WiSe 2026/27',
     kicker:    'Veldjournaal · Rotterdam · Nederland',
-    subHtml:   'Zeven gebouwen aan het water,<br>een reisdagboek uit Rotterdam',
+    subHtml:   'Zeven gebouwen aan het water. Een reisdagboek door de Wijnhaven-wijk.',
     scrollCue: 'Scroll',
     drawerBtn: 'Notitie openen →',
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
@@ -2389,6 +2271,7 @@ const LANG = {
     placesBtnLbl:  'Plekken',
     shareCopied:   'Link gekopieerd',
     tour3dHint:    'Sleep om rond te kijken · tik op gebouwen en personen',
+    introLoc: 'Locatie', introRoute: 'Route', introRouteV: '7 stations · ca. 3 u', introSem: 'Semester', introTeam: 'Auteurs',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
       "Piet Blom · 1977-1984",
@@ -2430,7 +2313,7 @@ const LANG = {
   en: {
     loaderSub: 'Field Journal · Winter 2026/27',
     kicker:    'Field Journal · Rotterdam · Netherlands',
-    subHtml:   'Seven buildings on the water,<br>a travel diary from Rotterdam',
+    subHtml:   'Seven buildings on the water. A travel diary through the Wijnhaven district.',
     scrollCue: 'Scroll',
     drawerBtn: 'Open entry →',
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
@@ -2454,6 +2337,7 @@ const LANG = {
     placesBtnLbl:  'Places',
     shareCopied:   'Link copied',
     tour3dHint:    'Drag to look around · tap buildings and people',
+    introLoc: 'Location', introRoute: 'Route', introRouteV: '7 stops · approx. 3 h', introSem: 'Term', introTeam: 'Authors',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
       "Piet Blom · 1977-1984",
@@ -2522,12 +2406,8 @@ function setLang(lang){
   /* ── Journey ── */
   setText('.drawer-btn', t.drawerBtn);
 
-  /* ── Outro ── */
-  setText('.outro h2',  t.outroH2, true);
-  setText('.outro p',   t.outroP);
-
-  /* ── Impressum ── */
-  setText('.impressum-heading', t.impressum);
+  /* ── Colophon ── */
+  setText('.colophon-motto', t.outroH2, true);
 
   /* All data-i18n elements (dt labels, note, …) */
   document.querySelectorAll('[data-i18n]').forEach(function(el){
