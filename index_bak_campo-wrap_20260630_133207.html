@@ -108,17 +108,15 @@ body {
 .loader-flood {
   position:absolute; inset:0; background:var(--accent); z-index:5;
   clip-path:circle(0% at 50% 50%);
-  transition:clip-path 1.2s cubic-bezier(.37,0,.26,1);
+  transition:clip-path 1.25s cubic-bezier(.4,0,.2,1);
 }
-/* 75% deckt jeden Bildschirm (Vollabdeckung bei ~70.7%, unabhaengig vom Seitenverhaeltnis),
-   sodass die gesamte Dauer sichtbar fuellt statt in unsichtbarem Overshoot zu verpuffen */
-#loader.flood .loader-flood { clip-path:circle(75% at 50% 50%); }
+#loader.flood .loader-flood { clip-path:circle(150% at 50% 50%); }
 
 .loader-inner {
   display:flex; flex-direction:column; align-items:center; gap:1.4rem;
   width:min(74vw,420px); position:relative; z-index:2;
 }
-.campo-wrap { width:56%; max-width:212px; aspect-ratio:1.7/1; }
+.campo-wrap { width:38%; max-width:140px; aspect-ratio:1.7/1; }
 
 .segment {
   fill:none; stroke:var(--ink-1); stroke-width:2.5; stroke-linecap:square;
@@ -1715,8 +1713,8 @@ var snapping      = false;
       document.body.classList.add('loaded');   /* Landing animiert ein */
       el.classList.add('lift');                /* Vorhang hoch, Seite erscheint */
       if (lang) lang.classList.add('show');
-    }, 1300);
-    setTimeout(function(){ el.classList.add('gone'); }, 1300 + 880);
+    }, 640);
+    setTimeout(function(){ el.classList.add('gone'); }, 640 + 880);
   }
   function whenReady(){ setTimeout(reveal, Math.max(0, MIN - (now() - t0))); }
   if (document.readyState === 'complete') whenReady();

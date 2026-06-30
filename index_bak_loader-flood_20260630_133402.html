@@ -108,11 +108,9 @@ body {
 .loader-flood {
   position:absolute; inset:0; background:var(--accent); z-index:5;
   clip-path:circle(0% at 50% 50%);
-  transition:clip-path 1.2s cubic-bezier(.37,0,.26,1);
+  transition:clip-path 1.25s cubic-bezier(.4,0,.2,1);
 }
-/* 75% deckt jeden Bildschirm (Vollabdeckung bei ~70.7%, unabhaengig vom Seitenverhaeltnis),
-   sodass die gesamte Dauer sichtbar fuellt statt in unsichtbarem Overshoot zu verpuffen */
-#loader.flood .loader-flood { clip-path:circle(75% at 50% 50%); }
+#loader.flood .loader-flood { clip-path:circle(150% at 50% 50%); }
 
 .loader-inner {
   display:flex; flex-direction:column; align-items:center; gap:1.4rem;
