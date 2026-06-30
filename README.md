@@ -51,10 +51,25 @@ In der 3D-Ansicht gibt es oben einen Umschalter **Abstrakt / Realistisch**.
   **dieselben Knotennamen** haben (`building_<N>`, `person_<id>`), dann funktioniert das
   Antippen für beide ohne Codeänderung. Web-Budget anpeilen: möglichst unter ~25 MB,
   Licht in Lightmaps backen, Texturen als KTX2, Mesh per Draco/Meshopt (`gltf-transform optimize`).
-- Gibt es keine Detaildatei, zeigt der Umschalter stattdessen eine **Download-Karte**.
-  Den Ziel-Link in `index.html` bei `TOUR_FULLDETAIL_URL` setzen: eine Datei auf derselben
-  Domain (z. B. `downloads/wijnhaven-3d.glb`) lädt direkt herunter, ein externer Link
-  (App Store o. Ä.) öffnet stattdessen. Leer lassen = nur Hinweis „Folgt".
+- Gibt es keine Detaildatei, zeigt der Umschalter stattdessen eine **App-/Download-Karte**
+  mit Plattformwahl **Apple / Android** (`TOUR_APP_IOS`, `TOUR_APP_ANDROID` in `index.html`):
+  externe Links (App Store / Google Play) öffnen, relative Dateien laden direkt herunter.
+
+### Ego-Perspektive (Street View) + Vor-Ort-Sync
+
+Die 3D-Ansicht läuft in **First Person**: ziehen = umsehen, **Joystick** (unten links) bzw.
+**WASD/Pfeile** am Desktop = laufen, antippen = Gebäude/Person öffnen.
+
+Der Schalter **Vor Ort** (unten rechts) synchronisiert die Kamera mit dem **echten Standort**:
+`watchPosition` setzt die Position über `gpsToWorld(lat, lon)`, der Geräte-Kompass richtet die
+Blickrichtung aus. So sieht man vor Ort dasselbe wie im Modell. Manuelle Steuerung ist im
+Sync-Modus aus; aus Akkugründen läuft der Renderloop nur bei Eingabe/Bewegung.
+
+**Kalibrieren** (wie `gpsToSvg` für den Schwarzplan, in `index.html`): `GPS_ORIGIN` (GPS-Punkt am
+Modell-Ursprung), `GPS_KX`/`GPS_KZ` (Welt-Einheiten pro Grad Länge/Breite, an Modellmaßstab
+anpassen, Norden = -z) und `GPS_HEADING` (Grad-Offset für die Blickrichtung). Die Vorgaben sind
+Platzhalter und müssen am echten Modell vor Ort feinjustiert werden. iOS fragt beim ersten Mal
+nach Erlaubnis für Bewegungssensoren; ohne Kompass folgt nur die Position, Umsehen bleibt manuell.
 
 ## Lokal starten
 
