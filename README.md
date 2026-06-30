@@ -61,8 +61,12 @@ In der 3D-Ansicht gibt es oben einen Umschalter **Abstrakt / Realistisch**.
 
 ### Ego-Perspektive (Street View) + Vor-Ort-Sync
 
-Die 3D-Ansicht läuft in **First Person**: ziehen = umsehen, **Joystick** (unten links) bzw.
-**WASD/Pfeile** am Desktop = laufen, antippen = Gebäude/Person öffnen.
+Oben gibt es einen Umschalter **Geführt / Frei**:
+- **Geführt** (Standard, professionell): die Kamera gleitet zwischen festen Aussichtspunkten;
+  mit **‹ / ›** (unten) Schritt vor/zurück, ziehen = am Punkt umsehen, antippen = öffnen. Die
+  Punkte stehen in `TOUR_PATH` in `index.html` (je Punkt Standort + Blickziel, fürs echte Modell anpassen).
+- **Frei**: First-Person-Walk, ziehen = umsehen, **Joystick** (unten links) bzw. **WASD/Pfeile**
+  am Desktop = laufen, antippen = Gebäude/Person öffnen.
 
 Der Schalter **Vor Ort** (unten rechts) synchronisiert die Kamera mit dem **echten Standort**:
 `watchPosition` setzt die Position über `gpsToWorld(lat, lon)`, der Geräte-Kompass richtet die

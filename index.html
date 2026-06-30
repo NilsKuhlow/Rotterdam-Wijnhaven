@@ -1216,7 +1216,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   font-size:1rem; line-height:1; display:flex; align-items:center; justify-content:center;
 }
 #tour3d-hint {
-  position:absolute; bottom:1.6rem; left:50%; transform:translateX(-50%);
+  position:absolute; bottom:5rem; left:50%; transform:translateX(-50%);
   font-family:var(--font-mono); font-size:.56rem; letter-spacing:.12em;
   text-transform:uppercase; color:var(--ink-3); text-align:center;
   background:rgba(255,255,255,.82); padding:.45rem .8rem; white-space:nowrap; pointer-events:none;
@@ -1286,6 +1286,25 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 }
 #tour3d-gps.on { background:var(--ink-1); color:var(--paper-0); }
 #tour3d-gps .t-icon { width:14px; height:14px; }
+/* Top-Bar: zwei Umschalter (Qualitaet + Modus) gestapelt */
+.t3d-segs { display:flex; flex-direction:column; gap:.32rem; align-items:flex-end; pointer-events:none; }
+.t3d-segs .t3d-seg { pointer-events:auto; }
+/* Pfad-Navigation (Gefuehrt-Modus), unten mittig */
+#tour3d-nav {
+  position:absolute; left:50%; bottom:1.4rem; transform:translateX(-50%); z-index:9;
+  display:flex; align-items:center; gap:.55rem;
+  background:rgba(255,255,255,.92); padding:.32rem .42rem;
+}
+.t3d-nav-btn {
+  width:40px; height:34px; border:none; background:var(--ink-1); color:var(--paper-0); cursor:pointer;
+  font-size:1.15rem; line-height:1; display:flex; align-items:center; justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.t3d-nav-btn:active { opacity:.8; }
+#tour3d-nav-pos {
+  font-family:var(--font-mono); font-size:.55rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-1); min-width:3rem; text-align:center;
+}
 #tour3d-quote {
   position:absolute; left:0; right:0; bottom:0; z-index:5;
   display:flex; justify-content:center; padding:1.2rem;
@@ -1712,9 +1731,15 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <div id="tour3d-bar">
     <span id="tour3d-title">3D-Ansicht · Beispielmodell</span>
     <div class="t3d-actions">
-      <div id="tour3d-toggle" class="t3d-seg" role="group" aria-label="Modellqualität">
-        <button class="t3d-seg-btn is-on" data-mode="abstract" onclick="switchTourModel(false)">Abstrakt</button>
-        <button class="t3d-seg-btn"       data-mode="detailed" onclick="switchTourModel(true)">Realistisch</button>
+      <div class="t3d-segs">
+        <div id="tour3d-toggle" class="t3d-seg" role="group" aria-label="Modellqualität">
+          <button class="t3d-seg-btn is-on" data-mode="abstract" onclick="switchTourModel(false)">Abstrakt</button>
+          <button class="t3d-seg-btn"       data-mode="detailed" onclick="switchTourModel(true)">Realistisch</button>
+        </div>
+        <div id="tour3d-mode" class="t3d-seg" role="group" aria-label="Bewegungsmodus">
+          <button class="t3d-seg-btn is-on" data-m="guided" onclick="setTourMode(true)">Geführt</button>
+          <button class="t3d-seg-btn"       data-m="free"   onclick="setTourMode(false)">Frei</button>
+        </div>
       </div>
       <button id="tour3d-close" onclick="closeTour3D()" aria-label="3D schließen">✕</button>
     </div>
@@ -1726,6 +1751,12 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <button id="tour3d-gps" onclick="toggleTourGps()" aria-label="Mit Standort synchronisieren">
     <span class="t-icon" aria-hidden="true"></span><span id="tour3d-gps-label">Vor Ort</span>
   </button>
+  <!-- Pfad-Navigation (nur im Gefuehrt-Modus): Schritt zurueck / vor -->
+  <div id="tour3d-nav" aria-label="Rundgang">
+    <button class="t3d-nav-btn" onclick="tourPathStep(-1)" aria-label="Zurück">‹</button>
+    <span id="tour3d-nav-pos">1 / 7</span>
+    <button class="t3d-nav-btn" onclick="tourPathStep(1)" aria-label="Weiter">›</button>
+  </div>
   <div id="tour3d-loading"><span class="mono">3D wird geladen …</span></div>
   <!-- Detail-Dialog: Groessen-Bestaetigung oder Download-Fallback (Inhalt per JS) -->
   <div id="tour3d-detail" hidden><div class="t3d-card" id="tour3d-detail-card"></div></div>
@@ -4096,6 +4127,19 @@ function gpsToWorld(lat, lon){
   return { x: (lon - GPS_ORIGIN.lon) * GPS_KX, z: -(lat - GPS_ORIGIN.lat) * GPS_KZ };
 }
 
+/* ── Gefuehrter Pfad (fester Rundgang) fuer die 3D-Ansicht ──
+   Feste Aussichtspunkte, zwischen denen die Kamera gleitet (Modus "Gefuehrt").
+   Je Punkt: Standort {x,z} und Blickziel {lx,lz}. Fuer das echte Modell anpassen. */
+var TOUR_PATH = [
+  { x:0,  z:15, lx:0,   lz:-2 },   /* Eingang am Wasser, Blick in die Strasse */
+  { x:3,  z:6,  lx:9,   lz:-9 },   /* Richtung Markthal */
+  { x:7,  z:-2, lx:9,   lz:-9 },   /* vor dem Markthal */
+  { x:1,  z:-7, lx:-12, lz:-7 },   /* Blick zum Witte Huis */
+  { x:-8, z:-5, lx:-12, lz:-7 },   /* am Witte Huis */
+  { x:-5, z:3,  lx:7,   lz:7  },   /* Richtung Red Apple */
+  { x:4,  z:6,  lx:7,   lz:7  }    /* am Red Apple */
+];
+
 var T3D_TXT = {
   de:{abstract:'Abstrakt',real:'Realistisch',load:'Laden',cancel:'Abbrechen',
       title:'Realistisches Modell',note:'Texturiertes Modell laden. Über WLAN empfohlen.',
@@ -4103,21 +4147,24 @@ var T3D_TXT = {
       apple:'Apple',android:'Android',windows:'Windows',recommended:'Empfohlen für dein Gerät:',
       appLabel:'Volldetail-App',appTitle:'Street View durchs Quartier',
       appNote:'Lade die App, um dich auf der realistischen Karte in Ego-Perspektive zu bewegen. Plattform wählen:',
-      gps:'Vor Ort',gpsWait:'Suche GPS',gpsOn:'Vor Ort',gpsErr:'Kein Signal',gpsNo:'Kein GPS'},
+      gps:'Vor Ort',gpsWait:'Suche GPS',gpsOn:'Vor Ort',gpsErr:'Kein Signal',gpsNo:'Kein GPS',
+      guided:'Geführt',free:'Frei'},
   nl:{abstract:'Abstract',real:'Realistisch',load:'Laden',cancel:'Annuleren',
       title:'Realistisch model',note:'Getextureerd model laden. Wifi aanbevolen.',
       loading:'Realistisch model laadt',download:'Downloaden',soon:'Volgt',
       apple:'Apple',android:'Android',windows:'Windows',recommended:'Aanbevolen voor je toestel:',
       appLabel:'Volledige app',appTitle:'Street View door de wijk',
       appNote:'Download de app om je in ego-perspectief over de realistische kaart te bewegen. Kies platform:',
-      gps:'Ter plaatse',gpsWait:'GPS zoeken',gpsOn:'Ter plaatse',gpsErr:'Geen signaal',gpsNo:'Geen GPS'},
+      gps:'Ter plaatse',gpsWait:'GPS zoeken',gpsOn:'Ter plaatse',gpsErr:'Geen signaal',gpsNo:'Geen GPS',
+      guided:'Geleid',free:'Vrij'},
   en:{abstract:'Abstract',real:'Realistic',load:'Load',cancel:'Cancel',
       title:'Realistic model',note:'Load the textured model. Wi-Fi recommended.',
       loading:'Loading realistic model',download:'Download',soon:'Soon',
       apple:'Apple',android:'Android',windows:'Windows',recommended:'Recommended for your device:',
       appLabel:'Full app',appTitle:'Street View through the district',
       appNote:'Download the app to move around the realistic map in first person. Choose your platform:',
-      gps:'On site',gpsWait:'Finding GPS',gpsOn:'On site',gpsErr:'No signal',gpsNo:'No GPS'}
+      gps:'On site',gpsWait:'Finding GPS',gpsOn:'On site',gpsErr:'No signal',gpsNo:'No GPS',
+      guided:'Guided',free:'Free'}
 };
 function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
 
@@ -4151,6 +4198,9 @@ function closeTour3D(){
 }
 /* Vor-Ort-Sync der 3D-Ansicht ein/aus */
 function toggleTourGps(){ if (_t3d && _t3d.toggleGps) _t3d.toggleGps(); }
+/* Bewegungsmodus: gefuehrter Pfad <-> freier Walk; im Gefuehrt-Modus Schritt vor/zurueck */
+function setTourMode(guided){ if (_t3d && _t3d.setGuided) _t3d.setGuided(guided); }
+function tourPathStep(n){ if (_t3d && _t3d.pathStep) _t3d.pathStep(n); }
 
 /* ── Umschalter Abstrakt <-> Realistisch ── */
 function updateTourToggleUI(){
@@ -4354,6 +4404,8 @@ async function _initTour(THREE, GLTFLoader){
   var compassActive = false, geoWatch = null, orientHandler = null;
   function tourOpen(){ var h = document.getElementById('tour3d'); return h && !h.hidden; }
   function stickEl(){ return document.getElementById('tour3d-stick'); }
+  /* Gefuehrt (fester Pfad, professionell) vs. Frei (Ego-Walk). Standard = gefuehrt. */
+  var guided = true, pathIdx = 0, guidedYawLock = true;
 
   function loop(t){
     if (!running) return;
@@ -4369,6 +4421,19 @@ async function _initTour(THREE, GLTFLoader){
       if (compassActive){
         var dY = ((gpsYaw - yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
         if (Math.abs(dY) > 0.003){ yaw += dY * Math.min(1, dt * 6); busy = true; }
+      }
+    } else if (guided){
+      var wp = TOUR_PATH[pathIdx] || TOUR_PATH[0];
+      var lg = Math.min(1, dt * 3.0);
+      camera.position.x += (wp.x - camera.position.x) * lg;
+      camera.position.z += (wp.z - camera.position.z) * lg;
+      camera.position.y = EYE;
+      if (Math.hypot(wp.x - camera.position.x, wp.z - camera.position.z) > 0.03) busy = true;
+      if (guidedYawLock){
+        var tY = Math.atan2((wp.lx != null ? wp.lx : wp.x) - wp.x, -((wp.lz != null ? wp.lz : wp.z) - wp.z));
+        var dG = ((tY - yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+        if (Math.abs(dG) > 0.004){ yaw += dG * Math.min(1, dt * 5); busy = true; }
+        if (Math.abs(pitch) > 0.004){ pitch += (0 - pitch) * Math.min(1, dt * 5); busy = true; }
       }
     } else {
       var kf = ((keys['w']||keys['arrowup'])?1:0) - ((keys['s']||keys['arrowdown'])?1:0);
@@ -4390,6 +4455,28 @@ async function _initTour(THREE, GLTFLoader){
     else { running = false; lastT = 0; }
   }
   function kick(){ if (!running){ running = true; lastT = 0; requestAnimationFrame(loop); } }
+
+  /* ── Gefuehrter Pfad: zwischen festen Aussichtspunkten gleiten ── */
+  function _navLabel(){ var el = document.getElementById('tour3d-nav-pos'); if (el) el.textContent = (pathIdx + 1) + ' / ' + TOUR_PATH.length; }
+  function _nearestWp(){
+    var bi = 0, bd = 1e9;
+    for (var i = 0; i < TOUR_PATH.length; i++){ var w = TOUR_PATH[i]; var d = Math.hypot(w.x - camera.position.x, w.z - camera.position.z); if (d < bd){ bd = d; bi = i; } }
+    return bi;
+  }
+  function pathStep(n){ if (!guided) return; pathIdx = Math.max(0, Math.min(TOUR_PATH.length - 1, pathIdx + n)); guidedYawLock = true; _navLabel(); kick(); }
+  function updateTourControls(){
+    var st = document.getElementById('tour3d-stick'), nv = document.getElementById('tour3d-nav');
+    if (st) st.style.display = (!guided && !gpsSync) ? '' : 'none';   /* Joystick nur im Frei-Modus */
+    if (nv) nv.style.display = (guided && !gpsSync) ? '' : 'none';    /* Pfad-Navigation nur im Gefuehrt-Modus */
+    var seg = document.getElementById('tour3d-mode');
+    if (seg) Array.prototype.forEach.call(seg.querySelectorAll('.t3d-seg-btn'), function(b){
+      var m = b.getAttribute('data-m');
+      b.classList.toggle('is-on', m === (guided ? 'guided' : 'free'));
+      b.textContent = (m === 'guided') ? t3dt().guided : t3dt().free;
+    });
+    _navLabel();
+  }
+  function setGuided(on){ guided = !!on; if (guided){ pathIdx = _nearestWp(); guidedYawLock = true; } updateTourControls(); kick(); }
 
   /* ── GPS-Sync: echte Position -> Kamera, Geraete-Kompass -> Blickrichtung ── */
   function _gpsLabel(txt){ var el = document.getElementById('tour3d-gps-label'); if (el) el.textContent = txt; }
@@ -4415,7 +4502,7 @@ async function _initTour(THREE, GLTFLoader){
   function startGps(){
     if (!navigator.geolocation){ _gpsLabel(t3dt().gpsNo); return; }
     gpsSync = true; _gpsBtn(true); _gpsLabel(t3dt().gpsWait);
-    if (stickEl()) stickEl().style.display = 'none';
+    updateTourControls();
     geoWatch = navigator.geolocation.watchPosition(function(pos){
       var w = gpsToWorld(pos.coords.latitude, pos.coords.longitude);
       gpsTX = Math.max(-BOUND, Math.min(BOUND, w.x));
@@ -4427,7 +4514,7 @@ async function _initTour(THREE, GLTFLoader){
   }
   function stopGps(){
     gpsSync = false; compassActive = false; _gpsBtn(false); _gpsLabel(t3dt().gps);
-    if (stickEl()) stickEl().style.display = '';
+    updateTourControls();
     if (geoWatch != null && navigator.geolocation){ navigator.geolocation.clearWatch(geoWatch); geoWatch = null; }
     if (orientHandler){
       window.removeEventListener('deviceorientationabsolute', orientHandler, true);
@@ -4447,6 +4534,7 @@ async function _initTour(THREE, GLTFLoader){
   canvas.addEventListener('pointermove', function(e){
     if (!looking || e.pointerId !== lpId) return;
     if (gpsSync && compassActive) return;   /* im Sync-Modus dreht der Kompass den Blick */
+    if (guided) guidedYawLock = false;      /* im Gefuehrt-Modus: am Punkt frei umsehen */
     var ddx = e.clientX - lx, ddy = e.clientY - ly; lx = e.clientX; ly = e.clientY;
     yaw  -= ddx * LOOK;
     pitch = Math.max(-1.2, Math.min(1.2, pitch - ddy * LOOK));
@@ -4503,10 +4591,12 @@ async function _initTour(THREE, GLTFLoader){
   var gltf = await new GLTFLoader().loadAsync(TOUR_ABSTRACT_URL);
   setModel(gltf.scene);
   _gpsLabel(t3dt().gps);
-  resize();
+  pathIdx = _nearestWp(); updateTourControls();
+  resize(); kick();                                  /* gleitet zum ersten Aussichtspunkt (Gefuehrt-Standard) */
   return {
     resize: resize, render: render, scene: scene, camera: camera, setModel: setModel,
     toggleGps: toggleGps, stopGps: stopGps, isGps: function(){ return gpsSync; },
+    setGuided: setGuided, isGuided: function(){ return guided; }, pathStep: pathStep, updateTourControls: updateTourControls,
     GLTFLoader: GLTFLoader, THREE: THREE,
     models: { abstract: gltf.scene, detailed: null }, mode: 'abstract'
   };
