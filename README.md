@@ -41,6 +41,21 @@ Objekte/Meshes so benennen:
 Als `.glb` nach `/models/walkthrough.glb` exportieren (Y nach oben, reale Maßstäbe sind ok).
 Das Generator-Skript des Beispiels liegt unter `tools/make_walkthrough.py`.
 
+### Abstrakt / Realistisch umschalten
+
+In der 3D-Ansicht gibt es oben einen Umschalter **Abstrakt / Realistisch**.
+
+- **Abstrakt** ist Standard und lädt `models/walkthrough.glb` (weiß, leicht).
+- **Realistisch** lädt `models/walkthrough_detailed.glb` erst auf Knopfdruck, mit
+  Größen-Hinweis (per HTTP-HEAD ermittelt) und Fortschrittsbalken. Beide Dateien müssen
+  **dieselben Knotennamen** haben (`building_<N>`, `person_<id>`), dann funktioniert das
+  Antippen für beide ohne Codeänderung. Web-Budget anpeilen: möglichst unter ~25 MB,
+  Licht in Lightmaps backen, Texturen als KTX2, Mesh per Draco/Meshopt (`gltf-transform optimize`).
+- Gibt es keine Detaildatei, zeigt der Umschalter stattdessen eine **Download-Karte**.
+  Den Ziel-Link in `index.html` bei `TOUR_FULLDETAIL_URL` setzen: eine Datei auf derselben
+  Domain (z. B. `downloads/wijnhaven-3d.glb`) lädt direkt herunter, ein externer Link
+  (App Store o. Ä.) öffnet stattdessen. Leer lassen = nur Hinweis „Folgt".
+
 ## Lokal starten
 
 ```
