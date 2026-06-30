@@ -1233,67 +1233,6 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 #lang-switch.light .lang-sep        { color:rgba(0,0,0,.15); }
 
 /* ═══════════════════════════════════════════
-   3D BUTTON + WALKTHROUGH OVERLAY
-═══════════════════════════════════════════ */
-#tour3d-btn {
-  display:none; align-items:center; gap:.4rem;
-  background:var(--ink-1); color:var(--paper-0);
-  border:none; border-radius:0; cursor:pointer;
-  padding:.4rem .7rem;
-  font-family:var(--font-sans); font-weight:500;
-  font-size:.55rem; letter-spacing:.16em; text-transform:uppercase;
-  pointer-events:auto; -webkit-tap-highlight-color:transparent;
-}
-#nav-crumb.show #tour3d-btn { display:inline-flex; }
-#tour3d-btn svg { width:13px; height:13px; }
-
-#tour3d {
-  position:fixed; inset:0; z-index:300;
-  background:var(--paper-0);
-  display:flex; align-items:center; justify-content:center;
-}
-#tour3d[hidden] { display:none; }
-#tour3d-canvas { width:100%; height:100%; display:block; touch-action:none; }
-#tour3d-bar {
-  position:absolute; top:0; left:0; right:0;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:.9rem 1.1rem; pointer-events:none;
-}
-#tour3d-title {
-  font-family:var(--font-mono); font-size:.6rem; letter-spacing:.16em;
-  text-transform:uppercase; color:var(--ink-3);
-}
-#tour3d-close {
-  pointer-events:auto; width:38px; height:38px; border-radius:50%;
-  background:var(--ink-1); color:var(--paper-0); border:none; cursor:pointer;
-  font-size:1rem; line-height:1; display:flex; align-items:center; justify-content:center;
-}
-#tour3d-hint {
-  position:absolute; bottom:1.6rem; left:50%; transform:translateX(-50%);
-  font-family:var(--font-mono); font-size:.56rem; letter-spacing:.12em;
-  text-transform:uppercase; color:var(--ink-3); text-align:center;
-  background:rgba(255,255,255,.82); padding:.45rem .8rem; white-space:nowrap; pointer-events:none;
-}
-#tour3d-loading {
-  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  background:var(--paper-0); color:var(--ink-3);
-}
-#tour3d-loading .mono { font-family:var(--font-mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; }
-#tour3d-quote {
-  position:absolute; left:0; right:0; bottom:0; z-index:5;
-  display:flex; justify-content:center; padding:1.2rem;
-}
-#tour3d-quote[hidden] { display:none; }
-.t3q-inner { background:var(--paper-1); padding:1.4rem 1.5rem; max-width:34rem; width:100%; }
-#t3q-quote { margin:.3rem 0 .6rem; background:transparent; padding:0; }
-.t3q-close {
-  background:var(--ink-1); color:var(--paper-0); border:none; border-radius:0;
-  padding:.5rem 1rem; font-family:var(--font-sans); font-size:.58rem;
-  letter-spacing:.12em; text-transform:uppercase; cursor:pointer; margin-top:.4rem;
-}
-.t3d-cursor-pointer { cursor:pointer; }
-
-/* ═══════════════════════════════════════════
    MOBILE: impressum grid stacks vertically
 ═══════════════════════════════════════════ */
 @media (max-width:600px){
@@ -1662,25 +1601,6 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <div id="scan-line" aria-hidden="true"></div>
 
 <!-- Language switch moved into #nav-crumb (top bar) -->
-
-<!-- 3D-ANSICHT (Walkthrough) — lazy, nur aktiv wenn geöffnet -->
-<div id="tour3d" hidden aria-modal="true" role="dialog" aria-label="3D-Ansicht">
-  <canvas id="tour3d-canvas"></canvas>
-  <div id="tour3d-bar">
-    <span id="tour3d-title">3D-Ansicht · Beispielmodell</span>
-    <button id="tour3d-close" onclick="closeTour3D()" aria-label="3D schließen">✕</button>
-  </div>
-  <div id="tour3d-hint" data-i18n="tour3dHint">Ziehen zum Umsehen · Gebäude und Personen antippen</div>
-  <div id="tour3d-loading"><span class="mono">3D wird geladen …</span></div>
-  <div id="tour3d-quote" hidden>
-    <div class="t3q-inner">
-      <div class="jl-head" id="t3q-role">Stimme vom Ort</div>
-      <blockquote class="voice" id="t3q-quote">…</blockquote>
-      <cite id="t3q-name"></cite>
-      <button class="t3q-close" onclick="closeTourQuote()">schließen</button>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL -->
 <div id="backdrop" onclick="closeModal()"></div>
@@ -2323,7 +2243,6 @@ const LANG = {
     ppExtra:       'Weitere Orte',
     placesBtnLbl:  'Orte',
     shareCopied:   'Link kopiert',
-    tour3dHint:    'Ziehen zum Umsehen · Gebäude und Personen antippen',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
       "Piet Blom · 1977-1984",
@@ -2388,7 +2307,6 @@ const LANG = {
     ppExtra:       'Overige plekken',
     placesBtnLbl:  'Plekken',
     shareCopied:   'Link gekopieerd',
-    tour3dHint:    'Sleep om rond te kijken · tik op gebouwen en personen',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
       "Piet Blom · 1977-1984",
@@ -2453,7 +2371,6 @@ const LANG = {
     ppExtra:       'Other places',
     placesBtnLbl:  'Places',
     shareCopied:   'Link copied',
-    tour3dHint:    'Drag to look around · tap buildings and people',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
       "Piet Blom · 1977-1984",
@@ -3803,136 +3720,6 @@ document.addEventListener('visibilitychange', function(){
     }
   }
 }, { passive:true });
-</script>
-
-<script>
-/* ════════════════════════════════════════════════════════════════
-   3D-WALKTHROUGH (Basis)
-   Lazy: Three.js wird erst beim Öffnen vom CDN geladen.
-   Akku: On-Demand-Rendering (nur bei Interaktion/Resize), kein Idle-Loop.
-   Namenskonvention im glb (so baut Nils sein eigenes Modell):
-     building_<N>  -> Antippen öffnet Eintrag N (0..6)
-     person_<id>   -> Antippen zeigt Zitat aus TOUR_PEOPLE[id]
-     ground / scenery_*  -> nur Kulisse, nicht antippbar
-   ════════════════════════════════════════════════════════════════ */
-var TOUR_PEOPLE = {
-  kai: {
-    de:{name:'Kai-Lars Ehrich', role:'Projektpartner', quote:'Hier erscheint später unser eigenes Interview vom Ort.'},
-    nl:{name:'Kai-Lars Ehrich', role:'Projectpartner', quote:'Hier verschijnt later ons eigen interview ter plaatse.'},
-    en:{name:'Kai-Lars Ehrich', role:'Project partner', quote:'Our own on-site interview will appear here later.'}
-  },
-  bewohner: {
-    de:{name:'Bewohnerin (Beispiel)', role:'Stimme vom Ort', quote:'Platzhalter: Zitat aus dem Vor-Ort-Interview (Phase B).'},
-    nl:{name:'Bewoner (voorbeeld)', role:'Stem ter plaatse', quote:'Plaatshouder: citaat uit het interview ter plaatse (fase B).'},
-    en:{name:'Resident (example)', role:'Voice on site', quote:'Placeholder: quote from the on-site interview (phase B).'}
-  }
-};
-
-var _t3d = null;
-
-async function openTour3D(){
-  var host = document.getElementById('tour3d');
-  host.hidden = false;
-  document.body.style.overflow = 'hidden';
-  if (_t3d){ _t3d.resize(); return; }
-  var loading = document.getElementById('tour3d-loading');
-  loading.style.display = 'flex';
-  try {
-    var THREE = await import('https://esm.sh/three@0.160.0');
-    var oc = await import('https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls.js');
-    var gl = await import('https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js');
-    _t3d = await _initTour(THREE, oc.OrbitControls, gl.GLTFLoader);
-    loading.style.display = 'none';
-  } catch(e){
-    console.error('3D load failed', e);
-    loading.innerHTML = '<span class="mono">3D konnte nicht geladen werden (Internet?)</span>';
-  }
-}
-function closeTour3D(){
-  var host = document.getElementById('tour3d');
-  if (host) host.hidden = true;
-  document.body.style.overflow = '';
-  closeTourQuote();
-}
-function closeTourQuote(){ var q=document.getElementById('tour3d-quote'); if(q) q.hidden=true; }
-
-function _tourTargetName(o){
-  var x=o;
-  while(x){ if(x.name && (/^building_\d+/.test(x.name) || /^person_/.test(x.name))) return x.name; x=x.parent; }
-  return null;
-}
-function _handleTourHit(name){
-  if(!name) return;
-  if(name.indexOf('building_')===0){
-    var idx = parseInt(name.slice(9),10);
-    if(!isNaN(idx) && idx>=0 && idx<7){ closeTour3D(); openModal(idx); }
-  } else if(name.indexOf('person_')===0){
-    _showTourQuote(name.slice(7).split('_')[0]);
-  }
-}
-function _showTourQuote(id){
-  var rec = TOUR_PEOPLE[id]; if(!rec) return;
-  var lang = (typeof currentLang!=='undefined' && rec[currentLang]) ? currentLang : 'de';
-  var p = rec[lang];
-  document.getElementById('t3q-role').textContent  = p.role;
-  document.getElementById('t3q-quote').textContent = '„'+p.quote+'“';
-  document.getElementById('t3q-name').textContent  = p.name;
-  document.getElementById('tour3d-quote').hidden = false;
-}
-
-async function _initTour(THREE, OrbitControls, GLTFLoader){
-  var canvas = document.getElementById('tour3d-canvas');
-  var renderer = new THREE.WebGLRenderer({ canvas:canvas, antialias:true, powerPreference:'low-power' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-
-  var scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xffffff);
-  var camera = new THREE.PerspectiveCamera(56, 1, 0.1, 600);
-  camera.position.set(32, 26, 40);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xdcdcdc, 1.15));
-  var dir = new THREE.DirectionalLight(0xffffff, 1.35); dir.position.set(24, 34, 14); scene.add(dir);
-
-  var controls = new OrbitControls(camera, canvas);
-  controls.enableDamping = false;          /* pure on-demand: render only on change */
-  controls.maxPolarAngle = Math.PI * 0.49; /* stay above the ground plane */
-  controls.minDistance = 6; controls.maxDistance = 90;
-  controls.target.set(0, 4, 0);
-  controls.update();
-
-  function render(){ renderer.render(scene, camera); }
-  controls.addEventListener('change', render);
-
-  function resize(){
-    var w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h; camera.updateProjectionMatrix();
-    render();
-  }
-  window.addEventListener('resize', resize);
-
-  var gltf = await new GLTFLoader().loadAsync('models/walkthrough.glb');
-  scene.add(gltf.scene);
-  var clickable = [];
-  gltf.scene.traverse(function(o){
-    if (o.isMesh){ var n = _tourTargetName(o); if (n){ o.userData.t3d = n; clickable.push(o); } }
-  });
-
-  /* raycast: distinguish tap from orbit-drag via a small movement threshold */
-  var ray = new THREE.Raycaster(), v = new THREE.Vector2(), dx=0, dy=0;
-  canvas.addEventListener('pointerdown', function(e){ dx=e.clientX; dy=e.clientY; });
-  canvas.addEventListener('pointerup', function(e){
-    if (Math.hypot(e.clientX-dx, e.clientY-dy) > 6) return;
-    var r = canvas.getBoundingClientRect();
-    v.x = ((e.clientX-r.left)/r.width)*2 - 1;
-    v.y = -((e.clientY-r.top)/r.height)*2 + 1;
-    ray.setFromCamera(v, camera);
-    var hits = ray.intersectObjects(clickable, true);
-    if (hits.length) _handleTourHit(hits[0].object.userData.t3d || _tourTargetName(hits[0].object));
-  });
-
-  resize();
-  return { resize:resize, render:render };
-}
 </script>
 
 <script>
