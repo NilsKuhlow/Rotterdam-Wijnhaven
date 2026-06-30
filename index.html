@@ -1220,7 +1220,9 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   font-family:var(--font-mono); font-size:.56rem; letter-spacing:.12em;
   text-transform:uppercase; color:var(--ink-3); text-align:center;
   background:rgba(255,255,255,.82); padding:.45rem .8rem; white-space:nowrap; pointer-events:none;
+  transition:opacity .6s ease;
 }
+#tour3d-hint.faded { opacity:0; }
 #tour3d-loading {
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   background:var(--paper-0); color:var(--ink-3);
@@ -1247,7 +1249,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 .t3d-card-label { font-family:var(--font-mono); font-size:.55rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-3); }
 .t3d-card-size  { font-family:var(--font-display); font-weight:600; font-size:1.7rem; line-height:1; color:var(--ink-1); margin:.5rem 0 0; }
 .t3d-card-note  { font-family:var(--font-sans); font-size:.72rem; line-height:1.5; color:var(--ink-3); margin:.55rem 0 1.3rem; }
-.t3d-card-actions { display:flex; gap:.55rem; align-items:center; }
+.t3d-card-actions { display:flex; gap:.55rem; align-items:center; flex-wrap:wrap; }
 .t3d-btn {
   font-family:var(--font-mono); font-size:.55rem; letter-spacing:.14em; text-transform:uppercase;
   padding:.6rem 1rem; border:none; background:var(--ink-1); color:var(--paper-0); cursor:pointer;
@@ -1259,6 +1261,18 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 .t3d-prog-track { width:min(62vw,260px); height:3px; background:rgba(255,255,255,.28); overflow:hidden; }
 .t3d-prog-fill  { height:100%; width:0%; background:var(--accent); transition:width .15s linear; }
 .t3d-prog-pct   { font-family:var(--font-mono); font-size:.56rem; letter-spacing:.1em; color:rgba(255,255,255,.7); margin-top:.65rem; }
+/* Lauf-Joystick (Ego-Perspektive) */
+#tour3d-stick {
+  position:absolute; left:1.1rem; bottom:1.3rem; width:104px; height:104px; z-index:8;
+  border-radius:50%; background:rgba(10,10,10,.07);
+  display:flex; align-items:center; justify-content:center;
+  touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none;
+}
+#tour3d-nub {
+  width:46px; height:46px; border-radius:50%; background:var(--ink-1);
+  pointer-events:none; will-change:transform;
+}
+@media (hover:hover) and (pointer:fine){ #tour3d-stick { opacity:.5; } }  /* am Desktop dezenter (WASD geht auch) */
 #tour3d-quote {
   position:absolute; left:0; right:0; bottom:0; z-index:5;
   display:flex; justify-content:center; padding:1.2rem;
@@ -1692,7 +1706,9 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
       <button id="tour3d-close" onclick="closeTour3D()" aria-label="3D schließen">✕</button>
     </div>
   </div>
-  <div id="tour3d-hint" data-i18n="tour3dHint">Ziehen zum Umsehen · Gebäude und Personen antippen</div>
+  <div id="tour3d-hint" data-i18n="tour3dHint">Laufen · umsehen · antippen</div>
+  <!-- Lauf-Joystick (Ego-Perspektive, Street-View-artig) -->
+  <div id="tour3d-stick" aria-hidden="true"><div id="tour3d-nub"></div></div>
   <div id="tour3d-loading"><span class="mono">3D wird geladen …</span></div>
   <!-- Detail-Dialog: Groessen-Bestaetigung oder Download-Fallback (Inhalt per JS) -->
   <div id="tour3d-detail" hidden><div class="t3d-card" id="tour3d-detail-card"></div></div>
@@ -2511,7 +2527,7 @@ const LANG = {
     ppExtra:       'Weitere Orte',
     placesBtnLbl:  'Orte',
     shareCopied:   'Link kopiert',
-    tour3dHint:    'Ziehen zum Umsehen · Gebäude und Personen antippen',
+    tour3dHint:    'Laufen · umsehen · antippen',
     introLoc: 'Ort', introRoute: 'Route', introRouteV: '7 Stationen · ca. 3 h', introSem: 'Semester', introTeam: 'Autoren',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
@@ -2577,7 +2593,7 @@ const LANG = {
     ppExtra:       'Overige plekken',
     placesBtnLbl:  'Plekken',
     shareCopied:   'Link gekopieerd',
-    tour3dHint:    'Sleep om rond te kijken · tik op gebouwen en personen',
+    tour3dHint:    'Lopen · rondkijken · tikken',
     introLoc: 'Locatie', introRoute: 'Route', introRouteV: '7 stations · ca. 3 u', introSem: 'Semester', introTeam: 'Auteurs',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
@@ -2643,7 +2659,7 @@ const LANG = {
     ppExtra:       'Other places',
     placesBtnLbl:  'Places',
     shareCopied:   'Link copied',
-    tour3dHint:    'Drag to look around · tap buildings and people',
+    tour3dHint:    'Walk · look · tap',
     introLoc: 'Location', introRoute: 'Route', introRouteV: '7 stops · approx. 3 h', introSem: 'Term', introTeam: 'Authors',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
@@ -4033,27 +4049,33 @@ var TOUR_PEOPLE = {
 var _t3d = null;
 
 /* ── Modell-Quellen (gleiche Knotennamen building_<N>/person_<id> in beiden glb!) ──
-   TOUR_DETAIL_URL: optionales realistisches Modell, wird nur auf Wunsch geladen.
-   TOUR_FULLDETAIL_URL: optionaler Voll-Detail-Download (App/grosses Modell). Eine
-   Datei auf derselben Domain (z.B. 'downloads/wijnhaven-3d.glb') laedt direkt herunter;
-   sonst auch ein externer Link (App Store o.ae.) moeglich. Leer = nur Hinweis. */
+   TOUR_DETAIL_URL: optionales realistisches Modell, wird im Browser nur auf Wunsch geladen.
+   App-Download (Ego-Perspektive/Street View durch das fertige Modell): pro Plattform
+   eine URL. Ein externer Link (https://, App Store / Google Play) wird geoeffnet; eine
+   Datei auf derselben Domain (relativer Pfad) laedt direkt herunter. Leer = ausgeblendet.
+   TOUR_FULLDETAIL_URL bleibt als einfacher Datei-Download-Fallback erhalten. */
 var TOUR_ABSTRACT_URL   = 'models/walkthrough.glb';
 var TOUR_DETAIL_URL     = 'models/walkthrough_detailed.glb';
-var TOUR_FULLDETAIL_URL = 'downloads/wijnhaven-volldetail-demo.glb';  /* Testdatei; spaeter durch echtes Volldetail-Modell/App-Link ersetzen */
+var TOUR_APP_IOS        = 'downloads/wijnhaven-volldetail-demo.glb';   /* spaeter App-Store-Link */
+var TOUR_APP_ANDROID    = 'downloads/wijnhaven-volldetail-demo.glb';   /* spaeter Google-Play-Link */
+var TOUR_FULLDETAIL_URL = 'downloads/wijnhaven-volldetail-demo.glb';   /* optionaler einfacher Datei-Download */
 
 var T3D_TXT = {
   de:{abstract:'Abstrakt',real:'Realistisch',load:'Laden',cancel:'Abbrechen',
       title:'Realistisches Modell',note:'Texturiertes Modell laden. Über WLAN empfohlen.',
       loading:'Realistisches Modell lädt',download:'Herunterladen',soon:'Folgt',
-      fbLabel:'Volldetail',fb:'Als Download',fbNote:'Das hochdetaillierte Modell gibt es als separaten Download.'},
+      apple:'Apple',android:'Android',appLabel:'Volldetail-App',appTitle:'Street View durchs Quartier',
+      appNote:'Lade die App, um in Ego-Perspektive durch das fertige Modell zu laufen. Plattform wählen:'},
   nl:{abstract:'Abstract',real:'Realistisch',load:'Laden',cancel:'Annuleren',
       title:'Realistisch model',note:'Getextureerd model laden. Wifi aanbevolen.',
       loading:'Realistisch model laadt',download:'Downloaden',soon:'Volgt',
-      fbLabel:'Volledig detail',fb:'Als download',fbNote:'Het hoog gedetailleerde model is een aparte download.'},
+      apple:'Apple',android:'Android',appLabel:'Volledige app',appTitle:'Street View door de wijk',
+      appNote:'Download de app om in ego-perspectief door het model te lopen. Kies platform:'},
   en:{abstract:'Abstract',real:'Realistic',load:'Load',cancel:'Cancel',
       title:'Realistic model',note:'Load the textured model. Wi-Fi recommended.',
       loading:'Loading realistic model',download:'Download',soon:'Soon',
-      fbLabel:'Full detail',fb:'As download',fbNote:'The high-detail model is a separate download.'}
+      apple:'Apple',android:'Android',appLabel:'Full app',appTitle:'Street View through the district',
+      appNote:'Download the app to walk through the finished model in first person. Choose your platform:'}
 };
 function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
 
@@ -4062,14 +4084,15 @@ async function openTour3D(){
   host.hidden = false;
   document.body.style.overflow = 'hidden';
   hideTourDetail(); hideTourProgress();
+  var _hint = document.getElementById('tour3d-hint');   /* Coachmark kurz zeigen, dann ausblenden (Joystick frei) */
+  if (_hint){ _hint.classList.remove('faded'); clearTimeout(window._t3dHintT); window._t3dHintT = setTimeout(function(){ _hint.classList.add('faded'); }, 4500); }
   if (_t3d){ _t3d.resize(); updateTourToggleUI(); return; }
   var loading = document.getElementById('tour3d-loading');
   loading.style.display = 'flex';
   try {
     var THREE = await import('https://esm.sh/three@0.160.0');
-    var oc = await import('https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls.js');
     var gl = await import('https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js');
-    _t3d = await _initTour(THREE, oc.OrbitControls, gl.GLTFLoader);
+    _t3d = await _initTour(THREE, gl.GLTFLoader);
     loading.style.display = 'none';
     updateTourToggleUI();
   } catch(e){
@@ -4141,15 +4164,23 @@ function showTourConfirm(size){
   document.getElementById('tour3d-detail').hidden = false;
   document.getElementById('t3dLoadBtn').onclick = function(){ hideTourDetail(); _doLoadDetail(); };
 }
+function _dlBtn(url, label){
+  if (!url) return '';
+  /* externer Link (https://, App Store/Play) -> oeffnen; relative Datei -> direkt herunterladen */
+  return /^https?:\/\//i.test(url)
+    ? '<a class="t3d-btn" href="' + url + '" target="_blank" rel="noopener noreferrer">' + label + '</a>'
+    : '<a class="t3d-btn" href="' + url + '" download>' + label + '</a>';
+}
 function showTourFallback(){
   var t = t3dt(), card = document.getElementById('tour3d-detail-card');
-  var primary = TOUR_FULLDETAIL_URL
-    ? '<a class="t3d-btn" href="' + TOUR_FULLDETAIL_URL + '" download>' + t.download + '</a>'
-    : '<button class="t3d-btn" disabled>' + t.soon + '</button>';
+  var ios = _dlBtn(TOUR_APP_IOS, t.apple), and = _dlBtn(TOUR_APP_ANDROID, t.android);
+  var primary = (ios || and)
+    ? (ios + and)
+    : (TOUR_FULLDETAIL_URL ? _dlBtn(TOUR_FULLDETAIL_URL, t.download) : '<button class="t3d-btn" disabled>' + t.soon + '</button>');
   card.innerHTML =
-    '<div class="t3d-card-label">' + t.fbLabel + '</div>' +
-    '<div class="t3d-card-size">' + t.fb + '</div>' +
-    '<div class="t3d-card-note">' + t.fbNote + '</div>' +
+    '<div class="t3d-card-label">' + t.appLabel + '</div>' +
+    '<div class="t3d-card-size">' + t.appTitle + '</div>' +
+    '<div class="t3d-card-note">' + t.appNote + '</div>' +
     '<div class="t3d-card-actions">' + primary +
       '<button class="t3d-btn ghost" onclick="hideTourDetail()">' + t.cancel + '</button>' +
     '</div>';
@@ -4202,28 +4233,31 @@ function _showTourQuote(id){
   document.getElementById('tour3d-quote').hidden = false;
 }
 
-async function _initTour(THREE, OrbitControls, GLTFLoader){
+async function _initTour(THREE, GLTFLoader){
   var canvas = document.getElementById('tour3d-canvas');
   var renderer = new THREE.WebGLRenderer({ canvas:canvas, antialias:true, powerPreference:'low-power' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 
   var scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
-  var camera = new THREE.PerspectiveCamera(56, 1, 0.1, 600);
-  camera.position.set(32, 26, 40);
+  var camera = new THREE.PerspectiveCamera(72, 1, 0.05, 600);   /* weiteres FOV = Ego-Perspektive */
+  var EYE = 1.7, BOUND = 21, SPEED = 7.2, LOOK = 0.0042;        /* Augenhoehe, Bodengrenze, Tempo, Maus-Empfindlichkeit */
+  camera.position.set(0, EYE, 17);
+  var yaw = 0, pitch = 0;                                       /* yaw=0 blickt nach -Z */
   scene.add(new THREE.HemisphereLight(0xffffff, 0xf0f0f0, 1.55));
   var dir = new THREE.DirectionalLight(0xffffff, 0.45); dir.position.set(20, 44, 18); scene.add(dir);
 
-  var controls = new OrbitControls(camera, canvas);
-  controls.enableDamping = false;          /* pure on-demand: render only on change */
-  controls.maxPolarAngle = Math.PI * 0.49; /* stay above the ground plane */
-  controls.minDistance = 6; controls.maxDistance = 90;
-  controls.target.set(0, 4, 0);
-  controls.update();
+  function applyLook(){
+    var cp = Math.cos(pitch);
+    camera.lookAt(
+      camera.position.x + Math.sin(yaw) * cp,
+      camera.position.y + Math.sin(pitch),
+      camera.position.z - Math.cos(yaw) * cp
+    );
+  }
+  applyLook();
 
   function render(){ renderer.render(scene, camera); }
-  controls.addEventListener('change', render);
-
   function resize(){
     var w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
     renderer.setSize(w, h, false);
@@ -4232,6 +4266,7 @@ async function _initTour(THREE, OrbitControls, GLTFLoader){
   }
   window.addEventListener('resize', resize);
 
+  /* ── Modell-Verwaltung ── */
   var clickable = [], currentModel = null;
   function rebuildClickable(){
     clickable.length = 0;
@@ -4245,24 +4280,101 @@ async function _initTour(THREE, OrbitControls, GLTFLoader){
     currentModel = node; scene.add(node); rebuildClickable(); render();
   }
 
-  /* raycast: distinguish tap from orbit-drag via a small movement threshold */
-  var ray = new THREE.Raycaster(), v = new THREE.Vector2(), dx=0, dy=0;
-  canvas.addEventListener('pointerdown', function(e){ dx=e.clientX; dy=e.clientY; });
-  canvas.addEventListener('pointerup', function(e){
-    if (Math.hypot(e.clientX-dx, e.clientY-dy) > 6) return;
-    var r = canvas.getBoundingClientRect();
-    v.x = ((e.clientX-r.left)/r.width)*2 - 1;
-    v.y = -((e.clientY-r.top)/r.height)*2 + 1;
-    ray.setFromCamera(v, camera);
-    var hits = ray.intersectObjects(clickable, true);
-    if (hits.length) _handleTourHit(hits[0].object.userData.t3d || _tourTargetName(hits[0].object));
+  /* ── First-Person-Steuerung (Street-View-artig): ziehen = umsehen, Joystick/WASD = laufen,
+        kurzes Tippen = Gebaeude/Person auswaehlen. Renderloop laeuft nur bei aktiver Eingabe (Akku). ── */
+  var moveF = 0, moveR = 0, keys = {}, looking = false;
+  var ray = new THREE.Raycaster(), v2 = new THREE.Vector2();
+  var running = false, lastT = 0;
+  function tourOpen(){ var h = document.getElementById('tour3d'); return h && !h.hidden; }
+
+  function loop(t){
+    if (!running) return;
+    if (!lastT) lastT = t;
+    var dt = Math.min(0.05, (t - lastT) / 1000); lastT = t;
+    var kf = ((keys['w']||keys['arrowup'])?1:0) - ((keys['s']||keys['arrowdown'])?1:0);
+    var kr = ((keys['d']||keys['arrowright'])?1:0) - ((keys['a']||keys['arrowleft'])?1:0);
+    var f = moveF + kf, r = moveR + kr;
+    if (f || r){
+      var mag = Math.hypot(f, r); if (mag > 1){ f /= mag; r /= mag; }
+      var fx = Math.sin(yaw), fz = -Math.cos(yaw);   /* vorwaerts (horizontal) */
+      var rx = Math.cos(yaw), rz = Math.sin(yaw);    /* rechts */
+      camera.position.x = Math.max(-BOUND, Math.min(BOUND, camera.position.x + (fx*f + rx*r) * SPEED * dt));
+      camera.position.z = Math.max(-BOUND, Math.min(BOUND, camera.position.z + (fz*f + rz*r) * SPEED * dt));
+      camera.position.y = EYE;
+    }
+    applyLook();
+    render();
+    if (moveF || moveR || kf || kr || looking) requestAnimationFrame(loop);
+    else { running = false; lastT = 0; }
+  }
+  function kick(){ if (!running){ running = true; lastT = 0; requestAnimationFrame(loop); } }
+
+  /* Umsehen per Ziehen auf dem Canvas; kurzes Tippen waehlt aus */
+  var lpId = -1, lx = 0, ly = 0, downX = 0, downY = 0;
+  canvas.addEventListener('pointerdown', function(e){
+    looking = true; lpId = e.pointerId; lx = e.clientX; ly = e.clientY; downX = e.clientX; downY = e.clientY;
+    if (canvas.setPointerCapture){ try { canvas.setPointerCapture(e.pointerId); } catch(_){} }
+    kick();
   });
+  canvas.addEventListener('pointermove', function(e){
+    if (!looking || e.pointerId !== lpId) return;
+    var ddx = e.clientX - lx, ddy = e.clientY - ly; lx = e.clientX; ly = e.clientY;
+    yaw  -= ddx * LOOK;
+    pitch = Math.max(-1.2, Math.min(1.2, pitch - ddy * LOOK));
+    kick();
+  });
+  function endLook(e){
+    if (e.pointerId !== lpId) return;
+    looking = false; lpId = -1;
+    if (Math.hypot(e.clientX - downX, e.clientY - downY) <= 6){
+      var rct = canvas.getBoundingClientRect();
+      v2.x = ((e.clientX - rct.left)/rct.width)*2 - 1;
+      v2.y = -((e.clientY - rct.top)/rct.height)*2 + 1;
+      ray.setFromCamera(v2, camera);
+      var hits = ray.intersectObjects(clickable, true);
+      if (hits.length) _handleTourHit(hits[0].object.userData.t3d || _tourTargetName(hits[0].object));
+    }
+  }
+  canvas.addEventListener('pointerup', endLook);
+  canvas.addEventListener('pointercancel', endLook);
+
+  /* Tastatur (Desktop): WASD / Pfeile */
+  window.addEventListener('keydown', function(e){ if (!tourOpen()) return; keys[(e.key||'').toLowerCase()] = true; kick(); });
+  window.addEventListener('keyup',   function(e){ keys[(e.key||'').toLowerCase()] = false; });
+
+  /* Joystick (Touch/Maus) unten links */
+  var stick = document.getElementById('tour3d-stick'), nub = document.getElementById('tour3d-nub');
+  if (stick && nub){
+    var sId = -1, sCx = 0, sCy = 0, SR = 46;
+    function sStart(e){
+      sId = e.pointerId;
+      var r = stick.getBoundingClientRect(); sCx = r.left + r.width/2; sCy = r.top + r.height/2;
+      if (stick.setPointerCapture){ try { stick.setPointerCapture(e.pointerId); } catch(_){} }
+      sMove(e); e.preventDefault();
+    }
+    function sMove(e){
+      if (e.pointerId !== sId) return;
+      var dx = e.clientX - sCx, dy = e.clientY - sCy, d = Math.hypot(dx, dy);
+      if (d > SR){ dx = dx/d*SR; dy = dy/d*SR; }
+      nub.style.transform = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px)';
+      moveR = dx / SR; moveF = -dy / SR;             /* hoch = vorwaerts */
+      kick(); e.preventDefault();
+    }
+    function sEnd(e){
+      if (e.pointerId !== sId) return;
+      sId = -1; moveF = 0; moveR = 0; nub.style.transform = 'translate(0,0)';
+    }
+    stick.addEventListener('pointerdown', sStart);
+    stick.addEventListener('pointermove', sMove);
+    stick.addEventListener('pointerup', sEnd);
+    stick.addEventListener('pointercancel', sEnd);
+  }
 
   var gltf = await new GLTFLoader().loadAsync(TOUR_ABSTRACT_URL);
   setModel(gltf.scene);
   resize();
   return {
-    resize: resize, render: render, scene: scene, setModel: setModel,
+    resize: resize, render: render, scene: scene, camera: camera, setModel: setModel,
     GLTFLoader: GLTFLoader, THREE: THREE,
     models: { abstract: gltf.scene, detailed: null }, mode: 'abstract'
   };
