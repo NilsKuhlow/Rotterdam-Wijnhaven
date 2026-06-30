@@ -3977,37 +3977,11 @@ var TOUR_PEOPLE = {
 
 var _t3d = null;
 
-/* ── Modell-Quellen (gleiche Knotennamen building_<N>/person_<id> in beiden glb!) ──
-   TOUR_DETAIL_URL: optionales realistisches Modell, wird nur auf Wunsch geladen.
-   TOUR_FULLDETAIL_URL: optionaler Voll-Detail-Download (App/grosses Modell). Eine
-   Datei auf derselben Domain (z.B. 'downloads/wijnhaven-3d.glb') laedt direkt herunter;
-   sonst auch ein externer Link (App Store o.ae.) moeglich. Leer = nur Hinweis. */
-var TOUR_ABSTRACT_URL   = 'models/walkthrough.glb';
-var TOUR_DETAIL_URL     = 'models/walkthrough_detailed.glb';
-var TOUR_FULLDETAIL_URL = '';
-
-var T3D_TXT = {
-  de:{abstract:'Abstrakt',real:'Realistisch',load:'Laden',cancel:'Abbrechen',
-      title:'Realistisches Modell',note:'Texturiertes Modell laden. Über WLAN empfohlen.',
-      loading:'Realistisches Modell lädt',download:'Herunterladen',soon:'Folgt',
-      fbLabel:'Volldetail',fb:'Als Download',fbNote:'Das hochdetaillierte Modell gibt es als separaten Download.'},
-  nl:{abstract:'Abstract',real:'Realistisch',load:'Laden',cancel:'Annuleren',
-      title:'Realistisch model',note:'Getextureerd model laden. Wifi aanbevolen.',
-      loading:'Realistisch model laadt',download:'Downloaden',soon:'Volgt',
-      fbLabel:'Volledig detail',fb:'Als download',fbNote:'Het hoog gedetailleerde model is een aparte download.'},
-  en:{abstract:'Abstract',real:'Realistic',load:'Load',cancel:'Cancel',
-      title:'Realistic model',note:'Load the textured model. Wi-Fi recommended.',
-      loading:'Loading realistic model',download:'Download',soon:'Soon',
-      fbLabel:'Full detail',fb:'As download',fbNote:'The high-detail model is a separate download.'}
-};
-function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
-
 async function openTour3D(){
   var host = document.getElementById('tour3d');
   host.hidden = false;
   document.body.style.overflow = 'hidden';
-  hideTourDetail(); hideTourProgress();
-  if (_t3d){ _t3d.resize(); updateTourToggleUI(); return; }
+  if (_t3d){ _t3d.resize(); return; }
   var loading = document.getElementById('tour3d-loading');
   loading.style.display = 'flex';
   try {
@@ -4016,7 +3990,6 @@ async function openTour3D(){
     var gl = await import('https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js');
     _t3d = await _initTour(THREE, oc.OrbitControls, gl.GLTFLoader);
     loading.style.display = 'none';
-    updateTourToggleUI();
   } catch(e){
     console.error('3D load failed', e);
     loading.innerHTML = '<span class="mono">3D konnte nicht geladen werden (Internet?)</span>';
@@ -4026,101 +3999,8 @@ function closeTour3D(){
   var host = document.getElementById('tour3d');
   if (host) host.hidden = true;
   document.body.style.overflow = '';
-  closeTourQuote(); hideTourDetail(); hideTourProgress();
+  closeTourQuote();
 }
-
-/* ── Umschalter Abstrakt <-> Realistisch ── */
-function updateTourToggleUI(){
-  var seg = document.getElementById('tour3d-toggle'); if (!seg) return;
-  var t = t3dt(), mode = _t3d ? _t3d.mode : 'abstract';
-  Array.prototype.forEach.call(seg.querySelectorAll('.t3d-seg-btn'), function(b){
-    var m = b.getAttribute('data-mode');
-    b.classList.toggle('is-on', m === mode);
-    b.textContent = (m === 'abstract') ? t.abstract : t.real;
-  });
-}
-function switchTourModel(toDetailed){
-  if (!_t3d) return;
-  hideTourDetail();
-  if (!toDetailed){
-    if (_t3d.models.abstract){ _t3d.setModel(_t3d.models.abstract); _t3d.mode = 'abstract'; updateTourToggleUI(); }
-    return;
-  }
-  if (_t3d.models.detailed){ _t3d.setModel(_t3d.models.detailed); _t3d.mode = 'detailed'; updateTourToggleUI(); return; }
-  /* noch nicht geladen: erst pruefen, ob es die Detaildatei ueberhaupt gibt */
-  _detailHead().then(function(h){
-    if (!h || !h.ok){ showTourFallback(); return; }
-    showTourConfirm(h.size);
-  });
-}
-function _detailHead(){
-  return fetch(TOUR_DETAIL_URL, { method:'HEAD' }).then(function(r){
-    if (!r.ok) return { ok:false };
-    var l = r.headers.get('content-length');
-    return { ok:true, size: l ? parseInt(l, 10) : 0 };
-  }).catch(function(){ return null; });
-}
-function _loadGlbProgress(GLTFLoader, url, onProg){
-  return new Promise(function(res, rej){
-    new GLTFLoader().load(url, res, function(ev){
-      if (ev && ev.lengthComputable && ev.total) onProg(ev.loaded / ev.total);
-    }, rej);
-  });
-}
-function _fmtMB(bytes){
-  if (!bytes) return '';
-  var mb = bytes / 1048576;
-  return '~ ' + (mb >= 10 ? Math.round(mb) : mb.toFixed(1)) + ' MB';
-}
-function showTourConfirm(size){
-  var t = t3dt(), sizeStr = _fmtMB(size) || t.title;
-  var card = document.getElementById('tour3d-detail-card');
-  card.innerHTML =
-    '<div class="t3d-card-label">' + t.title + '</div>' +
-    '<div class="t3d-card-size">' + sizeStr + '</div>' +
-    '<div class="t3d-card-note">' + t.note + '</div>' +
-    '<div class="t3d-card-actions">' +
-      '<button class="t3d-btn" id="t3dLoadBtn">' + t.load + '</button>' +
-      '<button class="t3d-btn ghost" onclick="hideTourDetail()">' + t.cancel + '</button>' +
-    '</div>';
-  document.getElementById('tour3d-detail').hidden = false;
-  document.getElementById('t3dLoadBtn').onclick = function(){ hideTourDetail(); _doLoadDetail(); };
-}
-function showTourFallback(){
-  var t = t3dt(), card = document.getElementById('tour3d-detail-card');
-  var primary = TOUR_FULLDETAIL_URL
-    ? '<a class="t3d-btn" href="' + TOUR_FULLDETAIL_URL + '" download>' + t.download + '</a>'
-    : '<button class="t3d-btn" disabled>' + t.soon + '</button>';
-  card.innerHTML =
-    '<div class="t3d-card-label">' + t.fbLabel + '</div>' +
-    '<div class="t3d-card-size">' + t.fb + '</div>' +
-    '<div class="t3d-card-note">' + t.fbNote + '</div>' +
-    '<div class="t3d-card-actions">' + primary +
-      '<button class="t3d-btn ghost" onclick="hideTourDetail()">' + t.cancel + '</button>' +
-    '</div>';
-  document.getElementById('tour3d-detail').hidden = false;
-  if (_t3d){ _t3d.mode = 'abstract'; updateTourToggleUI(); }
-}
-function _doLoadDetail(){
-  showTourProgress(0);
-  _loadGlbProgress(_t3d.GLTFLoader, TOUR_DETAIL_URL, function(p){ showTourProgress(p); })
-    .then(function(gltf){
-      _t3d.models.detailed = gltf.scene;
-      _t3d.setModel(gltf.scene); _t3d.mode = 'detailed';
-      hideTourProgress(); updateTourToggleUI();
-    })
-    .catch(function(e){ console.error('detail load failed', e); hideTourProgress(); showTourFallback(); });
-}
-function showTourProgress(p){
-  var box = document.getElementById('tour3d-progress'); if (!box) return;
-  box.hidden = false;
-  var pct = Math.max(0, Math.min(100, Math.round((p || 0) * 100)));
-  document.getElementById('t3dProgFill').style.width = pct + '%';
-  document.getElementById('t3dProgPct').textContent = pct + '%';
-  document.getElementById('t3dProgLabel').textContent = t3dt().loading;
-}
-function hideTourProgress(){ var b = document.getElementById('tour3d-progress'); if (b) b.hidden = true; }
-function hideTourDetail(){ var b = document.getElementById('tour3d-detail'); if (b) b.hidden = true; }
 function closeTourQuote(){ var q=document.getElementById('tour3d-quote'); if(q) q.hidden=true; }
 
 function _tourTargetName(o){

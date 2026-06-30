@@ -1221,39 +1221,6 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   background:var(--paper-0); color:var(--ink-3);
 }
 #tour3d-loading .mono { font-family:var(--font-mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; }
-
-/* ── 3D: Abstrakt/Realistisch-Umschalter + Detail-Dialog + Fortschritt ── */
-.t3d-actions { display:flex; align-items:center; gap:.7rem; pointer-events:none; }
-.t3d-seg { display:inline-flex; pointer-events:auto; background:var(--paper-1); }
-.t3d-seg-btn {
-  font-family:var(--font-mono); font-size:.54rem; letter-spacing:.13em; text-transform:uppercase;
-  padding:.45rem .7rem; border:none; background:transparent; color:var(--ink-3); cursor:pointer;
-  -webkit-tap-highlight-color:transparent; transition:background .18s, color .18s;
-}
-.t3d-seg-btn.is-on { background:var(--ink-1); color:var(--paper-0); }
-
-#tour3d-detail, #tour3d-progress {
-  position:absolute; inset:0; z-index:12; display:flex; align-items:center; justify-content:center;
-  background:rgba(10,10,10,.55);
-}
-#tour3d-detail[hidden], #tour3d-progress[hidden] { display:none; }
-#tour3d-progress { flex-direction:column; }
-.t3d-card { background:var(--paper-0); padding:1.7rem 1.6rem; width:min(80vw,330px); text-align:left; }
-.t3d-card-label { font-family:var(--font-mono); font-size:.55rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-3); }
-.t3d-card-size  { font-family:var(--font-display); font-weight:600; font-size:1.7rem; line-height:1; color:var(--ink-1); margin:.5rem 0 0; }
-.t3d-card-note  { font-family:var(--font-sans); font-size:.72rem; line-height:1.5; color:var(--ink-3); margin:.55rem 0 1.3rem; }
-.t3d-card-actions { display:flex; gap:.55rem; align-items:center; }
-.t3d-btn {
-  font-family:var(--font-mono); font-size:.55rem; letter-spacing:.14em; text-transform:uppercase;
-  padding:.6rem 1rem; border:none; background:var(--ink-1); color:var(--paper-0); cursor:pointer;
-  text-decoration:none; display:inline-flex; align-items:center; -webkit-tap-highlight-color:transparent;
-}
-.t3d-btn.ghost { background:transparent; color:var(--ink-3); padding:.6rem .4rem; }
-.t3d-btn[disabled] { opacity:.4; cursor:default; }
-.t3d-prog-label { font-family:var(--font-mono); font-size:.56rem; letter-spacing:.16em; text-transform:uppercase; color:var(--paper-0); margin-bottom:.85rem; }
-.t3d-prog-track { width:min(62vw,260px); height:3px; background:rgba(255,255,255,.28); overflow:hidden; }
-.t3d-prog-fill  { height:100%; width:0%; background:var(--accent); transition:width .15s linear; }
-.t3d-prog-pct   { font-family:var(--font-mono); font-size:.56rem; letter-spacing:.1em; color:rgba(255,255,255,.7); margin-top:.65rem; }
 #tour3d-quote {
   position:absolute; left:0; right:0; bottom:0; z-index:5;
   display:flex; justify-content:center; padding:1.2rem;
@@ -1679,24 +1646,10 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <canvas id="tour3d-canvas"></canvas>
   <div id="tour3d-bar">
     <span id="tour3d-title">3D-Ansicht · Beispielmodell</span>
-    <div class="t3d-actions">
-      <div id="tour3d-toggle" class="t3d-seg" role="group" aria-label="Modellqualität">
-        <button class="t3d-seg-btn is-on" data-mode="abstract" onclick="switchTourModel(false)">Abstrakt</button>
-        <button class="t3d-seg-btn"       data-mode="detailed" onclick="switchTourModel(true)">Realistisch</button>
-      </div>
-      <button id="tour3d-close" onclick="closeTour3D()" aria-label="3D schließen">✕</button>
-    </div>
+    <button id="tour3d-close" onclick="closeTour3D()" aria-label="3D schließen">✕</button>
   </div>
   <div id="tour3d-hint" data-i18n="tour3dHint">Ziehen zum Umsehen · Gebäude und Personen antippen</div>
   <div id="tour3d-loading"><span class="mono">3D wird geladen …</span></div>
-  <!-- Detail-Dialog: Groessen-Bestaetigung oder Download-Fallback (Inhalt per JS) -->
-  <div id="tour3d-detail" hidden><div class="t3d-card" id="tour3d-detail-card"></div></div>
-  <!-- Fortschritt beim Nachladen des realistischen Modells -->
-  <div id="tour3d-progress" hidden>
-    <div class="t3d-prog-label" id="t3dProgLabel">Realistisches Modell lädt</div>
-    <div class="t3d-prog-track"><div class="t3d-prog-fill" id="t3dProgFill"></div></div>
-    <div class="t3d-prog-pct" id="t3dProgPct">0%</div>
-  </div>
   <div id="tour3d-quote" hidden>
     <div class="t3q-inner">
       <div class="jl-head" id="t3q-role">Stimme vom Ort</div>
@@ -1782,31 +1735,6 @@ var snapping      = false;
   var t0 = now(), MIN = 2300, MAX = 14000, FILL_DELAY = 720, CREEP_DUR = MIN - FILL_DELAY;
   var loaded = false, done = false;
 
-  /* Status-Zeile: zeigt klein, was gerade laedt (zyklisch, mit ein paar Easter Eggs) */
-  var statusTimer = null;
-  (function(){
-    var sEl = document.getElementById('loaderStatus');
-    if (!sEl) return;
-    var span = document.createElement('span'); sEl.appendChild(span);
-    var pool = [
-      'Schwarzplan wird gezeichnet', 'Route wird vermessen', 'Wegpunkte werden gesetzt',
-      'GPS wird kalibriert', 'Sprachen werden geladen', 'Stationen werden sortiert',
-      'Markthal wird aufgespannt', 'Kubuswoningen werden gekippt',
-      'Stimmen vom Ort werden gesammelt', 'Gezeiten der Maas werden geprüft',
-      'Möwen werden gezählt', 'Pommes bei Bram Ladage geholt',
-      'Kaffee mit Kai-Lars', 'Fietsen werden gezählt', 'Regen wird abgewartet'
-    ];
-    for (var i = pool.length - 1; i > 0; i--){ var k = Math.floor(Math.random() * (i + 1)); var tmp = pool[i]; pool[i] = pool[k]; pool[k] = tmp; }
-    var seq = ['Seite wird geladen'].concat(pool), mi = 0;
-    function show(){
-      span.style.opacity = '0';
-      setTimeout(function(){ span.textContent = seq[mi % seq.length]; span.style.opacity = '1'; mi++; }, 190);
-    }
-    show();
-    statusTimer = setInterval(show, 640);
-  })();
-  function stopStatus(){ if (statusTimer){ clearInterval(statusTimer); statusTimer = null; } }
-
   function markLoaded(){ loaded = true; }               /* echtes Signal: gesamtes Dokument geladen */
   if (document.readyState === 'complete') markLoaded();
   else window.addEventListener('load', markLoaded, { once:true });
@@ -1849,7 +1777,6 @@ var snapping      = false;
   }
   function finish(){
     if (done) return; done = true;
-    stopStatus();
     setFill(1, 340, 'cubic-bezier(.4,0,.2,1)');          /* letzte Fuellung auf voll */
     setTimeout(reveal, 320);                             /* dann Gelb auf den ganzen Schirm */
   }
@@ -3977,37 +3904,11 @@ var TOUR_PEOPLE = {
 
 var _t3d = null;
 
-/* ── Modell-Quellen (gleiche Knotennamen building_<N>/person_<id> in beiden glb!) ──
-   TOUR_DETAIL_URL: optionales realistisches Modell, wird nur auf Wunsch geladen.
-   TOUR_FULLDETAIL_URL: optionaler Voll-Detail-Download (App/grosses Modell). Eine
-   Datei auf derselben Domain (z.B. 'downloads/wijnhaven-3d.glb') laedt direkt herunter;
-   sonst auch ein externer Link (App Store o.ae.) moeglich. Leer = nur Hinweis. */
-var TOUR_ABSTRACT_URL   = 'models/walkthrough.glb';
-var TOUR_DETAIL_URL     = 'models/walkthrough_detailed.glb';
-var TOUR_FULLDETAIL_URL = '';
-
-var T3D_TXT = {
-  de:{abstract:'Abstrakt',real:'Realistisch',load:'Laden',cancel:'Abbrechen',
-      title:'Realistisches Modell',note:'Texturiertes Modell laden. Über WLAN empfohlen.',
-      loading:'Realistisches Modell lädt',download:'Herunterladen',soon:'Folgt',
-      fbLabel:'Volldetail',fb:'Als Download',fbNote:'Das hochdetaillierte Modell gibt es als separaten Download.'},
-  nl:{abstract:'Abstract',real:'Realistisch',load:'Laden',cancel:'Annuleren',
-      title:'Realistisch model',note:'Getextureerd model laden. Wifi aanbevolen.',
-      loading:'Realistisch model laadt',download:'Downloaden',soon:'Volgt',
-      fbLabel:'Volledig detail',fb:'Als download',fbNote:'Het hoog gedetailleerde model is een aparte download.'},
-  en:{abstract:'Abstract',real:'Realistic',load:'Load',cancel:'Cancel',
-      title:'Realistic model',note:'Load the textured model. Wi-Fi recommended.',
-      loading:'Loading realistic model',download:'Download',soon:'Soon',
-      fbLabel:'Full detail',fb:'As download',fbNote:'The high-detail model is a separate download.'}
-};
-function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
-
 async function openTour3D(){
   var host = document.getElementById('tour3d');
   host.hidden = false;
   document.body.style.overflow = 'hidden';
-  hideTourDetail(); hideTourProgress();
-  if (_t3d){ _t3d.resize(); updateTourToggleUI(); return; }
+  if (_t3d){ _t3d.resize(); return; }
   var loading = document.getElementById('tour3d-loading');
   loading.style.display = 'flex';
   try {
@@ -4016,7 +3917,6 @@ async function openTour3D(){
     var gl = await import('https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js');
     _t3d = await _initTour(THREE, oc.OrbitControls, gl.GLTFLoader);
     loading.style.display = 'none';
-    updateTourToggleUI();
   } catch(e){
     console.error('3D load failed', e);
     loading.innerHTML = '<span class="mono">3D konnte nicht geladen werden (Internet?)</span>';
@@ -4026,101 +3926,8 @@ function closeTour3D(){
   var host = document.getElementById('tour3d');
   if (host) host.hidden = true;
   document.body.style.overflow = '';
-  closeTourQuote(); hideTourDetail(); hideTourProgress();
+  closeTourQuote();
 }
-
-/* ── Umschalter Abstrakt <-> Realistisch ── */
-function updateTourToggleUI(){
-  var seg = document.getElementById('tour3d-toggle'); if (!seg) return;
-  var t = t3dt(), mode = _t3d ? _t3d.mode : 'abstract';
-  Array.prototype.forEach.call(seg.querySelectorAll('.t3d-seg-btn'), function(b){
-    var m = b.getAttribute('data-mode');
-    b.classList.toggle('is-on', m === mode);
-    b.textContent = (m === 'abstract') ? t.abstract : t.real;
-  });
-}
-function switchTourModel(toDetailed){
-  if (!_t3d) return;
-  hideTourDetail();
-  if (!toDetailed){
-    if (_t3d.models.abstract){ _t3d.setModel(_t3d.models.abstract); _t3d.mode = 'abstract'; updateTourToggleUI(); }
-    return;
-  }
-  if (_t3d.models.detailed){ _t3d.setModel(_t3d.models.detailed); _t3d.mode = 'detailed'; updateTourToggleUI(); return; }
-  /* noch nicht geladen: erst pruefen, ob es die Detaildatei ueberhaupt gibt */
-  _detailHead().then(function(h){
-    if (!h || !h.ok){ showTourFallback(); return; }
-    showTourConfirm(h.size);
-  });
-}
-function _detailHead(){
-  return fetch(TOUR_DETAIL_URL, { method:'HEAD' }).then(function(r){
-    if (!r.ok) return { ok:false };
-    var l = r.headers.get('content-length');
-    return { ok:true, size: l ? parseInt(l, 10) : 0 };
-  }).catch(function(){ return null; });
-}
-function _loadGlbProgress(GLTFLoader, url, onProg){
-  return new Promise(function(res, rej){
-    new GLTFLoader().load(url, res, function(ev){
-      if (ev && ev.lengthComputable && ev.total) onProg(ev.loaded / ev.total);
-    }, rej);
-  });
-}
-function _fmtMB(bytes){
-  if (!bytes) return '';
-  var mb = bytes / 1048576;
-  return '~ ' + (mb >= 10 ? Math.round(mb) : mb.toFixed(1)) + ' MB';
-}
-function showTourConfirm(size){
-  var t = t3dt(), sizeStr = _fmtMB(size) || t.title;
-  var card = document.getElementById('tour3d-detail-card');
-  card.innerHTML =
-    '<div class="t3d-card-label">' + t.title + '</div>' +
-    '<div class="t3d-card-size">' + sizeStr + '</div>' +
-    '<div class="t3d-card-note">' + t.note + '</div>' +
-    '<div class="t3d-card-actions">' +
-      '<button class="t3d-btn" id="t3dLoadBtn">' + t.load + '</button>' +
-      '<button class="t3d-btn ghost" onclick="hideTourDetail()">' + t.cancel + '</button>' +
-    '</div>';
-  document.getElementById('tour3d-detail').hidden = false;
-  document.getElementById('t3dLoadBtn').onclick = function(){ hideTourDetail(); _doLoadDetail(); };
-}
-function showTourFallback(){
-  var t = t3dt(), card = document.getElementById('tour3d-detail-card');
-  var primary = TOUR_FULLDETAIL_URL
-    ? '<a class="t3d-btn" href="' + TOUR_FULLDETAIL_URL + '" download>' + t.download + '</a>'
-    : '<button class="t3d-btn" disabled>' + t.soon + '</button>';
-  card.innerHTML =
-    '<div class="t3d-card-label">' + t.fbLabel + '</div>' +
-    '<div class="t3d-card-size">' + t.fb + '</div>' +
-    '<div class="t3d-card-note">' + t.fbNote + '</div>' +
-    '<div class="t3d-card-actions">' + primary +
-      '<button class="t3d-btn ghost" onclick="hideTourDetail()">' + t.cancel + '</button>' +
-    '</div>';
-  document.getElementById('tour3d-detail').hidden = false;
-  if (_t3d){ _t3d.mode = 'abstract'; updateTourToggleUI(); }
-}
-function _doLoadDetail(){
-  showTourProgress(0);
-  _loadGlbProgress(_t3d.GLTFLoader, TOUR_DETAIL_URL, function(p){ showTourProgress(p); })
-    .then(function(gltf){
-      _t3d.models.detailed = gltf.scene;
-      _t3d.setModel(gltf.scene); _t3d.mode = 'detailed';
-      hideTourProgress(); updateTourToggleUI();
-    })
-    .catch(function(e){ console.error('detail load failed', e); hideTourProgress(); showTourFallback(); });
-}
-function showTourProgress(p){
-  var box = document.getElementById('tour3d-progress'); if (!box) return;
-  box.hidden = false;
-  var pct = Math.max(0, Math.min(100, Math.round((p || 0) * 100)));
-  document.getElementById('t3dProgFill').style.width = pct + '%';
-  document.getElementById('t3dProgPct').textContent = pct + '%';
-  document.getElementById('t3dProgLabel').textContent = t3dt().loading;
-}
-function hideTourProgress(){ var b = document.getElementById('tour3d-progress'); if (b) b.hidden = true; }
-function hideTourDetail(){ var b = document.getElementById('tour3d-detail'); if (b) b.hidden = true; }
 function closeTourQuote(){ var q=document.getElementById('tour3d-quote'); if(q) q.hidden=true; }
 
 function _tourTargetName(o){
@@ -4177,18 +3984,12 @@ async function _initTour(THREE, OrbitControls, GLTFLoader){
   }
   window.addEventListener('resize', resize);
 
-  var clickable = [], currentModel = null;
-  function rebuildClickable(){
-    clickable.length = 0;
-    if (!currentModel) return;
-    currentModel.traverse(function(o){
-      if (o.isMesh){ var n = _tourTargetName(o); if (n){ o.userData.t3d = n; clickable.push(o); } }
-    });
-  }
-  function setModel(node){
-    if (currentModel) scene.remove(currentModel);
-    currentModel = node; scene.add(node); rebuildClickable(); render();
-  }
+  var gltf = await new GLTFLoader().loadAsync('models/walkthrough.glb');
+  scene.add(gltf.scene);
+  var clickable = [];
+  gltf.scene.traverse(function(o){
+    if (o.isMesh){ var n = _tourTargetName(o); if (n){ o.userData.t3d = n; clickable.push(o); } }
+  });
 
   /* raycast: distinguish tap from orbit-drag via a small movement threshold */
   var ray = new THREE.Raycaster(), v = new THREE.Vector2(), dx=0, dy=0;
@@ -4203,14 +4004,8 @@ async function _initTour(THREE, OrbitControls, GLTFLoader){
     if (hits.length) _handleTourHit(hits[0].object.userData.t3d || _tourTargetName(hits[0].object));
   });
 
-  var gltf = await new GLTFLoader().loadAsync(TOUR_ABSTRACT_URL);
-  setModel(gltf.scene);
   resize();
-  return {
-    resize: resize, render: render, scene: scene, setModel: setModel,
-    GLTFLoader: GLTFLoader, THREE: THREE,
-    models: { abstract: gltf.scene, detailed: null }, mode: 'abstract'
-  };
+  return { resize:resize, render:render };
 }
 </script>
 
