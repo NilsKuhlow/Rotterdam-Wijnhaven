@@ -52,8 +52,12 @@ In der 3D-Ansicht gibt es oben einen Umschalter **Abstrakt / Realistisch**.
   Antippen für beide ohne Codeänderung. Web-Budget anpeilen: möglichst unter ~25 MB,
   Licht in Lightmaps backen, Texturen als KTX2, Mesh per Draco/Meshopt (`gltf-transform optimize`).
 - Gibt es keine Detaildatei, zeigt der Umschalter stattdessen eine **App-/Download-Karte**
-  mit Plattformwahl **Apple / Android** (`TOUR_APP_IOS`, `TOUR_APP_ANDROID` in `index.html`):
-  externe Links (App Store / Google Play) öffnen, relative Dateien laden direkt herunter.
+  mit Plattformwahl **Windows / Apple / Android** (`TOUR_APP_WINDOWS`, `TOUR_APP_IOS`,
+  `TOUR_APP_ANDROID` in `index.html`). Die Website **erkennt das Betriebssystem** und stellt
+  den passenden Download nach vorne und hervorgehoben dar. Externe Links (Microsoft Store /
+  App Store / Google Play) öffnen, relative Dateien (z. B. `.exe`/`.msi`/`.apk` auf derselben
+  Domain) laden direkt herunter. Die echten App-Builds baust du selbst und trägst dann nur
+  die Links/Dateien ein.
 
 ### Ego-Perspektive (Street View) + Vor-Ort-Sync
 
