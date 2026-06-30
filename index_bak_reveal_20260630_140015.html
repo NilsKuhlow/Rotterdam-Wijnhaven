@@ -1732,27 +1732,7 @@ var snapping      = false;
   }
 
   function reveal(){
-    /* Flood exakt aus dem (jetzt gelben) Wuerfel heraus expandieren, mit minimalem
-       Overshoot: Radius genau bis zur entferntesten Bildschirmecke + kleine Reserve. */
-    var fd = document.querySelector('.loader-flood');
-    if (fd && fill){
-      var r  = fill.getBoundingClientRect();
-      var W  = window.innerWidth  || 360, H = window.innerHeight || 640;
-      var px = r.left + r.width / 2, py = r.top + r.height / 2;
-      var cx = px / W * 100, cy = py / H * 100;
-      var maxd = 0;
-      [[0,0],[W,0],[0,H],[W,H]].forEach(function(c){
-        var d = Math.sqrt((c[0]-px)*(c[0]-px) + (c[1]-py)*(c[1]-py));
-        if (d > maxd) maxd = d;
-      });
-      var pct = Math.ceil(maxd / (Math.sqrt(W*W + H*H) / Math.SQRT2) * 100) + 4;
-      fd.style.transition = 'none';
-      fd.style.clipPath = 'circle(0% at ' + cx.toFixed(1) + '% ' + cy.toFixed(1) + '%)';
-      void getComputedStyle(fd).clipPath;                 /* Startwert verbindlich festschreiben */
-      fd.style.transition = '';                           /* zurueck zur CSS-Transition */
-      fd.style.clipPath = 'circle(' + pct + '% at ' + cx.toFixed(1) + '% ' + cy.toFixed(1) + '%)';
-    }
-    el.classList.add('flood');
+    el.classList.add('flood');                           /* Gelb aus dem vollen Wuerfel auf den ganzen Schirm */
     setTimeout(function(){
       document.body.classList.add('loaded');             /* Landing animiert ein */
       el.classList.add('lift');                          /* Vorhang hoch, Seite erscheint */

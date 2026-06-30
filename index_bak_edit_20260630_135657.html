@@ -20,9 +20,7 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
 <!-- Map figure-ground is inlined in the SVG below (placeholder until the hand-drawn Schwarzplan is ready) -->
 <!-- Interaktive 3D-Modelle (lädt nur, wenn ein Eintrag ein Modell hat) -->
-<!-- model-viewer wird verzoegert geladen (nur fuer 3D im Eintrag noetig), damit es weder
-     den Loader noch den ersten Seitenaufbau blockiert. Siehe loadModelViewer(). -->
-
+<script type="module" src="https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════
@@ -1714,83 +1712,48 @@ var snapping      = false;
   function now(){ return (window.performance && performance.now) ? performance.now() : Date.now(); }
 
   /* MIN = Mindestdauer (Fuellung sichtbar), MAX = harte Sicherung falls load nie feuert.
-     FILL_DELAY: Fuellung startet erst, wenn der Wuerfel-Umriss gezeichnet ist.
-     Die Fuellung laeuft als CSS-Transform-Transition (Compositor), damit sie auch
-     waehrend des Ladens fluessig bleibt, statt per-Frame im Hauptthread zu ruckeln. */
-  var t0 = now(), MIN = 2300, MAX = 14000, FILL_DELAY = 720, CREEP_DUR = MIN - FILL_DELAY;
-  var loaded = false, done = false;
+     FILL_DELAY: Fuellung startet erst, wenn der Wuerfel-Umriss gezeichnet ist. */
+  var t0 = now(), MIN = 2300, MAX = 14000, FILL_DELAY = 640, FILL_SPAN = MIN - FILL_DELAY;
+  var loaded = false, done = false, prog = 0;
 
-  function markLoaded(){ loaded = true; }               /* echtes Signal: gesamtes Dokument geladen */
+  function markLoaded(){ loaded = true; }              /* echtes Signal: gesamtes Dokument geladen */
   if (document.readyState === 'complete') markLoaded();
   else window.addEventListener('load', markLoaded, { once:true });
-  setTimeout(markLoaded, MAX);                           /* Sicherung */
+  setTimeout(markLoaded, MAX);                          /* Sicherung */
 
-  function setFill(scale, dur, ease){
+  function applyProg(p){
     if (!fill) return;
-    fill.style.transition = 'transform ' + dur + 'ms ' + ease;
-    fill.style.transform  = 'rotate(45deg) scale(' + scale + ')';
+    var s = 0.08 + 0.92 * p;                            /* kleiner Kern -> fuellt den Wuerfel */
+    fill.style.transform = 'rotate(45deg) scale(' + s.toFixed(4) + ')';
   }
+  function easeOutCubic(x){ return 1 - Math.pow(1 - x, 3); }
 
   function reveal(){
-    /* Flood exakt aus dem (jetzt gelben) Wuerfel heraus expandieren, mit minimalem
-       Overshoot: Radius genau bis zur entferntesten Bildschirmecke + kleine Reserve. */
-    var fd = document.querySelector('.loader-flood');
-    if (fd && fill){
-      var r  = fill.getBoundingClientRect();
-      var W  = window.innerWidth  || 360, H = window.innerHeight || 640;
-      var px = r.left + r.width / 2, py = r.top + r.height / 2;
-      var cx = px / W * 100, cy = py / H * 100;
-      var maxd = 0;
-      [[0,0],[W,0],[0,H],[W,H]].forEach(function(c){
-        var d = Math.sqrt((c[0]-px)*(c[0]-px) + (c[1]-py)*(c[1]-py));
-        if (d > maxd) maxd = d;
-      });
-      var pct = Math.ceil(maxd / (Math.sqrt(W*W + H*H) / Math.SQRT2) * 100) + 4;
-      fd.style.transition = 'none';
-      fd.style.clipPath = 'circle(0% at ' + cx.toFixed(1) + '% ' + cy.toFixed(1) + '%)';
-      void getComputedStyle(fd).clipPath;                 /* Startwert verbindlich festschreiben */
-      fd.style.transition = '';                           /* zurueck zur CSS-Transition */
-      fd.style.clipPath = 'circle(' + pct + '% at ' + cx.toFixed(1) + '% ' + cy.toFixed(1) + '%)';
-    }
-    el.classList.add('flood');
+    el.classList.add('flood');                          /* Gelb aus dem vollen Wuerfel auf den ganzen Schirm */
     setTimeout(function(){
-      document.body.classList.add('loaded');             /* Landing animiert ein */
-      el.classList.add('lift');                          /* Vorhang hoch, Seite erscheint */
+      document.body.classList.add('loaded');            /* Landing animiert ein */
+      el.classList.add('lift');                         /* Vorhang hoch, Seite erscheint */
       if (lang) lang.classList.add('show');
     }, 1300);
     setTimeout(function(){ el.classList.add('gone'); }, 1300 + 880);
   }
-  function finish(){
-    if (done) return; done = true;
-    setFill(1, 340, 'cubic-bezier(.4,0,.2,1)');          /* letzte Fuellung auf voll */
-    setTimeout(reveal, 320);                             /* dann Gelb auf den ganzen Schirm */
+  function complete(){ if (done) return; done = true; applyProg(1); reveal(); }
+
+  function tick(){
+    var e  = now() - t0;
+    var fe = Math.min(1, Math.max(0, (e - FILL_DELAY) / FILL_SPAN));
+    var creep = easeOutCubic(fe);                        /* zeitbasierte Fuellung 0..1 ueber die Mindestdauer */
+    var cap   = loaded ? 1 : 0.9;                        /* haelt knapp unter voll, bis wirklich geladen */
+    var tgt   = Math.min(creep, cap);
+    prog += (tgt - prog) * 0.14;                         /* weiches Nachziehen */
+    if (tgt >= 0.999 && prog > 0.99) prog = 1;
+    applyProg(prog);
+    if (loaded && e >= MIN && prog >= 0.995){ complete(); return; }
+    requestAnimationFrame(tick);
   }
-
-  /* Fuellung kriecht bis knapp unter voll ueber die Mindestdauer (Ladefortschritt) */
-  setTimeout(function(){ setFill(0.9, CREEP_DUR, 'cubic-bezier(.2,.7,.3,1)'); }, FILL_DELAY);
-
-  /* Abschluss, sobald wirklich geladen UND Mindestzeit erreicht */
-  (function poll(){
-    if (done) return;
-    if (loaded && (now() - t0) >= MIN) finish();
-    else setTimeout(poll, 90);
-  })();
-  setTimeout(function(){ if (!done) finish(); }, MAX + 1500);  /* harte Sicherung */
+  requestAnimationFrame(tick);
+  setTimeout(function(){ if (!done) complete(); }, MAX + 1500);  /* Sicherung, falls rAF pausiert */
 })();
-
-/* ── model-viewer verzoegert nachladen: nur fuer 3D im Eintrag noetig, darf den
-      Loader/Erstaufbau nicht blockieren. Wird nach window.load im Leerlauf injiziert
-      und spaetestens beim Oeffnen eines Eintrags mit Modell. ── */
-function loadModelViewer(){
-  if (window.__mvLoad) return; window.__mvLoad = true;
-  var s = document.createElement('script');
-  s.type = 'module';
-  s.src  = 'https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js';
-  document.head.appendChild(s);
-}
-window.addEventListener('load', function(){
-  (window.requestIdleCallback || function(f){ setTimeout(f, 1400); })(loadModelViewer);
-});
 
 /* ═══════════════════════════════
    DATA
@@ -3611,7 +3574,6 @@ function openModal(idx, _placeObj){
     ? `<div class="steckbrief"><div class="jl-head">${jl.steckbrief}</div><dl class="sb-list">${sbRows}</dl></div>` : '';
 
   /* Interaktives 3D-Modell (optional) */
-  if (s.model && s.model.src && typeof loadModelViewer === 'function') loadModelViewer();
   const modelHtml = (s.model && s.model.src)
     ? `<div class="model-block"><div class="jl-head">${jl.model}</div>
         <model-viewer class="mv" src="${s.model.src}" ${s.model.poster?`poster="${s.model.poster}"`:''}
