@@ -18,3 +18,7 @@ _t3d*.png
 _*.png
 _rl*.png
 index_bak_*.html
+
+# InDesign Sperr-/Temporärdateien
+*.idlk
+~*.idlk
