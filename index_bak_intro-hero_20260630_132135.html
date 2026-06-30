@@ -465,8 +465,7 @@ body {
 }
 body.loaded .intro-kicker { animation:introUp .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay:.05s; }
 
-.intro-hero { }
-.intro-foot { }
+.intro-hero { margin-top:auto; }
 .intro-title {
   font-family:var(--font-display); font-weight:300;
   font-size:clamp(4rem,17vw,8rem); line-height:.9; letter-spacing:-.02em;
@@ -518,24 +517,6 @@ body.loaded .scroll-cue { animation:introFade .9s ease forwards; animation-delay
 @keyframes cueSlide { 0%{transform:translateX(-14px)} 55%{transform:translateX(36px)} 100%{transform:translateX(-14px)} }
 @keyframes introUp  { 0%{opacity:0;transform:translateY(16px)} 100%{opacity:1;transform:none} }
 @keyframes introFade{ 0%{opacity:0} 100%{opacity:1} }
-
-/* Desktop: editorial grid so the landing is not a left-clinging mobile column */
-@media (min-width:880px){
-  .intro {
-    display:grid;
-    grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);
-    grid-template-areas:"top top" "hero meta" "cue cue";
-    align-content:center; align-items:end;
-    row-gap:clamp(2rem,7vh,4.5rem); column-gap:clamp(3rem,6vw,7rem);
-    max-width:1280px; margin-inline:auto;
-    padding:clamp(4rem,10vh,7rem) clamp(3rem,7vw,7rem);
-  }
-  .intro-top  { grid-area:top; }
-  .intro-hero { grid-area:hero; }
-  .intro-foot { display:contents; }
-  .intro-meta { grid-area:meta; align-self:end; margin:0; gap:1.3rem 2rem; }
-  .intro .scroll-cue { grid-area:cue; margin-top:1rem; }
-}
 /* ═══════════════════════════════════════════
    MAP PANEL , fixed, full width, top portion
    Hidden during intro, revealed on scroll
@@ -832,35 +813,18 @@ body.at-end #track-btn, body.at-end #nav-crumb { opacity:0 !important; pointer-e
    OUTRO
 ═══════════════════════════════════════════ */
 .colophon {
-  background:var(--paper-0); padding:clamp(3rem,6vh,4.5rem) 7vw clamp(3.5rem,7vh,5rem);
+  background:var(--paper-0); padding:clamp(5rem,9vh,7rem) 7vw clamp(4rem,7vh,5.5rem);
   position:relative; z-index:60;
-  min-height:100vh; min-height:100dvh;
-  display:flex; flex-direction:column; justify-content:center;
-  content-visibility:auto; contain-intrinsic-size:auto 100vh;
+  content-visibility:auto; contain-intrinsic-size:auto 50vh;
 }
 .colophon-motto {
   font-family:var(--font-display); font-style:italic; font-weight:300;
-  font-size:clamp(1.3rem,4.6vw,1.9rem); line-height:1.32; color:var(--ink-1);
-  max-width:24ch; margin:0; text-wrap:balance;
+  font-size:clamp(1.3rem,4.6vw,1.9rem); line-height:1.3; color:var(--ink-1);
+  max-width:22ch; margin:0;
 }
-.colophon-mark { width:14px; height:14px; background:var(--ink-1); margin:0 0 1.6rem; }
+.colophon-mark { width:14px; height:14px; background:var(--accent); margin:1.5rem 0 2.4rem; }
 .colophon-credits {
-  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.3rem 2rem; margin:2.4rem 0 2.2rem;
-}
-@media (min-width:880px){
-  .colophon {
-    display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-    grid-template-areas:"mark mark" "motto credits" "note note";
-    column-gap:clamp(3rem,6vw,7rem); row-gap:2.6rem; align-items:start;
-    align-content:center;
-    max-width:1280px; margin-inline:auto;
-    padding:clamp(4rem,8vh,6rem) clamp(3rem,7vw,7rem);
-  }
-  .colophon-mark    { grid-area:mark; margin:0; }
-  .colophon-motto   { grid-area:motto; max-width:18ch; }
-  .colophon-credits { grid-area:credits; margin:0; }
-  .colophon-note    { grid-area:note; margin:0; }
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.3rem 2rem; margin:0 0 2.2rem;
 }
 .colophon-credits dt {
   font-family:var(--font-mono); font-size:.54rem; letter-spacing:.16em; text-transform:uppercase;
@@ -3877,8 +3841,8 @@ async function _initTour(THREE, OrbitControls, GLTFLoader){
   scene.background = new THREE.Color(0xffffff);
   var camera = new THREE.PerspectiveCamera(56, 1, 0.1, 600);
   camera.position.set(32, 26, 40);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xf0f0f0, 1.55));
-  var dir = new THREE.DirectionalLight(0xffffff, 0.45); dir.position.set(20, 44, 18); scene.add(dir);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xdcdcdc, 1.15));
+  var dir = new THREE.DirectionalLight(0xffffff, 1.35); dir.position.set(24, 34, 14); scene.add(dir);
 
   var controls = new OrbitControls(camera, canvas);
   controls.enableDamping = false;          /* pure on-demand: render only on change */

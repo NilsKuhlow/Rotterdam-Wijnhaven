@@ -465,8 +465,7 @@ body {
 }
 body.loaded .intro-kicker { animation:introUp .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay:.05s; }
 
-.intro-hero { }
-.intro-foot { }
+.intro-hero { margin-top:auto; }
 .intro-title {
   font-family:var(--font-display); font-weight:300;
   font-size:clamp(4rem,17vw,8rem); line-height:.9; letter-spacing:-.02em;
@@ -518,24 +517,6 @@ body.loaded .scroll-cue { animation:introFade .9s ease forwards; animation-delay
 @keyframes cueSlide { 0%{transform:translateX(-14px)} 55%{transform:translateX(36px)} 100%{transform:translateX(-14px)} }
 @keyframes introUp  { 0%{opacity:0;transform:translateY(16px)} 100%{opacity:1;transform:none} }
 @keyframes introFade{ 0%{opacity:0} 100%{opacity:1} }
-
-/* Desktop: editorial grid so the landing is not a left-clinging mobile column */
-@media (min-width:880px){
-  .intro {
-    display:grid;
-    grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);
-    grid-template-areas:"top top" "hero meta" "cue cue";
-    align-content:center; align-items:end;
-    row-gap:clamp(2rem,7vh,4.5rem); column-gap:clamp(3rem,6vw,7rem);
-    max-width:1280px; margin-inline:auto;
-    padding:clamp(4rem,10vh,7rem) clamp(3rem,7vw,7rem);
-  }
-  .intro-top  { grid-area:top; }
-  .intro-hero { grid-area:hero; }
-  .intro-foot { display:contents; }
-  .intro-meta { grid-area:meta; align-self:end; margin:0; gap:1.3rem 2rem; }
-  .intro .scroll-cue { grid-area:cue; margin-top:1rem; }
-}
 /* ═══════════════════════════════════════════
    MAP PANEL , fixed, full width, top portion
    Hidden during intro, revealed on scroll
@@ -832,35 +813,18 @@ body.at-end #track-btn, body.at-end #nav-crumb { opacity:0 !important; pointer-e
    OUTRO
 ═══════════════════════════════════════════ */
 .colophon {
-  background:var(--paper-0); padding:clamp(3rem,6vh,4.5rem) 7vw clamp(3.5rem,7vh,5rem);
+  background:var(--paper-0); padding:clamp(5rem,9vh,7rem) 7vw clamp(4rem,7vh,5.5rem);
   position:relative; z-index:60;
-  min-height:100vh; min-height:100dvh;
-  display:flex; flex-direction:column; justify-content:center;
-  content-visibility:auto; contain-intrinsic-size:auto 100vh;
+  content-visibility:auto; contain-intrinsic-size:auto 50vh;
 }
 .colophon-motto {
   font-family:var(--font-display); font-style:italic; font-weight:300;
-  font-size:clamp(1.3rem,4.6vw,1.9rem); line-height:1.32; color:var(--ink-1);
-  max-width:24ch; margin:0; text-wrap:balance;
+  font-size:clamp(1.3rem,4.6vw,1.9rem); line-height:1.3; color:var(--ink-1);
+  max-width:22ch; margin:0;
 }
-.colophon-mark { width:14px; height:14px; background:var(--ink-1); margin:0 0 1.6rem; }
+.colophon-mark { width:14px; height:14px; background:var(--accent); margin:1.5rem 0 2.4rem; }
 .colophon-credits {
-  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.3rem 2rem; margin:2.4rem 0 2.2rem;
-}
-@media (min-width:880px){
-  .colophon {
-    display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-    grid-template-areas:"mark mark" "motto credits" "note note";
-    column-gap:clamp(3rem,6vw,7rem); row-gap:2.6rem; align-items:start;
-    align-content:center;
-    max-width:1280px; margin-inline:auto;
-    padding:clamp(4rem,8vh,6rem) clamp(3rem,7vw,7rem);
-  }
-  .colophon-mark    { grid-area:mark; margin:0; }
-  .colophon-motto   { grid-area:motto; max-width:18ch; }
-  .colophon-credits { grid-area:credits; margin:0; }
-  .colophon-note    { grid-area:note; margin:0; }
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.3rem 2rem; margin:0 0 2.2rem;
 }
 .colophon-credits dt {
   font-family:var(--font-mono); font-size:.54rem; letter-spacing:.16em; text-transform:uppercase;
@@ -989,10 +953,7 @@ body.at-end #track-btn, body.at-end #nav-crumb { opacity:0 !important; pointer-e
 }
 
 /* Gallery */
-.modal-gallery { position:relative; width:100%; height:52vw; min-height:200px; max-height:280px; overflow:hidden; background:var(--paper-1); flex-shrink:0; }
-.slide-ph { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.55rem; text-align:center; padding:0 1.6rem; }
-.slide-ph-tag { font-family:var(--font-mono); font-size:.56rem; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-1); }
-.slide-ph-cap { font-family:var(--font-mono); font-size:.5rem; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); max-width:26ch; line-height:1.7; }
+.modal-gallery { position:relative; width:100%; height:52vw; min-height:200px; max-height:280px; overflow:hidden; background:var(--sand); flex-shrink:0; }
 .gallery-slides { display:flex; height:100%; transition:transform .45s cubic-bezier(.77,0,.175,1); }
 .gallery-slide  { min-width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
 .slide-bg    { position:absolute; inset:0; }
@@ -1010,11 +971,11 @@ body.at-end #track-btn, body.at-end #nav-crumb { opacity:0 !important; pointer-e
 
 
 .modal-num   { font-family:var(--font-sans); font-weight:600; font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--terra); margin-bottom:.4rem; }
-.modal-title { font-family:var(--font-display); font-weight:600; font-size:clamp(2rem,3.4vw,2.5rem); line-height:1.04; letter-spacing:-.01em; color:var(--ink); }
-.modal-sub   { font-family:var(--font-sans); font-style:normal; font-weight:400; font-size:.82rem; color:var(--ink-3); display:block; margin-top:.4rem; }
+.modal-title { font-family:var(--font-display); font-weight:600; font-size:2rem; line-height:1.02; color:var(--ink); }
+.modal-sub   { font-family:var(--font-sans); font-style:normal; font-weight:400; font-size:.9rem; color:var(--ink-3); display:block; margin-top:.3rem; }
 .modal-rule  { width:0; height:0; background:transparent; margin:1.4rem 0; }
-.modal-text  { font-family:var(--font-sans); font-size:.85rem; line-height:1.62; color:var(--dim); margin-bottom:1rem; font-weight:400; }
-.modal-facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:.6rem; margin-top:1.4rem; }
+.modal-text  { font-family:var(--font-sans); font-size:.82rem; line-height:1.95; color:var(--dim); margin-bottom:.9rem; font-weight:400; }
+.modal-facts { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-top:1.4rem; }
 .fact        { background:var(--paper-1); padding:.9rem 1rem; }
 .fact-lbl    { font-family:var(--font-sans); font-size:.55rem; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-3); margin-bottom:.2rem; }
 .fact-val    { font-family:var(--font-display); font-size:1rem; color:var(--ink); }
@@ -1039,10 +1000,7 @@ body.at-end #track-btn, body.at-end #nav-crumb { opacity:0 !important; pointer-e
 }
 .steckbrief { margin:1.8rem 0 .4rem; padding-top:1.3rem; border-top:1px solid var(--border); }
 .sb-list { display:flex; flex-direction:column; gap:.7rem; }
-.sb-row  { display:grid; grid-template-columns:10rem 1fr; gap:.7rem; align-items:baseline; }
-@media (max-width:460px){
-  .sb-row { grid-template-columns:1fr; gap:.18rem; margin-bottom:.3rem; }
-}
+.sb-row  { display:grid; grid-template-columns:8.5rem 1fr; gap:.7rem; align-items:baseline; }
 .sb-row dt {
   font-family:var(--font-mono); font-size:.56rem; letter-spacing:.08em;
   text-transform:uppercase; color:var(--muted); line-height:1.5;
@@ -1074,14 +1032,6 @@ body.at-end #track-btn, body.at-end #nav-crumb { opacity:0 !important; pointer-e
 
 /* Modal body, generous padding, never clipped */
 .modal-body  { padding: 1.8rem 1.5rem 3.5rem 1.5rem; }
-.modal-text  { max-width:62ch; }
-
-/* Desktop: centred reading measure so prose is not edge-to-edge */
-@media (min-width:768px){
-  .modal-gallery { max-width:44rem; margin-inline:auto; height:30vw; max-height:340px; }
-  .modal-body    { max-width:44rem; margin-inline:auto; padding:2.6rem 2rem 4rem; }
-  #photo-hint    { display:none !important; }
-}
 
 /* GPS dot on SVG map. Pulse only while actually tracking (battery). */
 #gps-group.tracking #gps-halo { animation: gpsPulse 2s ease-out infinite; }
@@ -1355,17 +1305,15 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     <div class="intro-accent"></div>
     <p class="intro-sub">Sieben Bauten am Wasser. Ein Reisetagebuch durch das Wijnhaven-Quartier.</p>
   </div>
-  <div class="intro-foot">
-    <dl class="intro-meta">
-      <div><dt data-i18n="introLoc">Ort</dt><dd>Wijnhaven, Rotterdam</dd></div>
-      <div><dt data-i18n="introRoute">Route</dt><dd data-i18n="introRouteV">7 Stationen · ca. 3 h</dd></div>
-      <div><dt data-i18n="introSem">Semester</dt><dd>WiSe 2026/27</dd></div>
-      <div><dt data-i18n="introTeam">Autoren</dt><dd>Nils Kuhlow · Kai-Lars Ehrich</dd></div>
-    </dl>
-    <div class="scroll-cue">
-      <span>Scrollen</span>
-      <div class="scroll-line"></div>
-    </div>
+  <dl class="intro-meta">
+    <div><dt data-i18n="introLoc">Ort</dt><dd>Wijnhaven, Rotterdam</dd></div>
+    <div><dt data-i18n="introRoute">Route</dt><dd data-i18n="introRouteV">7 Stationen · ca. 3 h</dd></div>
+    <div><dt data-i18n="introSem">Semester</dt><dd>WiSe 2026/27</dd></div>
+    <div><dt data-i18n="introTeam">Autoren</dt><dd>Nils Kuhlow · Kai-Lars Ehrich</dd></div>
+  </dl>
+  <div class="scroll-cue">
+    <span>Scrollen</span>
+    <div class="scroll-line"></div>
   </div>
 </section>
 
@@ -1604,8 +1552,8 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 
 <!-- COLOPHON -->
 <footer class="colophon">
-  <div class="colophon-mark" aria-hidden="true"></div>
   <p class="colophon-motto">De stad is een boek. Haar lezen is al reizen.</p>
+  <div class="colophon-mark" aria-hidden="true"></div>
   <dl class="colophon-credits">
     <div><dt data-i18n="imp_responsible">Verantwortlich</dt><dd>Nils Kuhlow · Kai-Lars Ehrich</dd></div>
     <div><dt data-i18n="imp_institution">Institution</dt><dd>Hochschule Wismar · Fakultät Gestaltung</dd></div>
@@ -2095,11 +2043,9 @@ function resetMap(){
   activeStop = -1;
   document.getElementById('routeTrail').setAttribute('d', '');
   document.getElementById('traveller').style.opacity = '0';
-  const _lbls = document.querySelectorAll('.stop-lbl');
   for (let i = 0; i < 7; i++){
     document.getElementById('dot'+i).classList.remove('visited','active-dot');
     document.getElementById('dot'+i).setAttribute('r','7');
-    if (_lbls[i]) _lbls[i].classList.remove('active-lbl');
     const r = document.getElementById('rp'+i);
     r.style.animation = 'none'; r.style.opacity = '0';
   }
@@ -3502,17 +3448,10 @@ function openModal(idx, _placeObj){
   const jlang = JL[currentLang] ? currentLang : 'de';
   const jl = JL[jlang], sbl = SB_LABELS[jlang];
 
-  const phTag = {de:'Foto folgt',nl:'Foto volgt',en:'Photo to come'}[currentLang] || 'Foto folgt';
-  document.getElementById('galSlides').innerHTML = s.slides.map(sl => {
-    const isPh = !/url\(/.test(sl.bg);
-    return `
+  document.getElementById('galSlides').innerHTML = s.slides.map(sl => `
     <div class="gallery-slide">
-      <div class="slide-bg" style="background:${isPh ? 'var(--paper-1)' : sl.bg}"></div>
-      ${isPh
-        ? `<div class="slide-ph"><span class="slide-ph-tag">${phTag}</span>${sl.cap ? `<span class="slide-ph-cap">${sl.cap}</span>` : ''}</div>`
-        : (sl.cap ? `<div class="slide-cap">${sl.cap}</div>` : '')}
-    </div>`;
-  }).join('');
+      <div class="slide-bg" style="background:${sl.bg}"></div>
+    </div>`).join('');
 
   document.getElementById('galNav').innerHTML = s.slides.map((_,i) =>
     `<div class="gal-pip${i===0?' on':''}" onclick="galTo(${i})"></div>`).join('');
@@ -3877,8 +3816,8 @@ async function _initTour(THREE, OrbitControls, GLTFLoader){
   scene.background = new THREE.Color(0xffffff);
   var camera = new THREE.PerspectiveCamera(56, 1, 0.1, 600);
   camera.position.set(32, 26, 40);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xf0f0f0, 1.55));
-  var dir = new THREE.DirectionalLight(0xffffff, 0.45); dir.position.set(20, 44, 18); scene.add(dir);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xdcdcdc, 1.15));
+  var dir = new THREE.DirectionalLight(0xffffff, 1.35); dir.position.set(24, 34, 14); scene.add(dir);
 
   var controls = new OrbitControls(camera, canvas);
   controls.enableDamping = false;          /* pure on-demand: render only on change */

@@ -834,9 +834,7 @@ body.at-end #track-btn, body.at-end #nav-crumb { opacity:0 !important; pointer-e
 .colophon {
   background:var(--paper-0); padding:clamp(3rem,6vh,4.5rem) 7vw clamp(3.5rem,7vh,5rem);
   position:relative; z-index:60;
-  min-height:100vh; min-height:100dvh;
-  display:flex; flex-direction:column; justify-content:center;
-  content-visibility:auto; contain-intrinsic-size:auto 100vh;
+  content-visibility:auto; contain-intrinsic-size:auto 50vh;
 }
 .colophon-motto {
   font-family:var(--font-display); font-style:italic; font-weight:300;
@@ -853,7 +851,6 @@ body.at-end #track-btn, body.at-end #nav-crumb { opacity:0 !important; pointer-e
     grid-template-columns:minmax(0,1fr) minmax(0,1fr);
     grid-template-areas:"mark mark" "motto credits" "note note";
     column-gap:clamp(3rem,6vw,7rem); row-gap:2.6rem; align-items:start;
-    align-content:center;
     max-width:1280px; margin-inline:auto;
     padding:clamp(4rem,8vh,6rem) clamp(3rem,7vw,7rem);
   }
