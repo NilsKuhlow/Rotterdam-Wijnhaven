@@ -1273,6 +1273,17 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   pointer-events:none; will-change:transform;
 }
 @media (hover:hover) and (pointer:fine){ #tour3d-stick { opacity:.5; } }  /* am Desktop dezenter (WASD geht auch) */
+/* Vor-Ort-Sync-Schalter (unten rechts) */
+#tour3d-gps {
+  position:absolute; right:1.1rem; bottom:1.4rem; z-index:9;
+  display:inline-flex; align-items:center; gap:.45rem;
+  padding:.5rem .8rem .5rem .62rem; border:none; cursor:pointer;
+  background:rgba(255,255,255,.92); color:var(--ink-1);
+  font-family:var(--font-mono); font-size:.55rem; letter-spacing:.14em; text-transform:uppercase;
+  -webkit-tap-highlight-color:transparent; white-space:nowrap;
+}
+#tour3d-gps.on { background:var(--ink-1); color:var(--paper-0); }
+#tour3d-gps .t-icon { width:14px; height:14px; }
 #tour3d-quote {
   position:absolute; left:0; right:0; bottom:0; z-index:5;
   display:flex; justify-content:center; padding:1.2rem;
@@ -1709,6 +1720,10 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <div id="tour3d-hint" data-i18n="tour3dHint">Laufen · umsehen · antippen</div>
   <!-- Lauf-Joystick (Ego-Perspektive, Street-View-artig) -->
   <div id="tour3d-stick" aria-hidden="true"><div id="tour3d-nub"></div></div>
+  <!-- Vor-Ort-Sync: Kamera folgt der echten GPS-Position + Kompass -->
+  <button id="tour3d-gps" onclick="toggleTourGps()" aria-label="Mit Standort synchronisieren">
+    <span class="t-icon" aria-hidden="true"></span><span id="tour3d-gps-label">Vor Ort</span>
+  </button>
   <div id="tour3d-loading"><span class="mono">3D wird geladen …</span></div>
   <!-- Detail-Dialog: Groessen-Bestaetigung oder Download-Fallback (Inhalt per JS) -->
   <div id="tour3d-detail" hidden><div class="t3d-card" id="tour3d-detail-card"></div></div>
@@ -4060,22 +4075,39 @@ var TOUR_APP_IOS        = 'downloads/wijnhaven-volldetail-demo.glb';   /* spaete
 var TOUR_APP_ANDROID    = 'downloads/wijnhaven-volldetail-demo.glb';   /* spaeter Google-Play-Link */
 var TOUR_FULLDETAIL_URL = 'downloads/wijnhaven-volldetail-demo.glb';   /* optionaler einfacher Datei-Download */
 
+/* ── GPS-Sync der 3D-Ansicht: echte Position (lat/lon) -> 3D-Welt (x,z) ──
+   MUSS fuer das echte Modell kalibriert werden (analog zu gpsToSvg fuer den Schwarzplan):
+   - GPS_ORIGIN: GPS-Punkt, der im Modell bei (0,0) liegt (z.B. Modell-Ursprung).
+   - GPS_KX / GPS_KZ: Welt-Einheiten pro Grad Laenge / Breite (an Modellmassstab + Ausrichtung
+     anpassen; Norden = -z). GPS_HEADING: Grad-Offset, falls Modell-Norden gedreht ist.
+   Vorgabewerte sind Platzhalter; vor Ort am echten Modell feinjustieren. */
+var GPS_ORIGIN  = { lat: 51.9201, lon: 4.4889 };
+var GPS_KX = 6800;     /* Welt-Einheiten pro Grad Laenge  (Platzhalter) */
+var GPS_KZ = 10200;    /* Welt-Einheiten pro Grad Breite  (Platzhalter) */
+var GPS_HEADING = 0;   /* Grad-Offset fuer die Blickrichtung */
+function gpsToWorld(lat, lon){
+  return { x: (lon - GPS_ORIGIN.lon) * GPS_KX, z: -(lat - GPS_ORIGIN.lat) * GPS_KZ };
+}
+
 var T3D_TXT = {
   de:{abstract:'Abstrakt',real:'Realistisch',load:'Laden',cancel:'Abbrechen',
       title:'Realistisches Modell',note:'Texturiertes Modell laden. Über WLAN empfohlen.',
       loading:'Realistisches Modell lädt',download:'Herunterladen',soon:'Folgt',
       apple:'Apple',android:'Android',appLabel:'Volldetail-App',appTitle:'Street View durchs Quartier',
-      appNote:'Lade die App, um in Ego-Perspektive durch das fertige Modell zu laufen. Plattform wählen:'},
+      appNote:'Lade die App, um in Ego-Perspektive durch das fertige Modell zu laufen. Plattform wählen:',
+      gps:'Vor Ort',gpsWait:'Suche GPS',gpsOn:'Vor Ort',gpsErr:'Kein Signal',gpsNo:'Kein GPS'},
   nl:{abstract:'Abstract',real:'Realistisch',load:'Laden',cancel:'Annuleren',
       title:'Realistisch model',note:'Getextureerd model laden. Wifi aanbevolen.',
       loading:'Realistisch model laadt',download:'Downloaden',soon:'Volgt',
       apple:'Apple',android:'Android',appLabel:'Volledige app',appTitle:'Street View door de wijk',
-      appNote:'Download de app om in ego-perspectief door het model te lopen. Kies platform:'},
+      appNote:'Download de app om in ego-perspectief door het model te lopen. Kies platform:',
+      gps:'Ter plaatse',gpsWait:'GPS zoeken',gpsOn:'Ter plaatse',gpsErr:'Geen signaal',gpsNo:'Geen GPS'},
   en:{abstract:'Abstract',real:'Realistic',load:'Load',cancel:'Cancel',
       title:'Realistic model',note:'Load the textured model. Wi-Fi recommended.',
       loading:'Loading realistic model',download:'Download',soon:'Soon',
       apple:'Apple',android:'Android',appLabel:'Full app',appTitle:'Street View through the district',
-      appNote:'Download the app to walk through the finished model in first person. Choose your platform:'}
+      appNote:'Download the app to walk through the finished model in first person. Choose your platform:',
+      gps:'On site',gpsWait:'Finding GPS',gpsOn:'On site',gpsErr:'No signal',gpsNo:'No GPS'}
 };
 function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
 
@@ -4104,8 +4136,11 @@ function closeTour3D(){
   var host = document.getElementById('tour3d');
   if (host) host.hidden = true;
   document.body.style.overflow = '';
+  if (_t3d && _t3d.stopGps) _t3d.stopGps();        /* GPS-Watch + Kompass beenden (Akku) */
   closeTourQuote(); hideTourDetail(); hideTourProgress();
 }
+/* Vor-Ort-Sync der 3D-Ansicht ein/aus */
+function toggleTourGps(){ if (_t3d && _t3d.toggleGps) _t3d.toggleGps(); }
 
 /* ── Umschalter Abstrakt <-> Realistisch ── */
 function updateTourToggleUI(){
@@ -4285,29 +4320,93 @@ async function _initTour(THREE, GLTFLoader){
   var moveF = 0, moveR = 0, keys = {}, looking = false;
   var ray = new THREE.Raycaster(), v2 = new THREE.Vector2();
   var running = false, lastT = 0;
+  /* GPS-Sync-Zustand: Kamera folgt der echten Position, Blick optional dem Kompass */
+  var gpsSync = false, gpsTX = camera.position.x, gpsTZ = camera.position.z, gpsYaw = yaw;
+  var compassActive = false, geoWatch = null, orientHandler = null;
   function tourOpen(){ var h = document.getElementById('tour3d'); return h && !h.hidden; }
+  function stickEl(){ return document.getElementById('tour3d-stick'); }
 
   function loop(t){
     if (!running) return;
     if (!lastT) lastT = t;
     var dt = Math.min(0.05, (t - lastT) / 1000); lastT = t;
-    var kf = ((keys['w']||keys['arrowup'])?1:0) - ((keys['s']||keys['arrowdown'])?1:0);
-    var kr = ((keys['d']||keys['arrowright'])?1:0) - ((keys['a']||keys['arrowleft'])?1:0);
-    var f = moveF + kf, r = moveR + kr;
-    if (f || r){
-      var mag = Math.hypot(f, r); if (mag > 1){ f /= mag; r /= mag; }
-      var fx = Math.sin(yaw), fz = -Math.cos(yaw);   /* vorwaerts (horizontal) */
-      var rx = Math.cos(yaw), rz = Math.sin(yaw);    /* rechts */
-      camera.position.x = Math.max(-BOUND, Math.min(BOUND, camera.position.x + (fx*f + rx*r) * SPEED * dt));
-      camera.position.z = Math.max(-BOUND, Math.min(BOUND, camera.position.z + (fz*f + rz*r) * SPEED * dt));
+    var busy = false;
+    if (gpsSync){
+      var lp = Math.min(1, dt * 3.5);
+      if (Math.hypot(gpsTX - camera.position.x, gpsTZ - camera.position.z) > 0.02) busy = true;  /* solange nicht am Ziel -> Loop laeuft weiter */
+      camera.position.x += (gpsTX - camera.position.x) * lp;
+      camera.position.z += (gpsTZ - camera.position.z) * lp;
       camera.position.y = EYE;
+      if (compassActive){
+        var dY = ((gpsYaw - yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+        if (Math.abs(dY) > 0.003){ yaw += dY * Math.min(1, dt * 6); busy = true; }
+      }
+    } else {
+      var kf = ((keys['w']||keys['arrowup'])?1:0) - ((keys['s']||keys['arrowdown'])?1:0);
+      var kr = ((keys['d']||keys['arrowright'])?1:0) - ((keys['a']||keys['arrowleft'])?1:0);
+      var f = moveF + kf, r = moveR + kr;
+      if (f || r){
+        var mag = Math.hypot(f, r); if (mag > 1){ f /= mag; r /= mag; }
+        var fx = Math.sin(yaw), fz = -Math.cos(yaw);
+        var rx = Math.cos(yaw), rz = Math.sin(yaw);
+        camera.position.x = Math.max(-BOUND, Math.min(BOUND, camera.position.x + (fx*f + rx*r) * SPEED * dt));
+        camera.position.z = Math.max(-BOUND, Math.min(BOUND, camera.position.z + (fz*f + rz*r) * SPEED * dt));
+        camera.position.y = EYE;
+        busy = true;
+      }
     }
     applyLook();
     render();
-    if (moveF || moveR || kf || kr || looking) requestAnimationFrame(loop);
+    if (busy || looking) requestAnimationFrame(loop);
     else { running = false; lastT = 0; }
   }
   function kick(){ if (!running){ running = true; lastT = 0; requestAnimationFrame(loop); } }
+
+  /* ── GPS-Sync: echte Position -> Kamera, Geraete-Kompass -> Blickrichtung ── */
+  function _gpsLabel(txt){ var el = document.getElementById('tour3d-gps-label'); if (el) el.textContent = txt; }
+  function _gpsBtn(on){ var b = document.getElementById('tour3d-gps'); if (b) b.classList.toggle('on', !!on); }
+  function startCompass(){
+    function attach(){
+      orientHandler = function(e){
+        var h = (typeof e.webkitCompassHeading === 'number') ? e.webkitCompassHeading
+              : (e.absolute && typeof e.alpha === 'number') ? (360 - e.alpha) : null;
+        if (h == null) return;
+        compassActive = true;
+        gpsYaw = h * Math.PI / 180 + GPS_HEADING * Math.PI / 180;   /* Kompass -> Yaw */
+        kick();
+      };
+      window.addEventListener('deviceorientationabsolute', orientHandler, true);
+      window.addEventListener('deviceorientation', orientHandler, true);
+    }
+    var DOE = window.DeviceOrientationEvent;
+    if (DOE && typeof DOE.requestPermission === 'function'){   /* iOS 13+ braucht Erlaubnis */
+      DOE.requestPermission().then(function(s){ if (s === 'granted') attach(); }).catch(function(){});
+    } else { attach(); }
+  }
+  function startGps(){
+    if (!navigator.geolocation){ _gpsLabel(t3dt().gpsNo); return; }
+    gpsSync = true; _gpsBtn(true); _gpsLabel(t3dt().gpsWait);
+    if (stickEl()) stickEl().style.display = 'none';
+    geoWatch = navigator.geolocation.watchPosition(function(pos){
+      var w = gpsToWorld(pos.coords.latitude, pos.coords.longitude);
+      gpsTX = Math.max(-BOUND, Math.min(BOUND, w.x));
+      gpsTZ = Math.max(-BOUND, Math.min(BOUND, w.z));
+      _gpsLabel(t3dt().gpsOn + ' · ±' + Math.round(pos.coords.accuracy) + ' m');
+      kick();
+    }, function(){ _gpsLabel(t3dt().gpsErr); }, { enableHighAccuracy:true, maximumAge:1000, timeout:15000 });
+    startCompass();
+  }
+  function stopGps(){
+    gpsSync = false; compassActive = false; _gpsBtn(false); _gpsLabel(t3dt().gps);
+    if (stickEl()) stickEl().style.display = '';
+    if (geoWatch != null && navigator.geolocation){ navigator.geolocation.clearWatch(geoWatch); geoWatch = null; }
+    if (orientHandler){
+      window.removeEventListener('deviceorientationabsolute', orientHandler, true);
+      window.removeEventListener('deviceorientation', orientHandler, true);
+      orientHandler = null;
+    }
+  }
+  function toggleGps(){ if (gpsSync) stopGps(); else startGps(); }
 
   /* Umsehen per Ziehen auf dem Canvas; kurzes Tippen waehlt aus */
   var lpId = -1, lx = 0, ly = 0, downX = 0, downY = 0;
@@ -4318,6 +4417,7 @@ async function _initTour(THREE, GLTFLoader){
   });
   canvas.addEventListener('pointermove', function(e){
     if (!looking || e.pointerId !== lpId) return;
+    if (gpsSync && compassActive) return;   /* im Sync-Modus dreht der Kompass den Blick */
     var ddx = e.clientX - lx, ddy = e.clientY - ly; lx = e.clientX; ly = e.clientY;
     yaw  -= ddx * LOOK;
     pitch = Math.max(-1.2, Math.min(1.2, pitch - ddy * LOOK));
@@ -4347,6 +4447,7 @@ async function _initTour(THREE, GLTFLoader){
   if (stick && nub){
     var sId = -1, sCx = 0, sCy = 0, SR = 46;
     function sStart(e){
+      if (gpsSync) return;                  /* im Sync-Modus folgt die Position dem GPS */
       sId = e.pointerId;
       var r = stick.getBoundingClientRect(); sCx = r.left + r.width/2; sCy = r.top + r.height/2;
       if (stick.setPointerCapture){ try { stick.setPointerCapture(e.pointerId); } catch(_){} }
@@ -4372,9 +4473,11 @@ async function _initTour(THREE, GLTFLoader){
 
   var gltf = await new GLTFLoader().loadAsync(TOUR_ABSTRACT_URL);
   setModel(gltf.scene);
+  _gpsLabel(t3dt().gps);
   resize();
   return {
     resize: resize, render: render, scene: scene, camera: camera, setModel: setModel,
+    toggleGps: toggleGps, stopGps: stopGps, isGps: function(){ return gpsSync; },
     GLTFLoader: GLTFLoader, THREE: THREE,
     models: { abstract: gltf.scene, detailed: null }, mode: 'abstract'
   };
