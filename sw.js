@@ -8,7 +8,7 @@
    ⚠ Bump CACHE version on every deploy that changes files.
 ═══════════════════════════════════════════════════════════ */
 
-const CACHE = 'wijnhaven-v25';
+const CACHE = 'wijnhaven-v26';
 
 /* All local assets that must work fully offline.
    Map figure-ground is inlined in index.html; eigene Fotos kommen
