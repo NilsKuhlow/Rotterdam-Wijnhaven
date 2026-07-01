@@ -4109,7 +4109,7 @@ var _t3d = null;
    eine URL. Ein externer Link (https://, App Store / Google Play) wird geoeffnet; eine
    Datei auf derselben Domain (relativer Pfad) laedt direkt herunter. Leer = ausgeblendet.
    TOUR_FULLDETAIL_URL bleibt als einfacher Datei-Download-Fallback erhalten. */
-var TOUR_ABSTRACT_URL   = 'models/walkthrough.glb';
+var TOUR_ABSTRACT_URL   = 'models/map_v1.glb';   /* erste Version der abstrakten Gesamtkarte (Blender-Export) */
 var TOUR_DETAIL_URL     = 'models/walkthrough_detailed.glb';
 /* App-Downloads je Plattform. Externer Link (https://, App Store / Google Play / Microsoft Store)
    wird geoeffnet; relativer Pfad (Datei auf derselben Domain, z.B. .exe/.msi/.apk) laedt direkt
@@ -4363,6 +4363,7 @@ async function _initTour(THREE, GLTFLoader){
   scene.background = new THREE.Color(0xffffff);
   var camera = new THREE.PerspectiveCamera(72, 1, 0.05, 600);   /* weiteres FOV = Ego-Perspektive */
   var EYE = 1.7, BOUND = 21, SPEED = 7.2, LOOK = 0.0042;        /* Augenhoehe, Bodengrenze, Tempo, Maus-Empfindlichkeit */
+  var GROUND_WALK = false;                                      /* true = Ego am Boden; false = Overview-Flug ueber grosser Karte (per _fitAndFrame gesetzt) */
   camera.position.set(0, EYE, 17);
   var yaw = 0, pitch = 0;                                       /* yaw=0 blickt nach -Z */
   scene.add(new THREE.HemisphereLight(0xffffff, 0xeaeaea, 2.05));   /* hell genug, dass farbige (realistische) Fassaden lesen; Schwarz bleibt schwarz */
@@ -4398,7 +4399,36 @@ async function _initTour(THREE, GLTFLoader){
   }
   function setModel(node){
     if (currentModel) scene.remove(currentModel);
-    currentModel = node; scene.add(node); rebuildClickable(); render();
+    currentModel = node; scene.add(node); _fitAndFrame(node); rebuildClickable(); render();
+  }
+  /* Karte einpassen: Grundriss auf den Ursprung zentrieren, Boden auf y=0.
+     Grosse Karte (> 60 m Kantenlaenge) -> Overview-Flug (schweben + umsehen);
+     kleine Szene -> klassischer Ego-Walk am Boden. */
+  function _fitAndFrame(node){
+    node.position.set(0, 0, 0); node.updateMatrixWorld(true);
+    var box = new THREE.Box3().setFromObject(node);
+    if (box.isEmpty()) return;
+    var size = new THREE.Vector3(); box.getSize(size);
+    var ctr  = new THREE.Vector3(); box.getCenter(ctr);
+    node.position.x = -ctr.x; node.position.z = -ctr.z; node.position.y = -box.min.y;
+    var span = Math.max(size.x, size.z), radius = span / 2;
+    if (span > 60){
+      GROUND_WALK = false;
+      BOUND = radius * 1.05;
+      SPEED = Math.max(7.2, span / 6);
+      var oh = span * 0.62 + size.y;
+      camera.position.set(0, oh, radius * 1.15);
+      pitch = -Math.atan2(oh, radius * 1.15); yaw = 0;
+      camera.far = (radius + oh) * 4; camera.updateProjectionMatrix();
+      var rr = radius * 0.82, pts = [[0,rr],[rr*0.9,rr*0.55],[rr,-rr*0.2],[0,-rr],[-rr,-rr*0.2],[-rr*0.9,rr*0.55]];
+      TOUR_PATH.length = 0;
+      for (var i = 0; i < pts.length; i++) TOUR_PATH.push({ x:pts[i][0], z:pts[i][1], lx:0, lz:0 });
+    } else {
+      GROUND_WALK = true; BOUND = 21; SPEED = 7.2;
+      camera.position.set(0, EYE, Math.max(12, radius + 3));
+      pitch = 0; yaw = 0;
+    }
+    applyLook();
   }
 
   /* ── First-Person-Steuerung (Street-View-artig): ziehen = umsehen, Joystick/WASD = laufen,
@@ -4412,7 +4442,7 @@ async function _initTour(THREE, GLTFLoader){
   function tourOpen(){ var h = document.getElementById('tour3d'); return h && !h.hidden; }
   function stickEl(){ return document.getElementById('tour3d-stick'); }
   /* Gefuehrt (fester Pfad, professionell) vs. Frei (Ego-Walk). Standard = gefuehrt. */
-  var guided = true, pathIdx = 0, guidedYawLock = true;
+  var guided = false, pathIdx = 0, guidedYawLock = true;   /* Overview-Karte: Standard = frei schweben/umsehen */
 
   function loop(t){
     if (!running) return;
@@ -4424,7 +4454,7 @@ async function _initTour(THREE, GLTFLoader){
       if (Math.hypot(gpsTX - camera.position.x, gpsTZ - camera.position.z) > 0.02) busy = true;  /* solange nicht am Ziel -> Loop laeuft weiter */
       camera.position.x += (gpsTX - camera.position.x) * lp;
       camera.position.z += (gpsTZ - camera.position.z) * lp;
-      camera.position.y = EYE;
+      if (GROUND_WALK) camera.position.y = EYE;
       if (compassActive){
         var dY = ((gpsYaw - yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
         if (Math.abs(dY) > 0.003){ yaw += dY * Math.min(1, dt * 6); busy = true; }
@@ -4434,13 +4464,13 @@ async function _initTour(THREE, GLTFLoader){
       var lg = Math.min(1, dt * 3.0);
       camera.position.x += (wp.x - camera.position.x) * lg;
       camera.position.z += (wp.z - camera.position.z) * lg;
-      camera.position.y = EYE;
+      if (GROUND_WALK) camera.position.y = EYE;
       if (Math.hypot(wp.x - camera.position.x, wp.z - camera.position.z) > 0.03) busy = true;
       if (guidedYawLock){
         var tY = Math.atan2((wp.lx != null ? wp.lx : wp.x) - wp.x, -((wp.lz != null ? wp.lz : wp.z) - wp.z));
         var dG = ((tY - yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
         if (Math.abs(dG) > 0.004){ yaw += dG * Math.min(1, dt * 5); busy = true; }
-        if (Math.abs(pitch) > 0.004){ pitch += (0 - pitch) * Math.min(1, dt * 5); busy = true; }
+        if (GROUND_WALK && Math.abs(pitch) > 0.004){ pitch += (0 - pitch) * Math.min(1, dt * 5); busy = true; }
       }
     } else {
       var kf = ((keys['w']||keys['arrowup'])?1:0) - ((keys['s']||keys['arrowdown'])?1:0);
@@ -4452,7 +4482,7 @@ async function _initTour(THREE, GLTFLoader){
         var rx = Math.cos(yaw), rz = Math.sin(yaw);
         camera.position.x = Math.max(-BOUND, Math.min(BOUND, camera.position.x + (fx*f + rx*r) * SPEED * dt));
         camera.position.z = Math.max(-BOUND, Math.min(BOUND, camera.position.z + (fz*f + rz*r) * SPEED * dt));
-        camera.position.y = EYE;
+        if (GROUND_WALK) camera.position.y = EYE;
         busy = true;
       }
     }
