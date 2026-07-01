@@ -4120,18 +4120,27 @@ var TOUR_APP_IOS        = 'downloads/wijnhaven-volldetail-demo.glb';   /* spaete
 var TOUR_APP_ANDROID    = 'downloads/wijnhaven-volldetail-demo.glb';   /* spaeter .apk oder Google-Play-Link */
 var TOUR_FULLDETAIL_URL = 'downloads/wijnhaven-volldetail-demo.glb';   /* optionaler einfacher Datei-Download */
 
-/* ── GPS-Sync der 3D-Ansicht: echte Position (lat/lon) -> 3D-Welt (x,z) ──
-   MUSS fuer das echte Modell kalibriert werden (analog zu gpsToSvg fuer den Schwarzplan):
-   - GPS_ORIGIN: GPS-Punkt, der im Modell bei (0,0) liegt (z.B. Modell-Ursprung).
-   - GPS_KX / GPS_KZ: Welt-Einheiten pro Grad Laenge / Breite (an Modellmassstab + Ausrichtung
-     anpassen; Norden = -z). GPS_HEADING: Grad-Offset, falls Modell-Norden gedreht ist.
-   Vorgabewerte sind Platzhalter; vor Ort am echten Modell feinjustieren. */
-var GPS_ORIGIN  = { lat: 51.9201, lon: 4.4889 };
-var GPS_KX = 6800;     /* Welt-Einheiten pro Grad Laenge  (Platzhalter) */
-var GPS_KZ = 10200;    /* Welt-Einheiten pro Grad Breite  (Platzhalter) */
-var GPS_HEADING = 0;   /* Grad-Offset fuer die Blickrichtung */
+/* ── Georeferenz der neuen Karte (metrisch, ~1 Einheit = 1 m) ──
+   Bildet reale Position (lat/lon) auf die 3D-Welt (x,z) im ZENTRIERTEN Kartenraum ab
+   (nach _fitAndFrame). Damit werden Blickpunkt-Marker gesetzt UND die GPS-Sync gespeist.
+   PROVISORISCH kalibriert - mit EINEM echten Anker exakt justierbar:
+     * refLat/refLon = eine reale Referenz (hier Schwerpunkt der 7 Bauten)
+     * refX/refZ     = deren Lage in der zentrierten Karte (schieben, bis die Marker sitzen)
+     * rotDeg        = Nordabweichung der Karte (Karte drehen)
+   Helfer in der Konsole: window.mapGeoSet({refX:.., refZ:.., rotDeg:..}) -> live nachjustieren. */
+var MAP_GEO = {
+  refLat: 51.917714, refLon: 4.488671,
+  refX: 60, refZ: -60,
+  rotDeg: 0,
+  mPerLat: 111320, mPerLon: 68700   /* Meter pro Grad Breite / Laenge bei ~51.92 Grad N */
+};
+var GPS_HEADING = 0;   /* Grad-Offset fuer die Blickrichtung (Kompass) */
 function gpsToWorld(lat, lon){
-  return { x: (lon - GPS_ORIGIN.lon) * GPS_KX, z: -(lat - GPS_ORIGIN.lat) * GPS_KZ };
+  var dN = (lat - MAP_GEO.refLat) * MAP_GEO.mPerLat;   /* Meter nach Norden */
+  var dE = (lon - MAP_GEO.refLon) * MAP_GEO.mPerLon;   /* Meter nach Osten  */
+  var ex = dE, ez = -dN;                                /* Ost = +x, Nord = -z */
+  var r = MAP_GEO.rotDeg * Math.PI / 180, cr = Math.cos(r), sr = Math.sin(r);
+  return { x: MAP_GEO.refX + ex * cr - ez * sr, z: MAP_GEO.refZ + ex * sr + ez * cr };
 }
 
 /* ── Gefuehrter Pfad (fester Rundgang) fuer die 3D-Ansicht ──
@@ -4389,13 +4398,36 @@ async function _initTour(THREE, GLTFLoader){
   window.addEventListener('resize', resize);
 
   /* ── Modell-Verwaltung ── */
-  var clickable = [], currentModel = null;
+  var clickable = [], currentModel = null, poiGroup = null;
   function rebuildClickable(){
     clickable.length = 0;
-    if (!currentModel) return;
-    currentModel.traverse(function(o){
+    if (currentModel) currentModel.traverse(function(o){
       if (o.isMesh){ var n = _tourTargetName(o); if (n){ o.userData.t3d = n; clickable.push(o); } }
     });
+    if (poiGroup) poiGroup.traverse(function(o){ if (o.isMesh && o.userData.t3d) clickable.push(o); });
+  }
+  /* ── Blickpunkte: gelbe Pin-Marker fuer die 7 Bauten, benannt building_<N>,
+       damit Antippen den bestehenden Eintrag-Handler (_handleTourHit) oeffnet.
+       Position via gpsToWorld() -> reagiert live auf die Karten-Kalibrierung. ── */
+  function buildPOIs(){
+    if (poiGroup) scene.remove(poiGroup);
+    poiGroup = new THREE.Group();
+    var mat = new THREE.MeshBasicMaterial({ color: 0xFFED29 });
+    var core = new THREE.MeshBasicMaterial({ color: 0x0A0A0A });
+    for (var i = 0; i < STOP_COORDS.length; i++){
+      var w = gpsToWorld(STOP_COORDS[i][0], STOP_COORDS[i][1]);
+      var grp = new THREE.Group(); grp.name = 'building_' + i;
+      var mast = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 62, 8), mat); mast.position.y = 31;
+      var head = new THREE.Mesh(new THREE.SphereGeometry(8, 18, 14), mat); head.position.y = 66;
+      var dot  = new THREE.Mesh(new THREE.SphereGeometry(3.4, 14, 10), core); dot.position.y = 66;
+      mast.userData.t3d = grp.name; head.userData.t3d = grp.name; dot.userData.t3d = grp.name;
+      grp.add(mast); grp.add(head); grp.add(dot);
+      grp.position.set(w.x, 0, w.z);
+      poiGroup.add(grp);
+    }
+    scene.add(poiGroup);
+    rebuildClickable();
+    render();
   }
   function setModel(node){
     if (currentModel) scene.remove(currentModel);
@@ -4627,6 +4659,7 @@ async function _initTour(THREE, GLTFLoader){
 
   var gltf = await new GLTFLoader().loadAsync(TOUR_ABSTRACT_URL);
   setModel(gltf.scene);
+  buildPOIs();                                       /* Blickpunkt-Marker der 7 Bauten */
   _gpsLabel(t3dt().gps);
   pathIdx = _nearestWp(); updateTourControls();
   resize(); kick();                                  /* gleitet zum ersten Aussichtspunkt (Gefuehrt-Standard) */
@@ -4634,10 +4667,15 @@ async function _initTour(THREE, GLTFLoader){
     resize: resize, render: render, scene: scene, camera: camera, setModel: setModel,
     toggleGps: toggleGps, stopGps: stopGps, isGps: function(){ return gpsSync; },
     setGuided: setGuided, isGuided: function(){ return guided; }, pathStep: pathStep, updateTourControls: updateTourControls,
+    rebuildPOIs: buildPOIs,
     GLTFLoader: GLTFLoader, THREE: THREE,
     models: { abstract: gltf.scene, detailed: null }, mode: 'abstract'
   };
 }
+
+/* Live-Kalibrierung der Karten-Georeferenz aus der Browser-Konsole, z. B.
+   mapGeoSet({ refX: 80, refZ: -120, rotDeg: 12 })  -> Marker + GPS-Sync sofort neu. */
+window.mapGeoSet = function(o){ if (o) for (var k in o) MAP_GEO[k] = o[k]; if (window._t3d && _t3d.rebuildPOIs) _t3d.rebuildPOIs(); return MAP_GEO; };
 </script>
 
 <script>
