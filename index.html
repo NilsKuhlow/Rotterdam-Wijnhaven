@@ -204,7 +204,7 @@ body {
 .loader-authors {
   font-family:var(--font-sans); font-weight:400;
   font-size:.5rem; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--ink-4); margin:.05rem 0 0; opacity:0;
+  color:var(--ink-3); margin:.05rem 0 0; opacity:0;   /* --ink-3 statt --ink-4: lesbarer Kontrast (WCAG) */
   animation:introFade .6s ease forwards; animation-delay:1.6s;
 }
 /* Status: zeigt klein an, was gerade laedt (zyklisch, mit Easter Eggs) */
@@ -1484,7 +1484,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <!-- INTRO -->
 <section class="intro" id="main" role="main">
   <header class="intro-top">
-    <span class="intro-kicker">Feldjournal · Rotterdam</span>
+    <span class="intro-kicker">Feldjournal · Rotterdam · Niederlande</span>
   </header>
   <div class="intro-hero">
     <h1 class="intro-title">Wijnhaven</h1>
@@ -2583,7 +2583,7 @@ function dotTap(idx){ scrollToStop(idx); }
 const LANG = {
   de: {
     loaderSub: 'Feldjournal · WiSe 2026/27',
-    kicker:    'Feldjournal · Rotterdam · Nederland',
+    kicker:    'Feldjournal · Rotterdam · Niederlande',
     subHtml:   'Sieben Bauten am Wasser. Ein Reisetagebuch durch das Wijnhaven-Quartier.',
     scrollCue: 'Scrollen',
     drawerBtn: 'Eintrag öffnen →',
