@@ -16,6 +16,9 @@
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
-  "screenshots": [],
+  "screenshots": [
+    { "src": "/screenshot-1.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Startseite" },
+    { "src": "/screenshot-2.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Die sieben Stationen" }
+  ],
   "categories": ["travel", "education"]
 }
