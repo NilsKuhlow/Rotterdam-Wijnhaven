@@ -2216,6 +2216,7 @@ const VB = [
   "130 275 520 390",   // 5
   "40 350 520 390",    // 6
 ];
+const MAP_REVEAL_VB = "444 44 160 120";   /* Reveal-Startzoom (eng auf Stop 0), aus dem herausgezoomt wird */
 
 /* ═══════════════════════════════
    HELPERS
@@ -2236,9 +2237,11 @@ function lerpVB(a, b, t){
    Zooms out from Stop-0 zoom level to give a "reveal" feel,
    then settles back to Stop-0 view.
 ═══════════════════════════════ */
+var _revealing = false;   /* waehrend des Reveal-Zooms treibt onScroll die viewBox NICHT (sonst kaempfen beide) */
 function triggerMapIntro(){
   if (mapShown) return;
   mapShown = true;
+  _revealing = true;
 
   /* Snap scroll to the exact start of the journey section and kill momentum.
      overflow:hidden trick stops native iOS/Android touch inertia; scrollTo
@@ -2257,7 +2260,7 @@ function triggerMapIntro(){
   sl.classList.add('sweep');
 
   /* Start from a tighter zoom (closer into stop 0) */
-  const zoomIn = "444 44 160 120";  /* zoomed on stop 0 */
+  const zoomIn = MAP_REVEAL_VB;     /* zoomed on stop 0 */
   const target  = VB[0];             /* normal stop-0 view */
 
   svg.setAttribute('viewBox', zoomIn);
@@ -2267,6 +2270,8 @@ function triggerMapIntro(){
   setTimeout(() => {
     animVB(zoomIn, target, 900);
   }, 400);
+  /* Reveal-Fenster (Hold 400 + Zoom 900): erst danach folgt die Karte wieder dem Scroll */
+  setTimeout(function(){ _revealing = false; onScroll(); }, 1360);
 
   /* Immediately activate stop 0 so drawer + sketch appear as map reveals.
      Set _fromScroll so activate() doesn't fight the animVB above. */
@@ -2428,6 +2433,7 @@ updateMapH();
 ═══════════════════════════════ */
 const _introEl     = document.querySelector('.intro');
 const _mapEl       = document.getElementById('map-panel');
+const _mapSvg      = document.getElementById('mapSvg');
 const _journeyEl   = document.getElementById('journey');
 const _progressBar = document.getElementById('progress-bar');
 const _langSwitch  = document.getElementById('lang-switch');
@@ -2493,6 +2499,8 @@ function onScroll(){
 
   /* Show map visually as soon as 70 % is crossed */
   map.classList.add('map-intro');
+  /* schon im Reveal-Startzoom einblenden, damit der Reveal spaeter nicht springt */
+  if (!mapShown) _mapSvg.setAttribute('viewBox', MAP_REVEAL_VB);
 
   /* But don't drive stops or snap scroll until we're close to journey start */
   if (!mapShown && sy < introH - 60) return;
@@ -2526,6 +2534,7 @@ function onScroll(){
   }
   stopIdx = Math.max(0, Math.min(6, stopIdx));
 
+  if (_revealing) return;   /* waehrend des Reveals gehoert die viewBox der Reveal-Animation */
   activate(stopIdx, globalT);
 }
 
