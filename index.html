@@ -2,15 +2,35 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Wijnhaven, Feldjournal</title>
 <meta name="description" content="Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, vom Witte Huis bis CasaNova.">
 <meta name="theme-color" content="#FFFFFF">
+<link rel="canonical" href="https://wijnhaven.com/">
+<!-- Open Graph / Twitter: Link-Vorschau beim Teilen -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Wijnhaven, Feldjournal">
+<meta property="og:title" content="Wijnhaven, Feldjournal">
+<meta property="og:description" content="Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, vom Witte Huis bis CasaNova.">
+<meta property="og:url" content="https://wijnhaven.com/">
+<meta property="og:image" content="https://wijnhaven.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Wijnhaven, Feldjournal, Rotterdam">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="nl_NL">
+<meta property="og:locale:alternate" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Wijnhaven, Feldjournal">
+<meta name="twitter:description" content="Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam.">
+<meta name="twitter:image" content="https://wijnhaven.com/og.png">
+<link rel="dns-prefetch" href="https://esm.sh">
+<link rel="dns-prefetch" href="https://unpkg.com">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Wijnhaven">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23FFFFFF'/%3E%3Cg transform='translate(50 52)' fill='none' stroke='%230A0A0A' stroke-width='3.4' stroke-linejoin='round'%3E%3Crect x='-19' y='-19' width='38' height='38' transform='rotate(45)'/%3E%3C/g%3E%3Crect x='42' y='44' width='16' height='16' transform='rotate(45 50 52)' fill='%23FFED29'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1160,9 +1180,10 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   font-size:.5rem; letter-spacing:.12em; text-transform:uppercase;
   color:rgba(20,19,15,.42); background:none; border:none;
   cursor:pointer;
-  /* Larger tap target on mobile */
+  /* Larger tap target on mobile (>= 40px) */
   padding:.5rem .38rem;
-  min-width:2.4rem; text-align:center;
+  min-width:2.4rem; min-height:40px;
+  display:inline-flex; align-items:center; justify-content:center;
   transition:color .2s;
   -webkit-tap-highlight-color:transparent;
   user-select:none;
@@ -1204,7 +1225,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 #tour3d-bar {
   position:absolute; top:0; left:0; right:0;
   display:flex; align-items:center; justify-content:space-between;
-  padding:.9rem 1.1rem; pointer-events:none;
+  padding:max(.9rem, env(safe-area-inset-top)) 1.1rem .9rem; pointer-events:none;
 }
 #tour3d-title {
   font-family:var(--font-mono); font-size:.6rem; letter-spacing:.16em;
@@ -1326,6 +1347,15 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   .impressum-grid { grid-template-columns:1fr; }
 }
 
+/* Sichtbarer Tastatur-Fokus (Quiet Precision: eckig, kein Blur) */
+:focus-visible{ outline:2px solid var(--ink-1); outline-offset:2px; }
+/* Skip-Link: zum Inhalt springen (nur bei Tastaturfokus sichtbar) */
+.skip-link{ position:fixed; left:-9999px; top:0; z-index:100000;
+  background:var(--ink-1); color:#fff; padding:.6rem .9rem;
+  font-family:var(--font-mono); font-size:.66rem; letter-spacing:.12em;
+  text-transform:uppercase; text-decoration:none; }
+.skip-link:focus{ left:.6rem; top:.6rem; }
+
 /* ═══════════════════════════════════════════
    REDUCED MOTION , disable all animations
 ═══════════════════════════════════════════ */
@@ -1339,6 +1369,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Zum Inhalt</a>
 
 <!-- LOADER -->
 <div id="loader">
@@ -1353,9 +1384,9 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
       <rect class="cube-fill" x="238" y="118" width="124" height="124"/>
     </svg>
     <div class="loader-line"></div>
-    <h1 class="loader-title">
+    <div class="loader-title" aria-hidden="true">
       <span class="char">W</span><span class="char">I</span><span class="char">J</span><span class="char">N</span><span class="char">H</span><span class="char">A</span><span class="char">V</span><span class="char">E</span><span class="char">N</span>
-    </h1>
+    </div>
     <p class="loader-sub">Feldjournal · WiSe 2026/27</p>
     <p class="loader-authors">Nils Kuhlow · Kai-Lars Ehrich</p>
     <p class="loader-status" id="loaderStatus" aria-hidden="true"></p>
@@ -1451,7 +1482,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <div id="stop-counter"></div>
 
 <!-- INTRO -->
-<section class="intro">
+<section class="intro" id="main" role="main">
   <header class="intro-top">
     <span class="intro-kicker">Feldjournal · Rotterdam</span>
   </header>
@@ -1730,7 +1761,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <div id="tour3d" hidden aria-modal="true" role="dialog" aria-label="3D-Ansicht">
   <canvas id="tour3d-canvas"></canvas>
   <div id="tour3d-bar">
-    <span id="tour3d-title">3D-Ansicht · Beispielmodell</span>
+    <span id="tour3d-title" data-i18n="tour3dTitle">3D-Ansicht · Karte</span>
     <div class="t3d-actions">
       <div class="t3d-segs">
         <div id="tour3d-toggle" class="t3d-seg" role="group" aria-label="Modellqualität">
@@ -2565,6 +2596,7 @@ const LANG = {
     imp_course:      'Lehrveranstaltung',
     imp_thesis:      'Vertiefung',
     imp_thesis_link: 'Bachelor-Thesis',
+    tour3dTitle:     '3D-Ansicht · Karte',
     imp_note:        'Diese Website ist ein nicht-kommerzielles Hochschulprojekt und dient ausschließlich akademischen Zwecken. Alle Inhalte sind urheberrechtlich geschützt. Eine kommerzielle Nutzung ist nicht gestattet.',
     modal_station: 'Eintrag',
     modal_of:      'von',
@@ -2633,6 +2665,7 @@ const LANG = {
     imp_course:      'Vak',
     imp_thesis:      'Verdieping',
     imp_thesis_link: 'Bachelorscriptie',
+    tour3dTitle:     '3D-weergave · Kaart',
     imp_note:        'Deze website is een niet-commercieel hogeschoolproject en dient uitsluitend academische doeleinden. Alle inhoud is auteursrechtelijk beschermd. Commercieel gebruik is niet toegestaan.',
     modal_station: 'Notitie',
     modal_of:      'van',
@@ -2701,6 +2734,7 @@ const LANG = {
     imp_course:      'Course',
     imp_thesis:      'In depth',
     imp_thesis_link: 'Bachelor thesis',
+    tour3dTitle:     '3D view · Map',
     imp_note:        'This website is a non-commercial university project for academic purposes only. All content is protected by copyright. Commercial use is not permitted.',
     modal_station: 'Entry',
     modal_of:      'of',
@@ -2762,6 +2796,7 @@ function setLang(lang){
   const t = LANG[lang];
   if (!t) return;                   /* unknown lang → bail out */
   currentLang = lang;
+  document.documentElement.lang = lang;   /* html lang mitschalten (Screenreader/SEO) */
 
   /* ── Button active states ── */
   document.querySelectorAll('.lang-btn').forEach(function(b){

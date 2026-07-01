@@ -8,7 +8,7 @@
    ⚠ Bump CACHE version on every deploy that changes files.
 ═══════════════════════════════════════════════════════════ */
 
-const CACHE = 'wijnhaven-v23';
+const CACHE = 'wijnhaven-v24';
 
 /* All local assets that must work fully offline.
    Map figure-ground is inlined in index.html; eigene Fotos kommen
@@ -19,9 +19,14 @@ const PRECACHE = [
   '/sw.js',
   '/manifest.json',
   '/icon.svg',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/apple-touch-icon.png',
   '/models/kubuswoningen.glb',
   '/models/markthal.glb',
 ];
+/* Bewusst NICHT precachen (gross / Opt-in, werden bei Bedarf zur Laufzeit gecacht):
+   models/map_v1.glb (~8,9 MB), walkthrough_detailed.glb, Thesis-PDF/IDML/INDD. */
 
 /* ── Update trigger from page script ── */
 self.addEventListener('message', event => {
