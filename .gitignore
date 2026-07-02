@@ -1,7 +1,11 @@
-# Verifikations-Screenshots / temporäre Render
-_shot_*.png
+# Verifikations-Screenshots / temporäre Render (alle _-prefixten PNGs + Backups)
+_*.png
 _pres*
 *_debug.html
+index_bak_*.html
+
+# Grosse Roh-/Quell-Modelle, die nur lokal liegen (nicht committen)
+3D MODEL/
 
 # Python
 __pycache__/
@@ -10,14 +14,6 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
-
-# QP verification shots
-_qp*.png
-_qp*.png
-_t3d*.png
-_*.png
-_rl*.png
-index_bak_*.html
 
 # InDesign Sperr-/Temporärdateien
 *.idlk

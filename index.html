@@ -3178,15 +3178,21 @@ function onGeoSuccess(pos){
 }
 
 function onGeoError(err){
-  /* stopTrack() calls hideToast(), so we must call it FIRST,
-     then showToast() so the error message stays visible. */
-  stopTrack();
   const msgs = {
     1: 'GPS-Zugriff verweigert, Standort in den Einstellungen erlauben',
-    2: 'Standort nicht verfügbar',
-    3: 'GPS-Zeitüberschreitung, erneut versuchen'
+    2: 'Standort nicht verfügbar, weiter am Suchen …',
+    3: 'GPS-Zeitüberschreitung, weiter am Suchen …'
   };
-  showToast(msgs[err.code] || 'GPS-Fehler', 5000);
+  /* Only a hard permission denial (code 1) is fatal — stop tracking.
+     Timeout (3) and temporary unavailability (2) are common in urban
+     canyons; watchPosition keeps trying, so we keep the watch alive and
+     just surface a transient hint instead of killing Smart-Track. */
+  if (err.code === 1){
+    stopTrack();                 // calls hideToast() → show the message after
+    showToast(msgs[1], 5000);
+  } else {
+    showToast(msgs[err.code] || 'GPS-Fehler', 3000);
+  }
 }
 
 function returnToGps(){
@@ -3957,10 +3963,19 @@ function galTo(i, _auto){
 function galStep(d){ galTo(galIdx + d); }
 
 document.addEventListener('keydown', e => {
+  var modalOpen = document.getElementById('modal').classList.contains('open');
   if (e.key === 'Escape') {
-    if (document.getElementById('places-panel').classList.contains('open')) closePlaces();
-    else closeModal();
+    var tour = document.getElementById('tour3d');
+    var card = document.getElementById('map-info-card');
+    if (tour && !tour.hidden) closeTour3D();
+    else if (card && card.classList.contains('show')) closeInfoCard();
+    else if (document.getElementById('places-panel').classList.contains('open')) closePlaces();
+    else if (modalOpen) closeModal();
+    return;
   }
+  /* Arrow keys drive the gallery only while the entry modal is open
+     (otherwise galLen is 0 → galTo() would compute NaN). */
+  if (!modalOpen) return;
   if (e.key === 'ArrowRight') galStep(1);
   if (e.key === 'ArrowLeft')  galStep(-1);
 });
@@ -4208,7 +4223,8 @@ var T3D_TXT = {
       appLabel:'Volldetail-App',appTitle:'Street View durchs Quartier',
       appNote:'Lade die App, um dich auf der realistischen Karte in Ego-Perspektive zu bewegen. Plattform wählen:',
       gps:'Vor Ort',gpsWait:'Suche GPS',gpsOn:'Vor Ort',gpsErr:'Kein Signal',gpsNo:'Kein GPS',
-      guided:'Geführt',free:'Frei'},
+      guided:'Geführt',free:'Frei',
+      sceneLoad:'3D wird geladen …',sceneErr:'3D konnte nicht geladen werden (Internet?)'},
   nl:{abstract:'Abstract',real:'Realistisch',load:'Laden',cancel:'Annuleren',
       title:'Realistisch model',note:'Getextureerd model laden. Wifi aanbevolen.',
       loading:'Realistisch model laadt',download:'Downloaden',soon:'Volgt',
@@ -4216,7 +4232,8 @@ var T3D_TXT = {
       appLabel:'Volledige app',appTitle:'Street View door de wijk',
       appNote:'Download de app om je in ego-perspectief over de realistische kaart te bewegen. Kies platform:',
       gps:'Ter plaatse',gpsWait:'GPS zoeken',gpsOn:'Ter plaatse',gpsErr:'Geen signaal',gpsNo:'Geen GPS',
-      guided:'Geleid',free:'Vrij'},
+      guided:'Geleid',free:'Vrij',
+      sceneLoad:'3D wordt geladen …',sceneErr:'3D kon niet worden geladen (internet?)'},
   en:{abstract:'Abstract',real:'Realistic',load:'Load',cancel:'Cancel',
       title:'Realistic model',note:'Load the textured model. Wi-Fi recommended.',
       loading:'Loading realistic model',download:'Download',soon:'Soon',
@@ -4224,7 +4241,8 @@ var T3D_TXT = {
       appLabel:'Full app',appTitle:'Street View through the district',
       appNote:'Download the app to move around the realistic map in first person. Choose your platform:',
       gps:'On site',gpsWait:'Finding GPS',gpsOn:'On site',gpsErr:'No signal',gpsNo:'No GPS',
-      guided:'Guided',free:'Free'}
+      guided:'Guided',free:'Free',
+      sceneLoad:'Loading 3D …',sceneErr:'3D could not be loaded (internet?)'}
 };
 function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
 
@@ -4237,16 +4255,23 @@ async function openTour3D(){
   if (_hint){ _hint.classList.remove('faded'); clearTimeout(window._t3dHintT); window._t3dHintT = setTimeout(function(){ _hint.classList.add('faded'); }, 4500); }
   if (_t3d){ _t3d.resize(); updateTourToggleUI(); return; }
   var loading = document.getElementById('tour3d-loading');
+  /* Reset to the loading state — a previous failure may have left the error
+     text in place, which would otherwise show as the "loading" indicator. */
+  loading.innerHTML = '<span class="mono">' + (t3dt().sceneLoad || '3D wird geladen …') + '</span>';
   loading.style.display = 'flex';
   try {
-    var THREE = await import('https://esm.sh/three@0.160.0');
-    var gl = await import('https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js');
-    _t3d = await _initTour(THREE, gl.GLTFLoader);
+    /* Load three + GLTFLoader in parallel (esm.sh dedupes the shared three
+       module) to save a network round-trip on first open. */
+    var mods = await Promise.all([
+      import('https://esm.sh/three@0.160.0'),
+      import('https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js')
+    ]);
+    _t3d = await _initTour(mods[0], mods[1].GLTFLoader);
     loading.style.display = 'none';
     updateTourToggleUI();
   } catch(e){
     console.error('3D load failed', e);
-    loading.innerHTML = '<span class="mono">3D konnte nicht geladen werden (Internet?)</span>';
+    loading.innerHTML = '<span class="mono">' + (t3dt().sceneErr || '3D konnte nicht geladen werden (Internet?)') + '</span>';
   }
 }
 function closeTour3D(){
@@ -4745,8 +4770,16 @@ if ('serviceWorker' in navigator) {
         console.warn('Service Worker nicht registriert:', err);
       });
 
-    /* When a new SW takes control, reload the page to apply updates */
+    /* When a NEW SW takes over, reload to apply the update — but NOT on the
+       first visit: there the page starts uncontrolled and clients.claim()
+       fires controllerchange (null → SW) mid-intro. Only reload on a real
+       update (a controller was already present) and guard against loops. */
+    var hadController = !!navigator.serviceWorker.controller;
+    var swRefreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (!hadController) { hadController = true; return; }
+      if (swRefreshing) return;
+      swRefreshing = true;
       window.location.reload();
     });
   });

@@ -29,23 +29,23 @@ Gruppe 4. Nils Kuhlow & Kai-Lars Ehrich.
 
 ## 3D-Walkthrough: eigenes Modell bauen
 
-Der Walkthrough lädt `models/walkthrough.glb`. Das mitgelieferte Beispielmodell zeigt die
-**Namenskonvention** für antippbare Objekte. Beim eigenen Modell (Blender o.ä.) einfach die
-Objekte/Meshes so benennen:
+Der Walkthrough lädt die abstrakte Gesamtkarte `models/map_v1.glb` (Konstante `TOUR_ABSTRACT_URL`
+in `index.html`). Für antippbare Objekte gilt die **Namenskonvention**. Beim eigenen Modell
+(Blender o.ä.) einfach die Objekte/Meshes so benennen:
 
 - `building_<N>` → Antippen öffnet Eintrag N (0 = Witte Huis … 6 = CasaNova). Beispiel: `building_2` = Markthal.
 - `person_<id>` → Antippen zeigt das Zitat/Interview aus `TOUR_PEOPLE[id]` (in `index.html`).
   Beispiel: `person_kai`. Neue Personen einfach in `TOUR_PEOPLE` mit `de/nl/en`-Eintrag ergänzen.
 - `ground`, `scenery_*` → reine Kulisse, nicht antippbar.
 
-Als `.glb` nach `/models/walkthrough.glb` exportieren (Y nach oben, reale Maßstäbe sind ok).
-Das Generator-Skript des Beispiels liegt unter `tools/make_walkthrough.py`.
+Als `.glb` nach `/models/map_v1.glb` exportieren (Y nach oben, reale Maßstäbe sind ok)
+und `TOUR_ABSTRACT_URL` ggf. anpassen.
 
 ### Abstrakt / Realistisch umschalten
 
 In der 3D-Ansicht gibt es oben einen Umschalter **Abstrakt / Realistisch**.
 
-- **Abstrakt** ist Standard und lädt `models/walkthrough.glb` (weiß, leicht).
+- **Abstrakt** ist Standard und lädt `models/map_v1.glb` (weiß, leicht).
 - **Realistisch** lädt `models/walkthrough_detailed.glb` erst auf Knopfdruck, mit
   Größen-Hinweis (per HTTP-HEAD ermittelt) und Fortschrittsbalken. Beide Dateien müssen
   **dieselben Knotennamen** haben (`building_<N>`, `person_<id>`), dann funktioniert das
