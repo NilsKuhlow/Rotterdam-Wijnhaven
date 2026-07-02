@@ -225,9 +225,13 @@ body {
    PROGRESS BAR
 ═══════════════════════════════════════════ */
 #progress-bar {
-  position:fixed; top:0; left:0; height:3px;
+  position:fixed; top:0; left:0; height:4px;
   background:var(--accent); z-index:200; pointer-events:none;
   width:0;
+  /* A11y: dunkle Grundlinie gibt dem Gelb auf Weiss eine sichtbare Kante
+     (Non-Text-Kontrast); box-sizing haelt die sichtbare Hoehe bei ~3px Gelb. */
+  box-sizing:border-box;
+  border-bottom:1px solid rgba(10,10,10,.55);
 }
 
 /* ═══════════════════════════════════════════
@@ -1366,6 +1370,22 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     transition-duration:.01ms !important;
   }
 }
+
+/* ═══════════════════════════════════════════
+   A11y-Feinschliff: Trefferflaechen + Safe-Area
+   (rein additiv, keine sichtbare Groessenaenderung)
+═══════════════════════════════════════════ */
+/* Statische Buttons brauchen einen Positionierungskontext fuer ::before.
+   NICHT modal-close/modal-share/gal-arr (bereits position:absolute). */
+.mic-close, .pp-close, #tour3d-close, .gal-pip { position:relative; }
+.modal-close::before, .modal-share::before, .mic-close::before, .pp-close::before,
+#tour3d-close::before, .gal-arr::before {
+  content:''; position:absolute; inset:-7px;   /* dehnt Trefferflaeche auf ~44px */
+}
+.gal-pip::before { content:''; position:absolute; inset:-11px -6px; }  /* groesserer Tap-Bereich fuer die Pips */
+/* Fixe Top-Chrome respektiert die Notch (viewport-fit=cover ist gesetzt) */
+#track-btn { top:max(.85rem, env(safe-area-inset-top)); }
+#nav-crumb { padding-top:max(.85rem, env(safe-area-inset-top)); }
 </style>
 </head>
 <body>
@@ -1396,11 +1416,11 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 
 <!-- CHROME -->
 <div id="progress-bar"></div>
-<button id="track-btn" onclick="toggleTrack()">
-  <span class="t-icon"></span>
+<button id="track-btn" onclick="toggleTrack()" aria-pressed="false" aria-label="Smart-Track, Standort auf der Karte verfolgen">
+  <span class="t-icon" aria-hidden="true"></span>
   <span id="track-label">Smart-Track</span>
 </button>
-<div id="track-toast"></div>
+<div id="track-toast" role="status" aria-live="polite"></div>
 
 <!-- Map interaction hint, appears briefly on first GPS track activation -->
 <div id="map-hint" aria-hidden="true">
@@ -1472,11 +1492,11 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     <span>3D</span>
   </button>
   <nav id="lang-switch" aria-label="Sprache wählen / Language">
-    <button class="lang-btn active" data-lang="de" aria-label="Deutsch">DE</button>
+    <button class="lang-btn active" data-lang="de" aria-label="Deutsch" aria-pressed="true">DE</button>
     <span class="lang-sep" aria-hidden="true">·</span>
-    <button class="lang-btn" data-lang="nl" aria-label="Nederlands">NL</button>
+    <button class="lang-btn" data-lang="nl" aria-label="Nederlands" aria-pressed="false">NL</button>
     <span class="lang-sep" aria-hidden="true">·</span>
-    <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
+    <button class="lang-btn" data-lang="en" aria-label="English" aria-pressed="false">EN</button>
   </nav>
 </div>
 <div id="stop-counter"></div>
@@ -1623,7 +1643,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 
     <!-- Traveller dot -->
     <circle id="traveller" cx="430" cy="250" r="7"
-      fill="var(--accent)"
+      fill="var(--accent)" stroke="var(--ink-1)" stroke-width="1.6"
       opacity="0"/>
 
     <!-- Ripple rings per stop -->
@@ -1677,7 +1697,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <div id="map-touch-layer"></div>
 
 <!-- Map Info Card, slides up when user taps a stop dot in track mode -->
-<div id="map-info-card" role="dialog" aria-modal="true" aria-label="Stationsinformation">
+<div id="map-info-card" role="dialog" aria-label="Stationsinformation" inert>
   <div class="mic-handle"></div>
   <div class="mic-body">
     <div class="mic-header">
@@ -1699,7 +1719,9 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 
 <!-- DRAWER (fixed below map) -->
 <div id="drawer">
-  <div class="drawer-inner" onclick="openModal(activeStop)">
+  <div class="drawer-inner" role="button" tabindex="0" aria-label="Eintrag öffnen"
+       onclick="openModal(activeStop)"
+       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openModal(activeStop);}">
     <div class="drawer-left">
       <div class="drawer-num"  id="drawer-num">Station 01</div>
       <div class="drawer-name" id="drawer-name">—</div>
@@ -1711,7 +1733,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 
 
 <!-- PLACES PANEL, bottom sheet -->
-<div id="places-panel" role="dialog" aria-modal="true" aria-labelledby="ppTitle">
+<div id="places-panel" role="dialog" aria-modal="true" aria-labelledby="ppTitle" inert>
   <div class="pp-backdrop" onclick="closePlaces()"></div>
   <div class="pp-sheet">
     <div class="pp-handle-zone" id="ppHandleZone">
@@ -1765,12 +1787,12 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     <div class="t3d-actions">
       <div class="t3d-segs">
         <div id="tour3d-toggle" class="t3d-seg" role="group" aria-label="Modellqualität">
-          <button class="t3d-seg-btn is-on" data-mode="abstract" onclick="switchTourModel(false)">Abstrakt</button>
-          <button class="t3d-seg-btn"       data-mode="detailed" onclick="switchTourModel(true)">Realistisch</button>
+          <button class="t3d-seg-btn is-on" data-mode="abstract" onclick="switchTourModel(false)" aria-pressed="true">Abstrakt</button>
+          <button class="t3d-seg-btn"       data-mode="detailed" onclick="switchTourModel(true)" aria-pressed="false">Realistisch</button>
         </div>
         <div id="tour3d-mode" class="t3d-seg" role="group" aria-label="Bewegungsmodus">
-          <button class="t3d-seg-btn is-on" data-m="guided" onclick="setTourMode(true)">Geführt</button>
-          <button class="t3d-seg-btn"       data-m="free"   onclick="setTourMode(false)">Frei</button>
+          <button class="t3d-seg-btn is-on" data-m="guided" onclick="setTourMode(true)" aria-pressed="true">Geführt</button>
+          <button class="t3d-seg-btn"       data-m="free"   onclick="setTourMode(false)" aria-pressed="false">Frei</button>
         </div>
       </div>
       <button id="tour3d-close" onclick="closeTour3D()" aria-label="3D schließen">✕</button>
@@ -1810,7 +1832,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 
 <!-- MODAL -->
 <div id="backdrop" onclick="closeModal()"></div>
-<div id="modal">
+<div id="modal" role="dialog" aria-modal="true" aria-label="Journaleintrag" inert>
   <!-- Drag handle, grab here and pull down to close -->
   <div class="modal-handle-zone" id="modalHandleZone">
     <div class="modal-drag-handle" aria-hidden="true"></div>
@@ -2809,7 +2831,9 @@ function setLang(lang){
 
   /* ── Button active states ── */
   document.querySelectorAll('.lang-btn').forEach(function(b){
-    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+    var on = b.getAttribute('data-lang') === lang;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
 
   /* ── Helper: set text/html safely ── */
@@ -3214,6 +3238,7 @@ function stopTrack(){
   if (watchId !== null){ navigator.geolocation.clearWatch(watchId); watchId=null; }
   const btn=document.getElementById('track-btn');
   btn.classList.remove('active','acquiring');
+  btn.setAttribute('aria-pressed','false');
   document.getElementById('track-label').textContent='Smart-Track';
   /* Hide GPS dot */
   var g=document.getElementById('gps-group'); if(g){ g.style.opacity='0'; g.classList.remove('tracking'); }
@@ -3233,6 +3258,7 @@ function toggleTrack(){
   document.getElementById('map-touch-layer').classList.add('active');
   const btn=document.getElementById('track-btn');
   btn.classList.add('acquiring');
+  btn.setAttribute('aria-pressed','true');
   document.getElementById('track-label').textContent='Orten…';
   showToast('Standort wird ermittelt…');
   showMapHint(); /* brief gesture hint on first activation */
@@ -3297,7 +3323,9 @@ function openInfoCard(idx){
   /* CTA wires to full modal for this stop */
   document.getElementById('mic-cta').onclick = function(){ openModal(idx); };
 
-  document.getElementById('map-info-card').classList.add('show');
+  var _ic = document.getElementById('map-info-card');
+  _ic.classList.add('show');
+  _ic.removeAttribute('inert');   /* A11y: jetzt bedienbar */
 
   /* Show return-btn, map will move away from GPS position */
   document.getElementById('return-btn').classList.add('show');
@@ -3314,7 +3342,9 @@ function openInfoCard(idx){
 }
 
 function closeInfoCard(){
-  document.getElementById('map-info-card').classList.remove('show');
+  var _ic = document.getElementById('map-info-card');
+  _ic.classList.remove('show');
+  _ic.setAttribute('inert', '');   /* A11y: raus aus Tab-Order/AT */
   _infoCardStop = -1;
 }
 
@@ -3751,12 +3781,16 @@ function renderPlacesList(){
 
 function openPlaces(){
   renderPlacesList();
-  document.getElementById('places-panel').classList.add('open');
+  var pp = document.getElementById('places-panel');
+  pp.classList.add('open');
+  pp.removeAttribute('inert');
   document.body.style.overflow = 'hidden'; /* prevent background scroll */
 }
 
 function closePlaces(){
-  document.getElementById('places-panel').classList.remove('open');
+  var pp = document.getElementById('places-panel');
+  pp.classList.remove('open');
+  pp.setAttribute('inert', '');
   document.body.style.overflow = '';
 }
 
@@ -3819,6 +3853,22 @@ const SB_LABELS = {
   nl:{architekt:'Architect',fertigstellung:'Oplevering',flaeche:'Oppervlak / maat',kosten:'Kosten',einbindung:'Stedenbouwkundige inbedding',konzept:'Concept',programm:'Programma',konstruktion:'Constructie',resuemee:'Résumé / oordeel'},
   en:{architekt:'Architect',fertigstellung:'Completed',flaeche:'Area / size',kosten:'Cost',einbindung:'Urban integration',konzept:'Concept',programm:'Programme',konstruktion:'Construction',resuemee:'Résumé / assessment'}
 };
+
+/* ── A11y-Helfer: Fokus-Trap fuer Dialoge ── */
+var _modalLastFocus = null;
+function _focusables(container){
+  return Array.prototype.slice.call(container.querySelectorAll(
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )).filter(function(n){ return n.offsetWidth > 0 || n.offsetHeight > 0 || n === document.activeElement; });
+}
+function _trapTab(e, container){
+  var f = _focusables(container);
+  if (!f.length){ e.preventDefault(); return; }
+  var first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  else if (!container.contains(document.activeElement)){ e.preventDefault(); first.focus(); }
+}
 
 function openModal(idx, _placeObj){
   const s = _placeObj || ((idx >= 0 && idx < 7) ? STOPS[idx] : STOPS[activeStop]);
@@ -3912,8 +3962,16 @@ function openModal(idx, _placeObj){
   var cnt = document.getElementById('gal-counter');
   if (cnt) { cnt.style.display = singleSlide ? 'none' : 'block'; cnt.textContent = '1 / ' + galLen; }
 
-  document.getElementById('modal').classList.add('open');
+  var _m = document.getElementById('modal');
+  _m.classList.add('open');
   document.getElementById('backdrop').classList.add('open');
+  /* A11y: Dialog aktiv → aus inert holen, Fokus hinein, Body-Scroll sperren,
+     zuvor fokussiertes Element merken (Restore beim Schliessen). */
+  _m.removeAttribute('inert');
+  _m.setAttribute('aria-label', s.name || 'Journaleintrag');
+  _modalLastFocus = document.activeElement;
+  document.body.style.overflow = 'hidden';
+  var _cb = _m.querySelector('.modal-close'); if (_cb) _cb.focus();
   galTo(0, true);
   startGalAuto();
   /* Show swipe hint only when there are multiple photos to swipe between */
@@ -3922,13 +3980,30 @@ function openModal(idx, _placeObj){
 
 function closeModal(){
   stopGalAuto();
-  document.getElementById('modal').classList.remove('open');
+  var _m = document.getElementById('modal');
+  _m.classList.remove('open');
   document.getElementById('backdrop').classList.remove('open');
+  /* A11y: wieder inert (raus aus Tab-Order/AT), Scroll frei, Fokus zurueck. */
+  _m.setAttribute('inert', '');
+  document.body.style.overflow = '';
+  if (_modalLastFocus && _modalLastFocus.focus) { try { _modalLastFocus.focus(); } catch(e){} }
+  _modalLastFocus = null;
 }
 
+/* Respektiert die System-Einstellung "Bewegung reduzieren" (auch fuer JS-Motion). */
+function _prefersReducedMotion(){
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
 function startGalAuto(){
   stopGalAuto();
   if (galLen <= 1) return;
+  /* Kein automatisches Weiterblaettern, wenn der Nutzer reduzierte Bewegung
+     eingestellt hat — die Galerie bleibt still und wird nur manuell bedient. */
+  if (_prefersReducedMotion()){
+    var _b = document.getElementById('galProgress');
+    if (_b) _b.style.display = 'none';
+    return;
+  }
   document.getElementById('galProgress').style.display = '';
   _restartProgressAnim();
   _galAutoTimer = setInterval(function(){
@@ -3973,9 +4048,10 @@ document.addEventListener('keydown', e => {
     else if (modalOpen) closeModal();
     return;
   }
-  /* Arrow keys drive the gallery only while the entry modal is open
-     (otherwise galLen is 0 → galTo() would compute NaN). */
+  /* Arrow keys + Tab-Trap gelten nur bei offenem Eintrags-Modal
+     (sonst galLen 0 → galTo() rechnet NaN). */
   if (!modalOpen) return;
+  if (e.key === 'Tab'){ _trapTab(e, document.getElementById('modal')); return; }
   if (e.key === 'ArrowRight') galStep(1);
   if (e.key === 'ArrowLeft')  galStep(-1);
 });
@@ -4284,7 +4360,16 @@ function closeTour3D(){
 /* Vor-Ort-Sync der 3D-Ansicht ein/aus */
 function toggleTourGps(){ if (_t3d && _t3d.toggleGps) _t3d.toggleGps(); }
 /* Bewegungsmodus: gefuehrter Pfad <-> freier Walk; im Gefuehrt-Modus Schritt vor/zurueck */
-function setTourMode(guided){ if (_t3d && _t3d.setGuided) _t3d.setGuided(guided); }
+function setTourMode(guided){
+  if (_t3d && _t3d.setGuided) _t3d.setGuided(guided);
+  /* is-on + aria-pressed fuer die Gefuehrt/Frei-Segmentbuttons spiegeln */
+  var row = document.getElementById('tour3d-mode');
+  if (row) Array.prototype.forEach.call(row.querySelectorAll('.t3d-seg-btn'), function(b){
+    var on = (b.getAttribute('data-m') === (guided ? 'guided' : 'free'));
+    b.classList.toggle('is-on', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
 function tourPathStep(n){ if (_t3d && _t3d.pathStep) _t3d.pathStep(n); }
 
 /* ── Umschalter Abstrakt <-> Realistisch ── */
@@ -4293,7 +4378,9 @@ function updateTourToggleUI(){
   var t = t3dt(), mode = _t3d ? _t3d.mode : 'abstract';
   Array.prototype.forEach.call(seg.querySelectorAll('.t3d-seg-btn'), function(b){
     var m = b.getAttribute('data-mode');
-    b.classList.toggle('is-on', m === mode);
+    var on = m === mode;
+    b.classList.toggle('is-on', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
     b.textContent = (m === 'abstract') ? t.abstract : t.real;
   });
 }
@@ -4748,6 +4835,19 @@ window.mapGeoSet = function(o){ if (o) for (var k in o) MAP_GEO[k] = o[k]; if (w
 </script>
 
 <script>
+/* ── A11y: Karten-Punkte per Tastatur bedienbar (fokussierbar + Enter/Space) ── */
+(function(){
+  document.querySelectorAll('.stop-dot').forEach(function(dot, i){
+    dot.setAttribute('tabindex', '0');
+    dot.setAttribute('role', 'button');
+    var nm = (typeof STOPS !== 'undefined' && STOPS[i]) ? STOPS[i].name : ('Station ' + (i + 1));
+    dot.setAttribute('aria-label', nm);
+    dot.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); dotTap(i); }
+    });
+  });
+})();
+
 /* ── Service Worker registration ── */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
