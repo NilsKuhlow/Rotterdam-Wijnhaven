@@ -2581,7 +2581,13 @@ window.addEventListener('scroll', function(){
 }, { passive:true });
 onScroll();
 
-/* Karte sauber ausblenden, sobald der Colophon (Footer) ins Bild kommt */
+/* Karte sauber ausblenden, sobald der Colophon (Footer) ins Bild kommt.
+   rootMargin -90% unten: der Colophon zaehlt erst als "sichtbar", wenn er das
+   obere 10%-Band des Viewports erreicht. Ohne das feuerte at-end bereits, wenn
+   der Colophon nur unten hereinlugte — also GENAU beim Aktivwerden des letzten
+   Stopps (CasaNova, globalT=6). Dadurch wurde die Karte sofort weiss und der
+   CasaNova-Drawer war nie bedienbar. So bekommt der letzte Stopp — wie jeder
+   andere — sein volles Verweilfenster, bevor das Outro einblendet. */
 (function(){
   var colo = document.querySelector('.colophon');
   if (!colo || !('IntersectionObserver' in window)) return;
@@ -2590,7 +2596,7 @@ onScroll();
       _mapEl.classList.toggle('map-hidden', e.isIntersecting);
       document.body.classList.toggle('at-end', e.isIntersecting);   /* obere Steuerung ausblenden */
     });
-  }, { threshold:0 }).observe(colo);
+  }, { threshold:0, rootMargin:'0px 0px -90% 0px' }).observe(colo);
 })();
 
 /* ═══════════════════════════════
