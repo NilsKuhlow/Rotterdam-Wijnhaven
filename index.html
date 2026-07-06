@@ -1225,7 +1225,14 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   display:flex; align-items:center; justify-content:center;
 }
 #tour3d[hidden] { display:none; }
-#tour3d-canvas { width:100%; height:100%; display:block; touch-action:none; }
+#tour3d-mv {
+  width:100%; height:100%; display:block; touch-action:none;
+  background:var(--paper-0);
+  --poster-color:transparent;
+}
+/* model-viewer bringt eigenen Fortschrittsbalken/Prompt mit — wir nutzen unsere
+   eigene Ladeanzeige (#tour3d-loading) und blenden die eingebauten aus. */
+#tour3d-mv::part(default-progress-bar) { display:none; }
 #tour3d-bar {
   position:absolute; top:0; left:0; right:0;
   display:flex; align-items:center; justify-content:space-between;
@@ -1780,37 +1787,20 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <!-- Language switch moved into #nav-crumb (top bar) -->
 
 <!-- 3D-ANSICHT (Walkthrough) — lazy, nur aktiv wenn geöffnet -->
-<div id="tour3d" hidden aria-modal="true" role="dialog" aria-label="3D-Ansicht">
-  <canvas id="tour3d-canvas"></canvas>
+<div id="tour3d" hidden aria-modal="true" role="dialog" aria-label="3D-Modell">
+  <!-- Drehteller: Modell von aussen betrachten, um die Mitte drehen, begrenzt zoomen.
+       Kein Durchlaufen. src wird lazy in openTour3D() gesetzt (25 MB erst auf Wunsch). -->
+  <model-viewer id="tour3d-mv"
+    camera-controls disable-pan disable-tap interaction-prompt="none"
+    camera-orbit="35deg 68deg auto" min-camera-orbit="auto 15deg auto" max-camera-orbit="auto 89deg auto"
+    touch-action="none" loading="eager" reveal="auto"></model-viewer>
   <div id="tour3d-bar">
-    <span id="tour3d-title" data-i18n="tour3dTitle">3D-Ansicht · Karte</span>
+    <span id="tour3d-title" data-i18n="tour3dTitle">Wijnhaven · 3D-Modell</span>
     <div class="t3d-actions">
-      <div class="t3d-segs">
-        <div id="tour3d-toggle" class="t3d-seg" role="group" aria-label="Modellqualität">
-          <button class="t3d-seg-btn is-on" data-mode="abstract" onclick="switchTourModel(false)" aria-pressed="true">Abstrakt</button>
-          <button class="t3d-seg-btn"       data-mode="detailed" onclick="switchTourModel(true)" aria-pressed="false">Realistisch</button>
-        </div>
-        <div id="tour3d-mode" class="t3d-seg" role="group" aria-label="Bewegungsmodus">
-          <button class="t3d-seg-btn is-on" data-m="guided" onclick="setTourMode(true)" aria-pressed="true">Geführt</button>
-          <button class="t3d-seg-btn"       data-m="free"   onclick="setTourMode(false)" aria-pressed="false">Frei</button>
-        </div>
-      </div>
       <button id="tour3d-close" onclick="closeTour3D()" aria-label="3D schließen">✕</button>
     </div>
   </div>
-  <div id="tour3d-hint" data-i18n="tour3dHint">Laufen · umsehen · antippen</div>
-  <!-- Lauf-Joystick (Ego-Perspektive, Street-View-artig) -->
-  <div id="tour3d-stick" aria-hidden="true"><div id="tour3d-nub"></div></div>
-  <!-- Vor-Ort-Sync: Kamera folgt der echten GPS-Position + Kompass -->
-  <button id="tour3d-gps" onclick="toggleTourGps()" aria-label="Mit Standort synchronisieren">
-    <span class="t-icon" aria-hidden="true"></span><span id="tour3d-gps-label">Vor Ort</span>
-  </button>
-  <!-- Pfad-Navigation (nur im Gefuehrt-Modus): Schritt zurueck / vor -->
-  <div id="tour3d-nav" aria-label="Rundgang">
-    <button class="t3d-nav-btn" onclick="tourPathStep(-1)" aria-label="Zurück">‹</button>
-    <span id="tour3d-nav-pos">1 / 7</span>
-    <button class="t3d-nav-btn" onclick="tourPathStep(1)" aria-label="Weiter">›</button>
-  </div>
+  <div id="tour3d-hint" data-i18n="tour3dHint">Drehen · Zoomen</div>
   <div id="tour3d-loading"><span class="mono">3D wird geladen …</span></div>
   <!-- Detail-Dialog: Groessen-Bestaetigung oder Download-Fallback (Inhalt per JS) -->
   <div id="tour3d-detail" hidden><div class="t3d-card" id="tour3d-detail-card"></div></div>
@@ -2633,7 +2623,7 @@ const LANG = {
     imp_course:      'Lehrveranstaltung',
     imp_thesis:      'Vertiefung',
     imp_thesis_link: 'Arbeitsfassung (PDF)',
-    tour3dTitle:     '3D-Ansicht · Karte',
+    tour3dTitle:     'Wijnhaven · 3D-Modell',
     imp_note:        'Diese Website ist ein nicht-kommerzielles Hochschulprojekt und dient ausschließlich akademischen Zwecken. Alle Inhalte sind urheberrechtlich geschützt. Eine kommerzielle Nutzung ist nicht gestattet.',
     modal_station: 'Eintrag',
     modal_of:      'von',
@@ -2647,7 +2637,7 @@ const LANG = {
     ppExtra:       'Weitere Orte',
     placesBtnLbl:  'Orte',
     shareCopied:   'Link kopiert',
-    tour3dHint:    'Laufen · umsehen · antippen',
+    tour3dHint:    'Drehen · Zoomen',
     introLoc: 'Ort', introRoute: 'Route', introRouteV: '7 Stationen · ca. 3 h', introSem: 'Semester', introTeam: 'Autoren',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
@@ -2702,7 +2692,7 @@ const LANG = {
     imp_course:      'Vak',
     imp_thesis:      'Verdieping',
     imp_thesis_link: 'Werkversie (PDF)',
-    tour3dTitle:     '3D-weergave · Kaart',
+    tour3dTitle:     'Wijnhaven · 3D-model',
     imp_note:        'Deze website is een niet-commercieel hogeschoolproject en dient uitsluitend academische doeleinden. Alle inhoud is auteursrechtelijk beschermd. Commercieel gebruik is niet toegestaan.',
     modal_station: 'Notitie',
     modal_of:      'van',
@@ -2716,7 +2706,7 @@ const LANG = {
     ppExtra:       'Overige plekken',
     placesBtnLbl:  'Plekken',
     shareCopied:   'Link gekopieerd',
-    tour3dHint:    'Lopen · rondkijken · tikken',
+    tour3dHint:    'Draaien · Zoomen',
     introLoc: 'Locatie', introRoute: 'Route', introRouteV: '7 stations · ca. 3 u', introSem: 'Semester', introTeam: 'Auteurs',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
@@ -2771,7 +2761,7 @@ const LANG = {
     imp_course:      'Course',
     imp_thesis:      'In depth',
     imp_thesis_link: 'Working draft (PDF)',
-    tour3dTitle:     '3D view · Map',
+    tour3dTitle:     'Wijnhaven · 3D model',
     imp_note:        'This website is a non-commercial university project for academic purposes only. All content is protected by copyright. Commercial use is not permitted.',
     modal_station: 'Entry',
     modal_of:      'of',
@@ -2785,7 +2775,7 @@ const LANG = {
     ppExtra:       'Other places',
     placesBtnLbl:  'Places',
     shareCopied:   'Link copied',
-    tour3dHint:    'Walk · look · tap',
+    tour3dHint:    'Rotate · Zoom',
     introLoc: 'Location', introRoute: 'Route', introRouteV: '7 stops · approx. 3 h', introSem: 'Term', introTeam: 'Authors',
     stopSubs: [
       "Willem Molenbroek · 1897-1898",
@@ -4328,40 +4318,55 @@ var T3D_TXT = {
 };
 function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
 
-async function openTour3D(){
+/* Optimiertes 3D-Modell (Google-3D-Tiles-Export, per gltf-transform auf meshopt +
+   WebP + 1024px reduziert, ~25 MB). Wird erst beim Oeffnen der 3D-Ansicht geladen. */
+var TOUR_MODEL_URL = 'models/wijnhaven.glb';
+var _tourMvWired = false;
+
+function openTour3D(){
   var host = document.getElementById('tour3d');
   host.hidden = false;
   document.body.style.overflow = 'hidden';
-  hideTourDetail(); hideTourProgress();
-  var _hint = document.getElementById('tour3d-hint');   /* Coachmark kurz zeigen, dann ausblenden (Joystick frei) */
-  if (_hint){ _hint.classList.remove('faded'); clearTimeout(window._t3dHintT); window._t3dHintT = setTimeout(function(){ _hint.classList.add('faded'); }, 4500); }
-  if (_t3d){ _t3d.resize(); updateTourToggleUI(); return; }
+  var mv = document.getElementById('tour3d-mv');
   var loading = document.getElementById('tour3d-loading');
-  /* Reset to the loading state — a previous failure may have left the error
-     text in place, which would otherwise show as the "loading" indicator. */
-  loading.innerHTML = '<span class="mono">' + (t3dt().sceneLoad || '3D wird geladen …') + '</span>';
+  var hint = document.getElementById('tour3d-hint');   /* Coachmark kurz zeigen, dann ausblenden */
+  if (hint){ hint.classList.remove('faded'); clearTimeout(window._t3dHintT); window._t3dHintT = setTimeout(function(){ hint.classList.add('faded'); }, 4500); }
+
+  loadModelViewer();                       /* stellt sicher, dass <model-viewer> definiert ist */
+  if (mv.getAttribute('src')) return;      /* schon geladen → nur wieder einblenden */
+
+  function setLoad(txt){ loading.innerHTML = '<span class="mono">' + txt + '</span>'; }
+  setLoad(t3dt().sceneLoad || '3D wird geladen …');
   loading.style.display = 'flex';
-  try {
-    /* Load three + GLTFLoader in parallel (esm.sh dedupes the shared three
-       module) to save a network round-trip on first open. */
-    var mods = await Promise.all([
-      import('https://esm.sh/three@0.160.0'),
-      import('https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js')
-    ]);
-    _t3d = await _initTour(mods[0], mods[1].GLTFLoader);
-    loading.style.display = 'none';
-    updateTourToggleUI();
-  } catch(e){
-    console.error('3D load failed', e);
-    loading.innerHTML = '<span class="mono">' + (t3dt().sceneErr || '3D konnte nicht geladen werden (Internet?)') + '</span>';
+
+  if (!_tourMvWired){
+    _tourMvWired = true;
+    mv.addEventListener('progress', function(e){
+      var p = Math.round(((e.detail && e.detail.totalProgress) || 0) * 100);
+      if (p < 100) setLoad((t3dt().sceneLoad || '3D wird geladen …') + '  ' + p + '%');
+    });
+    mv.addEventListener('load', function(){
+      loading.style.display = 'none';
+      /* Zoom sanft um die gerahmte Distanz begrenzen: nur ein wenig rein/raus.
+         Polarwinkel-Limits (15–89°) beibehalten, Drehachse bleibt durch
+         disable-pan in der Modellmitte. */
+      try {
+        var r = mv.getCameraOrbit().radius;
+        mv.minCameraOrbit = 'auto 15deg ' + (r * 0.55) + 'm';
+        mv.maxCameraOrbit = 'auto 89deg ' + (r * 1.7)  + 'm';
+      } catch(err){}
+    });
+    mv.addEventListener('error', function(){
+      setLoad(t3dt().sceneErr || '3D konnte nicht geladen werden (Internet?)');
+    });
   }
+  mv.setAttribute('src', TOUR_MODEL_URL);
 }
+
 function closeTour3D(){
   var host = document.getElementById('tour3d');
   if (host) host.hidden = true;
   document.body.style.overflow = '';
-  if (_t3d && _t3d.stopGps) _t3d.stopGps();        /* GPS-Watch + Kompass beenden (Akku) */
-  closeTourQuote(); hideTourDetail(); hideTourProgress();
 }
 /* Vor-Ort-Sync der 3D-Ansicht ein/aus */
 function toggleTourGps(){ if (_t3d && _t3d.toggleGps) _t3d.toggleGps(); }

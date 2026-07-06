@@ -10,7 +10,7 @@
    ⚠ Bump CACHE version on every deploy that changes files.
 ═══════════════════════════════════════════════════════════ */
 
-const CACHE = 'wijnhaven-v32';
+const CACHE = 'wijnhaven-v33';
 
 /* Cross-origin hosts we are allowed to cache (all send CORS headers, so the
    responses are readable/cacheable — needed for offline fonts + 3D on-site). */
