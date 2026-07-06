@@ -1792,7 +1792,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
        Kein Durchlaufen. src wird lazy in openTour3D() gesetzt (25 MB erst auf Wunsch). -->
   <model-viewer id="tour3d-mv"
     camera-controls disable-pan disable-tap interaction-prompt="none"
-    camera-orbit="35deg 68deg auto" min-camera-orbit="auto 15deg auto" max-camera-orbit="auto 89deg auto"
+    camera-orbit="35deg 62deg auto" min-camera-orbit="auto 15deg auto" max-camera-orbit="auto 80deg auto"
     touch-action="none" loading="eager" reveal="auto"></model-viewer>
   <div id="tour3d-bar">
     <span id="tour3d-title" data-i18n="tour3dTitle">Wijnhaven · 3D-Modell</span>
@@ -4353,7 +4353,7 @@ function openTour3D(){
       try {
         var r = mv.getCameraOrbit().radius;
         mv.minCameraOrbit = 'auto 15deg ' + (r * 0.55) + 'm';
-        mv.maxCameraOrbit = 'auto 89deg ' + (r * 1.7)  + 'm';
+        mv.maxCameraOrbit = 'auto 80deg ' + (r * 1.7)  + 'm';   /* 80° statt 89°: kein Blick unter die Platte */
       } catch(err){}
     });
     mv.addEventListener('error', function(){
