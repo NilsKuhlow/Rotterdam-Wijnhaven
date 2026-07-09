@@ -4016,10 +4016,16 @@ function _thenNowHtml(tn){
 function _weaveBody(paras, figs, tn){
   paras = paras || []; figs = figs || [];
   var total = paras.length, out = [];
-  /* Figuren gleichmaessig zwischen die Absaetze verteilen (nicht nach dem letzten) */
-  var posOf = figs.map(function(_, k){
-    var pos = Math.floor((k+1) * total / (figs.length+1)) - 1;
-    return Math.max(0, Math.min(total-1, pos));
+  /* Figuren gleichmaessig zwischen die Absaetze verteilen (gerundet, mittig statt
+     front-loaded) und Indizes deduplizieren, damit auch bei figs>=paras keine zwei
+     Bilder auf denselben Absatz fallen. */
+  var posOf = [], _prev = -1;
+  figs.forEach(function(_, k){
+    var pos = Math.round((k+1) * total / (figs.length+1)) - 1;
+    pos = Math.max(0, Math.min(total-1, pos));
+    if (pos <= _prev) pos = Math.min(total-1, _prev + 1);
+    _prev = pos;
+    posOf.push(pos);
   });
   if (total === 0){
     if (tn) out.push(_thenNowHtml(tn));
@@ -4158,6 +4164,7 @@ function openModal(idx, _placeObj){
   if (cnt) { cnt.style.display = singleSlide ? 'none' : 'block'; cnt.textContent = '1 / ' + galLen; }
 
   var _m = document.getElementById('modal');
+  var _wasOpen = _m.classList.contains('open');   /* Eintragswechsel bei offenem Modal? */
   _m.classList.add('open');
   document.getElementById('backdrop').classList.add('open');
   /* A11y: Dialog aktiv → aus inert holen, Fokus hinein, Body-Scroll sperren,
@@ -4165,7 +4172,7 @@ function openModal(idx, _placeObj){
   _m.removeAttribute('inert');
   _m.setAttribute('aria-label', s.name || 'Journaleintrag');
   if (!_placeObj && s.slug) _setEntryHash(s.slug);   /* Deep-Link fuer NFC/QR/Teilen */
-  _modalLastFocus = document.activeElement;
+  if (!_wasOpen) _modalLastFocus = document.activeElement;   /* Opener nur beim frischen Oeffnen merken */
   document.body.style.overflow = 'hidden';
   var _cb = _m.querySelector('.modal-close'); if (_cb) _cb.focus();
   galTo(0, true);
@@ -5068,7 +5075,8 @@ window.mapGeoSet = function(o){ if (o) for (var k in o) MAP_GEO[k] = o[k]; if (w
   function openFromHash(){
     var h = (location.hash || '').replace(/^#/, '').toLowerCase();
     if (SLUGS.hasOwnProperty(h)){
-      openModal(SLUGS[h]);   /* auch bei bereits offenem Modal den Eintrag wechseln */
+      activeStop = SLUGS[h];   /* haelt setLang/shareStop/Drawer mit dem Deep-Link-Eintrag synchron */
+      openModal(SLUGS[h]);     /* auch bei bereits offenem Modal den Eintrag wechseln */
       return true;
     }
     return false;
