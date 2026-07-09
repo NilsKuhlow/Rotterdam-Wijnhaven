@@ -10,7 +10,7 @@
    ⚠ Bump CACHE version on every deploy that changes files.
 ═══════════════════════════════════════════════════════════ */
 
-const CACHE = 'wijnhaven-v34';
+const CACHE = 'wijnhaven-v35';
 
 /* Cross-origin hosts we are allowed to cache (all send CORS headers, so the
    responses are readable/cacheable — needed for offline fonts + 3D on-site). */
@@ -35,6 +35,18 @@ const PRECACHE = [
   '/apple-touch-icon.png',
   '/models/kubuswoningen.glb',
   '/models/markthal.glb',
+  /* Eintrags-Abbildungen (frei lizenziert, WebP) — fuer den Offline-Feldeinsatz vorgeladen */
+  '/img/witte-huis-then.webp',
+  '/img/witte-huis-now.webp',
+  '/img/luftbild-1940.webp',
+  '/img/kubuswoningen.webp',
+  '/img/markthal.webp',
+  '/img/markthal-innen.webp',
+  '/img/red-apple.webp',
+  '/img/wijnhaveneiland.webp',
+  '/img/wederopbouw-1950.webp',
+  '/img/ey.webp',
+  '/img/casanova.webp',
 ];
 /* Bewusst NICHT precachen (gross / Opt-in, werden bei Bedarf zur Laufzeit gecacht):
    models/map_v1.glb (~8,9 MB), downloads/wijnhaven-volldetail-demo.glb, Thesis-PDF. */
