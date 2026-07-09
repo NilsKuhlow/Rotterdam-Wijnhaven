@@ -1379,6 +1379,62 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 }
 
 /* ═══════════════════════════════════════════
+   Editoriale Abbildungen im Eintrag
+═══════════════════════════════════════════ */
+.entry-figure { margin:1.7rem 0; }
+.entry-figure img {
+  display:block; width:100%; height:auto; background:var(--paper-1);
+  border:1px solid var(--border);
+}
+.entry-figure figcaption, .thennow figcaption {
+  margin-top:.55rem; max-width:62ch;
+  font-family:var(--font-sans); font-size:.74rem; line-height:1.5; color:var(--ink-3);
+}
+.fig-credit {
+  display:block; margin-top:.22rem;
+  font-family:var(--font-mono); font-size:.56rem; letter-spacing:.05em; text-transform:uppercase;
+  color:rgba(10,10,10,.42);
+}
+.fig-credit a { color:inherit; text-decoration:underline; text-underline-offset:2px; }
+
+/* ═══════════════════════════════════════════
+   Then/Now-Vergleich (Schieberegler)
+═══════════════════════════════════════════ */
+.thennow { margin:1.7rem 0; }
+.tn-frame {
+  position:relative; width:100%; overflow:hidden; background:var(--paper-1);
+  border:1px solid var(--border); touch-action:pan-y; cursor:ew-resize; user-select:none;
+  -webkit-user-select:none; -webkit-tap-highlight-color:transparent;
+}
+.tn-frame:focus-visible { outline:2px solid var(--ink-1); outline-offset:2px; }
+.tn-base { display:block; width:100%; height:auto; }              /* "heute" bestimmt die Hoehe */
+.tn-clip { position:absolute; inset:0; overflow:hidden; clip-path:inset(0 calc(100% - var(--tn,50%)) 0 0); }
+.tn-clip img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.tn-divider { position:absolute; top:0; bottom:0; left:var(--tn,50%); width:2px; margin-left:-1px; background:var(--accent); pointer-events:none; }
+.tn-handle {
+  position:absolute; top:50%; left:var(--tn,50%); transform:translate(-50%,-50%);
+  width:36px; height:36px; border-radius:50%; background:var(--paper-0); border:2px solid var(--ink-1);
+  display:flex; align-items:center; justify-content:center; pointer-events:none;
+}
+.tn-handle::before { content:'\2039\2003\203A'; font-family:var(--font-mono); font-size:.72rem; color:var(--ink-1); }
+.tn-label {
+  position:absolute; bottom:.5rem; font-family:var(--font-mono); font-size:.55rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--paper-0);
+  background:rgba(10,10,10,.6); padding:.16rem .42rem; pointer-events:none;
+}
+.tn-label-then { left:.5rem; } .tn-label-now { right:.5rem; }
+
+/* ── "Im 3D-Modell ansehen"-Button im Eintrag ── */
+.entry-3d-btn {
+  display:inline-flex; align-items:center; gap:.55rem; margin:1.7rem 0 0;
+  padding:.72rem 1.1rem; background:var(--ink-1); color:var(--paper-0); border:none;
+  font-family:var(--font-mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase;
+  cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background .18s, color .18s;
+}
+.entry-3d-btn::before { content:''; width:9px; height:9px; border:1.5px solid currentColor; transform:rotate(45deg); }
+.entry-3d-btn:hover, .entry-3d-btn:focus-visible { background:var(--accent); color:var(--ink-1); outline:none; }
+
+/* ═══════════════════════════════════════════
    A11y-Feinschliff: Trefferflaechen + Safe-Area
    (rein additiv, keine sichtbare Groessenaenderung)
 ═══════════════════════════════════════════ */
@@ -2003,6 +2059,19 @@ window.addEventListener('load', function(){
 const STOPS = [
   {
     num:"01", name:"Witte Huis", sub:"Willem Molenbroek · 1897-1898",
+    slug:"witte-huis",
+    thenNow:{
+      then:{ src:"img/witte-huis-then.webp", w:1200, h:1600, year:"um 1900", alt:"Witte Huis um 1900" },
+      now: { src:"img/witte-huis-now.webp",  w:1200, h:1600, year:"Heute",   alt:"Witte Huis heute" },
+      cap:"Das Witte Huis um 1900 und heute. Den Regler ziehen zum Vergleichen.",
+      credit:"Historisch: Detroit Publishing Co. / Library of Congress, Public Domain · Heute: Johan Bakker, CC BY-SA 4.0 · via Wikimedia Commons"
+    },
+    figures:[
+      { src:"img/luftbild-1940.webp", w:1800, h:1285, alt:"Luftbild der zerstoerten Oude Haven 1940 mit dem Witte Huis",
+        cap:"Luftbild 1940: Das Witte Huis (Bildmitte) überstand als eines der wenigen Gebäude die Bombardierung, ringsum die zerstörte Oude Haven und Wijnhaven.",
+        credit:"KLM Aerocarto, Stadsarchief Rotterdam, CC0, Wikimedia Commons",
+        creditUrl:"https://commons.wikimedia.org/wiki/File:Luchtopname_van_de_Oudehaven_met_de_Wijnhaven,_Witte_Huis,_Koningsbrug,_Haringvliet,_Hotel_Weimar_en_Nieuwehaven_1940.jpg" }
+    ],
     entryDate:"26.10.2026", entryTime:"09:14",
     paras:[
       "Wir stehen am Rand der Oude Haven, wo Geldersekade und Wijnhaven aufeinandertreffen, und blicken an einem Turm hinauf, der 1898 als erstes Hochhaus Europas galt. Het Witte Huis trägt seinen Namen zu Recht: die Fassade ist ab dem zweiten Geschoss mit rund hunderttausend weiß glasierten Steinen verkleidet, die das Licht hell zurückwerfen. Auffallend ist, wie nüchtern das tragende Gerüst und wie üppig die Haut: Willem Molenbroek setzte amerikanische Hochhausideen in eine traditionelle, massive Stapelbauweise um, getragen von zwei dicken Innenwänden um ein zentrales Treppenhaus.",
@@ -2024,6 +2093,13 @@ const STOPS = [
   },
   {
     num:"02", name:"Kubuswoningen", sub:"Piet Blom · 1977-1984",
+    slug:"kubuswoningen",
+    figures:[
+      { src:"img/kubuswoningen.webp", w:1600, h:900, alt:"Die gekippten Wuerfel der Kubuswoningen",
+        cap:"Die um 45 Grad gekippten Würfel über dem Blaak.",
+        credit:"Choinowski, CC BY-SA 4.0, Wikimedia Commons",
+        creditUrl:"https://commons.wikimedia.org/wiki/File:Kubuswoningen_Rotterdam_in_2017.jpg" }
+    ],
     entryDate:"26.10.2026", entryTime:"10:05",
     paras:[
       "Wir stehen am Overblaak, dort wo die Stadt über ihre eigene Verkehrsachse hinweggebaut wurde. Was von der Straße zunächst wie ein Gewimmel gelber Körper wirkt, ordnet sich beim Näherkommen: 38 um 45 Grad gekippte Würfel, jeder auf einem sechseckigen Pfeiler, dazu zwei größere Superkuben am Rand. Piet Blom nannte das Ensemble den Blaakse Bos, den Blaaker Wald, und der Vergleich trägt: Die Pfeiler lesen sich als Stämme, die Würfel als Kronen, der Raum darunter bleibt der Stadt.",
@@ -2046,6 +2122,17 @@ const STOPS = [
   },
   {
     num:"03", name:"Markthal", sub:"MVRDV · 2009-2014",
+    slug:"markthal",
+    figures:[
+      { src:"img/markthal.webp", w:1800, h:809, alt:"Der Wohnbogen der Markthal",
+        cap:"Der hufeisenförmige Wohnbogen der Markthal an der Binnenrotte.",
+        credit:"Jan Geerling, CC BY-SA 4.0, Wikimedia Commons",
+        creditUrl:"https://commons.wikimedia.org/wiki/File:1503_Markthal,_Rotterdam_036.jpg" },
+      { src:"img/markthal-innen.webp", w:1600, h:900, alt:"Deckengemaelde Hoorn des Overvloeds im Inneren der Markthal",
+        cap:"Das 11.000 m² große Deckengemälde „Hoorn des Overvloeds“ überspannt die Halle.",
+        credit:"Foto: Paul van de Velde, CC BY 2.0 · Werk „Hoorn des Overvloeds“ © Arno Coenen &amp; Iris Roskam",
+        creditUrl:"https://commons.wikimedia.org/wiki/File:Horn_of_Plenty_(Markthal).jpg" }
+    ],
     entryDate:"26.10.2026", entryTime:"11:20",
     paras:[
       "Wir stehen am Binnenrotte, dort wo der offene Markt am Blaak seit jeher die Stadt teilt, und blicken in einen Bogen, der zugleich Haus und Halle ist. Auffallend ist die doppelte Lesart des Bauwerks: Von außen liest es sich als grauer, hufeisenförmiger Wohnblock, von innen öffnet sich ein stützenfreier Raum, über den sich die bedruckte Innenschale wölbt. Die beiden Stirnseiten sind mit einer kabelvorgespannten Glasfassade geschlossen, 34 Meter hoch und 42 Meter breit, sodass der Markt nach außen sichtbar bleibt.",
@@ -2070,6 +2157,13 @@ const STOPS = [
   },
   {
     num:"04", name:"Red Apple", sub:"KCAP / Kees Christiaanse · 2009",
+    slug:"red-apple",
+    figures:[
+      { src:"img/red-apple.webp", w:1000, h:1500, alt:"Der Red-Apple-Turm mit roter Fassade",
+        cap:"Die roten, nach oben sich öffnenden Aluminium-Lamellen am Wijnhaveneiland.",
+        credit:"Fred Romero, CC BY 2.0, Wikimedia Commons",
+        creditUrl:"https://commons.wikimedia.org/wiki/File:Rotterdam_-_The_Red_Apple_(2).jpg" }
+    ],
     entryDate:"26.10.2026", entryTime:"12:40",
     paras:[
       "Wir stehen an der östlichen Spitze des Wijnhaveneilands, dort wo die Innenstadt in die Nieuwe Maas übergeht. Der Red Apple setzt hier eine klare Marke: ein schlanker Wohnturm von rund 124 Metern, dem ein niedrigerer, fünfeckiger Kopblok angegliedert ist. Auffallend ist, wie der Kopfbau über den Sockel auskragt und dem Ensemble eine Spannung gibt, die über den bloßen Hochhaustyp hinausreicht.",
@@ -2093,6 +2187,19 @@ const STOPS = [
   },
   {
     num:"05", name:"Wijnhaveneiland", sub:"Masterplan KCAP · ab 1993",
+    slug:"wijnhaveneiland",
+    thenNow:{
+      then:{ src:"img/luftbild-1940.webp",     w:1800, h:1285, year:"1940", alt:"Luftbild des zerstoerten Quartiers 1940" },
+      now: { src:"img/wederopbouw-1950.webp",  w:1800, h:1205, year:"1950", alt:"Luftbild des Wiederaufbaus 1950" },
+      cap:"Dasselbe Gebiet 1940 nach der Bombardierung und 1950 im Wiederaufbau. Den Regler ziehen zum Vergleichen.",
+      credit:"KLM Aerocarto, Stadsarchief Rotterdam, CC0 · via Wikimedia Commons"
+    },
+    figures:[
+      { src:"img/wijnhaveneiland.webp", w:960, h:562, alt:"Turm-Skyline der Halbinsel Wijnhaveneiland",
+        cap:"Die verdichtete Turm-Skyline der Halbinsel über dem Hafenbecken.",
+        credit:"Je0290, CC BY-SA 3.0, Wikimedia Commons",
+        creditUrl:"https://commons.wikimedia.org/wiki/File:Wijnhaveneiland_Rotterdam.PNG" }
+    ],
     entryDate:"26.10.2026", entryTime:"13:30",
     paras:[
       "Wir stehen auf der dreieckigen Halbinsel zwischen Wijnhaven und Scheepmakershaven, dort wo Rotterdam nach dem Krieg ein nüchternes Büroquartier in das alte Hafenraster setzte. Auffallend ist, dass hier kein einzelner Entwurf das Bild bestimmt, sondern eine Spielregel: Kees Christiaanse und KCAP formulierten ab 1993 im Auftrag der Stadt ein dynamisches Transformationsmodell, das Eigentümern erlaubte, Volumen nach Grundstücksgröße aufzustocken, je höher, desto schlanker der Turm.",
@@ -2116,6 +2223,13 @@ const STOPS = [
   },
   {
     num:"06", name:"EY Netherlands", sub:"Philip Johnson / Alan Ritchie · 2005",
+    slug:"ey-netherlands",
+    figures:[
+      { src:"img/ey.webp", w:939, h:1500, alt:"Der EY-Bueroturm am Boompjes",
+        cap:"Der ruhige Büroturm am Boompjes, hier noch mit dem Schriftzug „Ernst & Young“.",
+        credit:"Wikifrits, Public Domain, Wikimedia Commons",
+        creditUrl:"https://commons.wikimedia.org/wiki/File:Rotterdam_toren_boompjes_ernst_en_young.jpg" }
+    ],
     entryDate:"26.10.2026", entryTime:"14:15",
     paras:[
       "Wir stehen am Boompjes, der Uferpromenade zwischen Willems- und Erasmusbrücke, und schauen auf einen Turm, der sich bewusst nicht in den Vordergrund drängt. Boompjes 258, der EY-Turm, ist ein spätes Werk aus dem Büro Philip Johnsons, ausgeführt mit Alan Ritchie und vor Ort betreut von den Rotterdamer 01-10 Architecten. Auffallend ist, wie diszipliniert die gerasterte Lochfassade die rund 75 bis 78 Meter und 21 Geschosse gliedert, ohne ikonische Geste.",
@@ -2138,6 +2252,13 @@ const STOPS = [
   },
   {
     num:"07", name:"CasaNova", sub:"Barcode Architects · 2018-2023",
+    slug:"casanova",
+    figures:[
+      { src:"img/casanova.webp", w:887, h:1500, alt:"Der dreieckige Wohnturm CasaNova",
+        cap:"Der dreieckige Turm mit nach unten verjüngter Basis an der Spitze der Wijnhaven.",
+        credit:"Dinx, CC BY-SA 4.0, Wikimedia Commons",
+        creditUrl:"https://commons.wikimedia.org/wiki/File:CasaNova_Rotterdam.jpg" }
+    ],
     entryDate:"26.10.2026", entryTime:"15:00",
     paras:[
       "Wir stehen an der Spitze der Wijnhaven, dort wo das Becken sich zur Oude Haven hin öffnet, und blicken an einem dreieckigen Turm hinauf. CasaNova steht nicht einfach auf dem Kai, der Baukörper scheint sich nach unten zu verjüngen: die untersten Geschosse ziehen sich ein, sodass das Hochhaus wie ein auf der Spitze balancierter Bleistift wirkt. Was wir vor uns haben, ist kein Gastronomie-Paviljoen, sondern ein 110 Meter hohes Wohnhochhaus von Barcode Architects, 2023 fertiggestellt.",
@@ -3866,6 +3987,82 @@ function _trapTab(e, container){
   else if (!container.contains(document.activeElement)){ e.preventDefault(); first.focus(); }
 }
 
+/* ── Editoriale Abbildungen: Figur + Then/Now, in die Reportage verwoben ── */
+function _figureHtml(f){
+  if (!f || !f.src) return '';
+  var dim = (f.w && f.h) ? (' width="'+f.w+'" height="'+f.h+'"') : '';
+  var credit = f.credit
+    ? '<span class="fig-credit">' + (f.creditUrl
+        ? '<a href="'+f.creditUrl+'" target="_blank" rel="noopener noreferrer">'+f.credit+'</a>'
+        : f.credit) + '</span>'
+    : '';
+  var capBlock = (f.cap || credit) ? ('<figcaption>' + (f.cap || '') + credit + '</figcaption>') : '';
+  return '<figure class="entry-figure"><img loading="lazy" decoding="async" src="'+f.src+'"'+dim+' alt="'+(f.alt||'')+'">'+capBlock+'</figure>';
+}
+function _thenNowHtml(tn){
+  if (!tn || !tn.then || !tn.now) return '';
+  var lblThen = tn.then.year || 'Früher', lblNow = tn.now.year || 'Heute';
+  var credit = tn.credit ? '<span class="fig-credit">'+tn.credit+'</span>' : '';
+  var capBlock = (tn.cap || credit) ? ('<figcaption>'+(tn.cap||'')+credit+'</figcaption>') : '';
+  var baseDim = (tn.now.w && tn.now.h) ? (' width="'+tn.now.w+'" height="'+tn.now.h+'"') : '';
+  return '<figure class="thennow"><div class="tn-frame" data-thennow role="slider" tabindex="0" '
+    + 'aria-label="Vergleich früher und heute" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">'
+    + '<img class="tn-base" src="'+tn.now.src+'" alt="'+(tn.now.alt||'')+'"'+baseDim+'>'
+    + '<div class="tn-clip"><img src="'+tn.then.src+'" alt="'+(tn.then.alt||'')+'"></div>'
+    + '<div class="tn-divider"></div><div class="tn-handle"></div>'
+    + '<span class="tn-label tn-label-then">'+lblThen+'</span><span class="tn-label tn-label-now">'+lblNow+'</span>'
+    + '</div>'+capBlock+'</figure>';
+}
+function _weaveBody(paras, figs, tn){
+  paras = paras || []; figs = figs || [];
+  var total = paras.length, out = [];
+  /* Figuren gleichmaessig zwischen die Absaetze verteilen (nicht nach dem letzten) */
+  var posOf = figs.map(function(_, k){
+    var pos = Math.floor((k+1) * total / (figs.length+1)) - 1;
+    return Math.max(0, Math.min(total-1, pos));
+  });
+  if (total === 0){
+    if (tn) out.push(_thenNowHtml(tn));
+    figs.forEach(function(f){ out.push(_figureHtml(f)); });
+    return out.join('');
+  }
+  for (var i=0;i<total;i++){
+    out.push('<p class="modal-text">'+paras[i]+'</p>');
+    if (i===0 && tn) out.push(_thenNowHtml(tn));
+    for (var k=0;k<figs.length;k++){ if (posOf[k]===i) out.push(_figureHtml(figs[k])); }
+  }
+  return out.join('');
+}
+function _initThenNow(root){
+  var frames = (root || document).querySelectorAll('.tn-frame[data-thennow]');
+  Array.prototype.forEach.call(frames, function(frame){
+    if (frame._tnWired) return; frame._tnWired = true;
+    function setPos(clientX){
+      var r = frame.getBoundingClientRect();
+      var pct = Math.max(0, Math.min(100, ((clientX - r.left) / r.width) * 100));
+      frame.style.setProperty('--tn', pct + '%');
+      frame.setAttribute('aria-valuenow', Math.round(pct));
+    }
+    var dragging = false;
+    frame.addEventListener('pointerdown', function(e){ dragging = true; try{ frame.setPointerCapture(e.pointerId); }catch(_){} setPos(e.clientX); e.preventDefault(); });
+    frame.addEventListener('pointermove', function(e){ if (dragging) setPos(e.clientX); });
+    frame.addEventListener('pointerup',   function(){ dragging = false; });
+    frame.addEventListener('pointercancel', function(){ dragging = false; });
+    frame.addEventListener('keydown', function(e){
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault(); e.stopPropagation();   /* nicht die Galerie mitsteuern */
+      var cur = parseFloat(frame.style.getPropertyValue('--tn')); if (isNaN(cur)) cur = 50;
+      cur = e.key === 'ArrowLeft' ? Math.max(0, cur-4) : Math.min(100, cur+4);
+      frame.style.setProperty('--tn', cur + '%');
+      frame.setAttribute('aria-valuenow', Math.round(cur));
+    });
+  });
+}
+
+/* ── Deep-Links: #slug oeffnet direkt den Eintrag (NFC-Tags, QR, Teilen) ── */
+function _setEntryHash(slug){ if (!slug) return; try { history.replaceState(null, '', '#'+slug); } catch(e){} }
+function _clearEntryHash(){ try { history.replaceState(null, '', location.pathname + location.search); } catch(e){} }
+
 function openModal(idx, _placeObj){
   const s = _placeObj || ((idx >= 0 && idx < 7) ? STOPS[idx] : STOPS[activeStop]);
   if (!s) return;
@@ -3941,14 +4138,16 @@ function openModal(idx, _placeObj){
     <div class="modal-title">${s.name}</div>
     <span class="modal-sub">${s.sub}</span>
     <div class="modal-rule"></div>
-    ${s.paras.map(p=>`<p class="modal-text">${p}</p>`).join('')}
+    ${_weaveBody(s.paras, s.figures, s.thenNow)}
     ${voicesHtml}
     <div class="modal-facts">
       ${s.facts.map(f=>`<div class="fact"><div class="fact-lbl">${f.l}</div><div class="fact-val">${f.v}</div></div>`).join('')}
     </div>
+    ${_placeObj ? '' : '<button type="button" class="entry-3d-btn" onclick="closeModal();openTour3D();">Im 3D-Modell ansehen</button>'}
     ${modelHtml}
     ${sbHtml}
     ${sourcesHtml}`;
+  _initThenNow(document.getElementById('modalBody'));   /* Then/Now-Schieberegler aktivieren */
 
   /* Hide navigation when there's only one slide */
   const singleSlide = galLen <= 1;
@@ -3965,6 +4164,7 @@ function openModal(idx, _placeObj){
      zuvor fokussiertes Element merken (Restore beim Schliessen). */
   _m.removeAttribute('inert');
   _m.setAttribute('aria-label', s.name || 'Journaleintrag');
+  if (!_placeObj && s.slug) _setEntryHash(s.slug);   /* Deep-Link fuer NFC/QR/Teilen */
   _modalLastFocus = document.activeElement;
   document.body.style.overflow = 'hidden';
   var _cb = _m.querySelector('.modal-close'); if (_cb) _cb.focus();
@@ -3981,6 +4181,7 @@ function closeModal(){
   document.getElementById('backdrop').classList.remove('open');
   /* A11y: wieder inert (raus aus Tab-Order/AT), Scroll frei, Fokus zurueck. */
   _m.setAttribute('inert', '');
+  _clearEntryHash();
   document.body.style.overflow = '';
   if (_modalLastFocus && _modalLastFocus.focus) { try { _modalLastFocus.focus(); } catch(e){} }
   _modalLastFocus = null;
@@ -4857,6 +5058,31 @@ window.mapGeoSet = function(o){ if (o) for (var k in o) MAP_GEO[k] = o[k]; if (w
       if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); dotTap(i); }
     });
   });
+})();
+
+/* ── Deep-Link-Routing: #slug oeffnet direkt den Eintrag (NFC-Tags, QR, Teilen) ── */
+(function(){
+  var SLUGS = {};
+  STOPS.forEach(function(s, i){ if (s.slug) SLUGS[s.slug] = i; });
+  window._entrySlugs = SLUGS;
+  function openFromHash(){
+    var h = (location.hash || '').replace(/^#/, '').toLowerCase();
+    if (SLUGS.hasOwnProperty(h)){
+      openModal(SLUGS[h]);   /* auch bei bereits offenem Modal den Eintrag wechseln */
+      return true;
+    }
+    return false;
+  }
+  window.addEventListener('hashchange', function(){
+    var h = (location.hash || '').replace(/^#/, '').toLowerCase();
+    if (SLUGS.hasOwnProperty(h)) openFromHash();
+    else if (document.getElementById('modal').classList.contains('open')) closeModal();  /* Zurueck-Taste schliesst */
+  });
+  /* Beim Laden: kommt jemand per NFC-Tag/QR mit #slug, direkt den Eintrag zeigen. */
+  if (location.hash){
+    if (document.readyState === 'complete') setTimeout(openFromHash, 300);
+    else window.addEventListener('load', function(){ setTimeout(openFromHash, 350); });
+  }
 })();
 
 /* ── Service Worker registration ── */
