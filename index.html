@@ -1454,6 +1454,82 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 /* Fixe Top-Chrome respektiert die Notch (viewport-fit=cover ist gesetzt) */
 #track-btn { top:max(.85rem, env(safe-area-inset-top)); }
 #nav-crumb { padding-top:max(.85rem, env(safe-area-inset-top)); }
+
+/* ══════════ ROUTE-AUSWAHL (Startbildschirm) ══════════ */
+#route-select{
+  position:fixed; inset:0; z-index:950;
+  background:var(--paper-0);
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s ease, visibility .5s ease;
+  padding:max(env(safe-area-inset-top),1.5rem) 1.25rem calc(env(safe-area-inset-bottom) + 2.5rem);
+}
+#route-select.show{ opacity:1; visibility:visible; pointer-events:auto; }
+html:has(#route-select.show){ overflow:hidden; }
+.rs-inner{ max-width:660px; margin:0 auto; padding-top:8vh; }
+.rs-kicker{
+  font-family:var(--mono,'JetBrains Mono',monospace);
+  font-size:.66rem; letter-spacing:.22em; text-transform:uppercase;
+  color:rgba(10,10,10,.5); margin-bottom:1rem;
+}
+.rs-title{
+  font-size:clamp(1.9rem,6vw,2.9rem); line-height:1.02; letter-spacing:-.02em;
+  color:var(--ink-1); margin:0 0 .85rem; font-weight:600;
+}
+.rs-lede{
+  font-size:.98rem; line-height:1.55; color:rgba(10,10,10,.62);
+  max-width:46ch; margin:0 0 2.4rem;
+}
+.rs-lede b{ color:var(--ink-1); font-weight:600; }
+.rs-cards{ display:flex; flex-direction:column; gap:.9rem; }
+.rs-card{
+  display:flex; align-items:stretch; gap:1rem; width:100%; text-align:left;
+  background:var(--paper-0); border:1px solid rgba(10,10,10,.16);
+  padding:1.15rem 1.15rem 1.2rem; cursor:pointer;
+  transition:border-color .18s ease, background .18s ease, transform .18s ease;
+  color:var(--ink-1); position:relative;
+}
+.rs-card:hover, .rs-card:focus-visible{
+  border-color:var(--ink-1); outline:none; transform:translateY(-1px);
+}
+.rs-card:focus-visible{ box-shadow:inset 0 0 0 2px var(--accent); }
+.rs-card.rs-current{ border-color:var(--ink-1); }
+.rs-card.rs-current::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--accent);
+}
+.rs-card-idx{
+  font-family:var(--mono,'JetBrains Mono',monospace);
+  font-size:.72rem; letter-spacing:.12em; color:rgba(10,10,10,.4);
+  padding-top:.28rem; min-width:1.6rem;
+}
+.rs-card-body{ display:flex; flex-direction:column; gap:.28rem; flex:1; min-width:0; }
+.rs-card-name{ font-size:1.22rem; font-weight:650; letter-spacing:-.01em; line-height:1.1; }
+.rs-card-sub{ font-size:.82rem; color:rgba(10,10,10,.55); }
+.rs-card-theme{ font-size:.9rem; line-height:1.45; color:rgba(10,10,10,.72); margin-top:.15rem; }
+.rs-card-meta{
+  display:flex; flex-wrap:wrap; gap:.5rem .9rem; margin-top:.55rem;
+  font-family:var(--mono,'JetBrains Mono',monospace);
+  font-size:.66rem; letter-spacing:.09em; text-transform:uppercase; color:rgba(10,10,10,.5);
+}
+.rs-card-meta span{ position:relative; }
+.rs-card-meta span + span::before{
+  content:"·"; position:absolute; left:-.55rem; color:rgba(10,10,10,.3);
+}
+.rs-card-go{
+  align-self:center; font-size:1.2rem; color:rgba(10,10,10,.35); flex-shrink:0;
+  transition:transform .18s ease, color .18s ease;
+}
+.rs-card:hover .rs-card-go, .rs-card:focus-visible .rs-card-go{ color:var(--ink-1); transform:translateX(3px); }
+
+/* Pausen-Marker auf der Karte */
+.stop-dot.break-dot{ fill:var(--paper-0); stroke:var(--ink-1); stroke-width:2; }
+.stop-lbl.break-lbl{ font-style:italic; }
+
+@media (prefers-reduced-motion:reduce){
+  #route-select{ transition:none; }
+  .rs-card, .rs-card-go{ transition:none; }
+}
+
 </style>
 </head>
 <body>
@@ -1607,34 +1683,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     </g>
     <path class="route-trail" id="routeTrail" d=""/>
     <circle id="traveller" cx="644" cy="311" r="7" fill="var(--accent)" stroke="var(--ink-1)" stroke-width="1.6" opacity="0"/>
-    <circle id="rp0" cx="644" cy="311" r="11" fill="none" stroke="var(--ink-1)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp1" cx="563" cy="220" r="11" fill="none" stroke="var(--ink-1)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp2" cx="388" cy="202" r="11" fill="none" stroke="var(--ink-1)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp3" cx="497" cy="441" r="11" fill="none" stroke="var(--ink-1)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp4" cx="426" cy="500" r="11" fill="none" stroke="var(--ink-1)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp5" cx="369" cy="691" r="11" fill="none" stroke="var(--ink-1)" stroke-width="1.5" opacity="0"/>
-    <circle id="rp6" cx="414" cy="385" r="11" fill="none" stroke="var(--ink-1)" stroke-width="1.5" opacity="0"/>
-    <circle class="stop-ring" cx="644" cy="311" r="14"/>
-    <circle class="stop-ring" cx="563" cy="220" r="14"/>
-    <circle class="stop-ring" cx="388" cy="202" r="14"/>
-    <circle class="stop-ring" cx="497" cy="441" r="14"/>
-    <circle class="stop-ring" cx="426" cy="500" r="14"/>
-    <circle class="stop-ring" cx="369" cy="691" r="14"/>
-    <circle class="stop-ring" cx="414" cy="385" r="14"/>
-    <circle class="stop-dot" id="dot0" cx="644" cy="311" r="8" onclick="dotTap(0)"/>
-    <circle class="stop-dot" id="dot1" cx="563" cy="220" r="8" onclick="dotTap(1)"/>
-    <circle class="stop-dot" id="dot2" cx="388" cy="202" r="8" onclick="dotTap(2)"/>
-    <circle class="stop-dot" id="dot3" cx="497" cy="441" r="8" onclick="dotTap(3)"/>
-    <circle class="stop-dot" id="dot4" cx="426" cy="500" r="8" onclick="dotTap(4)"/>
-    <circle class="stop-dot" id="dot5" cx="369" cy="691" r="8" onclick="dotTap(5)"/>
-    <circle class="stop-dot" id="dot6" cx="414" cy="385" r="8" onclick="dotTap(6)"/>
-    <text class="stop-lbl" x="656" y="315">① Witte Huis</text>
-    <text class="stop-lbl" x="575" y="224">② Kubuswoningen</text>
-    <text class="stop-lbl" x="400" y="206">③ Markthal</text>
-    <text class="stop-lbl" x="509" y="445">④ Red Apple</text>
-    <text class="stop-lbl" x="438" y="504">⑤ Wijnhaven</text>
-    <text class="stop-lbl" x="381" y="695">⑥ EY</text>
-    <text class="stop-lbl" x="426" y="389">⑦ CasaNova</text>
+    <g id="stop-markers"></g>
     <g id="gps-group" opacity="0">
       <circle id="gps-acc"   cx="0" cy="0" r="22" fill="rgba(10,10,10,.08)" stroke="rgba(10,10,10,.22)" stroke-width="1"/>
       <circle id="gps-halo"  cx="0" cy="0" r="10" fill="rgba(10,10,10,.18)"/>
@@ -1670,6 +1719,18 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <div id="journey"></div>
 
 <!-- DRAWER (fixed below map) -->
+<!-- ROUTE-AUSWAHL (Startbildschirm) -->
+<div id="route-select" class="show" role="dialog" aria-modal="true" aria-labelledby="rsTitle">
+  <div class="rs-inner">
+    <div class="rs-head">
+      <div class="rs-kicker">Feldjournal · Rotterdam</div>
+      <h2 class="rs-title" id="rsTitle">Wähle deinen Rundgang</h2>
+      <p class="rs-lede">Fünf Wege durch das zentrale Maasufer — jeder mit eigener Länge, Dauer und eigenem Schwerpunkt. Später jederzeit über <b>Orte</b> wechselbar.</p>
+    </div>
+    <div class="rs-cards" id="rsCards"><!-- renderRouteCards() --></div>
+  </div>
+</div>
+
 <div id="drawer">
   <div class="drawer-inner" role="button" tabindex="0" aria-label="Eintrag öffnen"
        onclick="openModal(activeStop)"
@@ -1945,7 +2006,7 @@ window.addEventListener('load', function(){
       Reportage-Absätze (paras) und voices sind PLATZHALTER (Ich-Perspektive),
       werden nach der Reise durch eigene Beobachtungen/Interviews ersetzt.
       slides: Farbverlauf-Platzhalter bis eigene Fotos vorliegen. ── */
-const STOPS = [
+const SEED7 = [
   {
     num:"01", name:"Witte Huis", sub:"Willem Molenbroek · 1897-1898",
     slug:"witte-huis",
@@ -2204,12 +2265,22 @@ function preloadAll(){
      slides:[{bg:"url('img/OratoriodiSanBernardino.jpg') center/cover no-repeat",icon:"",cap:"Oratorio di San Bernardino, Außenansicht"},{bg:"url('img/OratoriodiSanBernardino2.jpg') center/cover no-repeat",icon:"",cap:"Renaissancefresken, Sodoma und Beccafumi"}]
    }
 ═══════════════════════════════ */
+
+/* ══════════ MEHR-ROUTEN-SYSTEM: Gebäude-Master + Routen ══════════ */
+const NEWBUILDINGS = [{"slug":"laurenskerk","name":"Laurenskerk","sub":"Wiederaufbau bis 1968 · Spätgotik","tier":"icon","paras":["Rotterdams einziges erhaltenes mittelalterliches Bauwerk und größte spätgotische Kirche der Stadt. Als einziger Altbau überstand sie das Bombardement von 1940; nach dem Wiederaufbau gilt sie als Symbol der Resilienz und des Wiederaufbaus."],"facts":[{"l":"Stil","v":"Spätgotik"},{"l":"Bau","v":"1449–1525"},{"l":"Wiederaufbau","v":"bis 1968"}],"sources":[],"slides":[{"bg":"url('img/laurenskerk.webp') center/cover","cap":"Grote of Sint-Laurenskerk — die spätgotische Fassade","tmp":true,"credit":"Zairon, CC BY-SA 4.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Rotterdam_Grote_Kerk_Sint_Laurentius_Fassade_1.jpg"}]},{"slug":"bibliotheek","name":"Centrale Bibliotheek","sub":"Van den Broek en Bakema · 1983","tier":"icon","paras":["Strukturalistischer Großbau mit terrassiert zurückspringender Fassade und den markanten gelben Rolltreppen-Röhren an der Außenhaut; oft als Rotterdams Antwort auf das Centre Pompidou bezeichnet. Bildet mit Kubuswoningen und Markthal das Blaak-Ensemble."],"facts":[{"l":"Architekt","v":"Van den Broek en Bakema"},{"l":"Fertigstellung","v":"1983"}],"sources":[],"slides":[{"bg":"url('img/bibliotheek.webp') center/cover","cap":"Centrale Bibliotheek — die gelben Röhren über dem Blaak","tmp":true,"credit":"Frans Berkelaar, CC BY-SA 2.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Centrale_bibliotheek_van_Rotterdam_en_Blaaktoren_-_City_of_Rotterdam_(21999005883).jpg"}]},{"slug":"potlood","name":"Blaaktoren (Het Potlood)","sub":"Piet Blom · 1984","tier":"secondary","paras":["61 m hoher, sechseckiger Wohnturm mit charakteristisch zugespitztem Dach. Als vertikaler Kontrapunkt zu Bloms benachbarten Kubuswoningen konzipiert und Teil seines Gesamtplans für die Oude Haven."],"facts":[{"l":"Architekt","v":"Piet Blom"},{"l":"Höhe","v":"61 m"},{"l":"Fertigstellung","v":"1984"}],"sources":[],"slides":[{"bg":"url('img/potlood.webp') center/cover","cap":"Het Potlood — der sechseckige Bleistift-Wohnturm","tmp":true,"credit":"Zairon, CC BY-SA 4.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Rotterdam_Blaaktoren_2.jpg"}]},{"slug":"station-blaak","name":"Station Blaak","sub":"Harry Reijnders · 1993","tier":"secondary","paras":["Bahn- und Metrostation, deren kreisrunde, geneigte Stahl-Glas-Überdachung wie eine gelandete fliegende Untertasse über dem abgesenkten Bahnsteig schwebt; ein spielerisches High-Tech-Zeichen inmitten des Blaak-Ensembles."],"facts":[{"l":"Architekt","v":"Harry Reijnders"},{"l":"Fertigstellung","v":"1993"}],"sources":[],"slides":[{"bg":"url('img/station-blaak.webp') center/cover","cap":"Station Blaak — die gelandete Untertasse","tmp":true,"credit":"G.Lanting, CC BY-SA 4.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Station_Rotterdam_Blaak_DSCF0538.JPG"}]},{"slug":"willemsbrug","name":"Willemsbrug","sub":"Gemeentewerken · 1981","tier":"secondary","paras":["Markante rote Schrägseilbrücke über die Maas mit zwei 55 m hohen Pylonen. Prägt zusammen mit der Erasmusbrug die Silhouette des Maasufers; ihr Nordast wurde eigens verschwenkt, um die Oude Haven zu schonen."],"facts":[{"l":"Fertigstellung","v":"1981"},{"l":"Pylone","v":"2 × 55 m"}],"sources":[],"slides":[{"bg":"url('img/willemsbrug.webp') center/cover","cap":"Willemsbrug — die rote Schrägseilbrücke","tmp":true,"credit":"FaceMePLS, CC BY 2.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Willemsbrug_-_Rotterdam_(36757381985).jpg"}]},{"slug":"schielandshuis","name":"Schielandshuis","sub":"Pieter Post · 1665","tier":"secondary","paras":["Repräsentativer Verwaltungsbau im holländischen Klassizismus und einer der wenigen Vorkriegsbauten, die das Bombardement von 1940 überstanden. Rijksmonument, heute vom Nachkriegs-Hochbau eingerahmt."],"facts":[{"l":"Architekt","v":"Pieter Post"},{"l":"Fertigstellung","v":"1665"}],"sources":[],"slides":[{"bg":"url('img/schielandshuis.webp') center/cover","cap":"Schielandshuis — klassizistischer Überlebender von 1940","tmp":true,"credit":"M.Minderhoud, CC BY-SA 3.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Schielandshuis_Rotterdam.jpg"}]},{"slug":"spaansekade","name":"Woonblok Spaansekade","sub":"Piet Blom · 1984","tier":"secondary","paras":["Geschwungenes Wohn- und Geschäftsgebäude am Ostkai der Oude Haven; dritter Baustein von Bloms Gesamtplan neben Kubuswoningen und Blaaktoren und städtebaulicher Abschluss des historischen Hafenbeckens."],"facts":[{"l":"Architekt","v":"Piet Blom"},{"l":"Fertigstellung","v":"1984"}],"sources":[],"slides":[{"bg":"#0A0A0A","cap":"Woonblok Spaansekade · eigene Aufnahme folgt"}]},{"slug":"erasmusbrug","name":"Erasmusbrug","sub":"UNStudio / Ben van Berkel · 1996","tier":"icon","paras":["Rotterdams unverwechselbares Wahrzeichen, wegen des 139 m hohen, geknickten asymmetrischen Pylons „De Zwaan“ (der Schwan) genannt. Verbindet als Schrägseilbrücke das Nordufer mit der Kop van Zuid."],"facts":[{"l":"Architekt","v":"UNStudio"},{"l":"Pylon","v":"139 m"},{"l":"Fertigstellung","v":"1996"}],"sources":[],"slides":[{"bg":"url('img/erasmusbrug.webp') center/cover","cap":"Erasmusbrug — „De Zwaan“ über der Maas","tmp":true,"credit":"fychu, CC BY-SA 2.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Erasmusbrug_across_the_Nieuwe_Maas_river.jpg"}]},{"slug":"willemswerf","name":"Willemswerf","sub":"Wim Quist · 1988","tier":"secondary","paras":["94,5 m hohes Bürohochhaus mit markantem diagonalem Knick und gläserner „Wasserfall“-Fuge, das den Flussverlauf aufgreift; weiß gekachelte Betonplatten geben ihm einen grafischen Ausdruck. Errichtet für die Reederei Nedlloyd."],"facts":[{"l":"Architekt","v":"Wim Quist"},{"l":"Höhe","v":"94,5 m"},{"l":"Fertigstellung","v":"1988"}],"sources":[],"slides":[{"bg":"url('img/willemswerf.webp') center/cover","cap":"Willemswerf — der diagonale Knick von Wim Quist","tmp":true,"credit":"Alexander Migl, CC BY-SA 4.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Willemswerf_(Rotterdam)_IMG_5102.jpg"}]},{"slug":"maritiem-museum","name":"Maritiem Museum","sub":"Wim Quist · 1986","tier":"secondary","paras":["Museumsbau am Kopf des Leuvehaven mit dreieckigem Grundriss, der den Baulinien folgt; eines der ältesten Schifffahrtsmuseen der Niederlande, mit dem Freilichthafen davor."],"facts":[{"l":"Architekt","v":"Wim Quist"},{"l":"Fertigstellung","v":"1986"}],"sources":[],"slides":[{"bg":"url('img/maritiem-museum.webp') center/cover","cap":"Maritiem Museum am Leuvehaven","tmp":true,"credit":"Calips, CC BY-SA 3.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Netherland_Rotterdam_Maritiem_Museum_03.jpg"}]},{"slug":"de-boeg","name":"De Boeg (Koopvaardijmonument)","sub":"Fred Carasso · 1957","tier":"secondary","paras":["45 m hohes Kriegsmahnmal am Leuvehaven, das als aluminiumverkleideter Schiffsbug die Wellen teilt; erinnert an die im Zweiten Weltkrieg gefallenen Seeleute der Handelsmarine."],"facts":[{"l":"Künstler","v":"Fred Carasso"},{"l":"Höhe","v":"45 m"},{"l":"Fertigstellung","v":"1957"}],"sources":[],"slides":[{"bg":"#0A0A0A","cap":"De Boeg (Koopvaardijmonument) · eigene Aufnahme folgt"}]},{"slug":"boompjestorens","name":"Boompjestorens","sub":"Klunder Architecten · 1989","tier":"secondary","paras":["Drei identische, 70 m hohe weiße Wohntürme (Clipper, Schoener, Galjoen), die eine städtebauliche Vision von 1946 einlösen und die Offenheit des Coolsingel zur Maas sichern."],"facts":[{"l":"Architekt","v":"Klunder Architecten"},{"l":"Höhe","v":"3 × 70 m"},{"l":"Fertigstellung","v":"1989"}],"sources":[],"slides":[{"bg":"url('img/boompjestorens.webp') center/cover","cap":"Boompjestorens — drei weiße Wohntürme","tmp":true,"credit":"Wikifrits, Public Domain, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Rotterdam_toren_boompjes_drie_woontorens.jpg"}]},{"slug":"wereldmuseum","name":"Wereldmuseum (Willemskade)","sub":"P.G. Buskens · 1851","tier":"secondary","paras":["Neoklassizistische Villa von 1851, ursprünglich Clubhaus einer Rudervereinigung, seit 1885 Völkerkundemuseum; einer der wenigen erhaltenen historischen Bauten am Scheepvaartkwartier-Ufer."],"facts":[{"l":"Architekt","v":"P.G. Buskens"},{"l":"Fertigstellung","v":"1851"}],"sources":[],"slides":[{"bg":"#0A0A0A","cap":"Wereldmuseum (Willemskade) · eigene Aufnahme folgt"}]},{"slug":"leuvehaven","name":"Leuvehaven / Havenmuseum","sub":"ab 1598","tier":"secondary","paras":["Ältester gegrabener Hafen der Rotterdamer Innenstadt (1598), heute Freilichthafen des Maritiem Museum mit historischen Kränen, Schiffen und Werftanlagen; zentrales Zeugnis der maritimen Stadtgeschichte."],"facts":[{"l":"Angelegt","v":"1598"}],"sources":[],"slides":[{"bg":"#0A0A0A","cap":"Leuvehaven / Havenmuseum · eigene Aufnahme folgt"}]},{"slug":"de-rotterdam","name":"De Rotterdam","sub":"OMA / Rem Koolhaas · 2013","tier":"icon","paras":["Als „vertikale Stadt“ aus drei versetzten Türmen konzipiert, mit rund 160.000 m² das größte Gebäude der Niederlande und der markanteste Solitär am Kopfende der Wilhelminapier."],"facts":[{"l":"Architekt","v":"OMA / Rem Koolhaas"},{"l":"Fläche","v":"~160.000 m²"},{"l":"Fertigstellung","v":"2013"}],"sources":[],"slides":[{"bg":"url('img/de-rotterdam.webp') center/cover","cap":"De Rotterdam — die vertikale Stadt von OMA","tmp":true,"credit":"Fred Romero, CC BY 2.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Rotterdam_-_De_Rotterdam.jpg"}]},{"slug":"hotel-new-york","name":"Hotel New York","sub":"Müller & Van der Tak · 1901","tier":"icon","paras":["Das Jugendstil-Hauptquartier der Holland-America-Line mit seinen zwei markanten Türmen war Abfahrtsort der Auswanderer nach Amerika und ist der historische Identitätsanker der Kop van Zuid."],"facts":[{"l":"Architekt","v":"Müller & Van der Tak"},{"l":"Fertigstellung","v":"1901"}],"sources":[],"slides":[{"bg":"url('img/hotel-new-york.webp') center/cover","cap":"Hotel New York — das alte Holland-America-Line-HQ","tmp":true,"credit":"Fred Romero, CC BY 2.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Rotterdam_-_Hotel_New_York.jpg"}]},{"slug":"montevideo","name":"Montevideo","sub":"Mecanoo / Francine Houben · 2005","tier":"icon","paras":["140 m hoher Wohnturm mit collagenhaft gestapelten Fassaden aus Backstein, Glas und Stahl, der die maritime Geschichte des Piers zitiert und die Skyline der Wilhelminapier mitprägt."],"facts":[{"l":"Architekt","v":"Mecanoo"},{"l":"Höhe","v":"140 m"},{"l":"Fertigstellung","v":"2005"}],"sources":[],"slides":[{"bg":"url('img/montevideo.webp') center/cover","cap":"Montevideo — Mecanoos gestapelte Fassaden","tmp":true,"credit":"Fred Romero, CC BY 2.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Rotterdam_-_Montevideo_(1).jpg"}]},{"slug":"new-orleans","name":"New Orleans","sub":"Álvaro Siza · 2010","tier":"icon","paras":["Mit 158 m bis 2022 höchstes Wohnhochhaus der Niederlande; Sizas skulptural verjüngter Turm mit Penthouse-Krone über einem verglasten Kultursockel (LantarenVenster)."],"facts":[{"l":"Architekt","v":"Álvaro Siza"},{"l":"Höhe","v":"158 m"},{"l":"Fertigstellung","v":"2010"}],"sources":[],"slides":[{"bg":"url('img/new-orleans.webp') center/cover","cap":"New Orleans — Sizas verjüngter Turm","tmp":true,"credit":"Fred Romero, CC BY 2.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Rotterdam_-_New_Orleans_(3).jpg"}]},{"slug":"toren-op-zuid","name":"Toren op Zuid (KPN)","sub":"Renzo Piano · 2000","tier":"icon","paras":["Pianos schräg geneigter Turm, dessen Neigung dem Pylon der benachbarten Erasmusbrug antwortet, gestützt von einer roten Diagonalstrebe; die riesige LED-Medienfassade macht ihn zum Landmark am Brückenkopf."],"facts":[{"l":"Architekt","v":"Renzo Piano"},{"l":"Fertigstellung","v":"2000"}],"sources":[],"slides":[{"bg":"url('img/toren-op-zuid.webp') center/cover","cap":"Toren op Zuid — Pianos schräger KPN-Turm","tmp":true,"credit":"Fred Romero, CC BY 2.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Rotterdam_-_KPN_Tower.jpg"}]},{"slug":"fenix","name":"Fenix (Migrationsmuseum)","sub":"MAD Architects · 2025","tier":"icon","paras":["Umbau eines historischen Hafenlagerhauses zum weltweit ersten Migrationsmuseum; die spiralförmige, spiegelnde „Tornado“-Treppenskulptur auf dem Dach ist MADs erster öffentlicher Kulturbau in Europa."],"facts":[{"l":"Architekt","v":"MAD Architects"},{"l":"Fertigstellung","v":"2025"}],"sources":[],"slides":[{"bg":"url('img/fenix.webp') center/cover","cap":"Fenix — MADs „Tornado“ über dem Lagerhaus","tmp":true,"credit":"Mitsjol, CC BY 4.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:FENIX_museum_building,_Katendrecht,_Rotterdam.jpg"}]},{"slug":"world-port-center","name":"World Port Center","sub":"Norman Foster · 2000","tier":"secondary","paras":["Sitz der Hafenbehörde; Foster entwarf zugleich den städtebaulichen Masterplan der gesamten Wilhelminapier, weshalb der schlanke, gerundete Turm die geordnete Grundstruktur des Quartiers verkörpert."],"facts":[{"l":"Architekt","v":"Norman Foster"},{"l":"Fertigstellung","v":"2000"}],"sources":[],"slides":[{"bg":"url('img/world-port-center.webp') center/cover","cap":"World Port Center — Fosters Hafenturm","tmp":true,"credit":"S5A-0043, CC BY 4.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:(NLD-South_Holland)_Rotterdam_World_Port_Center_2025-06-04.jpg"}]},{"slug":"luxor","name":"Nieuwe Luxor Theater","sub":"Bolles+Wilson · 2001","tier":"secondary","paras":["Großes Musical- und Theaterhaus, dessen umlaufende leuchtend rote Fassade wie ein Bühnenvorhang die Foyers umhüllt und dem Bau eine bewusst zeichenhafte Rolle im Hafenquartier gibt."],"facts":[{"l":"Architekt","v":"Bolles+Wilson"},{"l":"Fertigstellung","v":"2001"}],"sources":[],"slides":[{"bg":"url('img/luxor.webp') center/cover","cap":"Nieuwe Luxor Theater — die rote Bühnenfassade","tmp":true,"credit":"Fred Romero, CC BY 2.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Rotterdam_-_Nieuwe_Luxor_Theater.jpg"}]},{"slug":"cruise-terminal","name":"Cruise Terminal","sub":"Brinkman, Van den Broek & Bakema · 1949","tier":"secondary","paras":["Nachkriegs-Abfertigungshalle der Holland-America-Line mit sechs weitgespannten Betonschalen-Dächern und 135 m durchlaufender Glasfassade; erster landesweiter Einsatz dieser Schalenbauweise, heute Rijksmonument."],"facts":[{"l":"Architekt","v":"Brinkman, Van den Broek & Bakema"},{"l":"Fertigstellung","v":"1949"}],"sources":[],"slides":[{"bg":"url('img/cruise-terminal.webp') center/cover","cap":"Cruise Terminal — die Betonschalen von 1949","tmp":true,"credit":"S5A-0043, CC BY 4.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:(NLD-South_Holland)_Cruise_Terminal_Rotterdam_2025-06-04.jpg"}]},{"slug":"rijnhavenbrug","name":"Rijnhavenbrug","sub":"Quist Wintermans · 2012","tier":"secondary","paras":["160 m lange Fuß- und Radbrücke mit beweglichem Segment, deren schlanke Form und Farbgebung die alten Hafenkräne zitiert; verbindet die Wilhelminapier mit Katendrecht."],"facts":[{"l":"Architekt","v":"Quist Wintermans"},{"l":"Länge","v":"160 m"},{"l":"Fertigstellung","v":"2012"}],"sources":[],"slides":[{"bg":"url('img/rijnhavenbrug.webp') center/cover","cap":"Rijnhavenbrug — die bewegliche Radbrücke","tmp":true,"credit":"AgainErick, CC BY-SA 3.0, Wikimedia Commons","creditUrl":"https://commons.wikimedia.org/wiki/File:Rijnhavenbrug_-_Rotterdam_-_View_of_the_bridge_from_the_northwest.jpg"}]}];
+const BUILDINGS = SEED7.concat(NEWBUILDINGS);
+const BYSLUG = {}; BUILDINGS.forEach(function(b){ BYSLUG[b.slug]=b; });
+const COORDS = {"witte-huis":[51.91883,4.49173],"kubuswoningen":[51.9199,4.4902],"markthal":[51.92011,4.48687],"red-apple":[51.9173,4.48895],"wijnhaveneiland":[51.9166,4.4876],"ey-netherlands":[51.91434,4.48652],"casanova":[51.91796,4.48736],"laurenskerk":[51.92159,4.48538],"bibliotheek":[51.92,4.4871],"potlood":[51.92051,4.48947],"station-blaak":[51.9185,4.4901],"willemsbrug":[51.9151,4.4965],"schielandshuis":[51.91895,4.48184],"spaansekade":[51.9196,4.4926],"erasmusbrug":[51.9089,4.4873],"willemswerf":[51.91712,4.49026],"maritiem-museum":[51.917,4.4828],"de-boeg":[51.911,4.4855],"boompjestorens":[51.912,4.489],"wereldmuseum":[51.9078,4.4835],"leuvehaven":[51.915,4.4835],"de-rotterdam":[51.90667,4.48812],"hotel-new-york":[51.9041,4.4845],"montevideo":[51.90417,4.48592],"new-orleans":[51.90494,4.48747],"toren-op-zuid":[51.9058,4.4887],"fenix":[51.90213,4.48442],"world-port-center":[51.90472,4.48464],"luxor":[51.90685,4.49103],"cruise-terminal":[51.90574,4.48656],"rijnhavenbrug":[51.9028,4.485]};
+const ROUTES = [{"id":"fuehrung","name":"Führung","sub":"Wijnhaven · euer Rundgang","dur":"~3 h","dist":"~2,5 km","theme":"Die Waterfront-Kante des Wijnhaven, von 1898 bis heute.","seq":[{"type":"stop","slug":"witte-huis"},{"type":"stop","slug":"kubuswoningen"},{"type":"stop","slug":"markthal"},{"type":"break","name":"APARTT.","kind":"Bar","coord":[51.9203,4.4898],"url":"https://apartt.nl/"},{"type":"stop","slug":"red-apple"},{"type":"stop","slug":"wijnhaveneiland"},{"type":"break","name":"FLOATS","kind":"Restaurant","coord":[51.9165,4.4885],"url":"https://www.floatsrotterdam.com/"},{"type":"stop","slug":"ey-netherlands"},{"type":"stop","slug":"casanova"}]},{"id":"oude-haven","name":"Oude Haven & Wiederaufbau","sub":"Piet Bloms Blaak-Plan + 1940","dur":"~2 h","dist":"~1,8 km","theme":"Bloms bewohnter Wald über dem Blaak und die Überlebenden der Bombardierung.","seq":[{"type":"stop","slug":"witte-huis"},{"type":"stop","slug":"kubuswoningen"},{"type":"stop","slug":"potlood"},{"type":"stop","slug":"spaansekade"},{"type":"stop","slug":"markthal"},{"type":"break","name":"Café Vader Kleinjan","kind":"Café","coord":[51.9199,4.4923],"url":"https://vaderkleinjan.nl/"},{"type":"stop","slug":"bibliotheek"},{"type":"stop","slug":"station-blaak"},{"type":"stop","slug":"laurenskerk"},{"type":"stop","slug":"schielandshuis"}]},{"id":"kop-van-zuid","name":"Kop van Zuid","sub":"über die Erasmusbrug ans Südufer","dur":"~3 h","dist":"~3 km","theme":"Vom Auswandererkai zum „Manhattan aan de Maas“.","seq":[{"type":"stop","slug":"erasmusbrug"},{"type":"stop","slug":"toren-op-zuid"},{"type":"stop","slug":"de-rotterdam"},{"type":"stop","slug":"world-port-center"},{"type":"stop","slug":"cruise-terminal"},{"type":"break","name":"Hotel New York","kind":"Restaurant","coord":[51.9046,4.4835],"url":"https://hotelnewyork.com/food-beverage/"},{"type":"stop","slug":"hotel-new-york"},{"type":"stop","slug":"new-orleans"},{"type":"stop","slug":"montevideo"},{"type":"stop","slug":"luxor"},{"type":"stop","slug":"rijnhavenbrug"},{"type":"break","name":"Fenix Food Factory","kind":"Lunchroom","coord":[51.9008,4.4877],"url":"https://www.fenixfoodfactory.nl/"},{"type":"stop","slug":"fenix"}]},{"id":"maasufer","name":"Maasufer / Waterkant","sub":"die arbeitende Hafenkante","dur":"~2,5 h","dist":"~2,5 km","theme":"Der Maas-Boulevard von der Oude Haven bis zur Erasmusbrug.","seq":[{"type":"stop","slug":"markthal"},{"type":"stop","slug":"willemsbrug"},{"type":"stop","slug":"boompjestorens"},{"type":"stop","slug":"willemswerf"},{"type":"stop","slug":"ey-netherlands"},{"type":"stop","slug":"de-boeg"},{"type":"stop","slug":"leuvehaven"},{"type":"break","name":"Museumcafé Het Lage Licht","kind":"Café","coord":[51.9177,4.4823],"url":"https://maritiemmuseum.nl/en/food-and-drinks"},{"type":"stop","slug":"maritiem-museum"},{"type":"stop","slug":"wereldmuseum"},{"type":"stop","slug":"erasmusbrug"}]},{"id":"ikonen","name":"Ikonen-Highlights","sub":"die Must-sees, beide Ufer","dur":"~2,5 h","dist":"~2,8 km","theme":"Die größten Bauten Rotterdams in einer kompakten Schleife.","seq":[{"type":"stop","slug":"witte-huis"},{"type":"stop","slug":"kubuswoningen"},{"type":"stop","slug":"markthal"},{"type":"break","name":"Markthal","kind":"Lunchroom","coord":[51.9203,4.4869],"url":"https://www.markthal.nl/"},{"type":"stop","slug":"bibliotheek"},{"type":"stop","slug":"erasmusbrug"},{"type":"stop","slug":"de-rotterdam"},{"type":"break","name":"Gastrobar Elvy","kind":"Bar","coord":[51.9052,4.4869],"url":"https://www.nhow-hotels.com/nl/nhow-rotterdam/eat-drink"},{"type":"stop","slug":"hotel-new-york"}]}];
+var STOPS = SEED7.slice();          /* aktive Route (Default: Führung) */
+var currentRouteId = "fuehrung";
+
 const EXTRA_PLACES = [];  // Wijnhaven: keine zusätzlichen Orte in Phase A (Route = 7 Einträge)
 
 /* ═══════════════════════════════
    ROUTE
 ═══════════════════════════════ */
-const TRAIL = [
+var TRAIL = [
   "M644 311",
   "M644 311 L563 220",
   "M644 311 L563 220 L388 202",
@@ -2219,7 +2290,7 @@ const TRAIL = [
   "M644 311 L563 220 L388 202 L497 441 L426 500 L369 691 L414 385",
 ];
 
-const WAYPOINTS = [
+var WAYPOINTS = [
   {x:644, y:311},   // 0 Witte Huis
   {x:563, y:220},   // 1 Kubuswoningen
   {x:388, y:202},   // 2 Markthal
@@ -2229,7 +2300,7 @@ const WAYPOINTS = [
   {x:414, y:385},   // 6 CasaNova
 ];
 
-const VB = [
+var VB = [
   "454 169 380 285",   // 0 Witte Huis
   "373 78 380 285",    // 1 Kubuswoningen
   "198 60 380 285",    // 2 Markthal
@@ -2238,7 +2309,8 @@ const VB = [
   "179 549 380 285",   // 5 EY
   "224 243 380 285",   // 6 CasaNova
 ];
-const MAP_REVEAL_VB = "454 169 209 157";   /* Reveal-Startzoom (eng auf Stop 0), aus dem herausgezoomt wird */
+var MAP_REVEAL_VB = "454 169 209 157";   /* Reveal-Startzoom (eng auf Stop 0), aus dem herausgezoomt wird */
+var MAP_VW = 1000, MAP_VH = 1949;   /* Schwarzplan-Masse (viewBox-Raum) */
 
 /* ═══════════════════════════════
    HELPERS
@@ -2339,7 +2411,7 @@ function moveTraveller(globalT){
 
   /* 7 Wegpunkte = 6 Segmente: auf [0, 5.9999] klemmen, damit es immer
      einen Folgepunkt WAYPOINTS[fromIdx+1] gibt (sonst Absturz am letzten Stopp). */
-  const t       = Math.max(0, Math.min(5.9999, globalT));
+  const t       = Math.max(0, Math.min(WAYPOINTS.length - 1.0001, globalT));
   const fromIdx = Math.floor(t);
   const frac    = t - fromIdx;
   /* ease-in-out so dot decelerates near stops */
@@ -2359,7 +2431,7 @@ function activate(idx, globalT){
 
   /* Dot + label states */
   const _lbls = document.querySelectorAll('.stop-lbl');
-  for (let i = 0; i < 7; i++){
+  for (let i = 0; i < STOPS.length; i++){
     const d = document.getElementById('dot'+i);
     d.classList.toggle('visited',    i < idx);
     d.classList.toggle('active-dot', i === idx);
@@ -2379,7 +2451,7 @@ function activate(idx, globalT){
        viewport snaps back to VB[N] causing the visible dot-jump. */
     if (globalT !== undefined){
       const frac = Math.max(0, Math.min(1, globalT - idx));
-      const next = idx < 6 ? VB[idx+1] : VB[6];
+      const next = idx < STOPS.length-1 ? VB[idx+1] : VB[STOPS.length-1];
       document.getElementById('mapSvg')
         .setAttribute('viewBox', lerpVB(VB[idx], next, frac));
     }
@@ -2392,7 +2464,7 @@ function activate(idx, globalT){
   document.getElementById('routeTrail').setAttribute('d', TRAIL[idx]);
 
   /* Ripples */
-  for (let i = 0; i < 7; i++){
+  for (let i = 0; i < STOPS.length; i++){
     const r = document.getElementById('rp'+i);
     r.style.animation = 'none'; r.style.opacity = '0';
   }
@@ -2405,10 +2477,14 @@ function activate(idx, globalT){
   crumb.classList.add('show');
   var _cs = document.getElementById('crumb-stop'); if (_cs) _cs.textContent = STOPS[idx].name;
 
-  /* Drawer, combined label: "STATION 01, 01/08" */
-  document.getElementById('drawer-num').textContent  = (LANG[currentLang]||LANG.de).modal_station + ' 0' + (idx+1) + ' \u00b7 0' + (idx+1) + ' / 07';
-  document.getElementById('drawer-name').textContent = STOPS[idx].name;
-  document.getElementById('drawer-sub').textContent  = STOPS[idx].sub;
+  /* Drawer, combined label: "STATION 01 \u00b7 01 / 10" (bzw. PAUSE) */
+  var _st = STOPS[idx], _tt = (LANG[currentLang]||LANG.de);
+  var _pad = function(n){ return String(n).length<2 ? '0'+n : ''+n; };
+  document.getElementById('drawer-num').textContent  = _st.isBreak
+      ? ((_tt.modal_pause||'PAUSE') + ' \u00b7 ' + _pad(idx+1) + ' / ' + _pad(STOPS.length))
+      : (_tt.modal_station + ' ' + _pad(idx+1) + ' \u00b7 ' + _pad(idx+1) + ' / ' + _pad(STOPS.length));
+  document.getElementById('drawer-name').textContent = _st.name;
+  document.getElementById('drawer-sub').textContent  = _st.sub || (_st.isBreak ? (_st.kind||'') : '');
   document.getElementById('drawer').classList.add('open');
 
   /* Journey scroll hint, show once on very first stop entry */
@@ -2425,7 +2501,7 @@ function resetMap(){
   document.getElementById('routeTrail').setAttribute('d', '');
   document.getElementById('traveller').style.opacity = '0';
   const _lbls = document.querySelectorAll('.stop-lbl');
-  for (let i = 0; i < 7; i++){
+  for (let i = 0; i < STOPS.length; i++){
     document.getElementById('dot'+i).classList.remove('visited','active-dot');
     document.getElementById('dot'+i).setAttribute('r','7');
     if (_lbls[i]) _lbls[i].classList.remove('active-lbl');
@@ -2533,7 +2609,7 @@ function onScroll(){
   /* Compute globalT from scroll position within #journey */
   const journeyTop = getJourneyTop();
   const scrollInJ  = sy - journeyTop;
-  const totalH     = 7 * innerHeight;
+  const totalH     = STOPS.length * innerHeight;
   /* 0 = start of stop 0, 4.999 = end of stop 4 */
   /* Past all stops → reveal outro + impressum by collapsing fixed UI panels.
      Reset activeStop so scrolling back re-triggers a full activate() call. */
@@ -2543,7 +2619,7 @@ function onScroll(){
     return;
   }
 
-  const globalT = Math.max(0, Math.min(6.999, (scrollInJ / totalH) * 7));
+  const globalT = Math.max(0, Math.min(STOPS.length - 0.001, (scrollInJ / totalH) * STOPS.length));
   const rawIdx  = Math.floor(globalT);
   const frac    = globalT - rawIdx;
 
@@ -2554,7 +2630,7 @@ function onScroll(){
   if (activeStop >= 0) {
     if (rawIdx === activeStop - 1 && frac > 0.92) stopIdx = activeStop; // just crossed back
   }
-  stopIdx = Math.max(0, Math.min(6, stopIdx));
+  stopIdx = Math.max(0, Math.min(STOPS.length - 1, stopIdx));
 
   if (_revealing) return;   /* waehrend des Reveals gehoert die viewBox der Reveal-Animation */
   activate(stopIdx, globalT);
@@ -2579,7 +2655,8 @@ window.addEventListener('scroll', function(){
   if (_scrollRaf) return;
   _scrollRaf = requestAnimationFrame(_scrollTick);
 }, { passive:true });
-onScroll();
+buildRoute(currentRouteId);   /* Marker der Startroute erzeugen + initial aktivieren */
+renderRouteCards();
 
 /* Karte sauber ausblenden, sobald der Colophon (Footer) ins Bild kommt.
    rootMargin -90% unten: der Colophon zaehlt erst als "sichtbar", wenn er das
@@ -2868,23 +2945,25 @@ function setLang(lang){
   });
 
   /* ── Patch stop subtitles in data array ── */
+  var SEED_ORDER = ['witte-huis','kubuswoningen','markthal','red-apple','wijnhaveneiland','ey-netherlands','casanova'];
+  function _bp(i){ return BYSLUG[SEED_ORDER[i]]; }   /* Original-7 per Slug: route- und pausensicher */
   for (var i = 0; i < t.stopSubs.length; i++){
-    if (STOPS[i]) STOPS[i].sub = t.stopSubs[i];
+    if (_bp(i)) _bp(i).sub = t.stopSubs[i];
   }
 
   /* ── Patch paragraph texts in data array ── */
   if (t.stopParas) {
-    for (var i = 0; i < STOPS.length; i++) {
-      if (t.stopParas[i]) STOPS[i].paras = t.stopParas[i];
+    for (var i = 0; i < SEED_ORDER.length; i++) {
+      if (t.stopParas[i] && _bp(i)) _bp(i).paras = t.stopParas[i];
     }
   }
 
   /* ── Patch fact labels in data array ── */
   if (t.stopFacts) {
-    for (var i = 0; i < STOPS.length; i++) {
-      if (t.stopFacts[i]) {
-        for (var j = 0; j < STOPS[i].facts.length; j++) {
-          if (t.stopFacts[i][j] !== undefined) STOPS[i].facts[j].l = t.stopFacts[i][j];
+    for (var i = 0; i < SEED_ORDER.length; i++) {
+      if (t.stopFacts[i] && _bp(i)) {
+        for (var j = 0; j < _bp(i).facts.length; j++) {
+          if (t.stopFacts[i][j] !== undefined) _bp(i).facts[j].l = t.stopFacts[i][j];
         }
       }
     }
@@ -2892,10 +2971,10 @@ function setLang(lang){
 
   /* ── Patch Steckbrief-Prosa pro Sprache ── */
   if (t.stopSteckbrief) {
-    for (var i = 0; i < STOPS.length; i++) {
-      if (t.stopSteckbrief[i] && STOPS[i].steckbrief) {
+    for (var i = 0; i < SEED_ORDER.length; i++) {
+      if (t.stopSteckbrief[i] && _bp(i) && _bp(i).steckbrief) {
         for (var sk in t.stopSteckbrief[i]) {
-          if (t.stopSteckbrief[i][sk] !== undefined) STOPS[i].steckbrief[sk] = t.stopSteckbrief[i][sk];
+          if (t.stopSteckbrief[i][sk] !== undefined) _bp(i).steckbrief[sk] = t.stopSteckbrief[i][sk];
         }
       }
     }
@@ -2947,7 +3026,7 @@ function setLang(lang){
   if (modal && modal.classList.contains('open') && activeStop >= 0) {
     var s = STOPS[activeStop];
     var mn = modal.querySelector('.modal-num');
-    if (mn) mn.textContent = t.modal_station + ' ' + s.num + ' ' + t.modal_of + ' 07';
+    if (mn) mn.textContent = t.modal_station + ' ' + s.num + ' ' + t.modal_of + ' ' + (STOPS.length<10?'0'+STOPS.length:''+STOPS.length);
     var msub = modal.querySelector('.modal-sub');
     if (msub) msub.textContent = s.sub;
     /* Rebuild paragraphs */
@@ -3037,7 +3116,7 @@ function updateTrackBtn(sy, introH){
 
 /* Real GPS coords of each stop, matches STOPS[] order */
 /* Reale GPS-Koordinaten (Näherung, vor Ort per Pin verfeinern) */
-const STOP_COORDS = [
+var STOP_COORDS = [
   [51.91883, 4.49173], /* 0 Witte Huis        */
   [51.9199,  4.4902 ], /* 1 Kubuswoningen     */
   [51.92011, 4.48687], /* 2 Markthal          */
@@ -3047,7 +3126,117 @@ const STOP_COORDS = [
   [51.91796, 4.48736], /* 6 CasaNova          */
 ];
 
-/* Route as real GPS polyline */
+/* Route as real GPS polyline */
+
+/* ══════════════════════════════════════════════════════════════════
+   ROUTEN-ENGINE — baut aus einer Route (Bauten + Pausen) die aktive
+   Journey: STOPS, WAYPOINTS, VB, TRAIL, Marker im SVG. Datengesteuert,
+   damit der Auswahlbildschirm nur buildRoute(id) aufrufen muss.
+════════════════════════════════════════════════════════════════════ */
+function _projWP(coord){ var p = gpsToSvg(coord[0], coord[1]); return { x: Math.round(p.x*10)/10, y: Math.round(p.y*10)/10 }; }
+function _circNum(n){ return (n>=1 && n<=20) ? String.fromCharCode(0x245F + n) : '('+n+')'; }
+function _shortName(n){ return n.length>17 ? n.slice(0,16)+'…' : n; }
+function _clampVB(x,y,w,hh){
+  x = Math.max(0, Math.min(MAP_VW - w, x));
+  y = Math.max(0, Math.min(MAP_VH - hh, y));
+  return (Math.round(x*10)/10)+' '+(Math.round(y*10)/10)+' '+w+' '+hh;
+}
+function _pad2(n){ return String(n).length<2 ? '0'+n : ''+n; }
+
+function buildRoute(routeId){
+  var route = ROUTES.filter(function(r){ return r.id===routeId; })[0] || ROUTES[0];
+  currentRouteId = route.id;
+
+  /* 1) STOPS aus der Sequenz (Bauten + Pausen) */
+  STOPS = route.seq.map(function(item, i){
+    var st;
+    if (item.type==='break'){
+      st = { isBreak:true, name:item.name, sub:item.kind, kind:item.kind, url:item.url, _coord:item.coord,
+             paras:[ item.kind + ' — eine eingeplante Pause auf diesem Rundgang, zum Durchatmen und Notieren.' ],
+             facts:[ {l:'Art', v:item.kind} ],
+             sources: item.url ? [item.url] : [],
+             slides:[ {bg:'#0A0A0A', cap:item.name+' · '+item.kind} ] };
+    } else {
+      st = BYSLUG[item.slug];
+      st._coord = COORDS[item.slug] || [51.9165,4.4876];
+    }
+    st.num  = _pad2(i+1);
+    st._idx = i;
+    return st;
+  });
+  STOP_COORDS = STOPS.map(function(s){ return s._coord; });
+
+  /* 2) Geometrie aus echten Koordinaten */
+  WAYPOINTS = STOPS.map(function(s){ return _projWP(s._coord); });
+  VB = WAYPOINTS.map(function(w){ return _clampVB(w.x-190, w.y-142.5, 380, 285); });
+  var d='';
+  TRAIL = WAYPOINTS.map(function(w,i){ d += (i===0?'M':' L')+w.x+' '+w.y; return d; });
+  MAP_REVEAL_VB = _clampVB(WAYPOINTS[0].x-104.5, WAYPOINTS[0].y-78.5, 209, 157);
+
+  /* 3) SVG-Marker neu erzeugen — Z-Ordnung: Ripple < Ring < Dot < Label */
+  var NS='http://www.w3.org/2000/svg';
+  var g=document.getElementById('stop-markers'); if(!g) return; g.textContent='';
+  function C(a){ var e=document.createElementNS(NS,'circle'); for(var k in a) e.setAttribute(k,a[k]); return e; }
+  WAYPOINTS.forEach(function(w,i){ g.appendChild(C({id:'rp'+i,cx:w.x,cy:w.y,r:11,fill:'none',stroke:'var(--ink-1)','stroke-width':1.5,opacity:0})); });
+  WAYPOINTS.forEach(function(w,i){ var e=C({cx:w.x,cy:w.y,r:14}); e.setAttribute('class','stop-ring'); g.appendChild(e); });
+  WAYPOINTS.forEach(function(w,i){ var e=C({id:'dot'+i,cx:w.x,cy:w.y,r:8}); e.setAttribute('class','stop-dot'+(STOPS[i].isBreak?' break-dot':'')); e.setAttribute('onclick','dotTap('+i+')'); e.setAttribute('tabindex','0'); e.setAttribute('role','button'); e.setAttribute('aria-label',STOPS[i].name); g.appendChild(e); });
+  WAYPOINTS.forEach(function(w,i){
+    var t=document.createElementNS(NS,'text'); t.setAttribute('class','stop-lbl'+(STOPS[i].isBreak?' break-lbl':'')); t.setAttribute('x', w.x+12); t.setAttribute('y', w.y+4);
+    t.textContent = (STOPS[i].isBreak ? '☕ ' : (_circNum(i+1)+' ')) + _shortName(STOPS[i].name);
+    g.appendChild(t);
+  });
+
+  /* 4) Journey-Scrolllaenge = Stoppzahl */
+  var jn=document.getElementById('journey'); if(jn) jn.style.height=(STOPS.length*100)+'vh';
+
+  /* 5) Zustand zuruecksetzen + neu ausrichten */
+  activeStop = -1; mapShown = false;
+  _introH = null; _journeyTop = null;
+  var rt=document.getElementById('routeTrail'); if(rt) rt.setAttribute('d','');
+  if (typeof onScroll==='function') onScroll();
+}
+
+/* ── Auswahlbildschirm ─────────────────────────────────────────────── */
+function renderRouteCards(){
+  var box=document.getElementById('rsCards'); if(!box) return;
+  box.innerHTML = ROUTES.map(function(r, i){
+    var stops  = r.seq.filter(function(x){ return x.type==='stop'; }).length;
+    var pauses = r.seq.filter(function(x){ return x.type==='break'; }).length;
+    var meta = '<span>'+r.dur+'</span><span>'+r.dist+'</span><span>'+stops+' Stopps'+(pauses?(' · '+pauses+' Pause'+(pauses>1?'n':'')):'')+'</span>';
+    return '<button class="rs-card'+(r.id===currentRouteId?' rs-current':'')+'" onclick="selectRoute(\''+r.id+'\')">'
+      + '<span class="rs-card-idx">'+_pad2(i+1)+'</span>'
+      + '<span class="rs-card-body">'
+      +   '<span class="rs-card-name">'+r.name+'</span>'
+      +   '<span class="rs-card-sub">'+r.sub+'</span>'
+      +   '<span class="rs-card-theme">'+r.theme+'</span>'
+      +   '<span class="rs-card-meta">'+meta+'</span>'
+      + '</span>'
+      + '<span class="rs-card-go" aria-hidden="true">→</span>'
+      + '</button>';
+  }).join('');
+}
+function showRouteSelect(){
+  renderRouteCards();
+  var ov=document.getElementById('route-select');
+  if(ov){ ov.classList.add('show'); ov.removeAttribute('inert'); }
+  document.documentElement.style.overflow='hidden';
+}
+function closeRouteSelect(){
+  var ov=document.getElementById('route-select');
+  if(ov){ ov.classList.remove('show'); ov.setAttribute('inert',''); }
+  document.documentElement.style.overflow='';
+}
+function selectRoute(id){
+  var wasDeep = window.scrollY > getIntroH()*0.6;
+  buildRoute(id);
+  closeRouteSelect();
+  if (wasDeep){
+    requestAnimationFrame(function(){ _journeyTop=null; window.scrollTo(0, getJourneyTop()+2); onScroll(); });
+  } else {
+    window.scrollTo(0,0);
+  }
+}
+
 
 /* GPS state vars declared at top */
 
@@ -3177,8 +3366,8 @@ function moveGpsDot(lat, lon) {
   var vb  = svg.viewBox.baseVal;
   var w = vb.width, h = vb.height;
   var tx = pt.x - w/2, ty = pt.y - h/2;
-  tx = Math.max(0, Math.min(1000-w, tx));
-  ty = Math.max(0, Math.min(750-h, ty));
+  tx = Math.max(0, Math.min(MAP_VW-w, tx));
+  ty = Math.max(0, Math.min(MAP_VH-h, ty));
   animVB(vb.x+' '+vb.y+' '+vb.width+' '+vb.height, tx+' '+ty+' '+w+' '+h, 600);
 }
 
@@ -3744,46 +3933,50 @@ var stopMapInertia = function(){};
    renderPlacesList(), builds the scrollable list HTML;
                         called each open so language is fresh
 ═══════════════════════════════════════════ */
-function renderPlacesList(){
-  var t    = LANG[currentLang] || LANG.de;
-  var subs = t.stopSubs || [];
-  var html = '';
+function openBuilding(slug){ var b=BYSLUG[slug]; if(b) openModal(-99, b); }
 
-  /* ── Route stops ── */
-  html += '<div class="pp-section-title" id="ppRouteLabel">' + (t.ppRoute || 'Route') + '</div>';
+function renderPlacesList(){
+  var t     = LANG[currentLang] || LANG.de;
+  var route = ROUTES.filter(function(r){ return r.id===currentRouteId; })[0] || ROUTES[0];
+  var html  = '';
+
+  /* ── Route wechseln ── */
+  html += '<button class="pp-item pp-switch" onclick="closePlaces();showRouteSelect();" aria-label="Route wechseln">'
+        + '<span class="pp-num pp-extra">↻</span>'
+        + '<span class="pp-info"><span class="pp-name">Route wechseln</span>'
+        + '<span class="pp-sub">Aktuell: ' + route.name + '</span></span>'
+        + '<span class="pp-chevron" aria-hidden="true">›</span></button>';
+
+  /* ── Stopps dieser Route (Bauten + Pausen) ── */
+  html += '<div class="pp-section-title">Diese Route · ' + route.name + '</div>';
   STOPS.forEach(function(s, i){
-    var sub = subs[i] || s.sub;
     var isActive = (i === activeStop) ? ' pp-active' : '';
+    var badge = s.isBreak ? '☕' : s.num;
     html += '<button class="pp-item' + isActive + '" onclick="closePlaces();openModal(' + i + ');" aria-label="' + s.name + '">'
-          + '<span class="pp-num">' + s.num + '</span>'
-          + '<span class="pp-info">'
-          +   '<span class="pp-name">' + s.name + '</span>'
-          +   '<span class="pp-sub">'  + sub    + '</span>'
-          + '</span>'
-          + '<span class="pp-chevron" aria-hidden="true">›</span>'
-          + '</button>';
+          + '<span class="pp-num' + (s.isBreak?' pp-extra':'') + '">' + badge + '</span>'
+          + '<span class="pp-info"><span class="pp-name">' + s.name + '</span>'
+          + '<span class="pp-sub">' + (s.sub || s.kind || '') + '</span></span>'
+          + '<span class="pp-chevron" aria-hidden="true">›</span></button>';
   });
 
-  /* ── Extra places (non-route) ── */
-  if (EXTRA_PLACES.length > 0) {
-    html += '<div class="pp-section-title" id="ppExtraLabel">' + (t.ppExtra || 'Weitere Orte') + '</div>';
-    EXTRA_PLACES.forEach(function(p, j){
-      html += '<button class="pp-item" onclick="closePlaces();openExtraPlace(' + j + ');" aria-label="' + p.name + '">'
+  /* ── Alle weiteren Bauwerke im Hafengebiet ── */
+  var inRoute = {};
+  STOPS.forEach(function(s){ if(!s.isBreak && s.slug) inRoute[s.slug]=1; });
+  var rest = BUILDINGS.filter(function(b){ return !inRoute[b.slug]; });
+  if (rest.length){
+    html += '<div class="pp-section-title">Alle Bauwerke im Hafengebiet</div>';
+    rest.forEach(function(b){
+      html += '<button class="pp-item" onclick="closePlaces();openBuilding(\'' + b.slug + '\');" aria-label="' + b.name + '">'
             + '<span class="pp-num pp-extra">+</span>'
-            + '<span class="pp-info">'
-            +   '<span class="pp-name">' + p.name + '</span>'
-            +   '<span class="pp-sub">'  + p.sub  + '</span>'
-            + '</span>'
-            + '<span class="pp-chevron" aria-hidden="true">›</span>'
-            + '</button>';
+            + '<span class="pp-info"><span class="pp-name">' + b.name + '</span>'
+            + '<span class="pp-sub">' + (b.sub || '') + '</span></span>'
+            + '<span class="pp-chevron" aria-hidden="true">›</span></button>';
     });
   }
 
   document.getElementById('ppScroll').innerHTML = html;
-
-  /* Update panel title + button label in current language */
   var titleEl = document.getElementById('ppTitle');
-  if (titleEl) titleEl.textContent = t.ppTitle || 'Orte in Wijnhaven';
+  if (titleEl) titleEl.textContent = 'Orte · Rotterdam';
 }
 
 function openPlaces(){
@@ -3960,7 +4153,7 @@ function _setEntryHash(slug){ if (!slug) return; try { history.replaceState(null
 function _clearEntryHash(){ try { history.replaceState(null, '', location.pathname + location.search); } catch(e){} }
 
 function openModal(idx, _placeObj){
-  const s = _placeObj || ((idx >= 0 && idx < 7) ? STOPS[idx] : STOPS[activeStop]);
+  const s = _placeObj || ((idx >= 0 && idx < STOPS.length) ? STOPS[idx] : STOPS[activeStop]);
   if (!s) return;
   galIdx = 0; galLen = s.slides.length;
 
@@ -3988,9 +4181,9 @@ function openModal(idx, _placeObj){
     `<div class="gal-pip${i===0?' on':''}" onclick="galTo(${i})"></div>`).join('');
 
   /* Show "Eintrag X von 07" only for route stops, not extra places */
-  const numLine = _placeObj
+  const numLine = (_placeObj || s.isBreak)
     ? ''
-    : `<div class="modal-num">${t.modal_station} ${s.num} ${t.modal_of} 07</div>`;
+    : `<div class="modal-num">${t.modal_station} ${s.num} ${t.modal_of} ${(STOPS.length<10?'0'+STOPS.length:''+STOPS.length)}</div>`;
 
   /* Tagebuch-Stempel: Datum · Uhrzeit */
   const stampLine = (s.entryDate && s.entryTime)
@@ -4617,7 +4810,7 @@ function _handleTourHit(name){
   if(!name) return;
   if(name.indexOf('building_')===0){
     var idx = parseInt(name.slice(9),10);
-    if(!isNaN(idx) && idx>=0 && idx<7){ closeTour3D(); openModal(idx); }
+    if(!isNaN(idx) && idx>=0 && idx<STOPS.length){ closeTour3D(); openModal(idx); }
   } else if(name.indexOf('person_')===0){
     _showTourQuote(name.slice(7).split('_')[0]);
   }
@@ -4968,16 +5161,16 @@ window.mapGeoSet = function(o){ if (o) for (var k in o) MAP_GEO[k] = o[k]; if (w
   window._entrySlugs = SLUGS;
   function openFromHash(){
     var h = (location.hash || '').replace(/^#/, '').toLowerCase();
-    if (SLUGS.hasOwnProperty(h)){
-      activeStop = SLUGS[h];   /* haelt setLang/shareStop/Drawer mit dem Deep-Link-Eintrag synchron */
-      openModal(SLUGS[h]);     /* auch bei bereits offenem Modal den Eintrag wechseln */
-      return true;
-    }
+    if (!h) return false;
+    var idx = -1;
+    STOPS.forEach(function(s,i){ if (s.slug===h) idx=i; });
+    if (idx>=0){ activeStop = idx; openModal(idx); return true; }
+    if (typeof BYSLUG!=='undefined' && BYSLUG[h]){ openModal(-99, BYSLUG[h]); return true; }
     return false;
   }
   window.addEventListener('hashchange', function(){
     var h = (location.hash || '').replace(/^#/, '').toLowerCase();
-    if (SLUGS.hasOwnProperty(h)) openFromHash();
+    if ((typeof BYSLUG!=='undefined' && BYSLUG[h])) openFromHash();
     else if (document.getElementById('modal').classList.contains('open')) closeModal();  /* Zurueck-Taste schliesst */
   });
   /* Beim Laden: kommt jemand per NFC-Tag/QR mit #slug, direkt den Eintrag zeigen. */
