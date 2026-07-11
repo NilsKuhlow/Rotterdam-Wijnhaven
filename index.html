@@ -1123,7 +1123,8 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
   font-family:var(--font-mono); font-size:.56rem; letter-spacing:.16em;
   text-transform:uppercase; color:var(--brick); margin-right:.5rem;
 }
-#places-btn { display:none !important; }  /* Phase A: keine Zusatzorte */
+/* #places-btn (Orte-Uebersicht) ist aktiv */
+.nav-left { display:flex; align-items:center; gap:.5rem; }
 
 /* Modal body, generous padding, never clipped */
 .modal-body  { padding: 1.8rem 1.5rem 3.5rem 1.5rem; }
@@ -1543,6 +1544,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <span data-i18n="return_btn">Standort</span>
 </button>
 <div id="nav-crumb">
+  <div class="nav-left">
   <button id="places-btn" onclick="openPlaces()" aria-label="Alle Orte anzeigen">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
       <rect x="1" y="2.5" width="12" height="1.5" rx=".75" fill="currentColor"/>
@@ -1558,6 +1560,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     </svg>
     <span>3D</span>
   </button>
+  </div>
   <nav id="lang-switch" aria-label="Sprache wählen / Language">
     <button class="lang-btn active" data-lang="de" aria-label="Deutsch" aria-pressed="true">DE</button>
     <span class="lang-sep" aria-hidden="true">·</span>
