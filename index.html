@@ -1530,6 +1530,16 @@ html:has(#route-select.show){ overflow:hidden; }
   .rs-card, .rs-card-go{ transition:none; }
 }
 
+
+/* ══ Uebersichtskarte Auswahlscreen ══ */
+.rs-map-wrap{ width:min(68vw,250px); margin:0 auto 1.6rem; border:1px solid rgba(10,10,10,.16); background:var(--paper-0); overflow:hidden; }
+#rs-map{ width:100%; height:auto; display:block; }
+.rsm-water{ fill:#F1F1F1; }
+.rsm-block{ fill:#E2E2E2; }
+.rsm-route{ stroke:rgba(10,10,10,.26); stroke-width:4; stroke-linejoin:round; stroke-linecap:round; cursor:pointer; transition:stroke .2s ease, stroke-width .2s ease; }
+.rsm-route.active{ stroke:#0A0A0A; stroke-width:7; }
+.rsm-dot{ fill:var(--accent); stroke:#0A0A0A; stroke-width:2; }
+@media (prefers-reduced-motion:reduce){ .rsm-route{ transition:none; } }
 </style>
 </head>
 <body>
@@ -1727,6 +1737,7 @@ html:has(#route-select.show){ overflow:hidden; }
       <h2 class="rs-title" id="rsTitle">Wähle deinen Rundgang</h2>
       <p class="rs-lede">Fünf Wege durch das zentrale Maasufer — jeder mit eigener Länge, Dauer und eigenem Schwerpunkt. Später jederzeit über <b>Orte</b> wechselbar.</p>
     </div>
+      <div class="rs-map-wrap"><svg id="rs-map" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><g id="rsMapPlan"></g><g id="rsMapRoutes"></g><g id="rsMapDots"></g></svg></div>
     <div class="rs-cards" id="rsCards"><!-- renderRouteCards() --></div>
   </div>
 </div>
@@ -2271,9 +2282,69 @@ const NEWBUILDINGS = [{"slug":"laurenskerk","name":"Laurenskerk","sub":"Wiederau
 const BUILDINGS = SEED7.concat(NEWBUILDINGS);
 const BYSLUG = {}; BUILDINGS.forEach(function(b){ BYSLUG[b.slug]=b; });
 const COORDS = {"witte-huis":[51.91883,4.49173],"kubuswoningen":[51.9199,4.4902],"markthal":[51.92011,4.48687],"red-apple":[51.9173,4.48895],"wijnhaveneiland":[51.9166,4.4876],"ey-netherlands":[51.91434,4.48652],"casanova":[51.91796,4.48736],"laurenskerk":[51.92159,4.48538],"bibliotheek":[51.92,4.4871],"potlood":[51.92051,4.48947],"station-blaak":[51.9185,4.4901],"willemsbrug":[51.9151,4.4965],"schielandshuis":[51.91895,4.48184],"spaansekade":[51.9196,4.4926],"erasmusbrug":[51.9089,4.4873],"willemswerf":[51.91712,4.49026],"maritiem-museum":[51.917,4.4828],"de-boeg":[51.911,4.4855],"boompjestorens":[51.912,4.489],"wereldmuseum":[51.9078,4.4835],"leuvehaven":[51.915,4.4835],"de-rotterdam":[51.90667,4.48812],"hotel-new-york":[51.9041,4.4845],"montevideo":[51.90417,4.48592],"new-orleans":[51.90494,4.48747],"toren-op-zuid":[51.9058,4.4887],"fenix":[51.90213,4.48442],"world-port-center":[51.90472,4.48464],"luxor":[51.90685,4.49103],"cruise-terminal":[51.90574,4.48656],"rijnhavenbrug":[51.9028,4.485]};
-const ROUTES = [{"id":"fuehrung","name":"Führung","sub":"Wijnhaven · euer Rundgang","dur":"~3 h","dist":"~2,5 km","theme":"Die Waterfront-Kante des Wijnhaven, von 1898 bis heute.","seq":[{"type":"stop","slug":"witte-huis"},{"type":"stop","slug":"kubuswoningen"},{"type":"stop","slug":"markthal"},{"type":"break","name":"APARTT.","kind":"Bar","coord":[51.9203,4.4898],"url":"https://apartt.nl/"},{"type":"stop","slug":"red-apple"},{"type":"stop","slug":"wijnhaveneiland"},{"type":"break","name":"FLOATS","kind":"Restaurant","coord":[51.9165,4.4885],"url":"https://www.floatsrotterdam.com/"},{"type":"stop","slug":"ey-netherlands"},{"type":"stop","slug":"casanova"}]},{"id":"oude-haven","name":"Oude Haven & Wiederaufbau","sub":"Piet Bloms Blaak-Plan + 1940","dur":"~2 h","dist":"~1,8 km","theme":"Bloms bewohnter Wald über dem Blaak und die Überlebenden der Bombardierung.","seq":[{"type":"stop","slug":"witte-huis"},{"type":"stop","slug":"kubuswoningen"},{"type":"stop","slug":"potlood"},{"type":"stop","slug":"spaansekade"},{"type":"stop","slug":"markthal"},{"type":"break","name":"Café Vader Kleinjan","kind":"Café","coord":[51.9199,4.4923],"url":"https://vaderkleinjan.nl/"},{"type":"stop","slug":"bibliotheek"},{"type":"stop","slug":"station-blaak"},{"type":"stop","slug":"laurenskerk"},{"type":"stop","slug":"schielandshuis"}]},{"id":"kop-van-zuid","name":"Kop van Zuid","sub":"über die Erasmusbrug ans Südufer","dur":"~3 h","dist":"~3 km","theme":"Vom Auswandererkai zum „Manhattan aan de Maas“.","seq":[{"type":"stop","slug":"erasmusbrug"},{"type":"stop","slug":"toren-op-zuid"},{"type":"stop","slug":"de-rotterdam"},{"type":"stop","slug":"world-port-center"},{"type":"stop","slug":"cruise-terminal"},{"type":"break","name":"Hotel New York","kind":"Restaurant","coord":[51.9046,4.4835],"url":"https://hotelnewyork.com/food-beverage/"},{"type":"stop","slug":"hotel-new-york"},{"type":"stop","slug":"new-orleans"},{"type":"stop","slug":"montevideo"},{"type":"stop","slug":"luxor"},{"type":"stop","slug":"rijnhavenbrug"},{"type":"break","name":"Fenix Food Factory","kind":"Lunchroom","coord":[51.9008,4.4877],"url":"https://www.fenixfoodfactory.nl/"},{"type":"stop","slug":"fenix"}]},{"id":"maasufer","name":"Maasufer / Waterkant","sub":"die arbeitende Hafenkante","dur":"~2,5 h","dist":"~2,5 km","theme":"Der Maas-Boulevard von der Oude Haven bis zur Erasmusbrug.","seq":[{"type":"stop","slug":"markthal"},{"type":"stop","slug":"willemsbrug"},{"type":"stop","slug":"boompjestorens"},{"type":"stop","slug":"willemswerf"},{"type":"stop","slug":"ey-netherlands"},{"type":"stop","slug":"de-boeg"},{"type":"stop","slug":"leuvehaven"},{"type":"break","name":"Museumcafé Het Lage Licht","kind":"Café","coord":[51.9177,4.4823],"url":"https://maritiemmuseum.nl/en/food-and-drinks"},{"type":"stop","slug":"maritiem-museum"},{"type":"stop","slug":"wereldmuseum"},{"type":"stop","slug":"erasmusbrug"}]},{"id":"ikonen","name":"Ikonen-Highlights","sub":"die Must-sees, beide Ufer","dur":"~2,5 h","dist":"~2,8 km","theme":"Die größten Bauten Rotterdams in einer kompakten Schleife.","seq":[{"type":"stop","slug":"witte-huis"},{"type":"stop","slug":"kubuswoningen"},{"type":"stop","slug":"markthal"},{"type":"break","name":"Markthal","kind":"Lunchroom","coord":[51.9203,4.4869],"url":"https://www.markthal.nl/"},{"type":"stop","slug":"bibliotheek"},{"type":"stop","slug":"erasmusbrug"},{"type":"stop","slug":"de-rotterdam"},{"type":"break","name":"Gastrobar Elvy","kind":"Bar","coord":[51.9052,4.4869],"url":"https://www.nhow-hotels.com/nl/nhow-rotterdam/eat-drink"},{"type":"stop","slug":"hotel-new-york"}]}];
+const ROUTES = [{"id":"fuehrung","name":"Führung","sub":"Wijnhaven · euer Rundgang","dur":"~3 h","dist":"~1,5 km","theme":"Die Waterfront-Kante des Wijnhaven, von 1898 bis heute.","seq":[{"type":"stop","slug":"witte-huis"},{"type":"stop","slug":"kubuswoningen"},{"type":"break","name":"APARTT.","kind":"Bar","coord":[51.9203,4.4898],"url":"https://apartt.nl/"},{"type":"stop","slug":"markthal"},{"type":"stop","slug":"casanova"},{"type":"stop","slug":"red-apple"},{"type":"break","name":"FLOATS","kind":"Restaurant","coord":[51.9165,4.4885],"url":"https://www.floatsrotterdam.com/"},{"type":"stop","slug":"wijnhaveneiland"},{"type":"stop","slug":"ey-netherlands"}]},{"id":"oude-haven","name":"Oude Haven & Wiederaufbau","sub":"Piet Bloms Blaak-Plan + 1940","dur":"~2 h","dist":"~1,5 km","theme":"Bloms bewohnter Wald über dem Blaak und die Überlebenden der Bombardierung.","seq":[{"type":"stop","slug":"station-blaak"},{"type":"stop","slug":"witte-huis"},{"type":"stop","slug":"spaansekade"},{"type":"break","name":"Café Vader Kleinjan","kind":"Café","coord":[51.9199,4.4923],"url":"https://vaderkleinjan.nl/"},{"type":"stop","slug":"kubuswoningen"},{"type":"stop","slug":"potlood"},{"type":"stop","slug":"bibliotheek"},{"type":"stop","slug":"markthal"},{"type":"stop","slug":"laurenskerk"},{"type":"stop","slug":"schielandshuis"}]},{"id":"kop-van-zuid","name":"Kop van Zuid","sub":"über die Erasmusbrug ans Südufer","dur":"~3 h","dist":"~2 km","theme":"Vom Auswandererkai zum „Manhattan aan de Maas“.","seq":[{"type":"stop","slug":"erasmusbrug"},{"type":"stop","slug":"luxor"},{"type":"stop","slug":"toren-op-zuid"},{"type":"stop","slug":"de-rotterdam"},{"type":"stop","slug":"cruise-terminal"},{"type":"stop","slug":"new-orleans"},{"type":"stop","slug":"montevideo"},{"type":"stop","slug":"world-port-center"},{"type":"break","name":"Hotel New York","kind":"Restaurant","coord":[51.9046,4.4835],"url":"https://hotelnewyork.com/food-beverage/"},{"type":"stop","slug":"hotel-new-york"},{"type":"stop","slug":"rijnhavenbrug"},{"type":"break","name":"Fenix Food Factory","kind":"Lunchroom","coord":[51.9008,4.4877],"url":"https://www.fenixfoodfactory.nl/"},{"type":"stop","slug":"fenix"}]},{"id":"maasufer","name":"Maasufer / Waterkant","sub":"die arbeitende Hafenkante","dur":"~3 h","dist":"~4 km","theme":"Der Maas-Boulevard von der Oude Haven bis zur Erasmusbrug.","seq":[{"type":"stop","slug":"markthal"},{"type":"stop","slug":"willemswerf"},{"type":"stop","slug":"willemsbrug"},{"type":"break","name":"Museumcafé Het Lage Licht","kind":"Café","coord":[51.9177,4.4823],"url":"https://maritiemmuseum.nl/en/food-and-drinks"},{"type":"stop","slug":"maritiem-museum"},{"type":"stop","slug":"leuvehaven"},{"type":"stop","slug":"ey-netherlands"},{"type":"stop","slug":"boompjestorens"},{"type":"stop","slug":"de-boeg"},{"type":"stop","slug":"wereldmuseum"},{"type":"stop","slug":"erasmusbrug"}]},{"id":"ikonen","name":"Ikonen-Highlights","sub":"die Must-sees, beide Ufer","dur":"~2,5 h","dist":"~3 km","theme":"Die größten Bauten Rotterdams in einer kompakten Schleife.","seq":[{"type":"stop","slug":"witte-huis"},{"type":"stop","slug":"kubuswoningen"},{"type":"stop","slug":"bibliotheek"},{"type":"stop","slug":"markthal"},{"type":"break","name":"Markthal","kind":"Lunchroom","coord":[51.9203,4.4869],"url":"https://www.markthal.nl/"},{"type":"stop","slug":"erasmusbrug"},{"type":"stop","slug":"de-rotterdam"},{"type":"break","name":"Gastrobar Elvy","kind":"Bar","coord":[51.9052,4.4869],"url":"https://www.nhow-hotels.com/nl/nhow-rotterdam/eat-drink"},{"type":"stop","slug":"hotel-new-york"}]}];
 var STOPS = SEED7.slice();          /* aktive Route (Default: Führung) */
-var currentRouteId = "fuehrung";
+var currentRouteId = "fuehrung";
+const I18N = {"buildings":[{"slug":"laurenskerk","nl":{"sub":"Wederopbouw tot 1968 · Laatgotiek","para":"Rotterdams enige bewaard gebleven middeleeuwse bouwwerk en de grootste laatgotische kerk van de stad. Als enige oude gebouw overleefde ze het bombardement van 1940; na de wederopbouw geldt ze als symbool van veerkracht en wederopbouw."},"en":{"sub":"Post-war reconstruction until 1968 · Late Gothic","para":"Rotterdam's only surviving medieval structure and the city's largest Late Gothic church. The sole old building to survive the bombardment of 1940; after its post-war reconstruction it is regarded as a symbol of resilience and rebuilding."}},{"slug":"bibliotheek","nl":{"sub":"Van den Broek en Bakema · 1983","para":"Structuralistisch grootschalig gebouw met een getrapt terugwijkende gevel en de opvallende gele roltrapbuizen aan de buitenhuid; vaak Rotterdams antwoord op het Centre Pompidou genoemd. Vormt samen met de Kubuswoningen en de Markthal het Blaak-ensemble."},"en":{"sub":"Van den Broek en Bakema · 1983","para":"A large structuralist building with a terraced, stepped-back facade and the striking yellow escalator tubes on its outer skin; often called Rotterdam's answer to the Centre Pompidou. Together with the Kubuswoningen and the Markthal it forms the Blaak ensemble."}},{"slug":"potlood","nl":{"sub":"Piet Blom · 1984","para":"61 m hoge, zeshoekige woontoren met een karakteristiek spits toelopend dak. Ontworpen als verticaal tegenwicht voor Bloms naburige Kubuswoningen en onderdeel van zijn totaalplan voor de Oude Haven."},"en":{"sub":"Piet Blom · 1984","para":"A 61 m tall, hexagonal residential tower with a distinctively tapered, pointed roof. Conceived as a vertical counterpoint to Blom's adjacent Kubuswoningen and part of his overall plan for the Oude Haven."}},{"slug":"station-blaak","nl":{"sub":"Harry Reijnders · 1993","para":"Trein- en metrostation waarvan de ronde, hellende overkapping van staal en glas als een geland vliegend schoteltje boven het verdiepte perron zweeft; een speels hightech-teken midden in het Blaak-ensemble."},"en":{"sub":"Harry Reijnders · 1993","para":"A rail and metro station whose circular, tilted steel-and-glass canopy hovers like a landed flying saucer above the sunken platform; a playful high-tech landmark in the midst of the Blaak ensemble."}},{"slug":"willemsbrug","nl":{"sub":"Gemeentewerken · 1981","para":"Markante rode tuibrug over de Maas met twee 55 m hoge pylonen. Bepaalt samen met de Erasmusbrug het silhouet van de Maasoever; de noordelijke tak werd bewust verlegd om de Oude Haven te ontzien."},"en":{"sub":"Gemeentewerken · 1981","para":"A striking red cable-stayed bridge over the Maas with two 55 m tall pylons. Together with the Erasmusbrug it defines the silhouette of the river's edge; its northern span was deliberately curved to spare the Oude Haven."}},{"slug":"schielandshuis","nl":{"sub":"Pieter Post · 1665","para":"Representatief bestuursgebouw in het Hollands classicisme en een van de weinige vooroorlogse bouwwerken die het bombardement van 1940 overleefden. Rijksmonument, tegenwoordig omkaderd door naoorlogse hoogbouw."},"en":{"sub":"Pieter Post · 1665","para":"A stately administrative building in Dutch Classicism and one of the few pre-war structures to survive the bombardment of 1940. A Rijksmonument, today framed by post-war high-rise construction."}},{"slug":"spaansekade","nl":{"sub":"Piet Blom · 1984","para":"Gebogen woon- en bedrijfsgebouw aan de oostkade van de Oude Haven; de derde bouwsteen van Bloms totaalplan naast de Kubuswoningen en de Blaaktoren en de stedenbouwkundige afronding van het historische havenbekken."},"en":{"sub":"Piet Blom · 1984","para":"Curved residential and commercial building on the eastern quay of the Oude Haven; the third component of Blom's master plan alongside the Kubuswoningen and the Blaaktoren, and the urban conclusion of the historic harbour basin."}},{"slug":"erasmusbrug","nl":{"sub":"UNStudio / Ben van Berkel · 1996","para":"Het onmiskenbare herkenningspunt van Rotterdam, vanwege de 139 m hoge, geknikte asymmetrische pyloon „De Zwaan” genoemd. Verbindt als tuibrug de noordoever met de Kop van Zuid."},"en":{"sub":"UNStudio / Ben van Berkel · 1996","para":"Rotterdam's unmistakable landmark, nicknamed “De Zwaan” (the Swan) for its 139 m high, angled asymmetrical pylon. As a cable-stayed bridge it links the north bank with the Kop van Zuid."}},{"slug":"willemswerf","nl":{"sub":"Wim Quist · 1988","para":"94,5 m hoog kantoorgebouw met een opvallende diagonale knik en een glazen „waterval”-voeg die de loop van de rivier oppakt; wit betegelde betonpanelen geven het een grafische uitstraling. Gebouwd voor de rederij Nedlloyd."},"en":{"sub":"Wim Quist · 1988","para":"94.5 m high office tower with a striking diagonal kink and a glazed “waterfall” joint that echoes the course of the river; white-tiled concrete panels give it a graphic character. Built for the shipping company Nedlloyd."}},{"slug":"maritiem-museum","nl":{"sub":"Wim Quist · 1986","para":"Museumgebouw aan de kop van de Leuvehaven met een driehoekige plattegrond die de rooilijnen volgt; een van de oudste maritieme musea van Nederland, met de openluchthaven ervoor."},"en":{"sub":"Wim Quist · 1986","para":"Museum building at the head of the Leuvehaven with a triangular plan that follows the building lines; one of the oldest maritime museums in the Netherlands, with the open-air harbour in front of it."}},{"slug":"de-boeg","nl":{"sub":"Fred Carasso · 1957","para":"45 m hoog oorlogsmonument aan de Leuvehaven dat als een met aluminium beklede scheepsboeg de golven klieft; herdenkt de in de Tweede Wereldoorlog gevallen zeelieden van de koopvaardij."},"en":{"sub":"Fred Carasso · 1957","para":"45 m high war memorial on the Leuvehaven that cleaves the waves like an aluminium-clad ship's bow; it commemorates the merchant navy seamen who fell in the Second World War."}},{"slug":"boompjestorens","nl":{"sub":"Klunder Architecten · 1989","para":"Drie identieke, 70 m hoge witte woontorens (Clipper, Schoener, Galjoen) die een stedenbouwkundige visie uit 1946 inlossen en de openheid van de Coolsingel naar de Maas waarborgen."},"en":{"sub":"Klunder Architecten · 1989","para":"Three identical, 70 m high white residential towers (Clipper, Schoener, Galjoen) that fulfil an urban vision from 1946 and secure the openness of the Coolsingel towards the Maas."}},{"slug":"wereldmuseum","nl":{"sub":"P.G. Buskens · 1851","para":"Neoclassicistische villa uit 1851, oorspronkelijk het clubhuis van een roeivereniging, sinds 1885 volkenkundig museum; een van de weinige bewaard gebleven historische gebouwen aan de oever van het Scheepvaartkwartier."},"en":{"sub":"P.G. Buskens · 1851","para":"A neoclassical villa from 1851, originally the clubhouse of a rowing club and since 1885 an ethnographic museum; one of the few surviving historic buildings on the Scheepvaartkwartier waterfront."}},{"slug":"leuvehaven","nl":{"sub":"vanaf 1598","para":"De oudste gegraven haven van de Rotterdamse binnenstad (1598), tegenwoordig de openluchthaven van het Maritiem Museum met historische kranen, schepen en werfinstallaties; een centraal getuigenis van de maritieme stadsgeschiedenis."},"en":{"sub":"from 1598","para":"The oldest dug harbour in Rotterdam's city centre (1598), today the open-air harbour of the Maritiem Museum with historic cranes, ships and shipyard installations; a central testament to the city's maritime history."}},{"slug":"de-rotterdam","nl":{"sub":"OMA / Rem Koolhaas · 2013","para":"Opgevat als een „verticale stad” van drie verspringende torens, met circa 160.000 m² het grootste gebouw van Nederland en de meest markante solitair aan de kop van de Wilhelminapier."},"en":{"sub":"OMA / Rem Koolhaas · 2013","para":"Conceived as a “vertical city” of three staggered towers, at roughly 160,000 m² the largest building in the Netherlands and the most striking solitary landmark at the head of the Wilhelminapier."}},{"slug":"hotel-new-york","nl":{"sub":"Müller & Van der Tak · 1901","para":"Het jugendstil-hoofdkantoor van de Holland-Amerika Lijn met zijn twee markante torens was de vertrekplaats van de landverhuizers naar Amerika en vormt het historische identiteitsanker van de Kop van Zuid."},"en":{"sub":"Müller & Van der Tak · 1901","para":"The Art Nouveau headquarters of the Holland-America Line, with its two distinctive towers, was the departure point of emigrants to America and remains the historic identity anchor of the Kop van Zuid."}},{"slug":"montevideo","nl":{"sub":"Mecanoo / Francine Houben · 2005","para":"140 m hoge woontoren met collageachtig gestapelde gevels van baksteen, glas en staal, die de maritieme geschiedenis van de pier citeert en mede de skyline van de Wilhelminapier bepaalt."},"en":{"sub":"Mecanoo / Francine Houben · 2005","para":"A 140 m residential tower with collage-like stacked façades of brick, glass and steel that quotes the pier's maritime history and helps define the skyline of the Wilhelminapier."}},{"slug":"new-orleans","nl":{"sub":"Álvaro Siza · 2010","para":"Met 158 m tot 2022 het hoogste woongebouw van Nederland; Siza's sculpturaal versmallende toren met penthousekroon boven een beglaasde culturele sokkel (LantarenVenster)."},"en":{"sub":"Álvaro Siza · 2010","para":"At 158 m, until 2022 the tallest residential building in the Netherlands; Siza's sculpturally tapering tower with a penthouse crown above a glazed cultural plinth (LantarenVenster)."}},{"slug":"toren-op-zuid","nl":{"sub":"Renzo Piano · 2000","para":"Piano's schuin hellende toren, waarvan de helling het antwoord vormt op de pyloon van de naastgelegen Erasmusbrug, geschraagd door een rode diagonale steunbalk; de enorme led-mediagevel maakt hem tot landmark bij het bruggenhoofd."},"en":{"sub":"Renzo Piano · 2000","para":"Piano's obliquely leaning tower, whose incline answers the pylon of the adjacent Erasmusbrug, propped by a red diagonal strut; the vast LED media façade turns it into a landmark at the bridgehead."}},{"slug":"fenix","nl":{"sub":"MAD Architects · 2025","para":"Verbouwing van een historisch havenpakhuis tot 's werelds eerste migratiemuseum; de spiraalvormige, spiegelende 'Tornado'-trapsculptuur op het dak is MAD's eerste openbare cultuurgebouw in Europa."},"en":{"sub":"MAD Architects · 2025","para":"Conversion of a historic harbour warehouse into the world's first migration museum; the spiralling, mirrored 'Tornado' staircase sculpture on the roof is MAD's first public cultural building in Europe."}},{"slug":"world-port-center","nl":{"sub":"Norman Foster · 2000","para":"Zetel van het Havenbedrijf; Foster ontwierp tegelijk het stedenbouwkundige masterplan van de gehele Wilhelminapier, waardoor de slanke, afgeronde toren de ordelijke basisstructuur van de wijk belichaamt."},"en":{"sub":"Norman Foster · 2000","para":"Seat of the Port Authority; Foster also designed the urban master plan for the entire Wilhelminapier, which is why the slender, rounded tower embodies the district's orderly underlying structure."}},{"slug":"luxor","nl":{"sub":"Bolles+Wilson · 2001","para":"Groot musical- en theaterhuis, waarvan de rondlopende felrode gevel als een toneelgordijn de foyers omhult en het gebouw een bewust tekenachtige rol in de havenwijk geeft."},"en":{"sub":"Bolles+Wilson · 2001","para":"Large musical and theatre house whose wraparound bright-red façade envelops the foyers like a stage curtain, giving the building a deliberately emblematic role in the harbour district."}},{"slug":"cruise-terminal","nl":{"sub":"Brinkman, Van den Broek & Bakema · 1949","para":"Naoorlogse vertrekhal van de Holland-Amerika Lijn met zes wijdgespannen betonschaaldaken en 135 m doorlopende glasgevel; eerste landelijke toepassing van deze schaalbouwwijze, nu Rijksmonument."},"en":{"sub":"Brinkman, Van den Broek & Bakema · 1949","para":"Post-war departure hall of the Holland-America Line with six wide-span concrete shell roofs and a 135 m continuous glass façade; the first nationwide use of this shell construction, today a Rijksmonument."}},{"slug":"rijnhavenbrug","nl":{"sub":"Quist Wintermans · 2012","para":"160 m lange voet- en fietsbrug met beweegbaar segment, waarvan de slanke vorm en kleurstelling de oude havenkranen citeren; verbindt de Wilhelminapier met Katendrecht."},"en":{"sub":"Quist Wintermans · 2012","para":"160 m long pedestrian and cycle bridge with a movable segment, whose slender form and colouring quote the old harbour cranes; it connects the Wilhelminapier with Katendrecht."}}],"factLabels":[{"de":"Stil","nl":"Stijl","en":"Style"},{"de":"Bau","nl":"Bouw","en":"Construction"},{"de":"Wiederaufbau","nl":"wederopbouw","en":"post-war reconstruction"},{"de":"Architekt","nl":"Architect","en":"Architect"},{"de":"Fertigstellung","nl":"Oplevering","en":"Completion"},{"de":"Höhe","nl":"Hoogte","en":"Height"},{"de":"Pylone","nl":"Pylonen","en":"Pylons"},{"de":"Pylon","nl":"Pyloon","en":"Pylon"},{"de":"Künstler","nl":"Kunstenaar","en":"Artist"},{"de":"Angelegt","nl":"Aangelegd","en":"Laid out"},{"de":"Fläche","nl":"Oppervlakte","en":"Area"},{"de":"Länge","nl":"Lengte","en":"Length"}],"routes":[{"id":"fuehrung","nl":{"name":"Rondleiding","sub":"Wijnhaven · jullie rondgang","theme":"De waterfrontrand van de Wijnhaven, van 1898 tot nu."},"en":{"name":"Tour","sub":"Wijnhaven · your walk","theme":"The waterfront edge of the Wijnhaven, from 1898 to today."}},{"id":"oude-haven","nl":{"name":"Oude Haven & wederopbouw","sub":"Piet Bloms Blaak-plan + 1940","theme":"Bloms bewoonde bos boven de Blaak en de overlevenden van het bombardement."},"en":{"name":"Oude Haven & post-war reconstruction","sub":"Piet Blom's Blaak plan + 1940","theme":"Blom's inhabited forest above the Blaak and the survivors of the bombing."}},{"id":"kop-van-zuid","nl":{"name":"Kop van Zuid","sub":"over de Erasmusbrug naar de zuidoever","theme":"Van landverhuizerskade tot „Manhattan aan de Maas”."},"en":{"name":"Kop van Zuid","sub":"across the Erasmusbrug to the south bank","theme":"From emigrants' quay to “Manhattan aan de Maas”."}},{"id":"maasufer","nl":{"name":"Maasoever / Waterkant","sub":"de werkende havenrand","theme":"De Maasboulevard van de Oude Haven tot de Erasmusbrug."},"en":{"name":"Maas waterfront","sub":"the working harbour edge","theme":"The Maas boulevard from the Oude Haven to the Erasmusbrug."}},{"id":"ikonen","nl":{"name":"Iconen-hoogtepunten","sub":"de must-sees, beide oevers","theme":"De grootste bouwwerken van Rotterdam in een compacte lus."},"en":{"name":"Icon highlights","sub":"the must-sees, both banks","theme":"Rotterdam's greatest buildings in one compact loop."}}],"breakKinds":[{"de":"Bar","nl":"Bar","en":"Bar"},{"de":"Restaurant","nl":"Restaurant","en":"Restaurant"},{"de":"Café","nl":"Café","en":"Café"},{"de":"Lunchroom","nl":"Lunchroom","en":"Lunchroom"}],"ui":[{"key":"rs_kicker","de":"Feldjournal · Rotterdam","nl":"Veldjournaal · Rotterdam","en":"Field journal · Rotterdam"},{"key":"rs_title","de":"Wähle deinen Rundgang","nl":"Kies je rondgang","en":"Choose your walk"},{"key":"rs_lede","de":"Fünf Wege durch das zentrale Maasufer, jeder mit eigener Länge, Dauer und eigenem Schwerpunkt. Später jederzeit über Orte wechselbar.","nl":"Vijf routes door de centrale Maasoever, elk met een eigen lengte, duur en accent. Later altijd via locaties te wisselen.","en":"Five routes through the central Maas waterfront, each with its own length, duration and focus. Switchable at any time via places."},{"key":"rs_stops","de":"Stopps","nl":"Stops","en":"Stops"},{"key":"rs_pause_sg","de":"Pause","nl":"Pauze","en":"Break"},{"key":"rs_pause_pl","de":"Pausen","nl":"Pauzes","en":"Breaks"},{"key":"pp_switch","de":"Route wechseln","nl":"Route wisselen","en":"Switch route"},{"key":"pp_current","de":"Aktuell","nl":"Actueel","en":"Current"},{"key":"pp_thisroute","de":"Diese Route","nl":"Deze route","en":"This route"},{"key":"pp_all","de":"Alle Bauwerke im Hafengebiet","nl":"Alle bouwwerken in het havengebied","en":"All buildings in the harbour area"},{"key":"pp_title","de":"Orte · Rotterdam","nl":"Locaties · Rotterdam","en":"Places · Rotterdam"},{"key":"modal_pause","de":"Pause","nl":"Pauze","en":"Break"},{"key":"break_note","de":"Eine eingeplante Pause auf diesem Rundgang, zum Durchatmen und Notieren.","nl":"Een geplande pauze op deze wandeling, om even op adem te komen en aantekeningen te maken.","en":"A planned break on this walk, to catch your breath and jot down notes."},{"key":"break_art","de":"Art","nl":"Soort","en":"Type"}]};
+
+/* ══════════════════════════════════════════════════════════════════
+   MEHRSPRACHIGKEIT (NL/EN) fuer die 24 neuen Bauten, Routen, Pausen, UI.
+   ROUTES/breakKinds bleiben in ROUTES als DE-Quelle; Uebersetzung nur an
+   den Render-Punkten. Die 24 Bauten werden mutiert (openModal liest direkt),
+   DE-Originale sind gesichert und werden bei lang==='de' wiederhergestellt.
+════════════════════════════════════════════════════════════════════ */
+var I18N_B={}, I18N_F={}, I18N_R={}, I18N_K={}, I18N_UI={};
+I18N.buildings.forEach(function(b){ I18N_B[b.slug]={nl:b.nl,en:b.en}; });
+I18N.factLabels.forEach(function(f){ I18N_F[f.de]={nl:f.nl,en:f.en}; });
+I18N.routes.forEach(function(r){ I18N_R[r.id]={nl:r.nl,en:r.en}; });
+I18N.breakKinds.forEach(function(k){ I18N_K[k.de]={nl:k.nl,en:k.en}; });
+I18N.ui.forEach(function(u){ I18N_UI[u.key]={de:u.de,nl:u.nl,en:u.en}; });
+
+function uiT(key){ var u=I18N_UI[key]; if(!u) return key; return (currentLang!=='de'&&u[currentLang])?u[currentLang]:(u.de||key); }
+function kindT(deKind){ if(currentLang==='de') return deKind; var d=I18N_K[deKind]; return (d&&d[currentLang])?d[currentLang]:deKind; }
+function routeT(r, field){ if(currentLang!=='de'){ var t=I18N_R[r.id]; if(t&&t[currentLang]&&t[currentLang][field]!=null) return t[currentLang][field]; } return r[field]; }
+
+/* DE-Originale der 24 neuen Bauten einmalig sichern */
+(function initI18N(){
+  if(typeof NEWBUILDINGS==='undefined') return;
+  NEWBUILDINGS.forEach(function(b){
+    b._deSub=b.sub; b._dePara=(b.paras&&b.paras[0])||'';
+    (b.facts||[]).forEach(function(f){ f._deL=f.l; });
+  });
+})();
+
+function applyContentLang(lang){
+  /* 24 neue Bauten: sub / para / Fakten-Etiketten */
+  if(typeof NEWBUILDINGS!=='undefined') NEWBUILDINGS.forEach(function(b){
+    var t=I18N_B[b.slug];
+    if(lang==='de'||!t||!t[lang]){ if(b._deSub!=null) b.sub=b._deSub; if(b._dePara!=null) b.paras=[b._dePara]; }
+    else { b.sub=t[lang].sub; b.paras=[t[lang].para]; }
+    (b.facts||[]).forEach(function(f){
+      if(lang==='de'){ if(f._deL!=null) f.l=f._deL; }
+      else { var d=I18N_F[f._deL]; f.l=(d&&d[lang])?d[lang]:(f._deL||f.l); }
+    });
+  });
+  /* aktive Pausen-Stopps live umstellen */
+  if(typeof STOPS!=='undefined') STOPS.forEach(function(s){
+    if(s&&s.isBreak){
+      s.kind=kindT(s._deKind||s.kind); s.sub=s.kind;
+      s.paras=[ s.kind+' — '+uiT('break_note') ];
+      if(s.facts&&s.facts[0]){ s.facts[0].l=uiT('break_art'); s.facts[0].v=s.kind; }
+      if(s.slides&&s.slides[0]) s.slides[0].cap=s.name+' · '+s.kind;
+    }
+  });
+  applyUiLang(lang);
+  if(typeof renderRouteCards==='function') renderRouteCards();
+  var pp=document.getElementById('places-panel');
+  if(pp&&pp.classList.contains('open')&&typeof renderPlacesList==='function') renderPlacesList();
+}
+
+function applyUiLang(lang){
+  var k=document.querySelector('#route-select .rs-kicker'); if(k) k.textContent=uiT('rs_kicker');
+  var t=document.getElementById('rsTitle');               if(t) t.textContent=uiT('rs_title');
+  var l=document.querySelector('#route-select .rs-lede'); if(l) l.textContent=uiT('rs_lede');
+}
+
 
 const EXTRA_PLACES = [];  // Wijnhaven: keine zusätzlichen Orte in Phase A (Route = 7 Einträge)
 
@@ -2481,7 +2552,7 @@ function activate(idx, globalT){
   var _st = STOPS[idx], _tt = (LANG[currentLang]||LANG.de);
   var _pad = function(n){ return String(n).length<2 ? '0'+n : ''+n; };
   document.getElementById('drawer-num').textContent  = _st.isBreak
-      ? ((_tt.modal_pause||'PAUSE') + ' \u00b7 ' + _pad(idx+1) + ' / ' + _pad(STOPS.length))
+      ? (uiT('modal_pause') + ' \u00b7 ' + _pad(idx+1) + ' / ' + _pad(STOPS.length))
       : (_tt.modal_station + ' ' + _pad(idx+1) + ' \u00b7 ' + _pad(idx+1) + ' / ' + _pad(STOPS.length));
   document.getElementById('drawer-name').textContent = _st.name;
   document.getElementById('drawer-sub').textContent  = _st.sub || (_st.isBreak ? (_st.kind||'') : '');
@@ -2655,8 +2726,8 @@ window.addEventListener('scroll', function(){
   if (_scrollRaf) return;
   _scrollRaf = requestAnimationFrame(_scrollTick);
 }, { passive:true });
-buildRoute(currentRouteId);   /* Marker der Startroute erzeugen + initial aktivieren */
-renderRouteCards();
+/* Deferred bis alle Top-Level-Deklarationen (LANG, currentLang) ausgewertet sind (sonst TDZ in kindT/uiT) */
+setTimeout(function(){ buildRoute(currentRouteId); renderRouteCards(); buildOverviewMap(); setRouteHighlight(currentRouteId); }, 0);
 
 /* Karte sauber ausblenden, sobald der Colophon (Footer) ins Bild kommt.
    rootMargin -90% unten: der Colophon zaehlt erst als "sichtbar", wenn er das
@@ -2910,6 +2981,7 @@ function setLang(lang){
   const t = LANG[lang];
   if (!t) return;                   /* unknown lang → bail out */
   currentLang = lang;
+  if (typeof applyContentLang==='function') applyContentLang(lang);
   document.documentElement.lang = lang;   /* html lang mitschalten (Screenreader/SEO) */
 
   /* ── Button active states ── */
@@ -3143,6 +3215,48 @@ function _clampVB(x,y,w,hh){
 }
 function _pad2(n){ return String(n).length<2 ? '0'+n : ''+n; }
 
+
+/* ── Uebersichtskarte im Auswahlscreen: alle 5 Routen auf dem Schwarzplan ── */
+function buildOverviewMap(){
+  var svg=document.getElementById('rs-map'); if(!svg) return;
+  var NS='http://www.w3.org/2000/svg';
+  var src=document.getElementById('mapSvg');
+  /* Plan (Wasser + Bloecke) einmalig aus #mapSvg klonen */
+  var planG=document.getElementById('rsMapPlan');
+  if(planG && !planG.childNodes.length && src){
+    var w=src.querySelector('.water-fill'), b=src.querySelector('.city-block');
+    if(w){ var pw=document.createElementNS(NS,'path'); pw.setAttribute('d',w.getAttribute('d')); pw.setAttribute('class','rsm-water'); planG.appendChild(pw); }
+    if(b){ var pb=document.createElementNS(NS,'path'); pb.setAttribute('d',b.getAttribute('d')); pb.setAttribute('fill-rule','evenodd'); pb.setAttribute('class','rsm-block'); planG.appendChild(pb); }
+  }
+  /* viewBox aus allen Bau-Koordinaten */
+  var xs=[], ys=[];
+  Object.keys(COORDS).forEach(function(k){ var p=gpsToSvg(COORDS[k][0],COORDS[k][1]); xs.push(p.x); ys.push(p.y); });
+  var minx=Math.min.apply(null,xs), maxx=Math.max.apply(null,xs), miny=Math.min.apply(null,ys), maxy=Math.max.apply(null,ys);
+  var pad=60, vw=(maxx-minx)+2*pad, vh=(maxy-miny)+2*pad; svg.setAttribute('viewBox', (minx-pad)+' '+(miny-pad)+' '+vw+' '+vh); svg.style.aspectRatio=vw+' / '+vh;
+  /* alle Routen als duenne Linien */
+  var rg=document.getElementById('rsMapRoutes'); if(!rg) return; rg.textContent='';
+  ROUTES.forEach(function(r){
+    var d='';
+    r.seq.forEach(function(it){ var c=it.type==='break'?it.coord:COORDS[it.slug]; if(!c) return; var p=gpsToSvg(c[0],c[1]); d+=(d?' L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1); });
+    var path=document.createElementNS(NS,'path'); path.setAttribute('d',d); path.setAttribute('fill','none');
+    path.setAttribute('class','rsm-route'); path.setAttribute('data-id',r.id);
+    path.setAttribute('onclick', "selectRoute('"+r.id+"')");
+    rg.appendChild(path);
+  });
+}
+function setRouteHighlight(id){
+  var rg=document.getElementById('rsMapRoutes'); if(!rg) return;
+  rg.querySelectorAll('.rsm-route').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-id')===id); });
+  var act=rg.querySelector('.rsm-route.active'); if(act) rg.appendChild(act);
+  var dg=document.getElementById('rsMapDots'); if(!dg) return; dg.textContent='';
+  var NS='http://www.w3.org/2000/svg';
+  var route=ROUTES.filter(function(r){return r.id===id;})[0]; if(!route) return;
+  route.seq.forEach(function(it){ if(it.type==='break') return; var c=COORDS[it.slug]; if(!c) return;
+    var p=gpsToSvg(c[0],c[1]); var dot=document.createElementNS(NS,'circle');
+    dot.setAttribute('cx',p.x); dot.setAttribute('cy',p.y); dot.setAttribute('r','8'); dot.setAttribute('class','rsm-dot'); dg.appendChild(dot);
+  });
+}
+
 function buildRoute(routeId){
   var route = ROUTES.filter(function(r){ return r.id===routeId; })[0] || ROUTES[0];
   currentRouteId = route.id;
@@ -3151,11 +3265,12 @@ function buildRoute(routeId){
   STOPS = route.seq.map(function(item, i){
     var st;
     if (item.type==='break'){
-      st = { isBreak:true, name:item.name, sub:item.kind, kind:item.kind, url:item.url, _coord:item.coord,
-             paras:[ item.kind + ' — eine eingeplante Pause auf diesem Rundgang, zum Durchatmen und Notieren.' ],
-             facts:[ {l:'Art', v:item.kind} ],
-             sources: item.url ? [item.url] : [],
-             slides:[ {bg:'#0A0A0A', cap:item.name+' · '+item.kind} ] };
+      st = { isBreak:true, name:item.name, _deKind:item.kind, kind:kindT(item.kind), url:item.url, _coord:item.coord };
+      st.sub = st.kind;
+      st.paras = [ st.kind + ' — ' + uiT('break_note') ];
+      st.facts = [ {l: uiT('break_art'), v: st.kind} ];
+      st.sources = item.url ? [item.url] : [];
+      st.slides = [ {bg:'#0A0A0A', cap: item.name + ' · ' + st.kind} ];
     } else {
       st = BYSLUG[item.slug];
       st._coord = COORDS[item.slug] || [51.9165,4.4876];
@@ -3202,13 +3317,13 @@ function renderRouteCards(){
   box.innerHTML = ROUTES.map(function(r, i){
     var stops  = r.seq.filter(function(x){ return x.type==='stop'; }).length;
     var pauses = r.seq.filter(function(x){ return x.type==='break'; }).length;
-    var meta = '<span>'+r.dur+'</span><span>'+r.dist+'</span><span>'+stops+' Stopps'+(pauses?(' · '+pauses+' Pause'+(pauses>1?'n':'')):'')+'</span>';
-    return '<button class="rs-card'+(r.id===currentRouteId?' rs-current':'')+'" onclick="selectRoute(\''+r.id+'\')">'
+    var meta = '<span>'+r.dur+'</span><span>'+r.dist+'</span><span>'+stops+' '+uiT('rs_stops')+(pauses?(' · '+pauses+' '+(pauses>1?uiT('rs_pause_pl'):uiT('rs_pause_sg'))):'')+'</span>';
+    return '<button class="rs-card'+(r.id===currentRouteId?' rs-current':'')+'" onpointerenter="setRouteHighlight(\''+r.id+'\')" onfocus="setRouteHighlight(\''+r.id+'\')" onclick="selectRoute(\''+r.id+'\')">'
       + '<span class="rs-card-idx">'+_pad2(i+1)+'</span>'
       + '<span class="rs-card-body">'
-      +   '<span class="rs-card-name">'+r.name+'</span>'
-      +   '<span class="rs-card-sub">'+r.sub+'</span>'
-      +   '<span class="rs-card-theme">'+r.theme+'</span>'
+      +   '<span class="rs-card-name">'+routeT(r,'name')+'</span>'
+      +   '<span class="rs-card-sub">'+routeT(r,'sub')+'</span>'
+      +   '<span class="rs-card-theme">'+routeT(r,'theme')+'</span>'
       +   '<span class="rs-card-meta">'+meta+'</span>'
       + '</span>'
       + '<span class="rs-card-go" aria-hidden="true">→</span>'
@@ -3217,6 +3332,7 @@ function renderRouteCards(){
 }
 function showRouteSelect(){
   renderRouteCards();
+  buildOverviewMap(); setRouteHighlight(currentRouteId);
   var ov=document.getElementById('route-select');
   if(ov){ ov.classList.add('show'); ov.removeAttribute('inert'); }
   document.documentElement.style.overflow='hidden';
@@ -3941,14 +4057,14 @@ function renderPlacesList(){
   var html  = '';
 
   /* ── Route wechseln ── */
-  html += '<button class="pp-item pp-switch" onclick="closePlaces();showRouteSelect();" aria-label="Route wechseln">'
+  html += '<button class="pp-item pp-switch" onclick="closePlaces();showRouteSelect();" aria-label="'+uiT('pp_switch')+'">'
         + '<span class="pp-num pp-extra">↻</span>'
-        + '<span class="pp-info"><span class="pp-name">Route wechseln</span>'
-        + '<span class="pp-sub">Aktuell: ' + route.name + '</span></span>'
+        + '<span class="pp-info"><span class="pp-name">'+uiT('pp_switch')+'</span>'
+        + '<span class="pp-sub">'+uiT('pp_current')+': ' + routeT(route,'name') + '</span></span>'
         + '<span class="pp-chevron" aria-hidden="true">›</span></button>';
 
   /* ── Stopps dieser Route (Bauten + Pausen) ── */
-  html += '<div class="pp-section-title">Diese Route · ' + route.name + '</div>';
+  html += '<div class="pp-section-title">'+uiT('pp_thisroute')+' · ' + routeT(route,'name') + '</div>';
   STOPS.forEach(function(s, i){
     var isActive = (i === activeStop) ? ' pp-active' : '';
     var badge = s.isBreak ? '☕' : s.num;
@@ -3964,7 +4080,7 @@ function renderPlacesList(){
   STOPS.forEach(function(s){ if(!s.isBreak && s.slug) inRoute[s.slug]=1; });
   var rest = BUILDINGS.filter(function(b){ return !inRoute[b.slug]; });
   if (rest.length){
-    html += '<div class="pp-section-title">Alle Bauwerke im Hafengebiet</div>';
+    html += '<div class="pp-section-title">'+uiT('pp_all')+'</div>';
     rest.forEach(function(b){
       html += '<button class="pp-item" onclick="closePlaces();openBuilding(\'' + b.slug + '\');" aria-label="' + b.name + '">'
             + '<span class="pp-num pp-extra">+</span>'
@@ -3976,7 +4092,7 @@ function renderPlacesList(){
 
   document.getElementById('ppScroll').innerHTML = html;
   var titleEl = document.getElementById('ppTitle');
-  if (titleEl) titleEl.textContent = 'Orte · Rotterdam';
+  if (titleEl) titleEl.textContent = uiT('pp_title');
 }
 
 function openPlaces(){
