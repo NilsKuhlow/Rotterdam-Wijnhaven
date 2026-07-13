@@ -1688,16 +1688,76 @@ html[data-design="bold"] #design-toggle{
 }
 html[data-design="bold"] #design-toggle .dt-opt.on{ color:var(--pink); }
 
+
+/* ══════════ BOLD-VERSTÄRKUNG — näher an der Riso-Collage-Referenz ══════════ */
+
+/* dezentes globales Punktraster (Riso-Papier-Anmutung) */
+html[data-design="bold"] body::before{
+  content:""; position:fixed; inset:0; z-index:9989; pointer-events:none;
+  background-image:radial-gradient(var(--navy) 11%, transparent 13%);
+  background-size:17px 17px; opacity:.045;
+}
+
+/* Hero: größere Versatz-Wortmarke + Sticker-Kicker */
+html[data-design="bold"] .intro-title{
+  font-size:clamp(4.6rem,20vw,11rem); line-height:.82;
+  -webkit-text-stroke:3px var(--navy); text-stroke:3px var(--navy);
+  text-shadow:9px 9px 0 var(--pink);
+}
+html[data-design="bold"] .intro-kicker{
+  display:inline-block; background:var(--pink); color:var(--paper-0);
+  padding:.32rem .62rem; letter-spacing:.14em; box-shadow:3px 3px 0 var(--navy);
+}
+html[data-design="bold"] .intro-sub{ font-weight:700; font-size:clamp(1.05rem,3.8vw,1.25rem); }
+html[data-design="bold"] .intro-accent{ height:9px; }
+
+/* Deko-Ebene im Intro (nur Bold) */
+.riso-decor{ display:none; }
+html[data-design="bold"] .riso-decor{ display:block; position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+html[data-design="bold"] .intro-top,
+html[data-design="bold"] .intro-hero,
+html[data-design="bold"] .intro-foot{ position:relative; z-index:2; }
+.rd-blob{ position:absolute; border-radius:50%; }
+.rd-y{ width:clamp(78px,14vw,150px); aspect-ratio:1; background:var(--yellow); top:8%; right:14%; box-shadow:5px 5px 0 var(--navy); }
+.rd-c{ width:clamp(46px,8vw,82px); aspect-ratio:1; background:var(--cyan); bottom:23%; left:6%; box-shadow:5px 5px 0 var(--navy); }
+.rd-p{ width:clamp(120px,30vw,220px); aspect-ratio:1; top:34%; right:-7%; color:var(--pink);
+       background-image:radial-gradient(currentColor 30%,transparent 32%); background-size:15px 15px; opacity:.85; }
+.rd-ht{ position:absolute; top:-4%; left:-5%; width:55%; height:42%;
+        background-image:radial-gradient(var(--navy) 17%,transparent 19%); background-size:14px 14px; opacity:.07; }
+.rd-sticker{
+  position:absolute; top:57%; left:6%; background:var(--pink); color:var(--paper-0);
+  font-family:var(--font-mono); font-size:.56rem; letter-spacing:.12em; text-transform:uppercase;
+  padding:.4rem .7rem; transform:rotate(-6deg); box-shadow:4px 4px 0 var(--navy);
+}
+.rd-wave{ position:absolute; bottom:12%; right:7%; width:clamp(110px,20vw,170px); height:32px; color:var(--yellow); }
+
+/* Fotos: Cyan-Overprint für Riso-Duotone-Anmutung + treated look */
+html[data-design="bold"] .gallery-slide::before{
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:var(--cyan); mix-blend-mode:screen; opacity:.15;
+}
+html[data-design="bold"] .slide-bg{ filter:grayscale(.35) contrast(1.14) saturate(1.15); }
+
+/* kräftigere Print-Schatten */
+html[data-design="bold"] .drawer-btn{ box-shadow:5px 5px 0 var(--navy); }
+html[data-design="bold"] .voice{ box-shadow:7px 7px 0 var(--yellow); }
+
+@media (prefers-reduced-motion:no-preference){
+  html[data-design="bold"] .rd-y{ animation:rdbob 7s ease-in-out infinite; }
+  html[data-design="bold"] .rd-c{ animation:rdbob 7s ease-in-out infinite -3s; }
+  @keyframes rdbob{ 50%{ transform:translateY(-12px); } }
+}
+
 </style>
 </head>
 <body>
-<script>try{var d=localStorage.getItem('design')||'quiet';document.documentElement.setAttribute('data-design',d);}catch(e){document.documentElement.setAttribute('data-design','quiet');}</script>
+<script>try{var DDV='b1';if(localStorage.getItem('designDefaultV')!==DDV){localStorage.setItem('designDefaultV',DDV);localStorage.setItem('design','bold');}var d=localStorage.getItem('design')||'bold';document.documentElement.setAttribute('data-design',d);}catch(e){document.documentElement.setAttribute('data-design','bold');}</script>
 <button id="design-toggle" type="button" aria-pressed="false" aria-label="Design umschalten: Quiet Precision oder Bold Riso" onclick="toggleDesign()"><span class="dt-opt" data-d="quiet">QP</span><span class="dt-sep" aria-hidden="true">·</span><span class="dt-opt" data-d="bold">RISO</span></button>
 <div class="grain-overlay" aria-hidden="true"></div>
 <script>
 function setDesign(d){ if(d!=='bold'&&d!=='quiet')d='quiet'; document.documentElement.setAttribute('data-design',d); try{localStorage.setItem('design',d);}catch(e){} var t=document.getElementById('design-toggle'); if(t){ t.setAttribute('aria-pressed', d==='bold'?'true':'false'); var os=t.querySelectorAll('.dt-opt'); for(var i=0;i<os.length;i++) os[i].classList.toggle('on', os[i].getAttribute('data-d')===d); } }
 function toggleDesign(){ setDesign(document.documentElement.getAttribute('data-design')==='bold'?'quiet':'bold'); }
-setDesign(document.documentElement.getAttribute('data-design')||'quiet');
+setDesign(document.documentElement.getAttribute('data-design')||'bold');
 </script>
 <a class="skip-link" href="#main">Zum Inhalt</a>
 
@@ -1814,7 +1874,8 @@ setDesign(document.documentElement.getAttribute('data-design')||'quiet');
 <div id="stop-counter"></div>
 
 <!-- INTRO -->
-<section class="intro" id="main" role="main">
+<section class="intro" id="main" role="main">
+  <div class="riso-decor" aria-hidden="true"><span class="rd-blob rd-y"></span><span class="rd-blob rd-c"></span><span class="rd-blob rd-p"></span><span class="rd-ht"></span><span class="rd-sticker">Veldjournaal ’26</span><svg class="rd-wave" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0 22 Q25 6 50 22 T100 22 T150 22 T200 22" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></div>
   <header class="intro-top">
     <span class="intro-kicker">Feldjournal · Rotterdam · Niederlande</span>
   </header>
