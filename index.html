@@ -1718,18 +1718,23 @@ html[data-design="bold"] .intro-top,
 html[data-design="bold"] .intro-hero,
 html[data-design="bold"] .intro-foot{ position:relative; z-index:2; }
 .rd-blob{ position:absolute; border-radius:50%; }
-.rd-y{ width:clamp(78px,14vw,150px); aspect-ratio:1; background:var(--yellow); top:8%; right:14%; box-shadow:5px 5px 0 var(--navy); }
-.rd-c{ width:clamp(46px,8vw,82px); aspect-ratio:1; background:var(--cyan); bottom:23%; left:6%; box-shadow:5px 5px 0 var(--navy); }
-.rd-p{ width:clamp(120px,30vw,220px); aspect-ratio:1; top:34%; right:-7%; color:var(--pink);
+.rd-y{ width:clamp(78px,14vw,150px); aspect-ratio:1; background:var(--yellow); top:4%; right:6%; box-shadow:5px 5px 0 var(--navy); }
+.rd-c{ width:clamp(46px,8vw,82px); aspect-ratio:1; background:var(--cyan); top:3%; left:5%; box-shadow:5px 5px 0 var(--navy); }
+.rd-p{ width:clamp(120px,30vw,220px); aspect-ratio:1; top:20%; right:-9%; color:var(--pink);
        background-image:radial-gradient(currentColor 30%,transparent 32%); background-size:15px 15px; opacity:.85; }
-.rd-ht{ position:absolute; top:-4%; left:-5%; width:55%; height:42%;
+.rd-ht{ position:absolute; top:-4%; left:-5%; width:46%; height:20%;
         background-image:radial-gradient(var(--navy) 17%,transparent 19%); background-size:14px 14px; opacity:.07; }
 .rd-sticker{
-  position:absolute; top:57%; left:6%; background:var(--pink); color:var(--paper-0);
+  position:absolute; top:31%; right:11%; background:var(--pink); color:var(--paper-0);
   font-family:var(--font-mono); font-size:.56rem; letter-spacing:.12em; text-transform:uppercase;
   padding:.4rem .7rem; transform:rotate(-6deg); box-shadow:4px 4px 0 var(--navy);
 }
-.rd-wave{ position:absolute; bottom:12%; right:7%; width:clamp(110px,20vw,170px); height:32px; color:var(--yellow); }
+.rd-wave{ position:absolute; top:44%; right:22%; width:clamp(110px,20vw,170px); height:32px; color:var(--yellow); }
+@media (max-width:640px){
+  .rd-y{ top:1%; right:4%; }
+  .rd-c{ top:1%; left:4%; }
+  .rd-p, .rd-sticker, .rd-wave{ display:none; }
+}
 
 /* Fotos: Cyan-Overprint für Riso-Duotone-Anmutung + treated look */
 html[data-design="bold"] .gallery-slide::before{
@@ -1748,6 +1753,49 @@ html[data-design="bold"] .voice{ box-shadow:7px 7px 0 var(--yellow); }
   @keyframes rdbob{ 50%{ transform:translateY(-12px); } }
 }
 
+
+/* ══════════ BOLD v2 — Farbbänder, echtes Foto-Duotone, mehr Collage ══════════ */
+
+/* alten CSS-Tint entfernen (jetzt echte Duotone-Dateien via syncPhotoDesign) */
+html[data-design="bold"] .gallery-slide::before{ content:none; }
+html[data-design="bold"] .slide-bg{ filter:none; }
+
+/* ── Farbblock-Bänder im Eintrag ── */
+html[data-design="bold"] .modal-body{ overflow-x:clip; position:relative; }
+html[data-design="bold"] .jl-head{
+  background:var(--navy); color:var(--paper-0); display:block;
+  margin-left:-1.5rem; margin-right:-1.5rem; padding:.5rem 1.5rem; letter-spacing:.12em;
+}
+html[data-design="bold"] .voices{ background:#F6E1EA; margin:1.7rem -1.5rem; padding:0 1.5rem 1.4rem; }
+html[data-design="bold"] .steckbrief{ background:#DCEEF3; margin:1.7rem -1.5rem; padding:0 1.5rem 1.4rem; }
+html[data-design="bold"] .voices .jl-head,
+html[data-design="bold"] .steckbrief .jl-head{ margin-bottom:1.1rem; }
+@media(min-width:768px){
+  html[data-design="bold"] .jl-head{ margin-left:-2rem; margin-right:-2rem; padding-left:2rem; padding-right:2rem; }
+  html[data-design="bold"] .voices, html[data-design="bold"] .steckbrief{ margin-left:-2rem; margin-right:-2rem; padding-left:2rem; padding-right:2rem; }
+}
+
+/* Footer als Navy-Band */
+html[data-design="bold"] .colophon{ background:var(--navy); }
+html[data-design="bold"] .colophon dt,
+html[data-design="bold"] .colophon-note{ color:var(--cyan); }
+html[data-design="bold"] .colophon dd,
+html[data-design="bold"] .colophon a{ color:var(--paper-0); }
+html[data-design="bold"] .colophon-motto{ color:var(--yellow); -webkit-text-stroke:1px var(--paper-0); }
+
+/* ── Collage im Eintrag: gedrehte, gerahmte Fotos + Cube-Motiv + Punktlinien ── */
+html[data-design="bold"] .entry-figure img{ border:3px solid var(--navy); box-shadow:6px 6px 0 var(--cyan); transform:rotate(-1.3deg); }
+html[data-design="bold"] .entry-figure:nth-of-type(even) img{ transform:rotate(1.3deg); box-shadow:6px 6px 0 var(--pink); }
+html[data-design="bold"] .mic-divider,
+html[data-design="bold"] .modal-body hr{ border:none; border-top:3px dotted var(--navy); height:0; opacity:1; }
+
+/* Cube-Motiv (Kubuswoningen) unten rechts im Eintrag */
+html[data-design="bold"] .modal-body::after{
+  content:""; position:absolute; bottom:1.1rem; right:1rem; width:104px; height:56px; z-index:0; pointer-events:none; opacity:.9;
+  background-repeat:no-repeat; background-size:contain; background-position:bottom right;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 74'%3E%3Cg stroke='%2312284B' stroke-width='3' stroke-linejoin='round'%3E%3Crect x='-17' y='-17' width='34' height='34' fill='%23FFD21E' transform='translate(28 38) rotate(45)'/%3E%3Crect x='-20' y='-20' width='40' height='40' fill='%2316B7D6' transform='translate(74 32) rotate(45)'/%3E%3Crect x='-15' y='-15' width='30' height='30' fill='%23EC3F8C' transform='translate(114 40) rotate(45)'/%3E%3C/g%3E%3C/svg%3E");
+}
+
 </style>
 </head>
 <body>
@@ -1755,7 +1803,13 @@ html[data-design="bold"] .voice{ box-shadow:7px 7px 0 var(--yellow); }
 <button id="design-toggle" type="button" aria-pressed="false" aria-label="Design umschalten: Quiet Precision oder Bold Riso" onclick="toggleDesign()"><span class="dt-opt" data-d="quiet">QP</span><span class="dt-sep" aria-hidden="true">·</span><span class="dt-opt" data-d="bold">RISO</span></button>
 <div class="grain-overlay" aria-hidden="true"></div>
 <script>
-function setDesign(d){ if(d!=='bold'&&d!=='quiet')d='quiet'; document.documentElement.setAttribute('data-design',d); try{localStorage.setItem('design',d);}catch(e){} var t=document.getElementById('design-toggle'); if(t){ t.setAttribute('aria-pressed', d==='bold'?'true':'false'); var os=t.querySelectorAll('.dt-opt'); for(var i=0;i<os.length;i++) os[i].classList.toggle('on', os[i].getAttribute('data-d')===d); } }
+function setDesign(d){ if(d!=='bold'&&d!=='quiet')d='quiet'; document.documentElement.setAttribute('data-design',d); try{localStorage.setItem('design',d);}catch(e){} var t=document.getElementById('design-toggle'); if(t){ t.setAttribute('aria-pressed', d==='bold'?'true':'false'); var os=t.querySelectorAll('.dt-opt'); for(var i=0;i<os.length;i++) os[i].classList.toggle('on', os[i].getAttribute('data-d')===d); } if(typeof syncPhotoDesign==='function'){ try{ syncPhotoDesign(); }catch(e){} } }
+function syncPhotoDesign(){
+  var bold=document.documentElement.getAttribute('data-design')==='bold';
+  function swap(v){ return bold ? v.replace(/img\/(?!duo\/)/g,'img/duo/') : v.replace(/img\/duo\//g,'img/'); }
+  document.querySelectorAll('.slide-bg').forEach(function(el){ var bg=el.style.backgroundImage||''; if(bg.indexOf('img/')<0) return; var nb=swap(bg); if(nb!==bg) el.style.backgroundImage=nb; });
+  document.querySelectorAll('.tn-frame img, .entry-figure img').forEach(function(im){ ['src','data-src'].forEach(function(a){ var s=im.getAttribute(a); if(!s||s.indexOf('img/')<0) return; var ns=swap(s); if(ns!==s) im.setAttribute(a,ns); }); });
+}
 function toggleDesign(){ setDesign(document.documentElement.getAttribute('data-design')==='bold'?'quiet':'bold'); }
 setDesign(document.documentElement.getAttribute('data-design')||'bold');
 </script>
@@ -4564,6 +4618,7 @@ function openModal(idx, _placeObj){
   var cnt = document.getElementById('gal-counter');
   if (cnt) { cnt.style.display = singleSlide ? 'none' : 'block'; cnt.textContent = '1 / ' + galLen; }
 
+  if(typeof syncPhotoDesign==='function'){ try{ syncPhotoDesign(); }catch(e){} }
   var _m = document.getElementById('modal');
   var _wasOpen = _m.classList.contains('open');   /* Eintragswechsel bei offenem Modal? */
   _m.classList.add('open');
