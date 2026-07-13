@@ -1800,21 +1800,151 @@ html[data-design="bold"] .modal-body::after{
 /* Loader bleibt gelb (Kubuswoningen-Verweis) auch im Bold-Design */
 html[data-design="bold"] .cube-fill{ fill:var(--yellow); }
 html[data-design="bold"] .loader-flood{ background:var(--yellow); }
+
+/* ══════════════════════════════════════════════════════════════════
+   PRUNK — drittes Design (data-design="prunk"). Rokoko-Exzess-Maximalismus:
+   Schwarz + Neon-Gelb + Magenta, gelbe Klebeband-Headlines, Riesen-Script,
+   Magenta-Duotone-Bilder, gelbe Label-Kaesten. Sehr laut, sehr extrem.
+══════════════════════════════════════════════════════════════════ */
+html[data-design="prunk"]{
+  --paper-0:#0D0B0C; --paper-1:#171416; --paper-2:#221E20; --paper-3:#2E2A2C;
+  --ink-1:#FDFDF5; --ink-2:#E9E9DD; --ink-3:#B9B9AE; --ink-4:#7A7A72;
+  --accent:#EDFF00; --accent-700:#C8D900; --accent-fg:#0D0B0C;
+  --cream:#0D0B0C; --off:#171416; --sand:#171416; --white:#FDFDF5;
+  --font-display:"Arial Black","Helvetica Neue",Arial,sans-serif;
+  --magenta:#F5219E; --neon:#EDFF00; --navy:#0D0B0C;
+}
+html[data-design="prunk"] body{ background:var(--paper-0); color:var(--ink-1); }
+html[data-design="prunk"] .grain-overlay{ display:none; }
+html[data-design="prunk"] body::before{ display:none; }
+
+/* Loader: schwarz, Neon-Wuerfel, Magenta-Flut */
+html[data-design="prunk"] .cube-fill{ fill:var(--neon); }
+html[data-design="prunk"] .loader-flood{ background:var(--magenta); }
+html[data-design="prunk"] .loader-title{ font-family:var(--font-display); font-weight:900; }
+
+/* ── Hero: Wortmarke als gelbes Klebeband, gedreht ── */
+html[data-design="prunk"] .intro{ background:var(--paper-0); }
+html[data-design="prunk"] .intro-hero::before{ display:none; }
+html[data-design="prunk"] .intro-title{
+  font-family:var(--font-display); font-weight:900; letter-spacing:-.02em; line-height:.9;
+  color:#0D0B0C; -webkit-text-stroke:0; text-stroke:0;
+  background:var(--neon); display:inline-block; padding:.03em .16em;
+  transform:rotate(-3deg); box-shadow:12px 12px 0 var(--magenta);
+  font-size:clamp(3.4rem,15vw,8.5rem);
+}
+html[data-design="prunk"] .intro-kicker{
+  display:inline-block; background:var(--neon); color:#0D0B0C; font-weight:800;
+  padding:.3rem .55rem; letter-spacing:.08em; transform:rotate(-1.5deg); box-shadow:none;
+}
+html[data-design="prunk"] .intro-sub{ color:var(--ink-1); font-weight:600; }
+html[data-design="prunk"] .intro-accent{ height:10px; background:var(--magenta); box-shadow:none; }
+html[data-design="prunk"] .intro-meta{ color:var(--neon); }
+html[data-design="prunk"] .intro-meta dt{ color:var(--magenta); }
+html[data-design="prunk"] .scroll-cue{ color:var(--neon); }
+
+/* Riesen-Script im Hintergrund (magenta/neon, kursiv) */
+.prunk-decor{ display:none; }
+html[data-design="prunk"] .prunk-decor{ display:block; position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+html[data-design="prunk"] .intro-top,
+html[data-design="prunk"] .intro-hero,
+html[data-design="prunk"] .intro-foot{ position:relative; z-index:2; }
+.pk-script{ position:absolute; font-family:Georgia,'Times New Roman',serif; font-style:italic; font-weight:700; white-space:nowrap; }
+.pk-s1{ font-size:30vw; top:34%; left:-8%; color:var(--magenta); opacity:.9; transform:rotate(-9deg); }
+.pk-s2{ font-size:18vw; bottom:2%; right:-12%; color:var(--neon); opacity:.35; transform:rotate(5deg); }
+.pk-band{ position:absolute; top:12%; right:-20%; width:80%; height:8%; background:var(--neon); transform:rotate(-4deg); opacity:.9; }
+
+/* ── Karte: Neon-Schwarzplan ── */
+html[data-design="prunk"] .city-block{ fill:var(--neon); stroke:#0D0B0C; }
+html[data-design="prunk"] .water-fill{ fill:#171416; stroke:var(--magenta); }
+html[data-design="prunk"] .stop-ring{ stroke:var(--magenta); opacity:.6; }
+html[data-design="prunk"] .route-trail{ stroke-dasharray:6 5; }
+html[data-design="prunk"] .stop-dot{ fill:var(--magenta); }
+html[data-design="prunk"] .stop-dot.active-dot{ fill:var(--neon); stroke:#0D0B0C; }
+html[data-design="prunk"] .stop-dot.visited{ fill:var(--ink-3); }
+html[data-design="prunk"] .stop-lbl{ fill:var(--neon); }
+html[data-design="prunk"] .break-dot{ fill:#0D0B0C; stroke:var(--neon); }
+
+/* ── Drawer ── */
+html[data-design="prunk"] #drawer{ border-top:4px solid var(--neon); }
+html[data-design="prunk"] .drawer-num{ background:var(--magenta); color:#0D0B0C; }
+html[data-design="prunk"] .drawer-name{ font-family:var(--font-display); font-weight:900; color:var(--ink-1); }
+html[data-design="prunk"] .drawer-sub{ color:var(--ink-3); }
+html[data-design="prunk"] .drawer-btn{ border:2.5px solid var(--neon); background:var(--magenta); color:#0D0B0C; box-shadow:5px 5px 0 var(--neon); font-weight:800; }
+html[data-design="prunk"] .drawer-btn:hover{ background:var(--neon); color:#0D0B0C; box-shadow:5px 5px 0 var(--magenta); }
+
+/* ── Modal-Eintrag ── */
+html[data-design="prunk"] .modal-num{ background:var(--neon); color:#0D0B0C; }
+html[data-design="prunk"] .entry-stamp{ background:var(--neon); color:#0D0B0C; box-shadow:4px 4px 0 var(--magenta); }
+html[data-design="prunk"] .jl-head{ background:var(--neon); color:#0D0B0C; }
+html[data-design="prunk"] .sb-row dt,
+html[data-design="prunk"] .fact-lbl,
+html[data-design="prunk"] .mic-fact-lbl{ background:var(--magenta); color:#0D0B0C; }
+html[data-design="prunk"] .voices{ background:#1B0E16; }
+html[data-design="prunk"] .steckbrief{ background:#111a1c; }
+html[data-design="prunk"] .voice{ border:3px solid var(--neon); background:var(--paper-1); box-shadow:7px 7px 0 var(--magenta); }
+html[data-design="prunk"] .voice::after{ background:var(--paper-1); border-right-color:var(--neon); border-bottom-color:var(--neon); }
+html[data-design="prunk"] .voice cite{ color:var(--magenta); }
+html[data-design="prunk"] .modal-body::after{ opacity:.55; }
+
+/* Bilder: Magenta-Duotone via Filter (prunk nutzt Farbbilder, kein Navy-Duo) */
+html[data-design="prunk"] .slide-bg,
+html[data-design="prunk"] .entry-figure img,
+html[data-design="prunk"] .tn-frame img{
+  filter:grayscale(1) contrast(1.15) brightness(1.02) sepia(1) hue-rotate(276deg) saturate(6);
+}
+html[data-design="prunk"] .gallery-slide{ box-shadow:inset 0 0 0 3px var(--neon); }
+html[data-design="prunk"] .entry-figure img{ border:3px solid var(--neon); box-shadow:6px 6px 0 var(--magenta); }
+html[data-design="prunk"] .slide-cap, html[data-design="prunk"] .slide-cap a{ background:var(--neon); color:#0D0B0C; }
+html[data-design="prunk"] .slide-tmp{ background:var(--magenta); color:#0D0B0C; }
+html[data-design="prunk"] .tn-frame{ box-shadow:inset 0 0 0 3px var(--neon); }
+
+/* ── Orte-Panel ── */
+html[data-design="prunk"] .pp-sheet{ border-top:4px solid var(--neon); }
+html[data-design="prunk"] .pp-num{ color:var(--magenta); font-weight:800; }
+html[data-design="prunk"] .pp-section-title{ color:var(--neon); }
+html[data-design="prunk"] .pp-name{ color:var(--ink-1); }
+html[data-design="prunk"] .pp-sub{ color:var(--ink-3); }
+html[data-design="prunk"] .pp-item.pp-active{ background:var(--paper-2); }
+
+/* ── Nav-Buttons als Neon-Pillen ── */
+html[data-design="prunk"] #places-btn,
+html[data-design="prunk"] #tour3d-btn,
+html[data-design="prunk"] #track-btn,
+html[data-design="prunk"] .entry-3d-btn{
+  border:2px solid var(--neon); background:var(--paper-1); color:var(--neon);
+  box-shadow:3px 3px 0 var(--magenta); font-weight:700;
+}
+html[data-design="prunk"] #nav-crumb{ color:var(--neon); }
+
+/* ── Footer ── */
+html[data-design="prunk"] .colophon{ background:#0D0B0C; color:var(--ink-1); }
+html[data-design="prunk"] .colophon dt{ color:var(--magenta); }
+html[data-design="prunk"] .colophon-note{ color:var(--ink-3); }
+html[data-design="prunk"] .colophon dd, html[data-design="prunk"] .colophon a{ color:var(--ink-1); }
+html[data-design="prunk"] .colophon-motto{ color:var(--neon); -webkit-text-stroke:0; font-family:var(--font-display); font-weight:900; }
+html[data-design="prunk"] .colophon-mark{ background:var(--magenta); }
+
+/* ── Umschalter unter prunk ── */
+html[data-design="prunk"] #design-toggle{ background:var(--paper-1); border:2px solid var(--neon); box-shadow:3px 3px 0 var(--magenta); color:var(--ink-3); }
+html[data-design="prunk"] #design-toggle .dt-opt.on{ color:var(--neon); }
+html[data-design="prunk"] #design-toggle .dt-sep{ color:var(--ink-4); }
+
 </style>
 </head>
 <body>
 <script>try{var DDV='b1';if(localStorage.getItem('designDefaultV')!==DDV){localStorage.setItem('designDefaultV',DDV);localStorage.setItem('design','bold');}var d=localStorage.getItem('design')||'bold';document.documentElement.setAttribute('data-design',d);}catch(e){document.documentElement.setAttribute('data-design','bold');}</script>
-<button id="design-toggle" type="button" aria-pressed="false" aria-label="Design umschalten: Quiet Precision oder Bold Riso" onclick="toggleDesign()"><span class="dt-opt" data-d="quiet">QP</span><span class="dt-sep" aria-hidden="true">·</span><span class="dt-opt" data-d="bold">RISO</span></button>
+<button id="design-toggle" type="button" aria-pressed="false" aria-label="Design umschalten: Quiet Precision, Bold Riso oder Prunk" onclick="toggleDesign()"><span class="dt-opt" data-d="quiet">QP</span><span class="dt-sep" aria-hidden="true">·</span><span class="dt-opt" data-d="bold">RISO</span><span class="dt-sep" aria-hidden="true">·</span><span class="dt-opt" data-d="prunk">PRUNK</span></button>
 <div class="grain-overlay" aria-hidden="true"></div>
 <script>
-function setDesign(d){ if(d!=='bold'&&d!=='quiet')d='quiet'; document.documentElement.setAttribute('data-design',d); try{localStorage.setItem('design',d);}catch(e){} var t=document.getElementById('design-toggle'); if(t){ t.setAttribute('aria-pressed', d==='bold'?'true':'false'); var os=t.querySelectorAll('.dt-opt'); for(var i=0;i<os.length;i++) os[i].classList.toggle('on', os[i].getAttribute('data-d')===d); } if(typeof syncPhotoDesign==='function'){ try{ syncPhotoDesign(); }catch(e){} } }
+function setDesign(d){ if(d!=='bold'&&d!=='quiet'&&d!=='prunk')d='quiet'; document.documentElement.setAttribute('data-design',d); try{localStorage.setItem('design',d);}catch(e){} var t=document.getElementById('design-toggle'); if(t){ t.setAttribute('aria-pressed', d==='bold'?'true':'false'); var os=t.querySelectorAll('.dt-opt'); for(var i=0;i<os.length;i++) os[i].classList.toggle('on', os[i].getAttribute('data-d')===d); } if(typeof syncPhotoDesign==='function'){ try{ syncPhotoDesign(); }catch(e){} } }
 function syncPhotoDesign(){
   var bold=document.documentElement.getAttribute('data-design')==='bold';
   function swap(v){ return bold ? v.replace(/img\/(?!duo\/)/g,'img/duo/') : v.replace(/img\/duo\//g,'img/'); }
   document.querySelectorAll('.slide-bg').forEach(function(el){ var bg=el.style.backgroundImage||''; if(bg.indexOf('img/')<0) return; var nb=swap(bg); if(nb!==bg) el.style.backgroundImage=nb; });
   document.querySelectorAll('.tn-frame img, .entry-figure img').forEach(function(im){ ['src','data-src'].forEach(function(a){ var s=im.getAttribute(a); if(!s||s.indexOf('img/')<0) return; var ns=swap(s); if(ns!==s) im.setAttribute(a,ns); }); });
 }
-function toggleDesign(){ setDesign(document.documentElement.getAttribute('data-design')==='bold'?'quiet':'bold'); }
+function toggleDesign(){ var o=['quiet','bold','prunk'],c=document.documentElement.getAttribute('data-design'),i=o.indexOf(c); setDesign(o[(i+1)%o.length]); }
 setDesign(document.documentElement.getAttribute('data-design')||'bold');
 </script>
 <a class="skip-link" href="#main">Zum Inhalt</a>
@@ -1933,6 +2063,7 @@ setDesign(document.documentElement.getAttribute('data-design')||'bold');
 
 <!-- INTRO -->
 <section class="intro" id="main" role="main">
+  <div class="prunk-decor" aria-hidden="true"><span class="pk-band"></span><span class="pk-script pk-s1">wijnhaven</span><span class="pk-script pk-s2">rotterdam</span></div>
   <div class="riso-decor" aria-hidden="true"><span class="rd-blob rd-y"></span><span class="rd-blob rd-c"></span><span class="rd-blob rd-p"></span><span class="rd-ht"></span><span class="rd-sticker">Veldjournaal ’26</span><svg class="rd-wave" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0 22 Q25 6 50 22 T100 22 T150 22 T200 22" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></div>
   <header class="intro-top">
     <span class="intro-kicker">Feldjournal · Rotterdam · Niederlande</span>
