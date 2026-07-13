@@ -1540,9 +1540,165 @@ html:has(#route-select.show){ overflow:hidden; }
 .rsm-route.active{ stroke:#0A0A0A; stroke-width:7; }
 .rsm-dot{ fill:var(--accent); stroke:#0A0A0A; stroke-width:2; }
 @media (prefers-reduced-motion:reduce){ .rsm-route{ transition:none; } }
+
+/* ══════════════════════════════════════════════════════════════════
+   BOLD RISO — zweites Design, aktiv via html[data-design="bold"].
+   Der Token-Override faerbt das token-getriebene UI automatisch um;
+   danach gezielte Riso-Behandlungen (Korn, Halbton, Print-Versatz,
+   dicke Raender, Sprechblasen). „quiet" bleibt der Default & unberuehrt.
+══════════════════════════════════════════════════════════════════ */
+html[data-design="bold"]{
+  --paper-0:#F5EEDD; --paper-1:#EEE3CB; --paper-2:#E5D8BA; --paper-3:#D7C6A0;
+  --ink-1:#12284B; --ink-2:#2C4067; --ink-3:#5C6E8B; --ink-4:#9AA6BC;
+  --accent:#EC3F8C; --accent-700:#C82A72; --accent-fg:#FDF6E7;
+  --cream:#F5EEDD; --off:#EEE3CB; --sand:#EEE3CB; --white:#F5EEDD;
+  --font-display:"Arial Black","Helvetica Neue",Arial,sans-serif;
+  /* Riso-Zweitakzente fuer Bold-only-Regeln */
+  --cyan:#16B7D6; --yellow:#FFD21E; --pink:#EC3F8C; --navy:#12284B;
+}
+html[data-design="bold"] body{ background:var(--paper-0); }
+
+/* ── Korn (nur Bold) ── */
+.grain-overlay{ display:none; }
+html[data-design="bold"] .grain-overlay{
+  display:block; position:fixed; inset:0; z-index:9990; pointer-events:none;
+  opacity:.4; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* ── Loader ── */
+html[data-design="bold"] .loader-title{ font-family:Impact,'Arial Narrow',sans-serif; letter-spacing:.01em; }
+
+/* ── Intro / Hero ── */
+html[data-design="bold"] .intro{ position:relative; }
+html[data-design="bold"] .intro-hero::before{
+  content:""; position:absolute; inset:-4vh -6vw; z-index:0; pointer-events:none;
+  background-image:radial-gradient(var(--navy) 19%, transparent 21%);
+  background-size:13px 13px; opacity:.06;
+}
+html[data-design="bold"] .intro-title{
+  font-family:Impact,'Haettenschweiler','Arial Narrow',sans-serif; font-weight:400; letter-spacing:0;
+  color:var(--cyan);
+  -webkit-text-stroke:2.5px var(--navy); text-stroke:2.5px var(--navy);
+  text-shadow:7px 7px 0 var(--pink);
+}
+html[data-design="bold"] .intro-accent{ height:8px; background:var(--yellow); box-shadow:3px 3px 0 var(--navy); }
+html[data-design="bold"] .intro-sub{ font-weight:600; }
+html[data-design="bold"] .intro-kicker,
+html[data-design="bold"] .intro-meta{ color:var(--pink); }
+
+/* ── Karte / Schwarzplan ── */
+html[data-design="bold"] .city-block{ fill:var(--navy); stroke:var(--paper-0); }
+html[data-design="bold"] .water-fill{ fill:#D8E9EE; stroke:var(--cyan); }
+html[data-design="bold"] .stop-ring{ stroke:var(--pink); opacity:.55; }
+html[data-design="bold"] .route-trail{ stroke-dasharray:6 5; }
+
+/* ── Drawer (Bottom-Sheet) ── */
+html[data-design="bold"] #drawer{ border-top:4px solid var(--navy); }
+html[data-design="bold"] .drawer-num{
+  display:inline-block; background:var(--navy); color:var(--paper-0);
+  padding:.15rem .45rem; letter-spacing:.12em;
+}
+html[data-design="bold"] .drawer-name{ font-family:var(--font-display); font-weight:900; }
+html[data-design="bold"] .drawer-btn{
+  border:2.5px solid var(--navy); background:var(--yellow); color:var(--navy);
+  box-shadow:4px 4px 0 var(--navy); font-weight:800;
+}
+html[data-design="bold"] .drawer-btn:hover{ background:var(--pink); color:var(--paper-0); }
+
+/* ── Modal-Eintrag ── */
+html[data-design="bold"] .modal-num{
+  display:inline-block; background:var(--cyan); color:var(--navy);
+  padding:.15rem .5rem; font-weight:700;
+}
+html[data-design="bold"] .entry-stamp{
+  display:inline-block; background:var(--pink); color:var(--paper-0);
+  padding:.2rem .5rem; transform:rotate(-2deg); box-shadow:3px 3px 0 var(--navy);
+}
+html[data-design="bold"] .jl-head{ color:var(--pink); }
+
+/* Steckbrief als Chips */
+html[data-design="bold"] .sb-row dt,
+html[data-design="bold"] .fact-lbl,
+html[data-design="bold"] .mic-fact-lbl{
+  background:var(--navy); color:var(--paper-0); padding:.12rem .4rem; display:inline-block;
+}
+html[data-design="bold"] .fact-val,
+html[data-design="bold"] .sb-row dd,
+html[data-design="bold"] .mic-fact-val{ font-weight:800; }
+
+/* Stimmen als Sprechblasen */
+html[data-design="bold"] .voice{
+  position:relative; border:3px solid var(--navy); background:var(--paper-0);
+  box-shadow:6px 6px 0 var(--yellow); padding:1rem 1.1rem;
+}
+html[data-design="bold"] .voice::after{
+  content:""; position:absolute; left:28px; bottom:-15px; width:20px; height:20px;
+  background:var(--paper-0); border-right:3px solid var(--navy); border-bottom:3px solid var(--navy);
+  transform:rotate(45deg);
+}
+html[data-design="bold"] .voice cite{ color:var(--pink); }
+
+/* Galerie-Fotos: Rahmen + Halbton-Schleier */
+html[data-design="bold"] .gallery-slide{ box-shadow:inset 0 0 0 3px var(--navy); }
+html[data-design="bold"] .slide-bg{ filter:saturate(1.15) contrast(1.06); }
+html[data-design="bold"] .gallery-slide::after{
+  content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+  background-image:radial-gradient(var(--navy) 22%, transparent 24%);
+  background-size:9px 9px; opacity:.12; mix-blend-mode:multiply;
+}
+html[data-design="bold"] .slide-cap, html[data-design="bold"] .slide-cap a{ background:var(--navy); color:var(--paper-0); }
+html[data-design="bold"] .slide-tmp{ background:var(--pink); color:var(--paper-0); }
+
+/* Then/Now-Slider */
+html[data-design="bold"] .tn-frame{ box-shadow:inset 0 0 0 3px var(--navy); }
+
+/* Orte-Panel */
+html[data-design="bold"] .pp-sheet{ border-top:4px solid var(--navy); }
+html[data-design="bold"] .pp-num{ color:var(--pink); font-weight:800; }
+html[data-design="bold"] .pp-section-title{ color:var(--pink); }
+
+/* Nav-Buttons als Riso-Pillen */
+html[data-design="bold"] #places-btn,
+html[data-design="bold"] #tour3d-btn,
+html[data-design="bold"] #track-btn,
+html[data-design="bold"] .entry-3d-btn{
+  border:2px solid var(--navy); background:var(--paper-0); color:var(--navy);
+  box-shadow:3px 3px 0 var(--pink); font-weight:700;
+}
+
+/* Footer / Colophon */
+html[data-design="bold"] .colophon-motto{ font-family:var(--font-display); font-weight:900; color:var(--cyan); -webkit-text-stroke:1px var(--navy); }
+html[data-design="bold"] .colophon-mark{ background:var(--pink); }
+
+/* ── Design-Umschalter ── */
+#design-toggle{
+  position:fixed; top:calc(max(env(safe-area-inset-top),8px) + 48px); right:12px; z-index:341;
+  display:inline-flex; align-items:center; gap:.28rem;
+  background:rgba(255,255,255,.92); border:1px solid rgba(0,0,0,.12);
+  padding:.42rem .62rem; cursor:pointer; min-height:34px;
+  font-family:var(--font-mono); font-size:.5rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--ink-3); -webkit-tap-highlight-color:transparent; user-select:none;
+}
+#design-toggle:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+#design-toggle .dt-opt.on{ color:var(--ink-1); font-weight:700; }
+#design-toggle .dt-sep{ color:var(--ink-4); }
+html[data-design="bold"] #design-toggle{
+  background:var(--paper-0); border:2px solid var(--navy); box-shadow:3px 3px 0 var(--pink);
+}
+html[data-design="bold"] #design-toggle .dt-opt.on{ color:var(--pink); }
+
 </style>
 </head>
-<body>
+<body>
+<script>try{var d=localStorage.getItem('design')||'quiet';document.documentElement.setAttribute('data-design',d);}catch(e){document.documentElement.setAttribute('data-design','quiet');}</script>
+<button id="design-toggle" type="button" aria-pressed="false" aria-label="Design umschalten: Quiet Precision oder Bold Riso" onclick="toggleDesign()"><span class="dt-opt" data-d="quiet">QP</span><span class="dt-sep" aria-hidden="true">·</span><span class="dt-opt" data-d="bold">RISO</span></button>
+<div class="grain-overlay" aria-hidden="true"></div>
+<script>
+function setDesign(d){ if(d!=='bold'&&d!=='quiet')d='quiet'; document.documentElement.setAttribute('data-design',d); try{localStorage.setItem('design',d);}catch(e){} var t=document.getElementById('design-toggle'); if(t){ t.setAttribute('aria-pressed', d==='bold'?'true':'false'); var os=t.querySelectorAll('.dt-opt'); for(var i=0;i<os.length;i++) os[i].classList.toggle('on', os[i].getAttribute('data-d')===d); } }
+function toggleDesign(){ setDesign(document.documentElement.getAttribute('data-design')==='bold'?'quiet':'bold'); }
+setDesign(document.documentElement.getAttribute('data-design')||'quiet');
+</script>
 <a class="skip-link" href="#main">Zum Inhalt</a>
 
 <!-- LOADER -->
