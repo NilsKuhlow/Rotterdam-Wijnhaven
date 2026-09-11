@@ -1239,7 +1239,9 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
    eigene Ladeanzeige (#tour3d-loading) und blenden die eingebauten aus. */
 #tour3d-mv::part(default-progress-bar) { display:none; }
 #tour3d-bar {
-  position:absolute; top:0; left:0; right:0;
+  /* z-index 2: Titel und Schliessen-Knopf bleiben auch waehrend des Ladens
+     sichtbar und bedienbar, die Ladeflaeche darf sie nicht zudecken. */
+  position:absolute; top:0; left:0; right:0; z-index:2;
   display:flex; align-items:center; justify-content:space-between;
   padding:max(.9rem, env(safe-area-inset-top)) 1.1rem .9rem; pointer-events:none;
 }
@@ -1260,11 +1262,33 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   transition:opacity .6s ease;
 }
 #tour3d-hint.faded { opacity:0; }
+/* Ladeanzeige: schmaler Balken mit schwarzer Kontur und gelber Fuellung.
+   Der Aufbau blendet das Modell ein, waehrend die Kamera aus der Draufsicht
+   in die Schraegansicht kippt (siehe _t3dReveal). */
+#tour3d-mv { opacity:0; transition:opacity .55s ease; }
+#tour3d.mv-in #tour3d-mv { opacity:1; }
 #tour3d-loading {
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  background:var(--paper-0); color:var(--ink-3);
+  background:var(--paper-0); color:var(--ink-3); transition:opacity .3s ease;
 }
-#tour3d-loading .mono { font-family:var(--font-mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; }
+#tour3d-loading.is-out { opacity:0; pointer-events:none; }
+.t3l-inner { width:min(20rem, 74vw); animation:t3lIn .45s cubic-bezier(.2,.7,.3,1) both; }
+@keyframes t3lIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+.t3l-label {
+  font-family:var(--font-mono); font-size:.62rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--ink-1); margin:0 0 .9rem;
+}
+.t3l-track { height:7px; border:1px solid var(--ink-1); background:var(--paper-0); position:relative; overflow:hidden; }
+.t3l-fill  { position:absolute; top:0; bottom:0; left:0; width:0; background:var(--accent);
+             transition:width .35s cubic-bezier(.4,0,.2,1); }
+.t3l-meta  { display:flex; justify-content:space-between; gap:1rem; margin-top:.6rem;
+             font-family:var(--font-mono); font-size:.55rem; letter-spacing:.14em;
+             text-transform:uppercase; color:var(--ink-3); }
+#t3dLoadPct { color:var(--ink-1); font-variant-numeric:tabular-nums; }
+@media (prefers-reduced-motion:reduce){
+  #tour3d-mv, #tour3d-loading, .t3l-fill { transition:none; }
+  .t3l-inner { animation:none; }
+}
 
 /* ── 3D: Abstrakt/Realistisch-Umschalter + Detail-Dialog + Fortschritt ── */
 .t3d-actions { display:flex; align-items:center; gap:.7rem; pointer-events:none; }
@@ -1807,7 +1831,16 @@ html:has(#route-select.show){ overflow:hidden; }
     </div>
   </div>
   <div id="tour3d-hint" data-i18n="tour3dHint">Drehen · Zoomen</div>
-  <div id="tour3d-loading"><span class="mono">3D wird geladen …</span></div>
+  <div id="tour3d-loading">
+    <div class="t3l-inner">
+      <div class="t3l-label" id="t3dLoadLabel">3D wird geladen</div>
+      <div class="t3l-track"><div class="t3l-fill" id="t3dLoadFill"></div></div>
+      <div class="t3l-meta">
+        <span id="t3dLoadNote">Photogrammetrie · 23,5 MB</span>
+        <span id="t3dLoadPct">0 %</span>
+      </div>
+    </div>
+  </div>
   <!-- Detail-Dialog: Groessen-Bestaetigung oder Download-Fallback (Inhalt per JS) -->
   <div id="tour3d-detail" hidden><div class="t3d-card" id="tour3d-detail-card"></div></div>
   <!-- Fortschritt beim Nachladen des realistischen Modells -->
@@ -4692,7 +4725,7 @@ var T3D_TXT = {
       appNote:'Lade die App, um dich auf der realistischen Karte in Ego-Perspektive zu bewegen. Plattform wählen:',
       gps:'Vor Ort',gpsWait:'Suche GPS',gpsOn:'Vor Ort',gpsErr:'Kein Signal',gpsNo:'Kein GPS',
       guided:'Geführt',free:'Frei',
-      sceneLoad:'3D wird geladen …',sceneErr:'3D konnte nicht geladen werden (Internet?)'},
+      sceneLoad:'3D wird geladen …',sceneNote:'Photogrammetrie · 23,5 MB',sceneErr:'3D konnte nicht geladen werden (Internet?)'},
   nl:{abstract:'Abstract',real:'Realistisch',load:'Laden',cancel:'Annuleren',
       title:'Realistisch model',note:'Getextureerd model laden. Wifi aanbevolen.',
       loading:'Realistisch model laadt',download:'Downloaden',soon:'Volgt',
@@ -4701,7 +4734,7 @@ var T3D_TXT = {
       appNote:'Download de app om je in ego-perspectief over de realistische kaart te bewegen. Kies platform:',
       gps:'Ter plaatse',gpsWait:'GPS zoeken',gpsOn:'Ter plaatse',gpsErr:'Geen signaal',gpsNo:'Geen GPS',
       guided:'Geleid',free:'Vrij',
-      sceneLoad:'3D wordt geladen …',sceneErr:'3D kon niet worden geladen (internet?)'},
+      sceneLoad:'3D wordt geladen …',sceneNote:'Fotogrammetrie · 23,5 MB',sceneErr:'3D kon niet worden geladen (internet?)'},
   en:{abstract:'Abstract',real:'Realistic',load:'Load',cancel:'Cancel',
       title:'Realistic model',note:'Load the textured model. Wi-Fi recommended.',
       loading:'Loading realistic model',download:'Download',soon:'Soon',
@@ -4710,7 +4743,7 @@ var T3D_TXT = {
       appNote:'Download the app to move around the realistic map in first person. Choose your platform:',
       gps:'On site',gpsWait:'Finding GPS',gpsOn:'On site',gpsErr:'No signal',gpsNo:'No GPS',
       guided:'Guided',free:'Free',
-      sceneLoad:'Loading 3D …',sceneErr:'3D could not be loaded (internet?)'}
+      sceneLoad:'Loading 3D …',sceneNote:'Photogrammetry · 23.5 MB',sceneErr:'3D could not be loaded (internet?)'}
 };
 function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
 
@@ -4725,38 +4758,102 @@ function openTour3D(){
   document.body.style.overflow = 'hidden';
   var mv = document.getElementById('tour3d-mv');
   var loading = document.getElementById('tour3d-loading');
-  var hint = document.getElementById('tour3d-hint');   /* Coachmark kurz zeigen, dann ausblenden */
-  if (hint){ hint.classList.remove('faded'); clearTimeout(window._t3dHintT); window._t3dHintT = setTimeout(function(){ hint.classList.add('faded'); }, 4500); }
 
   loadModelViewer();                       /* stellt sicher, dass <model-viewer> definiert ist */
-  if (mv.getAttribute('src')) return;      /* schon geladen → nur wieder einblenden */
+  if (mv.getAttribute('src')){ _t3dShowHint(); return; }   /* schon geladen, nur wieder einblenden */
 
-  function setLoad(txt){ loading.innerHTML = '<span class="mono">' + txt + '</span>'; }
-  setLoad(t3dt().sceneLoad || '3D wird geladen …');
+  /* Ladeanzeige beschriften und zuruecksetzen. Der Hinweis "Drehen, Zoomen"
+     kommt erst nach dem Aufbau, sonst ist er bei langsamer Verbindung
+     schon wieder weg, bevor ueberhaupt etwas zu sehen ist. */
+  var tx = t3dt();
+  _t3dText('t3dLoadLabel', (tx.sceneLoad || '3D wird geladen').replace(/\s*…\s*$/, ''));
+  _t3dText('t3dLoadNote', tx.sceneNote || '');
+  _t3dSetProgress(0);
+  loading.classList.remove('is-out');
   loading.style.display = 'flex';
+  var hint = document.getElementById('tour3d-hint');
+  if (hint){ hint.classList.add('faded'); clearTimeout(window._t3dHintT); }
 
   if (!_tourMvWired){
     _tourMvWired = true;
     mv.addEventListener('progress', function(e){
-      var p = Math.round(((e.detail && e.detail.totalProgress) || 0) * 100);
-      if (p < 100) setLoad((t3dt().sceneLoad || '3D wird geladen …') + '  ' + p + '%');
+      _t3dSetProgress((e.detail && e.detail.totalProgress) || 0);
     });
-    mv.addEventListener('load', function(){
-      loading.style.display = 'none';
-      /* Zoom sanft um die gerahmte Distanz begrenzen: nur ein wenig rein/raus.
-         Polarwinkel-Limits (15–89°) beibehalten, Drehachse bleibt durch
-         disable-pan in der Modellmitte. */
-      try {
-        var r = mv.getCameraOrbit().radius;
-        mv.minCameraOrbit = 'auto 15deg ' + (r * 0.55) + 'm';
-        mv.maxCameraOrbit = 'auto 80deg ' + (r * 1.7)  + 'm';   /* 80° statt 89°: kein Blick unter die Platte */
-      } catch(err){}
-    });
+    mv.addEventListener('load', function(){ _t3dReveal(mv); });
     mv.addEventListener('error', function(){
-      setLoad(t3dt().sceneErr || '3D konnte nicht geladen werden (Internet?)');
+      _t3dText('t3dLoadLabel', t3dt().sceneErr || '3D konnte nicht geladen werden');
+      _t3dSetProgress(0);
     });
   }
   mv.setAttribute('src', TOUR_MODEL_URL);
+}
+
+function _t3dText(id, s){ var el = document.getElementById(id); if (el) el.textContent = s; }
+
+function _t3dSetProgress(p){
+  var pct = Math.max(0, Math.min(100, Math.round((p || 0) * 100)));
+  var f = document.getElementById('t3dLoadFill');
+  if (f) f.style.width = pct + '%';
+  _t3dText('t3dLoadPct', pct + ' %');
+}
+
+/* Coachmark kurz zeigen, dann ausblenden. */
+function _t3dShowHint(){
+  var hint = document.getElementById('tour3d-hint');
+  if (!hint) return;
+  hint.classList.remove('faded');
+  clearTimeout(window._t3dHintT);
+  window._t3dHintT = setTimeout(function(){ hint.classList.add('faded'); }, 4500);
+}
+
+/* Aufbau der 3D-Ansicht. Die Kamera startet in der Draufsicht, also im selben
+   Blick wie der Schwarzplan der Route, und kippt dann in die gerahmte
+   Schraegansicht. Das verbindet die 2D-Karte mit dem Modell, statt das Bild
+   einfach hart einzusetzen. Bei "Bewegung reduzieren" wird nur eingeblendet. */
+function _t3dReveal(mv){
+  _t3dSetProgress(1);   /* totalProgress endet oft bei 98%: Balken sauber schliessen */
+  var host    = document.getElementById('tour3d');
+  var loading = document.getElementById('tour3d-loading');
+  var r = 0;
+  try { r = mv.getCameraOrbit().radius; } catch(err){}
+
+  /* Zoom sanft um die gerahmte Distanz begrenzen, Polarwinkel nach oben auf 80
+     Grad (nicht 89), sonst blickt man unter die Platte. minPhi ist waehrend des
+     Aufbaus flacher, damit die Draufsicht nicht sofort weggeklemmt wird. */
+  function limits(minPhi){
+    try {
+      mv.minCameraOrbit = 'auto ' + minPhi + 'deg ' + (r * 0.55) + 'm';
+      mv.maxCameraOrbit = 'auto 80deg ' + (r * 1.7) + 'm';
+    } catch(err){}
+  }
+
+  var still = !r || _prefersReducedMotion() || typeof mv.jumpCameraToGoal !== 'function';
+  if (still){
+    if (r) limits(15);
+    loading.classList.add('is-out');
+    host.classList.add('mv-in');
+    setTimeout(function(){ loading.style.display = 'none'; _t3dShowHint(); }, 320);
+    return;
+  }
+
+  limits(4);                                      /* Draufsicht voruebergehend erlauben */
+  mv.cameraOrbit = '-14deg 6deg ' + (r * 1.5) + 'm';
+  mv.jumpCameraToGoal();                          /* Startbild setzen, ohne dorthin zu fahren */
+  mv.interpolationDecay = 260;                    /* langsamer Schwenk statt Sprung */
+
+  loading.classList.add('is-out');
+  host.classList.add('mv-in');
+
+  setTimeout(function(){
+    loading.style.display = 'none';
+    mv.cameraOrbit = '35deg 62deg ' + r + 'm';   /* Zielbild: die gerahmte Schraegansicht */
+  }, 260);
+
+  setTimeout(function(){
+    mv.interpolationDecay = 50;                   /* wieder direkt auf Eingaben reagieren */
+    limits(15);
+    _t3dShowHint();
+  }, 2200);
 }
 
 function closeTour3D(){
