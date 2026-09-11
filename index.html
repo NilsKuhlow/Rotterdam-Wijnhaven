@@ -1262,6 +1262,60 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   transition:opacity .6s ease;
 }
 #tour3d-hint.faded { opacity:0; }
+/* ── 3D: Marker der sieben Bauten + Legende ──
+   Die Marker sind <model-viewer>-Hotspots, also HTML-Elemente an einer
+   Modellkoordinate. Sie bleiben in jeder Zoomstufe scharf, sind echte Buttons
+   (Tastatur, Screenreader) und lassen sich uebersetzen. Verdeckte Marker
+   blendet model-viewer ueber --min-hotspot-opacity ab. */
+#tour3d-mv { --min-hotspot-opacity:.16; }
+.t3d-pin {
+  position:relative; display:block; width:26px; height:26px; padding:0; margin:0;
+  background:var(--pin); color:var(--pin-fg); border:1px solid var(--ink-1); border-radius:0;
+  font-family:var(--font-mono); font-size:.56rem; font-weight:500; letter-spacing:.04em;
+  line-height:24px; text-align:center; cursor:pointer;
+  transform:scale(var(--pin-k,1)); transform-origin:50% 50%;
+  transition:transform .18s var(--easing);
+}
+.t3d-pin::before {  /* Tippflaeche: haelt 44 px, egal wie klein der Marker gezoomt ist */
+  content:''; position:absolute; left:50%; top:50%; width:44px; height:44px;
+  margin:-22px 0 0 -22px; transform:scale(calc(1 / var(--pin-k,1)));
+}
+.t3d-pin::after {   /* Lot vom Marker hinunter aufs Dach */
+  content:''; position:absolute; left:50%; top:100%; width:1px; height:20px;
+  margin-left:-.5px; background:var(--ink-1);
+}
+.t3d-pin:hover, .t3d-pin:focus-visible { transform:scale(calc(var(--pin-k,1) * 1.25)); outline:none; }
+.t3d-pin:focus-visible { box-shadow:0 0 0 2px var(--paper-0), 0 0 0 4px var(--ink-1); }
+
+#tour3d-legend {
+  position:absolute; left:1.1rem; bottom:1.3rem; z-index:3;
+  background:rgba(255,255,255,.93); border:1px solid var(--ink-1);
+  max-width:min(15rem,62vw); padding-bottom:.25rem;
+}
+#tour3d-legend[hidden] { display:none; }
+.t3g-head {
+  font-family:var(--font-mono); font-size:.5rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-3);
+  padding:.5rem .6rem .4rem; border-bottom:1px solid var(--paper-3);
+}
+.t3g-row {
+  display:flex; align-items:center; gap:.5rem; width:100%;
+  padding:.32rem .6rem; background:none; border:none; cursor:pointer; text-align:left;
+  font-family:var(--font-mono); font-size:.55rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-1);
+}
+.t3g-row:hover, .t3g-row:focus-visible { background:var(--accent); outline:none; }
+.t3g-sw   { width:11px; height:11px; flex:0 0 11px; border:1px solid var(--ink-1); background:var(--pin); }
+.t3g-num  { color:var(--ink-3); flex:0 0 auto; }
+.t3g-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#tour3d-legend-btn {
+  pointer-events:auto; background:none; border:1px solid var(--ink-1); cursor:pointer;
+  font-family:var(--font-mono); font-size:.5rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-1); padding:.42rem .6rem; line-height:1;
+}
+#tour3d-legend-btn[aria-pressed="true"] { background:var(--ink-1); color:var(--paper-0); }
+@media (prefers-reduced-motion:reduce){ .t3d-pin { transition:none; } }
+
 /* Ladeanzeige: schmaler Balken mit schwarzer Kontur und gelber Fuellung.
    Der Aufbau blendet das Modell ein, waehrend die Kamera aus der Draufsicht
    in die Schraegansicht kippt (siehe _t3dReveal). */
@@ -1827,10 +1881,12 @@ html:has(#route-select.show){ overflow:hidden; }
   <div id="tour3d-bar">
     <span id="tour3d-title" data-i18n="tour3dTitle">Wijnhaven · 3D-Modell</span>
     <div class="t3d-actions">
+      <button id="tour3d-legend-btn" type="button" onclick="toggleTourLegend()" aria-pressed="true" data-i18n="tour3dLegend">Legende</button>
       <button id="tour3d-close" onclick="closeTour3D()" aria-label="3D schließen">✕</button>
     </div>
   </div>
   <div id="tour3d-hint" data-i18n="tour3dHint">Drehen · Zoomen</div>
+  <div id="tour3d-legend" aria-label="Legende der Marker"></div>
   <div id="tour3d-loading">
     <div class="t3l-inner">
       <div class="t3l-label" id="t3dLoadLabel">3D wird geladen</div>
@@ -4408,7 +4464,9 @@ function closeModal(){
   /* A11y: wieder inert (raus aus Tab-Order/AT), Scroll frei, Fokus zurueck. */
   _m.setAttribute('inert', '');
   _clearEntryHash();
-  document.body.style.overflow = '';
+  /* Scroll bleibt gesperrt, wenn der Eintrag ueber der 3D-Ansicht lag. */
+  var _t3open = document.getElementById('tour3d');
+  document.body.style.overflow = (_t3open && !_t3open.hidden) ? 'hidden' : '';
   if (_modalLastFocus && _modalLastFocus.focus) { try { _modalLastFocus.focus(); } catch(e){} }
   _modalLastFocus = null;
 }
@@ -4725,7 +4783,7 @@ var T3D_TXT = {
       appNote:'Lade die App, um dich auf der realistischen Karte in Ego-Perspektive zu bewegen. Plattform wählen:',
       gps:'Vor Ort',gpsWait:'Suche GPS',gpsOn:'Vor Ort',gpsErr:'Kein Signal',gpsNo:'Kein GPS',
       guided:'Geführt',free:'Frei',
-      sceneLoad:'3D wird geladen …',sceneNote:'Photogrammetrie · 23,5 MB',sceneErr:'3D konnte nicht geladen werden (Internet?)'},
+      sceneLoad:'3D wird geladen …',sceneNote:'Photogrammetrie · 23,5 MB',legend:'Legende',sceneErr:'3D konnte nicht geladen werden (Internet?)'},
   nl:{abstract:'Abstract',real:'Realistisch',load:'Laden',cancel:'Annuleren',
       title:'Realistisch model',note:'Getextureerd model laden. Wifi aanbevolen.',
       loading:'Realistisch model laadt',download:'Downloaden',soon:'Volgt',
@@ -4734,7 +4792,7 @@ var T3D_TXT = {
       appNote:'Download de app om je in ego-perspectief over de realistische kaart te bewegen. Kies platform:',
       gps:'Ter plaatse',gpsWait:'GPS zoeken',gpsOn:'Ter plaatse',gpsErr:'Geen signaal',gpsNo:'Geen GPS',
       guided:'Geleid',free:'Vrij',
-      sceneLoad:'3D wordt geladen …',sceneNote:'Fotogrammetrie · 23,5 MB',sceneErr:'3D kon niet worden geladen (internet?)'},
+      sceneLoad:'3D wordt geladen …',sceneNote:'Fotogrammetrie · 23,5 MB',legend:'Legenda',sceneErr:'3D kon niet worden geladen (internet?)'},
   en:{abstract:'Abstract',real:'Realistic',load:'Load',cancel:'Cancel',
       title:'Realistic model',note:'Load the textured model. Wi-Fi recommended.',
       loading:'Loading realistic model',download:'Download',soon:'Soon',
@@ -4743,7 +4801,7 @@ var T3D_TXT = {
       appNote:'Download the app to move around the realistic map in first person. Choose your platform:',
       gps:'On site',gpsWait:'Finding GPS',gpsOn:'On site',gpsErr:'No signal',gpsNo:'No GPS',
       guided:'Guided',free:'Free',
-      sceneLoad:'Loading 3D …',sceneNote:'Photogrammetry · 23.5 MB',sceneErr:'3D could not be loaded (internet?)'}
+      sceneLoad:'Loading 3D …',sceneNote:'Photogrammetry · 23.5 MB',legend:'Legend',sceneErr:'3D could not be loaded (internet?)'}
 };
 function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
 
@@ -4759,8 +4817,14 @@ function openTour3D(){
   var mv = document.getElementById('tour3d-mv');
   var loading = document.getElementById('tour3d-loading');
 
+  _t3dBuildLegend();                       /* Namen folgen der Sprachwahl */
+  var lg = document.getElementById('tour3d-legend'), lb = document.getElementById('tour3d-legend-btn');
+  if (lg && lg.hidden === false && window.innerWidth < 560){ lg.hidden = true; if (lb) lb.setAttribute('aria-pressed', 'false'); }
   loadModelViewer();                       /* stellt sicher, dass <model-viewer> definiert ist */
-  if (mv.getAttribute('src')){ _t3dShowHint(); return; }   /* schon geladen, nur wieder einblenden */
+  if (mv.getAttribute('src')){                            /* schon geladen, nur wieder einblenden */
+    if (mv.loaded) _t3dBuildPins(mv);                     /* Sicherheitsnetz, falls load verpasst wurde */
+    _t3dShowHint(); return;
+  }
 
   /* Ladeanzeige beschriften und zuruecksetzen. Der Hinweis "Drehen, Zoomen"
      kommt erst nach dem Aufbau, sonst ist er bei langsamer Verbindung
@@ -4788,6 +4852,105 @@ function openTour3D(){
   mv.setAttribute('src', TOUR_MODEL_URL);
 }
 
+/* ── Marker der sieben Bauten im 3D-Modell ──
+   Umgesetzt als <model-viewer>-Hotspots, NICHT als Geometrie im glb: der
+   Optimierungslauf (gltf-transform optimize) fuehrt flatten + join aus und
+   fasst das Modell zu einem einzigen Mesh zusammen. Benannte Marker-Objekte
+   aus Blender waeren danach nicht mehr auffindbar. HTML-Hotspots bleiben
+   ausserdem in jeder Zoomstufe scharf, sind echte Buttons und uebersetzbar.
+
+   pos = Modellkoordinate in Metern, hergeleitet aus der Registrierung des
+   Hoehenrasters des Modells gegen die OSM-Grundrisse der Website:
+     X = (lon - 4.486400) * 68671.61405
+     Z = (51.916868 - lat) * 110540
+   Y liegt 18 m ueber der aus dem Modell gemessenen Dachhoehe. Gegenprobe:
+   die gemessenen Hoehen treffen die realen (Red Apple 127,8 m zu 124 m,
+   CasaNova 115,0 m zu rund 110 m, Witte Huis 46,9 m zu rund 43 m).
+   Farben nach Okabe-Ito (farbfehlsichtigkeitssicher), Gelb ist das Hausgelb
+   und sitzt auf den Kubuswoningen, die real gelb sind. */
+var TOUR_PINS = [
+  { num:'01', slug:'witte-huis',      pos:'366.0m 106.4m -216.9m', c:'#0072B2', fg:'#FFFFFF' },
+  { num:'02', slug:'kubuswoningen',   pos:'279.5m 91.1m -378.3m',  c:'#FFED29', fg:'#0A0A0A' },
+  { num:'03', slug:'markthal',        pos:'32.3m 104.3m -358.4m',  c:'#D55E00', fg:'#0A0A0A' },
+  { num:'04', slug:'red-apple',       pos:'175.1m 187.4m -47.8m',  c:'#CC79A7', fg:'#0A0A0A' },
+  { num:'05', slug:'wijnhaveneiland', pos:'82.4m 136.4m 29.6m',    c:'#009E73', fg:'#0A0A0A' },
+  { num:'06', slug:'ey-netherlands',  pos:'8.2m 146.4m 279.4m',    c:'#56B4E9', fg:'#0A0A0A' },
+  { num:'07', slug:'casanova',        pos:'65.9m 174.6m -120.7m',  c:'#E69F00', fg:'#0A0A0A' }
+];
+
+function _pinName(slug){
+  var b = (typeof BYSLUG !== 'undefined') ? BYSLUG[slug] : null;
+  return (b && b.name) ? b.name : slug;
+}
+
+/* Hotspots einmalig an das <model-viewer> haengen (erst nach dem Laden, sonst
+   kennt es die Modellkoordinaten noch nicht). */
+function _t3dBuildPins(mv){
+  if (!mv || mv.querySelector('.t3d-pin')) return;
+  TOUR_PINS.forEach(function(p){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 't3d-pin';
+    b.slot = 'hotspot-' + p.slug;
+    b.setAttribute('data-position', p.pos);
+    b.setAttribute('data-normal', '0m 1m 0m');
+    b.style.setProperty('--pin', p.c);
+    b.style.setProperty('--pin-fg', p.fg);
+    b.textContent = p.num;
+    b.setAttribute('aria-label', p.num + ' ' + _pinName(p.slug));
+    b.addEventListener('click', function(ev){ ev.stopPropagation(); openBuilding(p.slug); });
+    mv.appendChild(b);
+  });
+  try { _pinR0 = mv.getCameraOrbit().radius; } catch(e){ _pinR0 = 0; }
+  _t3dPinScale(mv);
+  mv.addEventListener("camera-change", function(){ _t3dPinScale(mv); });
+}
+
+/* Markergroesse an den Zoom koppeln. In der gerahmten Uebersicht liegen die
+   sieben Bauten nur rund 100 m auseinander, volle Chips wuerden sich dort
+   gegenseitig verdecken. r0 = die gerahmte Distanz, also der Startzustand. */
+var _pinR0 = 0;
+function _t3dPinScale(mv){
+  if (!_pinR0) return;
+  var r; try { r = mv.getCameraOrbit().radius; } catch(e){ return; }
+  if (!r) return;
+  var k = Math.max(0.46, Math.min(1.15, 0.52 * (_pinR0 / r)));
+  k = Math.round(k * 100) / 100;
+  if (k !== mv._pinK){ mv._pinK = k; mv.style.setProperty("--pin-k", k); }
+}
+
+/* Legende: benennt die Farben und ist zugleich der zweite Weg in den Eintrag. */
+function _t3dBuildLegend(){
+  var box = document.getElementById('tour3d-legend');
+  if (!box) return;
+  box.textContent = '';
+  var head = document.createElement('div');
+  head.className = 't3g-head';
+  head.textContent = t3dt().legend || 'Legende';
+  box.appendChild(head);
+  TOUR_PINS.forEach(function(p){
+    var r = document.createElement('button');
+    r.type = 'button';
+    r.className = 't3g-row';
+    r.style.setProperty('--pin', p.c);
+    var sw = document.createElement('span'); sw.className = 't3g-sw';
+    var nu = document.createElement('span'); nu.className = 't3g-num';  nu.textContent = p.num;
+    var na = document.createElement('span'); na.className = 't3g-name'; na.textContent = _pinName(p.slug);
+    r.appendChild(sw); r.appendChild(nu); r.appendChild(na);
+    r.addEventListener('click', function(){ openBuilding(p.slug); });
+    box.appendChild(r);
+  });
+}
+
+function toggleTourLegend(){
+  var box = document.getElementById('tour3d-legend');
+  var btn = document.getElementById('tour3d-legend-btn');
+  if (!box) return;
+  var oeffnen = box.hidden;
+  box.hidden = !oeffnen;
+  if (btn) btn.setAttribute('aria-pressed', oeffnen ? 'true' : 'false');
+}
+
 function _t3dText(id, s){ var el = document.getElementById(id); if (el) el.textContent = s; }
 
 function _t3dSetProgress(p){
@@ -4812,6 +4975,7 @@ function _t3dShowHint(){
    einfach hart einzusetzen. Bei "Bewegung reduzieren" wird nur eingeblendet. */
 function _t3dReveal(mv){
   _t3dSetProgress(1);   /* totalProgress endet oft bei 98%: Balken sauber schliessen */
+  _t3dBuildPins(mv);    /* Hotspots brauchen das geladene Modell */
   var host    = document.getElementById('tour3d');
   var loading = document.getElementById('tour3d-loading');
   var r = 0;

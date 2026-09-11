@@ -48,6 +48,56 @@ gltf-transform optimize in.glb out.glb --compress draco --texture-compress webp 
 Draco statt Meshopt, weil `<model-viewer>` Meshopt hier nicht lädt. `--simplify false` ist wichtig:
 sonst zerlegt die Vereinfachung die Photogrammetrie-Geometrie.
 
+### Marker der sieben Bauten
+
+In der 3D-Ansicht sitzt über jedem der sieben Bauten ein farbiger Marker mit der
+Stopp-Nummer. Antippen öffnet den Eintrag, die Legende unten links benennt die
+Farben und öffnet dieselben Einträge.
+
+Die Marker sind **`<model-viewer>`-Hotspots**, also HTML-Buttons an einer
+Modellkoordinate, und bewusst **keine Geometrie im glb**. Drei Gründe:
+
+- `gltf-transform optimize` führt `flatten` und `join` aus. Das Modell besteht
+  danach aus einem einzigen Mesh (`Mesh_0`, 415 Primitives). Benannte
+  Marker-Objekte aus Blender wären nicht mehr auffindbar.
+- HTML-Marker bleiben in jeder Zoomstufe scharf, sind echte Buttons (Tastatur,
+  Screenreader) und übersetzbar.
+- Farbe, Text und Reihenfolge ändert man in `TOUR_PINS` in `index.html`, ohne das
+  199-MB-Modell neu zu exportieren und zu optimieren.
+
+Farben nach **Okabe-Ito** (farbfehlsichtigkeitssicher); jeder Chip hat eine
+near-black Kontur, damit auch die hellen Töne auf Weiß stehen. Gelb sitzt auf den
+Kubuswoningen, die real gelb sind.
+
+#### Woher die Koordinaten kommen
+
+`data-position` ist eine Modellkoordinate in Metern. Der Blender-Umweg hat die
+Georeferenz aus dem Google-3D-Tiles-Export entfernt, sie wurde deshalb
+zurückgerechnet: aus dem Modell ein Höhenraster (DSM, 2 m) bilden, daraus per
+Blockminimum die Gebäudehöhen ableiten, und diese Maske gegen die OSM-Grundrisse
+der Website (`gpsToSvg`) kreuzkorrelieren. Das Maximum lag 11 Sigma über dem
+Mittel, ohne Drehung und im Maßstab 1 Einheit = 1 m:
+
+```
+X = (lon - 4.486400) * 68671.61405
+Z = (51.916868 - lat) * 110540
+```
+
+Y liegt 18 m über der aus dem Modell gemessenen Dachhöhe.
+
+Gegenprobe über die gemessenen Höhen: Red Apple 127,8 m (real 124 m), CasaNova
+115,0 m (rund 110 m), Witte Huis 46,9 m (rund 43 m), Markthal 44,7 m (rund 40 m).
+
+Die Skripte liegen in `tools/marker-kalibrierung/` (`extract_dsm.py`,
+`register.py`, `hotspots.py`) samt Kontrollbild. Sie sind nur nötig, wenn das
+Modell **neu exportiert** wird und dabei der Ausschnitt wandert.
+
+Hinweis: Die Koordinate der Kubuswoningen in `COORDS` (51.9199 / 4.4902) liegt
+rund 45 m südwestlich des tatsächlichen Schwerpunkts; in OSM heißt der Komplex
+**Blaakse Bos** und liegt bei 51.92029 / 4.49047. Der Marker nutzt den korrigierten
+Wert, `COORDS` ist unverändert, weil davon Karte und GPS-Tracker abhängen. Vor Ort
+prüfen und dann gemeinsam nachziehen.
+
 ### Volldetail-Modell und App (geplant)
 
 Der frühere Umschalter **Abstrakt / Realistisch** gehörte zum Three.js-Walkthrough und ist mit
