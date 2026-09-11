@@ -22,15 +22,15 @@ Gruppe 4. Nils Kuhlow & Kai-Lars Ehrich.
 - Single-File `index.html` (HTML + CSS + Vanilla-JS), keine Build-Pipeline
 - Karte: inline SVG-Figure-Ground (Platzhalter), scroll-getriebene Kamerafahrt, GPS Smart-Track
 - 3D je Eintrag: `<model-viewer>`, `.glb` in `/models`
-- 3D-Walkthrough (Button „3D" oben links): Three.js, lazy vom CDN, On-Demand-Rendering
+- 3D-Gesamtmodell (Button „3D" oben links): `<model-viewer>`-Drehteller, Draco-Mesh + WebP-Texturen
 - PWA: `manifest.json` + `sw.js` (offline-fähig)
 - Sprachen: DE / NL / EN
 - Akkuschonend: Animationen + GPS pausieren im Hintergrund, ~30fps-Scroll-Cap, kein Idle-Rendering
 
-## 3D-Walkthrough: eigenes Modell bauen
+## 3D-Gesamtmodell: eigenes Modell bauen
 
-Der Walkthrough lädt die abstrakte Gesamtkarte `models/map_v1.glb` (Konstante `TOUR_ABSTRACT_URL`
-in `index.html`). Für antippbare Objekte gilt die **Namenskonvention**. Beim eigenen Modell
+Die 3D-Ansicht zeigt die Gesamtkarte `models/wijnhaven.glb` (Konstante `TOUR_MODEL_URL`
+in `index.html`) als Drehteller. Für antippbare Objekte gilt die **Namenskonvention**. Beim eigenen Modell
 (Blender o.ä.) einfach die Objekte/Meshes so benennen:
 
 - `building_<N>` → Antippen öffnet Eintrag N (0 = Witte Huis … 6 = CasaNova). Beispiel: `building_2` = Markthal.
@@ -38,26 +38,27 @@ in `index.html`). Für antippbare Objekte gilt die **Namenskonvention**. Beim ei
   Beispiel: `person_kai`. Neue Personen einfach in `TOUR_PEOPLE` mit `de/nl/en`-Eintrag ergänzen.
 - `ground`, `scenery_*` → reine Kulisse, nicht antippbar.
 
-Als `.glb` nach `/models/map_v1.glb` exportieren (Y nach oben, reale Maßstäbe sind ok)
-und `TOUR_ABSTRACT_URL` ggf. anpassen.
+Als `.glb` nach `/models/wijnhaven.glb` exportieren (Y nach oben, reale Maßstäbe sind ok)
+und `TOUR_MODEL_URL` ggf. anpassen. Große Exporte vorher komprimieren:
 
-### Abstrakt / Realistisch umschalten
+```
+gltf-transform optimize in.glb out.glb --compress draco --texture-compress webp --texture-size 1024 --simplify false
+```
 
-In der 3D-Ansicht gibt es oben einen Umschalter **Abstrakt / Realistisch**.
+Draco statt Meshopt, weil `<model-viewer>` Meshopt hier nicht lädt. `--simplify false` ist wichtig:
+sonst zerlegt die Vereinfachung die Photogrammetrie-Geometrie.
 
-- **Abstrakt** ist Standard und lädt `models/map_v1.glb` (weiß, leicht).
-- **Realistisch** lädt `models/walkthrough_detailed.glb` erst auf Knopfdruck, mit
-  Größen-Hinweis (per HTTP-HEAD ermittelt) und Fortschrittsbalken. Beide Dateien müssen
-  **dieselben Knotennamen** haben (`building_<N>`, `person_<id>`), dann funktioniert das
-  Antippen für beide ohne Codeänderung. Web-Budget anpeilen: möglichst unter ~25 MB,
-  Licht in Lightmaps backen, Texturen als KTX2, Mesh per Draco/Meshopt (`gltf-transform optimize`).
-- Gibt es keine Detaildatei, zeigt der Umschalter stattdessen eine **App-/Download-Karte**
-  mit Plattformwahl **Windows / Apple / Android** (`TOUR_APP_WINDOWS`, `TOUR_APP_IOS`,
-  `TOUR_APP_ANDROID` in `index.html`). Die Website **erkennt das Betriebssystem** und stellt
-  den passenden Download nach vorne und hervorgehoben dar. Externe Links (Microsoft Store /
-  App Store / Google Play) öffnen, relative Dateien (z. B. `.exe`/`.msi`/`.apk` auf derselben
-  Domain) laden direkt herunter. Die echten App-Builds baust du selbst und trägst dann nur
-  die Links/Dateien ein.
+### Volldetail-Modell und App (geplant)
+
+Der frühere Umschalter **Abstrakt / Realistisch** gehörte zum Three.js-Walkthrough und ist mit
+dem Umbau auf den Drehteller entfallen; seine beiden Modelle (`map_v1.glb`,
+`walkthrough_detailed.glb`) sind aus dem Repo entfernt.
+
+Die Karte für die App-/Download-Wahl **Windows / Apple / Android** (`TOUR_APP_WINDOWS`,
+`TOUR_APP_IOS`, `TOUR_APP_ANDROID` in `index.html`) liegt als Code bereit, ist aber derzeit
+nicht verdrahtet. Vorgesehen: externe Links (Microsoft Store / App Store / Google Play) öffnen,
+relative Dateien (`.exe`, `.msi`, `.apk` auf derselben Domain) laden direkt herunter, und die
+Website erkennt das Betriebssystem und stellt den passenden Download nach vorne.
 
 ### Ego-Perspektive (Street View) + Vor-Ort-Sync
 

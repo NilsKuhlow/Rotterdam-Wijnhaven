@@ -4628,14 +4628,16 @@ var TOUR_PEOPLE = {
 
 var _t3d = null;
 
-/* ── Modell-Quellen (gleiche Knotennamen building_<N>/person_<id> in beiden glb!) ──
-   TOUR_DETAIL_URL: optionales realistisches Modell, wird im Browser nur auf Wunsch geladen.
+/* ── Modell-Quellen ──
+   Der alte Three.js-Walkthrough (_initTour) ist mit dem Umbau auf den Drehteller
+   inaktiv geworden; seine beiden Modelle sind aus dem Repo entfernt. Leer = deaktiviert.
+   Die 3D-Ansicht laedt TOUR_MODEL_URL (models/wijnhaven.glb, weiter unten).
    App-Download (Ego-Perspektive/Street View durch das fertige Modell): pro Plattform
    eine URL. Ein externer Link (https://, App Store / Google Play) wird geoeffnet; eine
    Datei auf derselben Domain (relativer Pfad) laedt direkt herunter. Leer = ausgeblendet.
    TOUR_FULLDETAIL_URL bleibt als einfacher Datei-Download-Fallback erhalten. */
-var TOUR_ABSTRACT_URL   = 'models/map_v1.glb';   /* erste Version der abstrakten Gesamtkarte (Blender-Export) */
-var TOUR_DETAIL_URL     = 'models/walkthrough_detailed.glb';
+var TOUR_ABSTRACT_URL   = '';   /* entfernt: models/map_v1.glb */
+var TOUR_DETAIL_URL     = '';   /* entfernt: models/walkthrough_detailed.glb */
 /* App-Downloads je Plattform. Externer Link (https://, App Store / Google Play / Microsoft Store)
    wird geoeffnet; relativer Pfad (Datei auf derselben Domain, z.B. .exe/.msi/.apk) laedt direkt
    herunter. Die Website erkennt die Plattform und empfiehlt den passenden Download. Aktuell alle
