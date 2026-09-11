@@ -49,7 +49,7 @@ const PRECACHE = [
   '/img/casanova.webp',
 ];
 /* Bewusst NICHT precachen (gross / Opt-in, werden bei Bedarf zur Laufzeit gecacht):
-   models/map_v1.glb (~8,9 MB), downloads/wijnhaven-volldetail-demo.glb, Thesis-PDF. */
+   models/wijnhaven.glb (~23,5 MB), downloads/wijnhaven-volldetail-demo.glb, Thesis-PDF. */
 
 /* ── Update trigger from page script ── */
 self.addEventListener('message', event => {
@@ -116,7 +116,7 @@ self.addEventListener('fetch', event => {
 
   /* Everything else (images, SVG, fonts, CDN modules, GLB):
      cache-first — instant, and NEVER re-downloads a cached asset (important
-     for the 8.9 MB map GLB on mobile data). Fresh copies arrive via CACHE bump. */
+     for the 23.5 MB map GLB on mobile data). Fresh copies arrive via CACHE bump. */
   event.respondWith(
     caches.match(req).then(cached => {
       if (cached) return cached;
