@@ -24,7 +24,7 @@ Gruppe 4. Nils Kuhlow & Kai-Lars Ehrich.
   GPS Smart-Track bewegt sie weiterhin
 - 3D-Gesamtmodell (Button „3D" oben links): `<model-viewer>`-Drehteller, Draco-Mesh + WebP-Texturen
 - PWA: `manifest.json` + `sw.js` (offline-fähig)
-- Sprachen: DE / NL / EN
+- Sprachen: NL (Start) / DE / EN, umschaltbar oben rechts
 - Akkuschonend: Animationen + GPS pausieren im Hintergrund, ~30fps-Scroll-Cap, kein Idle-Rendering
 
 ## 2D-Karte: lesen und antippen
@@ -161,6 +161,18 @@ Modell-Ursprung), `GPS_KX`/`GPS_KZ` (Welt-Einheiten pro Grad Länge/Breite, an M
 anpassen, Norden = -z) und `GPS_HEADING` (Grad-Offset für die Blickrichtung). Die Vorgaben sind
 Platzhalter und müssen am echten Modell vor Ort feinjustiert werden. iOS fragt beim ersten Mal
 nach Erlaubnis für Bewegungssensoren; ohne Kompass folgt nur die Position, Umsehen bleibt manuell.
+
+## Sprache
+
+Die Seite startet auf **Niederländisch** (`START_LANG` in `index.html`). Das statische
+HTML ist deutsch verfasst; direkt nach dem Verdrahten der Sprachknöpfe schaltet
+`_startLang()` um, noch während der Ladeschirm liegt, damit kein Wechsel aufblitzt.
+Deutsch und Englisch wählt man über die Knöpfe oben rechts.
+
+**Achtung, offener Widerspruch:** Titel, Beschreibung, strukturierte Daten und der
+Lese-Abschnitt sind weiterhin deutsch, damit die Seite unter *Stadtführung* gefunden
+wird. Ein niederländischer Besucher sieht deshalb unter der Karte einen deutschen
+Textblock. Sauber lösen ließe sich das nur mit eigenen URLs je Sprache plus `hreflang`.
 
 ## SEO
 
