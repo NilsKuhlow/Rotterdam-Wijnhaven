@@ -1,6 +1,6 @@
-# Wijnhaven, Feldjournal
+# Wijnhaven Rotterdam
 
-Interaktives Feldjournal durch das **Wijnhaven-Quartier in Rotterdam**: sieben Bauten am Wasser,
+Interaktiver Stadtrundgang durch das **Wijnhaven-Quartier in Rotterdam**: sieben Bauten am Wasser,
 vom Witte Huis (1898) bis CasaNova. Mobile-first Progressive Web App mit scroll-geführter Karte,
 GPS-Tracker und einem Tagebuch-Layout (eigene Einträge, Stimmen vom Ort, interaktive 3D-Modelle).
 
