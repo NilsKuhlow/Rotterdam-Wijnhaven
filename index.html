@@ -587,7 +587,6 @@ body {
   /* no opacity here, children control their own visibility */
 }
 /* crumb-left removed, stop name shown in drawer instead */
-#crumb-stop { display:none; }
 
 /* ═══════════════════════════════════════════
    INTRO  (full viewport, normal flow)
@@ -1215,6 +1214,22 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
    IMPRESSUM
 ═══════════════════════════════════════════ */
 /* Impressum-Stile in .colophon zusammengefuehrt */
+/* Datenschutz im Colophon: zusammenklappbar, damit der Fuss ruhig bleibt. */
+.dsg { margin:2.4rem 0 0; border-top:1px solid var(--paper-3); padding-top:1.1rem; }
+.dsg > summary {
+  font-family:var(--font-mono); font-size:.55rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-1); cursor:pointer; list-style:none;
+  display:flex; align-items:center; gap:.5rem;
+}
+.dsg > summary::-webkit-details-marker { display:none; }
+.dsg > summary::after { content:"+"; font-family:var(--font-mono); color:var(--ink-3); }
+.dsg[open] > summary::after { content:"\2212"; }
+.dsg > summary:hover, .dsg > summary:focus-visible { background:var(--accent); outline:none; }
+.dsg-body { max-width:62ch; margin-top:1.2rem; }
+.dsg-body p { font-size:.8rem; line-height:1.6; color:var(--ink-2); margin:0 0 1rem; }
+.dsg-body strong { color:var(--ink-1); font-weight:600; }
+.dsg-body a { color:var(--ink-1); }
+.dsg-body[hidden] { display:none; }
 
 /* ═══════════════════════════════════════════
    SCAN LINE , terra-cotta stripe sweeping
@@ -1406,95 +1421,8 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   .t3l-inner { animation:none; }
 }
 
-/* ── 3D: Abstrakt/Realistisch-Umschalter + Detail-Dialog + Fortschritt ── */
+/* Kopfzeile der 3D-Ansicht: Legende-Knopf und Schliessen */
 .t3d-actions { display:flex; align-items:center; gap:.7rem; pointer-events:none; }
-.t3d-seg { display:inline-flex; pointer-events:auto; background:var(--paper-1); }
-.t3d-seg-btn {
-  font-family:var(--font-mono); font-size:.54rem; letter-spacing:.13em; text-transform:uppercase;
-  padding:.45rem .7rem; border:none; background:transparent; color:var(--ink-3); cursor:pointer;
-  -webkit-tap-highlight-color:transparent; transition:background .18s, color .18s;
-}
-.t3d-seg-btn.is-on { background:var(--ink-1); color:var(--paper-0); }
-
-#tour3d-detail, #tour3d-progress {
-  position:absolute; inset:0; z-index:12; display:flex; align-items:center; justify-content:center;
-  background:rgba(10,10,10,.55);
-}
-#tour3d-detail[hidden], #tour3d-progress[hidden] { display:none; }
-#tour3d-progress { flex-direction:column; }
-.t3d-card { background:var(--paper-0); padding:1.7rem 1.6rem; width:min(80vw,330px); text-align:left; }
-.t3d-card-label { font-family:var(--font-mono); font-size:.55rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-3); }
-.t3d-card-size  { font-family:var(--font-display); font-weight:600; font-size:1.7rem; line-height:1; color:var(--ink-1); margin:.5rem 0 0; }
-.t3d-card-note  { font-family:var(--font-sans); font-size:.72rem; line-height:1.5; color:var(--ink-3); margin:.55rem 0 1.3rem; }
-.t3d-card-actions { display:flex; gap:.55rem; align-items:center; flex-wrap:wrap; }
-.t3d-btn {
-  font-family:var(--font-mono); font-size:.55rem; letter-spacing:.14em; text-transform:uppercase;
-  padding:.6rem 1rem; border:none; background:var(--ink-1); color:var(--paper-0); cursor:pointer;
-  text-decoration:none; display:inline-flex; align-items:center; -webkit-tap-highlight-color:transparent;
-}
-.t3d-btn.ghost { background:transparent; color:var(--ink-3); padding:.6rem .4rem; }
-.t3d-btn.alt { background:var(--paper-2); color:var(--ink-1); }   /* nicht-empfohlene Plattformen */
-.t3d-btn[disabled] { opacity:.4; cursor:default; }
-.t3d-card-rec { font-family:var(--font-mono); font-size:.5rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3); margin:-.7rem 0 1.1rem; }
-.t3d-prog-label { font-family:var(--font-mono); font-size:.56rem; letter-spacing:.16em; text-transform:uppercase; color:var(--paper-0); margin-bottom:.85rem; }
-.t3d-prog-track { width:min(62vw,260px); height:3px; background:rgba(255,255,255,.28); overflow:hidden; }
-.t3d-prog-fill  { height:100%; width:0%; background:var(--accent); transition:width .15s linear; }
-.t3d-prog-pct   { font-family:var(--font-mono); font-size:.56rem; letter-spacing:.1em; color:rgba(255,255,255,.7); margin-top:.65rem; }
-/* Lauf-Joystick (Ego-Perspektive) */
-#tour3d-stick {
-  position:absolute; left:1.1rem; bottom:1.3rem; width:104px; height:104px; z-index:8;
-  border-radius:50%; background:rgba(10,10,10,.07);
-  display:flex; align-items:center; justify-content:center;
-  touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none;
-}
-#tour3d-nub {
-  width:46px; height:46px; border-radius:50%; background:var(--ink-1);
-  pointer-events:none; will-change:transform;
-}
-@media (hover:hover) and (pointer:fine){ #tour3d-stick { opacity:.5; } }  /* am Desktop dezenter (WASD geht auch) */
-/* Vor-Ort-Sync-Schalter (unten rechts) */
-#tour3d-gps {
-  position:absolute; right:1.1rem; bottom:1.4rem; z-index:9;
-  display:inline-flex; align-items:center; gap:.45rem;
-  padding:.5rem .8rem .5rem .62rem; border:none; cursor:pointer;
-  background:rgba(255,255,255,.92); color:var(--ink-1);
-  font-family:var(--font-mono); font-size:.55rem; letter-spacing:.14em; text-transform:uppercase;
-  -webkit-tap-highlight-color:transparent; white-space:nowrap;
-}
-#tour3d-gps.on { background:var(--ink-1); color:var(--paper-0); }
-#tour3d-gps .t-icon { width:14px; height:14px; }
-/* Top-Bar: zwei Umschalter (Qualitaet + Modus) gestapelt */
-.t3d-segs { display:flex; flex-direction:column; gap:.32rem; align-items:flex-end; pointer-events:none; }
-.t3d-segs .t3d-seg { pointer-events:auto; }
-/* Pfad-Navigation (Gefuehrt-Modus), unten mittig */
-#tour3d-nav {
-  position:absolute; left:50%; bottom:1.4rem; transform:translateX(-50%); z-index:9;
-  display:flex; align-items:center; gap:.55rem;
-  background:rgba(255,255,255,.92); padding:.32rem .42rem;
-}
-.t3d-nav-btn {
-  width:40px; height:34px; border:none; background:var(--ink-1); color:var(--paper-0); cursor:pointer;
-  font-size:1.15rem; line-height:1; display:flex; align-items:center; justify-content:center;
-  -webkit-tap-highlight-color:transparent;
-}
-.t3d-nav-btn:active { opacity:.8; }
-#tour3d-nav-pos {
-  font-family:var(--font-mono); font-size:.55rem; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--ink-1); min-width:3rem; text-align:center;
-}
-#tour3d-quote {
-  position:absolute; left:0; right:0; bottom:0; z-index:5;
-  display:flex; justify-content:center; padding:1.2rem;
-}
-#tour3d-quote[hidden] { display:none; }
-.t3q-inner { background:var(--paper-1); padding:1.4rem 1.5rem; max-width:34rem; width:100%; }
-#t3q-quote { margin:.3rem 0 .6rem; background:transparent; padding:0; }
-.t3q-close {
-  background:var(--ink-1); color:var(--paper-0); border:none; border-radius:0;
-  padding:.5rem 1rem; font-family:var(--font-sans); font-size:.58rem;
-  letter-spacing:.12em; text-transform:uppercase; cursor:pointer; margin-top:.4rem;
-}
-.t3d-cursor-pointer { cursor:pointer; }
 
 /* ═══════════════════════════════════════════
    MOBILE: impressum grid stacks vertically
@@ -1596,138 +1524,6 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 #nav-crumb { padding-top:max(.85rem, env(safe-area-inset-top)); }
 
 
-/* ══════════ ROUTE-AUSWAHL (Startbildschirm) ══════════ */
-
-#route-select{
-
-  position:fixed; inset:0; z-index:950;
-
-  background:var(--paper-0);
-
-  overflow-y:auto; -webkit-overflow-scrolling:touch;
-
-  opacity:0; visibility:hidden; pointer-events:none;
-
-  transition:opacity .5s ease, visibility .5s ease;
-
-  padding:max(env(safe-area-inset-top),1.5rem) 1.25rem calc(env(safe-area-inset-bottom) + 2.5rem);
-
-}
-
-#route-select.show{ opacity:1; visibility:visible; pointer-events:auto; }
-
-html:has(#route-select.show){ overflow:hidden; }
-
-.rs-inner{ max-width:660px; margin:0 auto; padding-top:8vh; }
-
-.rs-kicker{
-
-  font-family:var(--mono,'JetBrains Mono',monospace);
-
-  font-size:.66rem; letter-spacing:.22em; text-transform:uppercase;
-
-  color:rgba(10,10,10,.5); margin-bottom:1rem;
-
-}
-
-.rs-title{
-
-  font-size:clamp(1.9rem,6vw,2.9rem); line-height:1.02; letter-spacing:-.02em;
-
-  color:var(--ink-1); margin:0 0 .85rem; font-weight:600;
-
-}
-
-.rs-lede{
-
-  font-size:.98rem; line-height:1.55; color:rgba(10,10,10,.62);
-
-  max-width:46ch; margin:0 0 2.4rem;
-
-}
-
-.rs-lede b{ color:var(--ink-1); font-weight:600; }
-
-.rs-cards{ display:flex; flex-direction:column; gap:.9rem; }
-
-.rs-card{
-
-  display:flex; align-items:stretch; gap:1rem; width:100%; text-align:left;
-
-  background:var(--paper-0); border:1px solid rgba(10,10,10,.16);
-
-  padding:1.15rem 1.15rem 1.2rem; cursor:pointer;
-
-  transition:border-color .18s ease, background .18s ease, transform .18s ease;
-
-  color:var(--ink-1); position:relative;
-
-}
-
-.rs-card:hover, .rs-card:focus-visible{
-
-  border-color:var(--ink-1); outline:none; transform:translateY(-1px);
-
-}
-
-.rs-card:focus-visible{ box-shadow:inset 0 0 0 2px var(--accent); }
-
-.rs-card.rs-current{ border-color:var(--ink-1); }
-
-.rs-card.rs-current::before{
-
-  content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--accent);
-
-}
-
-.rs-card-idx{
-
-  font-family:var(--mono,'JetBrains Mono',monospace);
-
-  font-size:.72rem; letter-spacing:.12em; color:rgba(10,10,10,.4);
-
-  padding-top:.28rem; min-width:1.6rem;
-
-}
-
-.rs-card-body{ display:flex; flex-direction:column; gap:.28rem; flex:1; min-width:0; }
-
-.rs-card-name{ font-size:1.22rem; font-weight:650; letter-spacing:-.01em; line-height:1.1; }
-
-.rs-card-sub{ font-size:.82rem; color:rgba(10,10,10,.55); }
-
-.rs-card-theme{ font-size:.9rem; line-height:1.45; color:rgba(10,10,10,.72); margin-top:.15rem; }
-
-.rs-card-meta{
-
-  display:flex; flex-wrap:wrap; gap:.5rem .9rem; margin-top:.55rem;
-
-  font-family:var(--mono,'JetBrains Mono',monospace);
-
-  font-size:.66rem; letter-spacing:.09em; text-transform:uppercase; color:rgba(10,10,10,.5);
-
-}
-
-.rs-card-meta span{ position:relative; }
-
-.rs-card-meta span + span::before{
-
-  content:"·"; position:absolute; left:-.55rem; color:rgba(10,10,10,.3);
-
-}
-
-.rs-card-go{
-
-  align-self:center; font-size:1.2rem; color:rgba(10,10,10,.35); flex-shrink:0;
-
-  transition:transform .18s ease, color .18s ease;
-
-}
-
-.rs-card:hover .rs-card-go, .rs-card:focus-visible .rs-card-go{ color:var(--ink-1); transform:translateX(3px); }
-
-
-
 /* Pausen-Marker auf der Karte */
 
 .stop-dot.break-dot{ fill:var(--paper-0); stroke:var(--ink-1); stroke-width:2; }
@@ -1738,24 +1534,9 @@ html:has(#route-select.show){ overflow:hidden; }
 
 @media (prefers-reduced-motion:reduce){
 
-  #route-select{ transition:none; }
-
-  .rs-card, .rs-card-go{ transition:none; }
-
-}
 
 
 
-
-/* ══ Uebersichtskarte Auswahlscreen ══ */
-.rs-map-wrap{ width:min(68vw,250px); margin:0 auto 1.6rem; border:1px solid rgba(10,10,10,.16); background:var(--paper-0); overflow:hidden; }
-#rs-map{ width:100%; height:auto; display:block; }
-.rsm-water{ fill:#F1F1F1; }
-.rsm-block{ fill:#E2E2E2; }
-.rsm-route{ stroke:rgba(10,10,10,.26); stroke-width:4; stroke-linejoin:round; stroke-linecap:round; cursor:pointer; transition:stroke .2s ease, stroke-width .2s ease; }
-.rsm-route.active{ stroke:#0A0A0A; stroke-width:7; }
-.rsm-dot{ fill:var(--accent); stroke:#0A0A0A; stroke-width:2; }
-@media (prefers-reduced-motion:reduce){ .rsm-route{ transition:none; } }
 
 
 </style>
@@ -2062,6 +1843,143 @@ html:has(#route-select.show){ overflow:hidden; }
     <div><dt data-i18n="imp_thesis">Vertiefung</dt><dd><a href="downloads/wijnhaven-thesis-arbeitsfassung.pdf" download data-i18n="imp_thesis_link">Arbeitsfassung (PDF)</a></dd></div>
   </dl>
   <p class="colophon-note" data-i18n="imp_note">Diese Website ist ein nicht-kommerzielles Hochschulprojekt und dient ausschließlich akademischen Zwecken. Eine kommerzielle Nutzung ist nicht gestattet.</p>
+  <details class="dsg">
+    <summary data-i18n="dsg_title">Datenschutz</summary>
+
+    <div class="dsg-body" data-lang-block="de">
+      <p><strong>Verantwortlich</strong><br>
+        Nils Kuhlow und Kai-Lars Ehrich, Studierende der Hochschule Wismar,
+        Fakultät Gestaltung. Kontakt: <a href="mailto:Nils@Kuhlow.eu">Nils@Kuhlow.eu</a>.
+        Diese Seite ist ein nicht-kommerzielles Hochschulprojekt.</p>
+
+      <p><strong>Hosting</strong><br>
+        Die Seite liegt auf GitHub Pages (GitHub Inc., San Francisco, USA). Beim
+        Abruf überträgt Ihr Gerät technisch notwendige Daten, darunter die
+        IP-Adresse. Darauf haben wir keinen Zugriff.</p>
+
+      <p><strong>Besucherzählung</strong><br>
+        Wir zählen Seitenaufrufe mit GoatCounter. Der Dienst arbeitet ohne Cookies
+        und speichert nach Angaben des Betreibers keine IP-Adressen. Erfasst werden
+        die aufgerufene Seite, die verweisende Adresse, grobe Angaben zu Browser und
+        System sowie das Land. Zusätzlich zählen wir, welcher der sieben Einträge
+        geöffnet wurde; übertragen wird dabei nur dessen Kennung. Ist in Ihrem
+        Browser „Do Not Track“ aktiviert, wird gar nicht gezählt.</p>
+
+      <p><strong>Standort</strong><br>
+        Die Ortung startet ausschließlich, wenn Sie den Schalter „Smart-Track“
+        selbst betätigen und Ihr Browser Sie um Erlaubnis gefragt hat. Ihre Position
+        wird nur auf Ihrem Gerät verarbeitet, um den Punkt auf der Karte zu setzen
+        und die Entfernung zum nächsten Bauwerk zu berechnen. Sie wird nicht
+        übertragen, nicht gespeichert und verlässt Ihr Gerät nicht. Die Ortung endet,
+        sobald Sie den Schalter erneut betätigen oder die Seite in den Hintergrund
+        legen.</p>
+
+      <p><strong>Eingebundene Dienste</strong><br>
+        Für die Schrift JetBrains Mono werden Dateien von Google Fonts geladen
+        (fonts.googleapis.com, fonts.gstatic.com). Für die 3D-Ansicht werden das
+        Anzeigeprogramm von unpkg.com und ein Entpacker von www.gstatic.com geladen.
+        Dabei wird Ihre IP-Adresse an diese Anbieter übertragen. Die 3D-Ansicht lädt
+        erst, wenn Sie sie öffnen.</p>
+
+      <p><strong>Keine Cookies, keine Konten</strong><br>
+        Die Seite setzt keine Cookies, hat keine Anmeldung und keine Formulare.
+        Damit sie offline funktioniert, legt Ihr Browser Dateien lokal ab. Diese
+        liegen nur auf Ihrem Gerät und lassen sich über die Browsereinstellungen
+        jederzeit löschen.</p>
+
+      <p><strong>Ihre Rechte</strong><br>
+        Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Widerspruch.
+        Da wir selbst keine personenbezogenen Daten speichern, richten Sie Anfragen
+        bitte an die oben genannte Adresse.</p>
+    </div>
+
+    <div class="dsg-body" data-lang-block="nl" hidden>
+      <p><strong>Verantwoordelijk</strong><br>
+        Nils Kuhlow en Kai-Lars Ehrich, studenten aan de Hochschule Wismar,
+        faculteit Vormgeving. Contact: <a href="mailto:Nils@Kuhlow.eu">Nils@Kuhlow.eu</a>.
+        Deze site is een niet-commercieel studieproject.</p>
+
+      <p><strong>Hosting</strong><br>
+        De site staat op GitHub Pages (GitHub Inc., San Francisco, VS). Bij het
+        opvragen verstuurt uw apparaat technisch noodzakelijke gegevens, waaronder
+        het IP-adres. Daar hebben wij geen toegang toe.</p>
+
+      <p><strong>Bezoekerstelling</strong><br>
+        Wij tellen paginaweergaven met GoatCounter. Die dienst werkt zonder cookies
+        en bewaart volgens de beheerder geen IP-adressen. Vastgelegd worden de
+        opgevraagde pagina, de verwijzende adres, globale gegevens over browser en
+        systeem, en het land. Daarnaast tellen wij welk van de zeven items geopend
+        is; daarbij wordt alleen de aanduiding daarvan verstuurd. Staat in uw browser
+        „Do Not Track“ aan, dan wordt er niets geteld.</p>
+
+      <p><strong>Locatie</strong><br>
+        De locatiebepaling start alleen wanneer u zelf op „Smart-Track“ drukt en uw
+        browser om toestemming heeft gevraagd. Uw positie wordt uitsluitend op uw
+        eigen apparaat verwerkt, om de stip op de kaart te zetten en de afstand tot
+        het dichtstbijzijnde gebouw te berekenen. Zij wordt niet verstuurd, niet
+        opgeslagen en verlaat uw apparaat niet.</p>
+
+      <p><strong>Diensten van derden</strong><br>
+        Voor het lettertype JetBrains Mono worden bestanden van Google Fonts geladen
+        (fonts.googleapis.com, fonts.gstatic.com). Voor de 3D-weergave worden een
+        weergaveprogramma van unpkg.com en een decoder van www.gstatic.com geladen.
+        Daarbij gaat uw IP-adres naar die aanbieders. De 3D-weergave laadt pas
+        wanneer u haar opent.</p>
+
+      <p><strong>Geen cookies, geen accounts</strong><br>
+        De site plaatst geen cookies, kent geen inlog en geen formulieren. Om
+        offline te werken bewaart uw browser bestanden lokaal. Die staan alleen op
+        uw apparaat en kunt u via de browserinstellingen verwijderen.</p>
+
+      <p><strong>Uw rechten</strong><br>
+        U heeft recht op inzage, rectificatie, verwijdering en bezwaar. Omdat wij
+        zelf geen persoonsgegevens bewaren, kunt u vragen richten aan het hierboven
+        genoemde adres.</p>
+    </div>
+
+    <div class="dsg-body" data-lang-block="en" hidden>
+      <p><strong>Responsible</strong><br>
+        Nils Kuhlow and Kai-Lars Ehrich, students at Hochschule Wismar, Faculty of
+        Design. Contact: <a href="mailto:Nils@Kuhlow.eu">Nils@Kuhlow.eu</a>.
+        This site is a non-commercial university project.</p>
+
+      <p><strong>Hosting</strong><br>
+        The site is hosted on GitHub Pages (GitHub Inc., San Francisco, USA). When
+        you open it, your device transmits technically necessary data including your
+        IP address. We have no access to it.</p>
+
+      <p><strong>Visitor counting</strong><br>
+        We count page views with GoatCounter. The service works without cookies and,
+        according to its operator, stores no IP addresses. Recorded are the page
+        requested, the referring address, coarse browser and system details, and the
+        country. We also count which of the seven entries was opened; only its
+        identifier is transmitted. If your browser sends “Do Not Track”, nothing is
+        counted at all.</p>
+
+      <p><strong>Location</strong><br>
+        Location tracking starts only when you press “Smart-Track” yourself and your
+        browser has asked for permission. Your position is processed on your device
+        alone, to place the dot on the map and measure the distance to the nearest
+        building. It is never transmitted, never stored and never leaves your
+        device.</p>
+
+      <p><strong>Third-party services</strong><br>
+        The typeface JetBrains Mono is loaded from Google Fonts
+        (fonts.googleapis.com, fonts.gstatic.com). The 3D view loads a viewer from
+        unpkg.com and a decoder from www.gstatic.com. Your IP address is transmitted
+        to these providers. The 3D view only loads when you open it.</p>
+
+      <p><strong>No cookies, no accounts</strong><br>
+        The site sets no cookies and has no login and no forms. To work offline, your
+        browser stores files locally. They stay on your device and can be deleted in
+        your browser settings at any time.</p>
+
+      <p><strong>Your rights</strong><br>
+        You have the right to information, correction, deletion and objection. As we
+        store no personal data ourselves, please direct requests to the address
+        above.</p>
+    </div>
+  </details>
 </footer>
 
 <!-- SCAN LINE, terra-cotta stripe during map reveal -->
@@ -2094,22 +2012,6 @@ html:has(#route-select.show){ overflow:hidden; }
         <span id="t3dLoadNote">Photogrammetrie · 23,5 MB</span>
         <span id="t3dLoadPct">0 %</span>
       </div>
-    </div>
-  </div>
-  <!-- Detail-Dialog: Groessen-Bestaetigung oder Download-Fallback (Inhalt per JS) -->
-  <div id="tour3d-detail" hidden><div class="t3d-card" id="tour3d-detail-card"></div></div>
-  <!-- Fortschritt beim Nachladen des realistischen Modells -->
-  <div id="tour3d-progress" hidden>
-    <div class="t3d-prog-label" id="t3dProgLabel">Realistisches Modell lädt</div>
-    <div class="t3d-prog-track"><div class="t3d-prog-fill" id="t3dProgFill"></div></div>
-    <div class="t3d-prog-pct" id="t3dProgPct">0%</div>
-  </div>
-  <div id="tour3d-quote" hidden>
-    <div class="t3q-inner">
-      <div class="jl-head" id="t3q-role">Stimme vom Ort</div>
-      <blockquote class="voice" id="t3q-quote">…</blockquote>
-      <cite id="t3q-name"></cite>
-      <button class="t3q-close" onclick="closeTourQuote()">schließen</button>
     </div>
   </div>
 </div>
@@ -2670,10 +2572,6 @@ function applyContentLang(lang){
 
   });
 
-  applyUiLang(lang);
-
-  if(typeof renderRouteCards==='function') renderRouteCards();
-
   var pp=document.getElementById('places-panel');
 
   if(pp&&pp.classList.contains('open')&&typeof renderPlacesList==='function') renderPlacesList();
@@ -2682,15 +2580,6 @@ function applyContentLang(lang){
 
 
 
-function applyUiLang(lang){
-
-  var k=document.querySelector('#route-select .rs-kicker'); if(k) k.textContent=uiT('rs_kicker');
-
-  var t=document.getElementById('rsTitle');               if(t) t.textContent=uiT('rs_title');
-
-  var l=document.querySelector('#route-select .rs-lede'); if(l) l.textContent=uiT('rs_lede');
-
-}
 
 
 
@@ -2881,7 +2770,6 @@ function activate(idx){
            ar.style.animation = 'ripple-anim 1.9s ease-out infinite'; }
 
   /* Kopfleiste: Name des naechsten Bauwerks */
-  var _cs = document.getElementById('crumb-stop'); if (_cs) _cs.textContent = STOPS[idx].name;
 }
 
 /* Hervorhebung loeschen, ohne die Kopfleiste anzufassen: die traegt die
@@ -2900,7 +2788,6 @@ function clearActiveStop(){
 function resetMap(){
   clearActiveStop();
   document.getElementById('nav-crumb').classList.remove('show');
-  var _cs = document.getElementById('crumb-stop'); if (_cs) _cs.textContent = '';
   /* Der Routenpfad bleibt gezeichnet: die Karte ist eine Karte. */
 }
 
@@ -3072,6 +2959,7 @@ const LANG = {
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
     outroP:    'Wijnhaven ist kein Einzelbauwerk, sondern eine Wasserkante, die man liest, indem man sie geht. Sieben Einträge, ein Quartier.',
     impressum:      'Impressum',
+    dsg_title:      'Datenschutz',
     imp_responsible: 'Verantwortlich',
     imp_institution: 'Institution',
     imp_contact:     'Kontakt',
@@ -3086,7 +2974,6 @@ const LANG = {
     hintPan:       'Bewegen',
     hintTrack:     'Frei auf der Karte navigieren',
     hintPhoto:     'Fotos wischen',
-    hintJourney:   'Scrollen',
     ppTitle:       'Orte in Wijnhaven',
     ppRoute:       'Route',
     ppExtra:       'Weitere Orte',
@@ -3141,6 +3028,7 @@ const LANG = {
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
     outroP:    'Wijnhaven is geen los gebouw, maar een waterrand die je leest door haar te lopen. Zeven notities, één wijk.',
     impressum:      'Colofon',
+    dsg_title:      'Privacy',
     imp_responsible: 'Verantwoordelijk',
     imp_institution: 'Instelling',
     imp_contact:     'Contact',
@@ -3155,7 +3043,6 @@ const LANG = {
     hintPan:       'Verplaatsen',
     hintTrack:     'Vrij over de kaart navigeren',
     hintPhoto:     'Foto’s vegen',
-    hintJourney:   'Scroll',
     ppTitle:       'Plekken in Wijnhaven',
     ppRoute:       'Route',
     ppExtra:       'Overige plekken',
@@ -3210,6 +3097,7 @@ const LANG = {
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
     outroP:    'Wijnhaven is not a single building but a waterfront you read by walking it. Seven entries, one district.',
     impressum:      'Imprint',
+    dsg_title:      'Privacy',
     imp_responsible: 'Responsible',
     imp_institution: 'Institution',
     imp_contact:     'Contact',
@@ -3224,7 +3112,6 @@ const LANG = {
     hintPan:       'Move',
     hintTrack:     'Navigate the map freely',
     hintPhoto:     'Swipe photos',
-    hintJourney:   'Scroll',
     ppTitle:       'Places in Wijnhaven',
     ppRoute:       'Route',
     ppExtra:       'Other places',
@@ -3280,6 +3167,11 @@ function setLang(lang){
   currentLang = lang;
   if (typeof applyContentLang==='function') applyContentLang(lang);
   document.documentElement.lang = lang;   /* html lang mitschalten (Screenreader/SEO) */
+
+  /* Datenschutz liegt dreisprachig im Dokument; nur die passende Fassung zeigen. */
+  document.querySelectorAll('[data-lang-block]').forEach(function(b){
+    b.hidden = (b.getAttribute('data-lang-block') !== lang);
+  });
 
   /* ── Button active states ── */
   document.querySelectorAll('.lang-btn').forEach(function(b){
@@ -3468,7 +3360,6 @@ var STOP_COORDS = [
 
 function _projWP(coord){ var p = gpsToSvg(coord[0], coord[1]); return { x: Math.round(p.x*10)/10, y: Math.round(p.y*10)/10 }; }
 
-function _circNum(n){ return (n>=1 && n<=20) ? String.fromCharCode(0x245F + n) : '('+n+')'; }
 
 function _shortName(n){ return n.length>17 ? n.slice(0,16)+'…' : n; }
 
@@ -3485,88 +3376,6 @@ function _clampVB(x,y,w,hh){
 function _pad2(n){ return String(n).length<2 ? '0'+n : ''+n; }
 
 
-
-
-
-/* ── Uebersichtskarte im Auswahlscreen: alle 5 Routen auf dem Schwarzplan ── */
-
-function buildOverviewMap(){
-
-  var svg=document.getElementById('rs-map'); if(!svg) return;
-
-  var NS='http://www.w3.org/2000/svg';
-
-  var src=document.getElementById('mapSvg');
-
-  /* Plan (Wasser + Bloecke) einmalig aus #mapSvg klonen */
-
-  var planG=document.getElementById('rsMapPlan');
-
-  if(planG && !planG.childNodes.length && src){
-
-    var w=src.querySelector('.water-fill'), b=src.querySelector('.city-block');
-
-    if(w){ var pw=document.createElementNS(NS,'path'); pw.setAttribute('d',w.getAttribute('d')); pw.setAttribute('class','rsm-water'); planG.appendChild(pw); }
-
-    if(b){ var pb=document.createElementNS(NS,'path'); pb.setAttribute('d',b.getAttribute('d')); pb.setAttribute('fill-rule','evenodd'); pb.setAttribute('class','rsm-block'); planG.appendChild(pb); }
-
-  }
-
-  /* viewBox aus allen Bau-Koordinaten */
-
-  var xs=[], ys=[];
-
-  Object.keys(COORDS).forEach(function(k){ var p=gpsToSvg(COORDS[k][0],COORDS[k][1]); xs.push(p.x); ys.push(p.y); });
-
-  var minx=Math.min.apply(null,xs), maxx=Math.max.apply(null,xs), miny=Math.min.apply(null,ys), maxy=Math.max.apply(null,ys);
-
-  var pad=60, vw=(maxx-minx)+2*pad, vh=(maxy-miny)+2*pad; svg.setAttribute('viewBox', (minx-pad)+' '+(miny-pad)+' '+vw+' '+vh); svg.style.aspectRatio=vw+' / '+vh;
-
-  /* alle Routen als duenne Linien */
-
-  var rg=document.getElementById('rsMapRoutes'); if(!rg) return; rg.textContent='';
-
-  ROUTES.forEach(function(r){
-
-    var d='';
-
-    r.seq.forEach(function(it){ var c=it.type==='break'?it.coord:COORDS[it.slug]; if(!c) return; var p=gpsToSvg(c[0],c[1]); d+=(d?' L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1); });
-
-    var path=document.createElementNS(NS,'path'); path.setAttribute('d',d); path.setAttribute('fill','none');
-
-    path.setAttribute('class','rsm-route'); path.setAttribute('data-id',r.id);
-
-    path.setAttribute('onclick', "selectRoute('"+r.id+"')");
-
-    rg.appendChild(path);
-
-  });
-
-}
-
-function setRouteHighlight(id){
-
-  var rg=document.getElementById('rsMapRoutes'); if(!rg) return;
-
-  rg.querySelectorAll('.rsm-route').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-id')===id); });
-
-  var act=rg.querySelector('.rsm-route.active'); if(act) rg.appendChild(act);
-
-  var dg=document.getElementById('rsMapDots'); if(!dg) return; dg.textContent='';
-
-  var NS='http://www.w3.org/2000/svg';
-
-  var route=ROUTES.filter(function(r){return r.id===id;})[0]; if(!route) return;
-
-  route.seq.forEach(function(it){ if(it.type==='break') return; var c=COORDS[it.slug]; if(!c) return;
-
-    var p=gpsToSvg(c[0],c[1]); var dot=document.createElementNS(NS,'circle');
-
-    dot.setAttribute('cx',p.x); dot.setAttribute('cy',p.y); dot.setAttribute('r','8'); dot.setAttribute('class','rsm-dot'); dg.appendChild(dot);
-
-  });
-
-}
 
 
 
@@ -3667,83 +3476,7 @@ function buildRoute(routeId){
 
 
 
-/* ── Auswahlbildschirm ─────────────────────────────────────────────── */
 
-function renderRouteCards(){
-
-  var box=document.getElementById('rsCards'); if(!box) return;
-
-  box.innerHTML = ROUTES.map(function(r, i){
-
-    var stops  = r.seq.filter(function(x){ return x.type==='stop'; }).length;
-
-    var pauses = r.seq.filter(function(x){ return x.type==='break'; }).length;
-
-    var meta = '<span>'+r.dur+'</span><span>'+r.dist+'</span><span>'+stops+' '+uiT('rs_stops')+(pauses?(' · '+pauses+' '+(pauses>1?uiT('rs_pause_pl'):uiT('rs_pause_sg'))):'')+'</span>';
-
-    return '<button class="rs-card'+(r.id===currentRouteId?' rs-current':'')+'" onpointerenter="setRouteHighlight(\''+r.id+'\')" onfocus="setRouteHighlight(\''+r.id+'\')" onclick="selectRoute(\''+r.id+'\')">'
-
-      + '<span class="rs-card-idx">'+_pad2(i+1)+'</span>'
-
-      + '<span class="rs-card-body">'
-
-      +   '<span class="rs-card-name">'+routeT(r,'name')+'</span>'
-      +   '<span class="rs-card-sub">'+routeT(r,'sub')+'</span>'
-      +   '<span class="rs-card-theme">'+routeT(r,'theme')+'</span>'
-      +   '<span class="rs-card-meta">'+meta+'</span>'
-
-      + '</span>'
-
-      + '<span class="rs-card-go" aria-hidden="true">→</span>'
-
-      + '</button>';
-
-  }).join('');
-
-}
-
-function showRouteSelect(){
-
-  renderRouteCards();
-
-  buildOverviewMap(); setRouteHighlight(currentRouteId);
-  var ov=document.getElementById('route-select');
-
-  if(ov){ ov.classList.add('show'); ov.removeAttribute('inert'); }
-
-  document.documentElement.style.overflow='hidden';
-
-}
-
-function closeRouteSelect(){
-
-  var ov=document.getElementById('route-select');
-
-  if(ov){ ov.classList.remove('show'); ov.setAttribute('inert',''); }
-
-  document.documentElement.style.overflow='';
-
-}
-
-function selectRoute(id){
-
-  var wasDeep = window.scrollY > getIntroH()*0.6;
-
-  buildRoute(id);
-
-  closeRouteSelect();
-
-  if (wasDeep){
-
-    requestAnimationFrame(function(){ _journeyTop=null; window.scrollTo(0, getJourneyTop()+2); onScroll(); });
-
-  } else {
-
-    window.scrollTo(0,0);
-
-  }
-
-}
 
 
 
@@ -5010,113 +4743,16 @@ document.addEventListener('visibilitychange', function(){
 </script>
 
 <script>
-/* ════════════════════════════════════════════════════════════════
-   3D-WALKTHROUGH (Basis)
-   Lazy: Three.js wird erst beim Öffnen vom CDN geladen.
-   Akku: On-Demand-Rendering (nur bei Interaktion/Resize), kein Idle-Loop.
-   Namenskonvention im glb (so baut Nils sein eigenes Modell):
-     building_<N>  -> Antippen öffnet Eintrag N (0..6)
-     person_<id>   -> Antippen zeigt Zitat aus TOUR_PEOPLE[id]
-     ground / scenery_*  -> nur Kulisse, nicht antippbar
-   ════════════════════════════════════════════════════════════════ */
-var TOUR_PEOPLE = {
-  kai: {
-    de:{name:'Kai-Lars Ehrich', role:'Projektpartner', quote:'Hier erscheint später unser eigenes Interview vom Ort.'},
-    nl:{name:'Kai-Lars Ehrich', role:'Projectpartner', quote:'Hier verschijnt later ons eigen interview ter plaatse.'},
-    en:{name:'Kai-Lars Ehrich', role:'Project partner', quote:'Our own on-site interview will appear here later.'}
-  },
-  bewohner: {
-    de:{name:'Bewohnerin (Beispiel)', role:'Stimme vom Ort', quote:'Platzhalter: Zitat aus dem Vor-Ort-Interview (Phase B).'},
-    nl:{name:'Bewoner (voorbeeld)', role:'Stem ter plaatse', quote:'Plaatshouder: citaat uit het interview ter plaatse (fase B).'},
-    en:{name:'Resident (example)', role:'Voice on site', quote:'Placeholder: quote from the on-site interview (phase B).'}
-  }
-};
-
-var _t3d = null;
-
-/* ── Modell-Quellen ──
-   Der alte Three.js-Walkthrough (_initTour) ist mit dem Umbau auf den Drehteller
-   inaktiv geworden; seine beiden Modelle sind aus dem Repo entfernt. Leer = deaktiviert.
-   Die 3D-Ansicht laedt TOUR_MODEL_URL (models/wijnhaven.glb, weiter unten).
-   App-Download (Ego-Perspektive/Street View durch das fertige Modell): pro Plattform
-   eine URL. Ein externer Link (https://, App Store / Google Play) wird geoeffnet; eine
-   Datei auf derselben Domain (relativer Pfad) laedt direkt herunter. Leer = ausgeblendet.
-   TOUR_FULLDETAIL_URL bleibt als einfacher Datei-Download-Fallback erhalten. */
-var TOUR_ABSTRACT_URL   = '';   /* entfernt: models/map_v1.glb */
-var TOUR_DETAIL_URL     = '';   /* entfernt: models/walkthrough_detailed.glb */
-/* App-Downloads je Plattform. Externer Link (https://, App Store / Google Play / Microsoft Store)
-   wird geoeffnet; relativer Pfad (Datei auf derselben Domain, z.B. .exe/.msi/.apk) laedt direkt
-   herunter. Die Website erkennt die Plattform und empfiehlt den passenden Download. Aktuell alle
-   auf die Testdatei verdrahtet; spaeter die echten App-Builds/Store-Links eintragen. Leer = ausblenden. */
-var TOUR_APP_WINDOWS    = 'downloads/wijnhaven-volldetail-demo.glb';   /* spaeter .exe/.msi oder Microsoft-Store-Link */
-var TOUR_APP_IOS        = 'downloads/wijnhaven-volldetail-demo.glb';   /* spaeter App-Store-Link */
-var TOUR_APP_ANDROID    = 'downloads/wijnhaven-volldetail-demo.glb';   /* spaeter .apk oder Google-Play-Link */
-var TOUR_FULLDETAIL_URL = 'downloads/wijnhaven-volldetail-demo.glb';   /* optionaler einfacher Datei-Download */
-
-/* ── Georeferenz der neuen Karte (metrisch, ~1 Einheit = 1 m) ──
-   Bildet reale Position (lat/lon) auf die 3D-Welt (x,z) im ZENTRIERTEN Kartenraum ab
-   (nach _fitAndFrame). Damit werden Blickpunkt-Marker gesetzt UND die GPS-Sync gespeist.
-   PROVISORISCH kalibriert - mit EINEM echten Anker exakt justierbar:
-     * refLat/refLon = eine reale Referenz (hier Schwerpunkt der 7 Bauten)
-     * refX/refZ     = deren Lage in der zentrierten Karte (schieben, bis die Marker sitzen)
-     * rotDeg        = Nordabweichung der Karte (Karte drehen)
-   Helfer in der Konsole: window.mapGeoSet({refX:.., refZ:.., rotDeg:..}) -> live nachjustieren. */
-var MAP_GEO = {
-  refLat: 51.917714, refLon: 4.488671,
-  refX: 60, refZ: -60,
-  rotDeg: 0,
-  mPerLat: 111320, mPerLon: 68700   /* Meter pro Grad Breite / Laenge bei ~51.92 Grad N */
-};
-var GPS_HEADING = 0;   /* Grad-Offset fuer die Blickrichtung (Kompass) */
-function gpsToWorld(lat, lon){
-  var dN = (lat - MAP_GEO.refLat) * MAP_GEO.mPerLat;   /* Meter nach Norden */
-  var dE = (lon - MAP_GEO.refLon) * MAP_GEO.mPerLon;   /* Meter nach Osten  */
-  var ex = dE, ez = -dN;                                /* Ost = +x, Nord = -z */
-  var r = MAP_GEO.rotDeg * Math.PI / 180, cr = Math.cos(r), sr = Math.sin(r);
-  return { x: MAP_GEO.refX + ex * cr - ez * sr, z: MAP_GEO.refZ + ex * sr + ez * cr };
-}
-
-/* ── Gefuehrter Pfad (fester Rundgang) fuer die 3D-Ansicht ──
-   Feste Aussichtspunkte, zwischen denen die Kamera gleitet (Modus "Gefuehrt").
-   Je Punkt: Standort {x,z} und Blickziel {lx,lz}. Fuer das echte Modell anpassen. */
-var TOUR_PATH = [
-  { x:0,  z:15, lx:0,   lz:-2 },   /* Eingang am Wasser, Blick in die Strasse */
-  { x:3,  z:6,  lx:9,   lz:-9 },   /* Richtung Markthal */
-  { x:7,  z:-2, lx:9,   lz:-9 },   /* vor dem Markthal */
-  { x:1,  z:-7, lx:-12, lz:-7 },   /* Blick zum Witte Huis */
-  { x:-8, z:-5, lx:-12, lz:-7 },   /* am Witte Huis */
-  { x:-5, z:3,  lx:7,   lz:7  },   /* Richtung Red Apple */
-  { x:4,  z:6,  lx:7,   lz:7  }    /* am Red Apple */
-];
+/* ═══════════════════════════════
+   3D-ANSICHT
+   Drehteller mit dem Stadtmodell. Lazy: <model-viewer> und das glb werden
+   erst beim Oeffnen geladen. Die Marker sind HTML-Hotspots, siehe TOUR_PINS.
+═══════════════════════════════ */
 
 var T3D_TXT = {
-  de:{abstract:'Abstrakt',real:'Realistisch',load:'Laden',cancel:'Abbrechen',
-      title:'Realistisches Modell',note:'Texturiertes Modell laden. Über WLAN empfohlen.',
-      loading:'Realistisches Modell lädt',download:'Herunterladen',soon:'Folgt',
-      apple:'Apple',android:'Android',windows:'Windows',recommended:'Empfohlen für dein Gerät:',
-      appLabel:'Volldetail-App',appTitle:'Street View durchs Quartier',
-      appNote:'Lade die App, um dich auf der realistischen Karte in Ego-Perspektive zu bewegen. Plattform wählen:',
-      gps:'Vor Ort',gpsWait:'Suche GPS',gpsOn:'Vor Ort',gpsErr:'Kein Signal',gpsNo:'Kein GPS',
-      guided:'Geführt',free:'Frei',
-      sceneLoad:'3D wird geladen …',sceneNote:'Photogrammetrie · 23,5 MB',legend:'Legende',sceneErr:'3D konnte nicht geladen werden (Internet?)'},
-  nl:{abstract:'Abstract',real:'Realistisch',load:'Laden',cancel:'Annuleren',
-      title:'Realistisch model',note:'Getextureerd model laden. Wifi aanbevolen.',
-      loading:'Realistisch model laadt',download:'Downloaden',soon:'Volgt',
-      apple:'Apple',android:'Android',windows:'Windows',recommended:'Aanbevolen voor je toestel:',
-      appLabel:'Volledige app',appTitle:'Street View door de wijk',
-      appNote:'Download de app om je in ego-perspectief over de realistische kaart te bewegen. Kies platform:',
-      gps:'Ter plaatse',gpsWait:'GPS zoeken',gpsOn:'Ter plaatse',gpsErr:'Geen signaal',gpsNo:'Geen GPS',
-      guided:'Geleid',free:'Vrij',
-      sceneLoad:'3D wordt geladen …',sceneNote:'Fotogrammetrie · 23,5 MB',legend:'Legenda',sceneErr:'3D kon niet worden geladen (internet?)'},
-  en:{abstract:'Abstract',real:'Realistic',load:'Load',cancel:'Cancel',
-      title:'Realistic model',note:'Load the textured model. Wi-Fi recommended.',
-      loading:'Loading realistic model',download:'Download',soon:'Soon',
-      apple:'Apple',android:'Android',windows:'Windows',recommended:'Recommended for your device:',
-      appLabel:'Full app',appTitle:'Street View through the district',
-      appNote:'Download the app to move around the realistic map in first person. Choose your platform:',
-      gps:'On site',gpsWait:'Finding GPS',gpsOn:'On site',gpsErr:'No signal',gpsNo:'No GPS',
-      guided:'Guided',free:'Free',
-      sceneLoad:'Loading 3D …',sceneNote:'Photogrammetry · 23.5 MB',legend:'Legend',sceneErr:'3D could not be loaded (internet?)'}
+  de:{sceneLoad:'3D wird geladen …',sceneNote:'Photogrammetrie · 23,5 MB',legend:'Legende',sceneErr:'3D konnte nicht geladen werden (Internet?)'},
+  nl:{sceneLoad:'3D wordt geladen …',sceneNote:'Fotogrammetrie · 23,5 MB',legend:'Legenda',sceneErr:'3D kon niet worden geladen (internet?)'},
+  en:{sceneLoad:'Loading 3D …',sceneNote:'Photogrammetry · 23.5 MB',legend:'Legend',sceneErr:'3D could not be loaded (internet?)'}
 };
 function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
 
@@ -5354,481 +4990,6 @@ function closeTour3D(){
   if (host) host.hidden = true;
   document.body.style.overflow = '';
 }
-/* Vor-Ort-Sync der 3D-Ansicht ein/aus */
-function toggleTourGps(){ if (_t3d && _t3d.toggleGps) _t3d.toggleGps(); }
-/* Bewegungsmodus: gefuehrter Pfad <-> freier Walk; im Gefuehrt-Modus Schritt vor/zurueck */
-function setTourMode(guided){
-  if (_t3d && _t3d.setGuided) _t3d.setGuided(guided);
-  /* is-on + aria-pressed fuer die Gefuehrt/Frei-Segmentbuttons spiegeln */
-  var row = document.getElementById('tour3d-mode');
-  if (row) Array.prototype.forEach.call(row.querySelectorAll('.t3d-seg-btn'), function(b){
-    var on = (b.getAttribute('data-m') === (guided ? 'guided' : 'free'));
-    b.classList.toggle('is-on', on);
-    b.setAttribute('aria-pressed', on ? 'true' : 'false');
-  });
-}
-function tourPathStep(n){ if (_t3d && _t3d.pathStep) _t3d.pathStep(n); }
-
-/* ── Umschalter Abstrakt <-> Realistisch ── */
-function updateTourToggleUI(){
-  var seg = document.getElementById('tour3d-toggle'); if (!seg) return;
-  var t = t3dt(), mode = _t3d ? _t3d.mode : 'abstract';
-  Array.prototype.forEach.call(seg.querySelectorAll('.t3d-seg-btn'), function(b){
-    var m = b.getAttribute('data-mode');
-    var on = m === mode;
-    b.classList.toggle('is-on', on);
-    b.setAttribute('aria-pressed', on ? 'true' : 'false');
-    b.textContent = (m === 'abstract') ? t.abstract : t.real;
-  });
-}
-function switchTourModel(toDetailed){
-  if (!_t3d) return;
-  hideTourDetail();
-  if (!toDetailed){
-    if (_t3d.models.abstract){ _t3d.setModel(_t3d.models.abstract); _t3d.mode = 'abstract'; updateTourToggleUI(); }
-    return;
-  }
-  if (_t3d.models.detailed){ _t3d.setModel(_t3d.models.detailed); _t3d.mode = 'detailed'; updateTourToggleUI(); return; }
-  /* noch nicht geladen: erst pruefen, ob es die Detaildatei ueberhaupt gibt */
-  _detailHead().then(function(h){
-    if (!h || !h.ok){ showTourFallback(); return; }
-    showTourConfirm(h.size);
-  });
-}
-function _detailHead(){
-  return fetch(TOUR_DETAIL_URL, { method:'HEAD' }).then(function(r){
-    if (!r.ok) return { ok:false };
-    var l = r.headers.get('content-length');
-    return { ok:true, size: l ? parseInt(l, 10) : 0 };
-  }).catch(function(){ return null; });
-}
-function _loadGlbProgress(GLTFLoader, url, onProg){
-  return new Promise(function(res, rej){
-    new GLTFLoader().load(url, res, function(ev){
-      if (ev && ev.lengthComputable && ev.total) onProg(ev.loaded / ev.total);
-    }, rej);
-  });
-}
-function _fmtMB(bytes){
-  if (!bytes) return '';
-  var mb = bytes / 1048576;
-  return '~ ' + (mb >= 10 ? Math.round(mb) : mb.toFixed(1)) + ' MB';
-}
-function showTourConfirm(size){
-  var t = t3dt(), sizeStr = _fmtMB(size) || t.title;
-  var card = document.getElementById('tour3d-detail-card');
-  card.innerHTML =
-    '<div class="t3d-card-label">' + t.title + '</div>' +
-    '<div class="t3d-card-size">' + sizeStr + '</div>' +
-    '<div class="t3d-card-note">' + t.note + '</div>' +
-    '<div class="t3d-card-actions">' +
-      '<button class="t3d-btn" id="t3dLoadBtn">' + t.load + '</button>' +
-      '<button class="t3d-btn ghost" onclick="hideTourDetail()">' + t.cancel + '</button>' +
-    '</div>';
-  document.getElementById('tour3d-detail').hidden = false;
-  document.getElementById('t3dLoadBtn').onclick = function(){ hideTourDetail(); _doLoadDetail(); };
-}
-function detectPlatform(){
-  var ua = navigator.userAgent || '';
-  if (/iPhone|iPad|iPod/i.test(ua)) return 'apple';
-  if (/Android/i.test(ua)) return 'android';
-  if (/Macintosh|Mac OS X/i.test(ua)) return 'apple';            /* macOS -> Apple */
-  if (/Windows|Win64|Win32|WOW64/i.test(ua)) return 'windows';
-  return null;
-}
-function _dlBtn(url, label, cls){
-  if (!url) return '';
-  /* externer Link (https://, App Store/Play/Store) -> oeffnen; relative Datei -> direkt herunterladen */
-  return /^https?:\/\//i.test(url)
-    ? '<a class="' + cls + '" href="' + url + '" target="_blank" rel="noopener noreferrer">' + label + '</a>'
-    : '<a class="' + cls + '" href="' + url + '" download>' + label + '</a>';
-}
-function showTourFallback(){
-  var t = t3dt(), card = document.getElementById('tour3d-detail-card');
-  var rec = detectPlatform();
-  var plats = [
-    { key:'windows', label:t.windows, url:TOUR_APP_WINDOWS },
-    { key:'apple',   label:t.apple,   url:TOUR_APP_IOS },
-    { key:'android', label:t.android, url:TOUR_APP_ANDROID }
-  ].filter(function(p){ return !!p.url; });
-  plats.sort(function(a, b){ return (b.key === rec ? 1 : 0) - (a.key === rec ? 1 : 0); });  /* empfohlene zuerst */
-  var btns = plats.map(function(p){
-    return _dlBtn(p.url, p.label, (p.key === rec) ? 't3d-btn' : 't3d-btn alt');
-  }).join('');
-  var recL = { windows:t.windows, apple:t.apple, android:t.android };
-  var recNote = (rec && recL[rec] && plats.some(function(p){ return p.key === rec; }))
-    ? '<div class="t3d-card-rec">' + t.recommended + ' ' + recL[rec] + '</div>' : '';
-  var primary = btns || (TOUR_FULLDETAIL_URL ? _dlBtn(TOUR_FULLDETAIL_URL, t.download, 't3d-btn') : '<button class="t3d-btn" disabled>' + t.soon + '</button>');
-  card.innerHTML =
-    '<div class="t3d-card-label">' + t.appLabel + '</div>' +
-    '<div class="t3d-card-size">' + t.appTitle + '</div>' +
-    '<div class="t3d-card-note">' + t.appNote + '</div>' +
-    recNote +
-    '<div class="t3d-card-actions">' + primary +
-      '<button class="t3d-btn ghost" onclick="hideTourDetail()">' + t.cancel + '</button>' +
-    '</div>';
-  document.getElementById('tour3d-detail').hidden = false;
-  if (_t3d){ _t3d.mode = 'abstract'; updateTourToggleUI(); }
-}
-function _doLoadDetail(){
-  showTourProgress(0);
-  _loadGlbProgress(_t3d.GLTFLoader, TOUR_DETAIL_URL, function(p){ showTourProgress(p); })
-    .then(function(gltf){
-      _t3d.models.detailed = gltf.scene;
-      _t3d.setModel(gltf.scene); _t3d.mode = 'detailed';
-      hideTourProgress(); updateTourToggleUI();
-    })
-    .catch(function(e){ console.error('detail load failed', e); hideTourProgress(); showTourFallback(); });
-}
-function showTourProgress(p){
-  var box = document.getElementById('tour3d-progress'); if (!box) return;
-  box.hidden = false;
-  var pct = Math.max(0, Math.min(100, Math.round((p || 0) * 100)));
-  document.getElementById('t3dProgFill').style.width = pct + '%';
-  document.getElementById('t3dProgPct').textContent = pct + '%';
-  document.getElementById('t3dProgLabel').textContent = t3dt().loading;
-}
-function hideTourProgress(){ var b = document.getElementById('tour3d-progress'); if (b) b.hidden = true; }
-function hideTourDetail(){ var b = document.getElementById('tour3d-detail'); if (b) b.hidden = true; }
-function closeTourQuote(){ var q=document.getElementById('tour3d-quote'); if(q) q.hidden=true; }
-
-function _tourTargetName(o){
-  var x=o;
-  while(x){ if(x.name && (/^building_\d+/.test(x.name) || /^person_/.test(x.name))) return x.name; x=x.parent; }
-  return null;
-}
-function _handleTourHit(name){
-  if(!name) return;
-  if(name.indexOf('building_')===0){
-    var idx = parseInt(name.slice(9),10);
-    if(!isNaN(idx) && idx>=0 && idx<STOPS.length){ closeTour3D(); openModal(idx); }
-  } else if(name.indexOf('person_')===0){
-    _showTourQuote(name.slice(7).split('_')[0]);
-  }
-}
-function _showTourQuote(id){
-  var rec = TOUR_PEOPLE[id]; if(!rec) return;
-  var lang = (typeof currentLang!=='undefined' && rec[currentLang]) ? currentLang : 'de';
-  var p = rec[lang];
-  document.getElementById('t3q-role').textContent  = p.role;
-  document.getElementById('t3q-quote').textContent = '„'+p.quote+'“';
-  document.getElementById('t3q-name').textContent  = p.name;
-  document.getElementById('tour3d-quote').hidden = false;
-}
-
-async function _initTour(THREE, GLTFLoader){
-  var canvas = document.getElementById('tour3d-canvas');
-  var renderer = new THREE.WebGLRenderer({ canvas:canvas, antialias:true, powerPreference:'low-power' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-
-  var scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xffffff);
-  var camera = new THREE.PerspectiveCamera(72, 1, 0.05, 600);   /* weiteres FOV = Ego-Perspektive */
-  var EYE = 1.7, BOUND = 21, SPEED = 7.2, LOOK = 0.0042;        /* Augenhoehe, Bodengrenze, Tempo, Maus-Empfindlichkeit */
-  var GROUND_WALK = false;                                      /* true = Ego am Boden; false = Overview-Flug ueber grosser Karte (per _fitAndFrame gesetzt) */
-  camera.position.set(0, EYE, 17);
-  var yaw = 0, pitch = 0;                                       /* yaw=0 blickt nach -Z */
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xeaeaea, 2.05));   /* hell genug, dass farbige (realistische) Fassaden lesen; Schwarz bleibt schwarz */
-  var dir = new THREE.DirectionalLight(0xffffff, 0.6); dir.position.set(20, 44, 18); scene.add(dir);
-
-  function applyLook(){
-    var cp = Math.cos(pitch);
-    camera.lookAt(
-      camera.position.x + Math.sin(yaw) * cp,
-      camera.position.y + Math.sin(pitch),
-      camera.position.z - Math.cos(yaw) * cp
-    );
-  }
-  applyLook();
-
-  function render(){ renderer.render(scene, camera); }
-  function resize(){
-    var w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h; camera.updateProjectionMatrix();
-    render();
-  }
-  window.addEventListener('resize', resize);
-
-  /* ── Modell-Verwaltung ── */
-  var clickable = [], currentModel = null, poiGroup = null;
-  function rebuildClickable(){
-    clickable.length = 0;
-    if (currentModel) currentModel.traverse(function(o){
-      if (o.isMesh){ var n = _tourTargetName(o); if (n){ o.userData.t3d = n; clickable.push(o); } }
-    });
-    if (poiGroup) poiGroup.traverse(function(o){ if (o.isMesh && o.userData.t3d) clickable.push(o); });
-  }
-  /* ── Blickpunkte: gelbe Pin-Marker fuer die 7 Bauten, benannt building_<N>,
-       damit Antippen den bestehenden Eintrag-Handler (_handleTourHit) oeffnet.
-       Position via gpsToWorld() -> reagiert live auf die Karten-Kalibrierung. ── */
-  function buildPOIs(){
-    if (poiGroup) scene.remove(poiGroup);
-    poiGroup = new THREE.Group();
-    var mat = new THREE.MeshBasicMaterial({ color: 0xFFED29 });
-    var core = new THREE.MeshBasicMaterial({ color: 0x0A0A0A });
-    for (var i = 0; i < STOP_COORDS.length; i++){
-      var w = gpsToWorld(STOP_COORDS[i][0], STOP_COORDS[i][1]);
-      var grp = new THREE.Group(); grp.name = 'building_' + i;
-      var mast = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 62, 8), mat); mast.position.y = 31;
-      var head = new THREE.Mesh(new THREE.SphereGeometry(8, 18, 14), mat); head.position.y = 66;
-      var dot  = new THREE.Mesh(new THREE.SphereGeometry(3.4, 14, 10), core); dot.position.y = 66;
-      mast.userData.t3d = grp.name; head.userData.t3d = grp.name; dot.userData.t3d = grp.name;
-      grp.add(mast); grp.add(head); grp.add(dot);
-      grp.position.set(w.x, 0, w.z);
-      poiGroup.add(grp);
-    }
-    scene.add(poiGroup);
-    rebuildClickable();
-    render();
-  }
-  function setModel(node){
-    if (currentModel) scene.remove(currentModel);
-    currentModel = node; scene.add(node); _fitAndFrame(node); rebuildClickable(); render();
-  }
-  /* Karte einpassen: Grundriss auf den Ursprung zentrieren, Boden auf y=0.
-     Grosse Karte (> 60 m Kantenlaenge) -> Overview-Flug (schweben + umsehen);
-     kleine Szene -> klassischer Ego-Walk am Boden. */
-  function _fitAndFrame(node){
-    node.position.set(0, 0, 0); node.updateMatrixWorld(true);
-    var box = new THREE.Box3().setFromObject(node);
-    if (box.isEmpty()) return;
-    var size = new THREE.Vector3(); box.getSize(size);
-    var ctr  = new THREE.Vector3(); box.getCenter(ctr);
-    node.position.x = -ctr.x; node.position.z = -ctr.z; node.position.y = -box.min.y;
-    var span = Math.max(size.x, size.z), radius = span / 2;
-    if (span > 60){
-      GROUND_WALK = false;
-      BOUND = radius * 1.05;
-      SPEED = Math.max(7.2, span / 6);
-      var oh = span * 0.62 + size.y;
-      camera.position.set(0, oh, radius * 1.15);
-      pitch = -Math.atan2(oh, radius * 1.15); yaw = 0;
-      camera.far = (radius + oh) * 4; camera.updateProjectionMatrix();
-      var rr = radius * 0.82, pts = [[0,rr],[rr*0.9,rr*0.55],[rr,-rr*0.2],[0,-rr],[-rr,-rr*0.2],[-rr*0.9,rr*0.55]];
-      TOUR_PATH.length = 0;
-      for (var i = 0; i < pts.length; i++) TOUR_PATH.push({ x:pts[i][0], z:pts[i][1], lx:0, lz:0 });
-    } else {
-      GROUND_WALK = true; BOUND = 21; SPEED = 7.2;
-      camera.position.set(0, EYE, Math.max(12, radius + 3));
-      pitch = 0; yaw = 0;
-    }
-    applyLook();
-  }
-
-  /* ── First-Person-Steuerung (Street-View-artig): ziehen = umsehen, Joystick/WASD = laufen,
-        kurzes Tippen = Gebaeude/Person auswaehlen. Renderloop laeuft nur bei aktiver Eingabe (Akku). ── */
-  var moveF = 0, moveR = 0, keys = {}, looking = false;
-  var ray = new THREE.Raycaster(), v2 = new THREE.Vector2();
-  var running = false, lastT = 0;
-  /* GPS-Sync-Zustand: Kamera folgt der echten Position, Blick optional dem Kompass */
-  var gpsSync = false, gpsTX = camera.position.x, gpsTZ = camera.position.z, gpsYaw = yaw;
-  var compassActive = false, geoWatch = null, orientHandler = null;
-  function tourOpen(){ var h = document.getElementById('tour3d'); return h && !h.hidden; }
-  function stickEl(){ return document.getElementById('tour3d-stick'); }
-  /* Gefuehrt (fester Pfad, professionell) vs. Frei (Ego-Walk). Standard = gefuehrt. */
-  var guided = false, pathIdx = 0, guidedYawLock = true;   /* Overview-Karte: Standard = frei schweben/umsehen */
-
-  function loop(t){
-    if (!running) return;
-    if (!lastT) lastT = t;
-    var dt = Math.min(0.05, (t - lastT) / 1000); lastT = t;
-    var busy = false;
-    if (gpsSync){
-      var lp = Math.min(1, dt * 3.5);
-      if (Math.hypot(gpsTX - camera.position.x, gpsTZ - camera.position.z) > 0.02) busy = true;  /* solange nicht am Ziel -> Loop laeuft weiter */
-      camera.position.x += (gpsTX - camera.position.x) * lp;
-      camera.position.z += (gpsTZ - camera.position.z) * lp;
-      if (GROUND_WALK) camera.position.y = EYE;
-      if (compassActive){
-        var dY = ((gpsYaw - yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-        if (Math.abs(dY) > 0.003){ yaw += dY * Math.min(1, dt * 6); busy = true; }
-      }
-    } else if (guided){
-      var wp = TOUR_PATH[pathIdx] || TOUR_PATH[0];
-      var lg = Math.min(1, dt * 3.0);
-      camera.position.x += (wp.x - camera.position.x) * lg;
-      camera.position.z += (wp.z - camera.position.z) * lg;
-      if (GROUND_WALK) camera.position.y = EYE;
-      if (Math.hypot(wp.x - camera.position.x, wp.z - camera.position.z) > 0.03) busy = true;
-      if (guidedYawLock){
-        var tY = Math.atan2((wp.lx != null ? wp.lx : wp.x) - wp.x, -((wp.lz != null ? wp.lz : wp.z) - wp.z));
-        var dG = ((tY - yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-        if (Math.abs(dG) > 0.004){ yaw += dG * Math.min(1, dt * 5); busy = true; }
-        if (GROUND_WALK && Math.abs(pitch) > 0.004){ pitch += (0 - pitch) * Math.min(1, dt * 5); busy = true; }
-      }
-    } else {
-      var kf = ((keys['w']||keys['arrowup'])?1:0) - ((keys['s']||keys['arrowdown'])?1:0);
-      var kr = ((keys['d']||keys['arrowright'])?1:0) - ((keys['a']||keys['arrowleft'])?1:0);
-      var f = moveF + kf, r = moveR + kr;
-      if (f || r){
-        var mag = Math.hypot(f, r); if (mag > 1){ f /= mag; r /= mag; }
-        var fx = Math.sin(yaw), fz = -Math.cos(yaw);
-        var rx = Math.cos(yaw), rz = Math.sin(yaw);
-        camera.position.x = Math.max(-BOUND, Math.min(BOUND, camera.position.x + (fx*f + rx*r) * SPEED * dt));
-        camera.position.z = Math.max(-BOUND, Math.min(BOUND, camera.position.z + (fz*f + rz*r) * SPEED * dt));
-        if (GROUND_WALK) camera.position.y = EYE;
-        busy = true;
-      }
-    }
-    applyLook();
-    render();
-    if (busy || looking) requestAnimationFrame(loop);
-    else { running = false; lastT = 0; }
-  }
-  function kick(){ if (!running){ running = true; lastT = 0; requestAnimationFrame(loop); } }
-
-  /* ── Gefuehrter Pfad: zwischen festen Aussichtspunkten gleiten ── */
-  function _navLabel(){ var el = document.getElementById('tour3d-nav-pos'); if (el) el.textContent = (pathIdx + 1) + ' / ' + TOUR_PATH.length; }
-  function _nearestWp(){
-    var bi = 0, bd = 1e9;
-    for (var i = 0; i < TOUR_PATH.length; i++){ var w = TOUR_PATH[i]; var d = Math.hypot(w.x - camera.position.x, w.z - camera.position.z); if (d < bd){ bd = d; bi = i; } }
-    return bi;
-  }
-  function pathStep(n){ if (!guided) return; pathIdx = Math.max(0, Math.min(TOUR_PATH.length - 1, pathIdx + n)); guidedYawLock = true; _navLabel(); kick(); }
-  function updateTourControls(){
-    var st = document.getElementById('tour3d-stick'), nv = document.getElementById('tour3d-nav');
-    if (st) st.style.display = (!guided && !gpsSync) ? '' : 'none';   /* Joystick nur im Frei-Modus */
-    if (nv) nv.style.display = (guided && !gpsSync) ? '' : 'none';    /* Pfad-Navigation nur im Gefuehrt-Modus */
-    var seg = document.getElementById('tour3d-mode');
-    if (seg) Array.prototype.forEach.call(seg.querySelectorAll('.t3d-seg-btn'), function(b){
-      var m = b.getAttribute('data-m');
-      b.classList.toggle('is-on', m === (guided ? 'guided' : 'free'));
-      b.textContent = (m === 'guided') ? t3dt().guided : t3dt().free;
-    });
-    _navLabel();
-  }
-  function setGuided(on){ guided = !!on; if (guided){ pathIdx = _nearestWp(); guidedYawLock = true; } updateTourControls(); kick(); }
-
-  /* ── GPS-Sync: echte Position -> Kamera, Geraete-Kompass -> Blickrichtung ── */
-  function _gpsLabel(txt){ var el = document.getElementById('tour3d-gps-label'); if (el) el.textContent = txt; }
-  function _gpsBtn(on){ var b = document.getElementById('tour3d-gps'); if (b) b.classList.toggle('on', !!on); }
-  function startCompass(){
-    function attach(){
-      orientHandler = function(e){
-        var h = (typeof e.webkitCompassHeading === 'number') ? e.webkitCompassHeading
-              : (e.absolute && typeof e.alpha === 'number') ? (360 - e.alpha) : null;
-        if (h == null) return;
-        compassActive = true;
-        gpsYaw = h * Math.PI / 180 + GPS_HEADING * Math.PI / 180;   /* Kompass -> Yaw */
-        kick();
-      };
-      window.addEventListener('deviceorientationabsolute', orientHandler, true);
-      window.addEventListener('deviceorientation', orientHandler, true);
-    }
-    var DOE = window.DeviceOrientationEvent;
-    if (DOE && typeof DOE.requestPermission === 'function'){   /* iOS 13+ braucht Erlaubnis */
-      DOE.requestPermission().then(function(s){ if (s === 'granted') attach(); }).catch(function(){});
-    } else { attach(); }
-  }
-  function startGps(){
-    if (!navigator.geolocation){ _gpsLabel(t3dt().gpsNo); return; }
-    gpsSync = true; _gpsBtn(true); _gpsLabel(t3dt().gpsWait);
-    updateTourControls();
-    geoWatch = navigator.geolocation.watchPosition(function(pos){
-      var w = gpsToWorld(pos.coords.latitude, pos.coords.longitude);
-      gpsTX = Math.max(-BOUND, Math.min(BOUND, w.x));
-      gpsTZ = Math.max(-BOUND, Math.min(BOUND, w.z));
-      _gpsLabel(t3dt().gpsOn + ' · ±' + Math.round(pos.coords.accuracy) + ' m');
-      kick();
-    }, function(){ _gpsLabel(t3dt().gpsErr); }, { enableHighAccuracy:true, maximumAge:1000, timeout:15000 });
-    startCompass();
-  }
-  function stopGps(){
-    gpsSync = false; compassActive = false; _gpsBtn(false); _gpsLabel(t3dt().gps);
-    updateTourControls();
-    if (geoWatch != null && navigator.geolocation){ navigator.geolocation.clearWatch(geoWatch); geoWatch = null; }
-    if (orientHandler){
-      window.removeEventListener('deviceorientationabsolute', orientHandler, true);
-      window.removeEventListener('deviceorientation', orientHandler, true);
-      orientHandler = null;
-    }
-  }
-  function toggleGps(){ if (gpsSync) stopGps(); else startGps(); }
-
-  /* Umsehen per Ziehen auf dem Canvas; kurzes Tippen waehlt aus */
-  var lpId = -1, lx = 0, ly = 0, downX = 0, downY = 0;
-  canvas.addEventListener('pointerdown', function(e){
-    looking = true; lpId = e.pointerId; lx = e.clientX; ly = e.clientY; downX = e.clientX; downY = e.clientY;
-    if (canvas.setPointerCapture){ try { canvas.setPointerCapture(e.pointerId); } catch(_){} }
-    kick();
-  });
-  canvas.addEventListener('pointermove', function(e){
-    if (!looking || e.pointerId !== lpId) return;
-    if (gpsSync && compassActive) return;   /* im Sync-Modus dreht der Kompass den Blick */
-    if (guided) guidedYawLock = false;      /* im Gefuehrt-Modus: am Punkt frei umsehen */
-    var ddx = e.clientX - lx, ddy = e.clientY - ly; lx = e.clientX; ly = e.clientY;
-    yaw  -= ddx * LOOK;
-    pitch = Math.max(-1.2, Math.min(1.2, pitch - ddy * LOOK));
-    kick();
-  });
-  function endLook(e){
-    if (e.pointerId !== lpId) return;
-    looking = false; lpId = -1;
-    if (Math.hypot(e.clientX - downX, e.clientY - downY) <= 6){
-      var rct = canvas.getBoundingClientRect();
-      v2.x = ((e.clientX - rct.left)/rct.width)*2 - 1;
-      v2.y = -((e.clientY - rct.top)/rct.height)*2 + 1;
-      ray.setFromCamera(v2, camera);
-      var hits = ray.intersectObjects(clickable, true);
-      if (hits.length) _handleTourHit(hits[0].object.userData.t3d || _tourTargetName(hits[0].object));
-    }
-  }
-  canvas.addEventListener('pointerup', endLook);
-  canvas.addEventListener('pointercancel', endLook);
-
-  /* Tastatur (Desktop): WASD / Pfeile */
-  window.addEventListener('keydown', function(e){ if (!tourOpen()) return; keys[(e.key||'').toLowerCase()] = true; kick(); });
-  window.addEventListener('keyup',   function(e){ keys[(e.key||'').toLowerCase()] = false; });
-
-  /* Joystick (Touch/Maus) unten links */
-  var stick = document.getElementById('tour3d-stick'), nub = document.getElementById('tour3d-nub');
-  if (stick && nub){
-    var sId = -1, sCx = 0, sCy = 0, SR = 46;
-    function sStart(e){
-      if (gpsSync) return;                  /* im Sync-Modus folgt die Position dem GPS */
-      sId = e.pointerId;
-      var r = stick.getBoundingClientRect(); sCx = r.left + r.width/2; sCy = r.top + r.height/2;
-      if (stick.setPointerCapture){ try { stick.setPointerCapture(e.pointerId); } catch(_){} }
-      sMove(e); e.preventDefault();
-    }
-    function sMove(e){
-      if (e.pointerId !== sId) return;
-      var dx = e.clientX - sCx, dy = e.clientY - sCy, d = Math.hypot(dx, dy);
-      if (d > SR){ dx = dx/d*SR; dy = dy/d*SR; }
-      nub.style.transform = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px)';
-      moveR = dx / SR; moveF = -dy / SR;             /* hoch = vorwaerts */
-      kick(); e.preventDefault();
-    }
-    function sEnd(e){
-      if (e.pointerId !== sId) return;
-      sId = -1; moveF = 0; moveR = 0; nub.style.transform = 'translate(0,0)';
-    }
-    stick.addEventListener('pointerdown', sStart);
-    stick.addEventListener('pointermove', sMove);
-    stick.addEventListener('pointerup', sEnd);
-    stick.addEventListener('pointercancel', sEnd);
-  }
-
-  var gltf = await new GLTFLoader().loadAsync(TOUR_ABSTRACT_URL);
-  setModel(gltf.scene);
-  buildPOIs();                                       /* Blickpunkt-Marker der 7 Bauten */
-  _gpsLabel(t3dt().gps);
-  pathIdx = _nearestWp(); updateTourControls();
-  resize(); kick();                                  /* gleitet zum ersten Aussichtspunkt (Gefuehrt-Standard) */
-  return {
-    resize: resize, render: render, scene: scene, camera: camera, setModel: setModel,
-    toggleGps: toggleGps, stopGps: stopGps, isGps: function(){ return gpsSync; },
-    setGuided: setGuided, isGuided: function(){ return guided; }, pathStep: pathStep, updateTourControls: updateTourControls,
-    rebuildPOIs: buildPOIs,
-    GLTFLoader: GLTFLoader, THREE: THREE,
-    models: { abstract: gltf.scene, detailed: null }, mode: 'abstract'
-  };
-}
-
-/* Live-Kalibrierung der Karten-Georeferenz aus der Browser-Konsole, z. B.
-   mapGeoSet({ refX: 80, refZ: -120, rotDeg: 12 })  -> Marker + GPS-Sync sofort neu. */
-window.mapGeoSet = function(o){ if (o) for (var k in o) MAP_GEO[k] = o[k]; if (window._t3d && _t3d.rebuildPOIs) _t3d.rebuildPOIs(); return MAP_GEO; };
 </script>
 
 <script>

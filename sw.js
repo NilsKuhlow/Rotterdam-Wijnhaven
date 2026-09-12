@@ -13,12 +13,14 @@
 const CACHE = 'wijnhaven-v51';
 
 /* Cross-origin hosts we are allowed to cache (all send CORS headers, so the
-   responses are readable/cacheable — needed for offline fonts + 3D on-site). */
+   responses are readable/cacheable — needed for offline fonts + 3D on-site).
+   www.gstatic.com liefert den Draco-Decoder. Ohne ihn liegt zwar das Modell
+   im Cache, laesst sich offline aber nicht auspacken: die 3D-Ansicht blieb leer. */
 const CACHEABLE_HOSTS = [
   'fonts.googleapis.com',   // font CSS
   'fonts.gstatic.com',      // font woff2
-  'esm.sh',                 // three.js + GLTFLoader (3D map)
-  'unpkg.com',              // <model-viewer> (per-stop models)
+  'unpkg.com',              // <model-viewer>
+  'www.gstatic.com',        // Draco-Decoder (wrapper.js + decoder.wasm)
 ];
 
 /* All local assets that must work fully offline.
