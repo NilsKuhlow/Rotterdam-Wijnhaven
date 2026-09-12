@@ -132,19 +132,38 @@ prüfen und dann gemeinsam nachziehen.
 
 ### Eigener Standort im Modell
 
-Läuft **Smart-Track**, während die 3D-Ansicht offen ist, schwebt der eigene Standort
-als runder Punkt im Modell — bewusst anders als die eckigen, nummerierten
-Bauwerksmarker, damit man beides nie verwechselt. Ein Lot zeigt auf den Boden, ein
-ruhiger Puls macht ihn auffindbar (`prefers-reduced-motion` schaltet ihn ab).
+Läuft **Smart-Track**, während die 3D-Ansicht offen ist, zeigt ein roter Marker, wo
+man steht. Er ist bewusst anders gebaut als die eckigen, nummerierten
+Bauwerksmarker: rund statt eckig, rot statt Bauwerksfarbe, ohne Nummer.
+
+Er besteht aus drei Teilen. Der **Standring** liegt auf dem Boden und bezeichnet den
+Punkt; aus ihm laufen zwei Ringe aus, damit man ihn im Gewimmel findet
+(`prefers-reduced-motion` friert sie ein). Darauf steht eine **Nadel**, und auf der
+sitzt der **Kopf**, der die Fernwirkung trägt.
+
+Der Ankerpunkt liegt auf Augenhöhe über dem Boden, also dort, wo man wirklich steht,
+und `<model-viewer>` zentriert das Element darauf. Deshalb ist der Standring das
+Element selbst. Nadel und Kopf sind in Pixeln versetzt, nicht in Metern: Ein Versatz
+in Metern würde beim Kippen der Kamera perspektivisch mitwandern und am Ende neben
+den Standort zeigen.
+
+Die Höhe des Standrings folgt der Kameraneigung (`--me-flach`, aus `cos(phi)` in
+`_t3dPinScale`). Von senkrecht oben ist er ein Kreis, beim Kippen wird er flach; so
+liegt er in jeder Ansicht in der Bodenebene.
+
+Rot (`--here`) ist die einzige Farbe außerhalb der Palette. Sie ist dem Standort
+vorbehalten, kein Bauwerk trägt sie, deshalb ist sie an dieser Stelle eindeutig.
+
+Beim Herauszoomen bleibt der Marker größer als die Bauwerksmarker
+(`scale(max(.85, var(--pin-k)))`): Es gibt nur einen davon, und er muss auch in der
+Gesamtansicht auffindbar sein.
 
 `gpsToModel()` nutzt dieselbe Registrierung wie die Bauwerksmarker, nur umgekehrt
 gelesen. Gegenprobe: Die Koordinate der Markthal aus `STOP_COORDS` landet auf
 `32.3 / -358.4` und trifft damit ihren Marker auf den Zehntelmeter.
 
-Der Punkt liegt 30 m über dem Bodenniveau (`MODEL_GRUND + MODEL_AUGEN`), sonst
-verschwindet er zwischen den Häusern. Er wird angelegt, wenn der erste Fix kommt,
-beim Öffnen der 3D-Ansicht nachgezogen, falls schon geortet wird, und beim Beenden
-des Trackers entfernt.
+Der Marker entsteht mit dem ersten Fix, wird beim Öffnen der 3D-Ansicht nachgezogen,
+falls schon geortet wird, und verschwindet beim Beenden des Trackers.
 
 Eine Fallgrube: `mv.updateHotspot()` bewegt den Punkt zwar in der Szene, schreibt
 aber `data-position` nicht zurück. `_t3dMeUpdate()` setzt deshalb immer beides.
@@ -289,7 +308,7 @@ python -m http.server 8097
 ## Testmodus (`?debug`)
 
 `index.html?debug` blendet ein kleines Bedienfeld ein, das einen GPS-Verlauf
-vortäuscht — nützlich am Schreibtisch, wo der Browser mitten in Wismar steht.
+vortäuscht. Nützlich am Schreibtisch, wo der Browser mitten in Wismar steht.
 Ohne `?debug` ist der Testmodus vollständig inaktiv.
 
 Die Route entsteht aus den echten `STOP_COORDS`: `_simPfad(6)` legt zwischen je zwei

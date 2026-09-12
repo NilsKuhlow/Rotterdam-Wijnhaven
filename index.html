@@ -166,6 +166,9 @@
   --accent:     #FFED29;
   --accent-700: #D9C200;
   --accent-fg:  #0A0A0A;
+  /* Signalrot: ausschliesslich fuer den eigenen Standort im 3D-Modell.
+     Kein Bauwerk traegt diese Farbe, deshalb ist sie dort eindeutig. */
+  --here:       #E4002B;
 
   /* Semantic + legacy aliases (alte Namen bleiben, damit bestehende Regeln aufloesen) */
   --paper:    var(--paper-0);
@@ -1364,28 +1367,48 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 .t3d-pin:hover, .t3d-pin:focus-visible { transform:scale(calc(var(--pin-k,1) * 1.25)); outline:none; }
 .t3d-pin:focus-visible { box-shadow:0 0 0 2px var(--paper-0), 0 0 0 4px var(--ink-1); }
 
-/* Eigener Standort im Modell. Bewusst anders als die Bauwerksmarker:
-   rund statt eckig, ohne Nummer, damit man beides nie verwechselt. */
-.t3d-me {
-  position:relative; display:block; width:22px; height:22px; padding:0; margin:0;
-  border-radius:50%; background:var(--ink-1); border:3px solid var(--paper-0);
-  box-shadow:0 0 0 1px var(--ink-1); cursor:default;
-  transform:scale(var(--pin-k,1));
+/* Eigener Standort im Modell. Bewusst anders als die Bauwerksmarker: rund
+   statt eckig, rot statt Bauwerksfarbe, ohne Nummer.
+   Der Hotspot ist auf Augenhoehe verankert, und model-viewer zentriert das
+   Element auf dem Ankerpunkt. Deshalb ist das Element selbst der Standring:
+   er liegt auf dem Punkt, auf dem man steht. Nadel und Kopf stehen darauf und
+   sind in Pixeln versetzt, nicht in Metern - so wandert der Kopf beim Kippen
+   der Kamera nicht vom Standort weg. */
+.t3d-me {          /* Standring auf dem Boden */
+  position:relative; display:block; padding:0; margin:0;
+  /* Hoehe folgt der Kameraneigung, damit der Ring in der Bodenebene liegt:
+     von oben rund, beim Kippen flach. --me-flach kommt aus _t3dPinScale. */
+  width:34px; height:calc(34px * var(--me-flach, .4));
+  border:2px solid var(--here); border-radius:50%; background:none; cursor:default;
+  /* Eigener Massstab: es gibt nur einen davon, er darf in der Uebersicht
+     groesser bleiben als die sieben Bauwerksmarker. */
+  transform:scale(max(.85, var(--pin-k,1))); transform-origin:50% 50%;
 }
-.t3d-me::after {   /* Lot zum Boden */
-  content:''; position:absolute; left:50%; top:100%; width:1px; height:26px;
-  margin-left:-.5px; background:var(--ink-1);
+.t3d-me::before, .t3d-me::after {   /* auslaufende Ringe, wie ein Echo am Boden */
+  content:''; position:absolute; inset:-2px; border-radius:50%;
+  border:2px solid var(--here); opacity:0;
+  animation:t3dMePuls 2.6s cubic-bezier(.2,.6,.35,1) infinite;
 }
-.t3d-me::before {  /* Puls, damit der Punkt auffindbar bleibt */
-  content:''; position:absolute; inset:-9px; border-radius:50%;
-  border:2px solid var(--ink-1); opacity:0;
-  animation:t3dMePuls 2.2s ease-out infinite;
+.t3d-me::after { animation-delay:1.3s; }
+.t3d-me-lot {      /* Nadel, steht auf dem Ring */
+  position:absolute; left:50%; bottom:50%; width:2px; height:34px;
+  margin-left:-1px; background:var(--here);
+}
+.t3d-me-kopf {     /* Kopf, traegt die Fernwirkung */
+  position:absolute; left:50%; bottom:50%; width:26px; height:26px;
+  margin:0 0 27px -13px; border-radius:50%;
+  background:var(--here); border:4px solid var(--paper-0);
+  box-shadow:0 0 0 1.5px var(--ink-1);
 }
 @keyframes t3dMePuls {
-  0%   { transform:scale(.55); opacity:.55; }
-  100% { transform:scale(1.35); opacity:0; }
+  0%   { transform:scale(.4);  opacity:.9; }
+  70%  { opacity:.22; }
+  100% { transform:scale(2.7); opacity:0; }
 }
-@media (prefers-reduced-motion:reduce){ .t3d-me::before { animation:none; } }
+@media (prefers-reduced-motion:reduce){
+  .t3d-me::before { animation:none; opacity:.45; transform:scale(1.7); }
+  .t3d-me::after  { animation:none; opacity:0; }
+}
 
 #tour3d-legend {
   position:absolute; left:1.1rem; bottom:1.3rem; z-index:3;
@@ -4818,12 +4841,12 @@ var TOUR_PINS = [
 /* ── Eigener Standort im 3D-Modell ──
    Dieselbe Umrechnung wie fuer die Bauwerksmarker, hergeleitet aus der
    Registrierung des Hoehenrasters gegen die OSM-Grundrisse. Der Punkt
-   schwebt 30 m ueber dem Bodenniveau, sonst verschwindet er zwischen den
-   Haeusern. Wird nur gezeigt, solange Smart-Track laeuft. */
+   Ankerpunkt liegt auf Augenhoehe ueber dem Boden, also dort, wo man wirklich
+   steht. Wird nur gezeigt, solange Smart-Track laeuft. */
 var MODEL_LON0 = 4.486400, MODEL_LAT0 = 51.916868;
 var MODEL_MLON = 68671.61405, MODEL_MLAT = 110540;
 var MODEL_GRUND = 41.6;        /* Bodenniveau im Modellraum */
-var MODEL_AUGEN = 30;          /* Hoehe des Punktes ueber dem Boden */
+var MODEL_AUGEN = 2;           /* Augenhoehe ueber dem Boden */
 
 function gpsToModel(lat, lon){
   return { x: (lon - MODEL_LON0) * MODEL_MLON,
@@ -4843,6 +4866,7 @@ function _t3dMeUpdate(lat, lon){
     el.setAttribute('data-position', pos);
     el.setAttribute('data-normal', '0m 1m 0m');
     el.setAttribute('aria-label', t3dt().me || 'Ihr Standort');
+    el.innerHTML = '<span class="t3d-me-lot"></span><span class="t3d-me-kopf"></span>';
     mv.appendChild(el);
   } else {
     /* Beides: updateHotspot bewegt den Punkt in der Szene, das Attribut haelt
@@ -4900,6 +4924,12 @@ function _t3dPinScale(mv){
   var r; try { r = mv.getCameraOrbit().radius; } catch(e){ return; }
   if (!r) return;
   var k = Math.max(0.46, Math.min(1.15, 0.52 * (_pinR0 / r)));
+  /* Neigung des Blicks: cos(phi) ist 1 von senkrecht oben und geht gegen 0,
+     je flacher man auf die Stadt schaut. Traegt den Standring in die Ebene. */
+  var f;
+  try { f = Math.cos(mv.getCameraOrbit().phi); } catch(e){ f = .4; }
+  f = Math.max(.1, Math.round(Math.abs(f) * 100) / 100);
+  if (f !== mv._meF){ mv._meF = f; mv.style.setProperty("--me-flach", f); }
   k = Math.round(k * 100) / 100;
   if (k !== mv._pinK){ mv._pinK = k; mv.style.setProperty("--pin-k", k); }
 }
