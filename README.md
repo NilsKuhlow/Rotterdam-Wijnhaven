@@ -162,6 +162,32 @@ anpassen, Norden = -z) und `GPS_HEADING` (Grad-Offset für die Blickrichtung). D
 Platzhalter und müssen am echten Modell vor Ort feinjustiert werden. iOS fragt beim ersten Mal
 nach Erlaubnis für Bewegungssensoren; ohne Kompass folgt nur die Position, Umsehen bleibt manuell.
 
+## SEO
+
+Der Kern des Problems war nicht Technik, sondern Inhalt: Die Eintragstexte entstehen erst
+beim Antippen eines Punktes, das gerenderte Dokument enthielt deshalb nur **77 Wörter**.
+Der statische Abschnitt `#route-read` (Kurzfassung der sieben Bauten, keine Kopie der
+Einträge) bringt das auf **481 Wörter** mit sauberer Hierarchie H1 zu H2 zu sieben H3 und
+sieben internen Links auf die Deep-Link-Anker.
+
+Weiter: `<title>` und Beschreibungen auf *Wijnhaven Rotterdam* und *Stadtführung*
+ausgerichtet, strukturierte Daten als `TouristTrip` mit allen sieben Stationen samt
+Koordinaten (JSON-LD im `<head>`), `lastmod` in der Sitemap. `robots.txt`, `sitemap.xml`,
+Canonical und Open Graph waren bereits vorhanden.
+
+**Realistisch einordnen:** Für *Wijnhaven* allein ist der Wettbewerb hart, der Begriff
+gehört auch dem Universitätsgebäude Wijnhaven in Den Haag und der gleichnamigen Straße.
+Erreichbar sind Suchen wie *Wijnhaven Rotterdam*, *Wijnhaven Architektur*, *Stadtführung
+Wijnhaven* oder *Wijnhaveneiland*. Die Domain wijnhaven.com hilft bei Suchen, die die
+Seite ohnehin meinen.
+
+**Offen:** NL und EN werden clientseitig umgeschaltet, ohne eigene URLs. Google indexiert
+deshalb nur die deutsche Fassung; niederländische Suchen finden den niederländischen Text
+nicht. Das zu lösen hieße eigene URLs je Sprache plus `hreflang`.
+
+**Nicht automatisierbar:** Die Sitemap muss in der Google Search Console eingereicht
+werden, das ist der wirksamste einzelne Schritt und braucht euren Zugang.
+
 ## Lokal starten
 
 ```
