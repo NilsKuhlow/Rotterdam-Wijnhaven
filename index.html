@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Wijnhaven, Feldjournal</title>
-<meta name="description" content="Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, vom Witte Huis bis CasaNova.">
+<title>Wijnhaven Rotterdam: Stadtführung zu sieben Bauten am Wasser</title>
+<meta name="description" content="Selbstgeführte Stadtführung durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten vom Witte Huis (1898) bis CasaNova (2023), mit Karte, GPS-Tracker und 3D-Stadtmodell.">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="canonical" href="https://wijnhaven.com/">
 <!-- Open Graph / Twitter: Link-Vorschau beim Teilen -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Wijnhaven, Feldjournal">
-<meta property="og:title" content="Wijnhaven, Feldjournal">
-<meta property="og:description" content="Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, vom Witte Huis bis CasaNova.">
+<meta property="og:title" content="Wijnhaven Rotterdam: Stadtführung zu sieben Bauten am Wasser">
+<meta property="og:description" content="Selbstgeführte Stadtführung durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten vom Witte Huis (1898) bis CasaNova (2023), mit Karte, GPS-Tracker und 3D-Stadtmodell.">
 <meta property="og:url" content="https://wijnhaven.com/">
 <meta property="og:image" content="https://wijnhaven.com/og.png">
 <meta property="og:image:width" content="1200">
@@ -21,9 +21,106 @@
 <meta property="og:locale:alternate" content="nl_NL">
 <meta property="og:locale:alternate" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Wijnhaven, Feldjournal">
-<meta name="twitter:description" content="Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam.">
+<meta name="twitter:title" content="Wijnhaven Rotterdam: Stadtführung zu sieben Bauten am Wasser">
+<meta name="twitter:description" content="Selbstgeführte Stadtführung durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, von 1898 bis 2023.">
 <meta name="twitter:image" content="https://wijnhaven.com/og.png">
+<!-- Strukturierte Daten: beschreibt den Rundgang als TouristTrip mit seinen
+     sieben Stationen samt Koordinaten. Hilft bei Suchen nach Stadtfuehrung /
+     Rundgang in Rotterdam und liefert Suchmaschinen die Geobezuege, die im
+     gerenderten Dokument sonst nur als SVG-Beschriftung vorkommen. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://wijnhaven.com/#website",
+      "url": "https://wijnhaven.com/",
+      "name": "Wijnhaven, Feldjournal",
+      "inLanguage": ["de", "nl", "en"],
+      "description": "Selbstgeführte Stadtführung durch das Wijnhaven-Quartier in Rotterdam."
+    },
+    {
+      "@type": "TouristTrip",
+      "@id": "https://wijnhaven.com/#rundgang",
+      "name": "Stadtführung Wijnhaven Rotterdam: sieben Bauten am Wasser",
+      "description": "Selbstgeführter Rundgang durch das Wijnhaven-Quartier in Rotterdam: sieben Bauwerke von 1898 bis 2023 zwischen Oude Haven und Boompjes, mit Karte, GPS-Tracker und dreidimensionalem Stadtmodell.",
+      "url": "https://wijnhaven.com/",
+      "image": "https://wijnhaven.com/og.png",
+      "inLanguage": "de",
+      "isAccessibleForFree": true,
+      "touristType": ["Architekturinteressierte", "Städtereisende", "Studierende"],
+      "estimatedCost": { "@type": "MonetaryAmount", "value": 0, "currency": "EUR" },
+      "arrivalPlace": {
+        "@type": "Place",
+        "name": "EY Netherlands, Boompjes 258, Rotterdam",
+        "geo": { "@type": "GeoCoordinates", "latitude": 51.91434, "longitude": 4.48652 }
+      },
+      "departurePlace": {
+        "@type": "Place",
+        "name": "Witte Huis, Oude Haven, Rotterdam",
+        "geo": { "@type": "GeoCoordinates", "latitude": 51.91883, "longitude": 4.49173 }
+      },
+      "author": [
+        { "@type": "Person", "name": "Nils Kuhlow" },
+        { "@type": "Person", "name": "Kai-Lars Ehrich" }
+      ],
+      "provider": {
+        "@type": "CollegeOrUniversity",
+        "name": "Hochschule Wismar, Fakultät Gestaltung"
+      },
+      "itinerary": {
+        "@type": "ItemList",
+        "numberOfItems": 7,
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "item": {
+            "@type": "LandmarksOrHistoricalBuildings", "name": "Witte Huis",
+            "description": "Bürohaus von Willem Molenbroek, 1897 bis 1898, rund 43 m. Bei der Fertigstellung das höchste Bürohaus Europas.",
+            "url": "https://wijnhaven.com/#witte-huis",
+            "address": { "@type": "PostalAddress", "addressLocality": "Rotterdam", "addressCountry": "NL" },
+            "geo": { "@type": "GeoCoordinates", "latitude": 51.91883, "longitude": 4.49173 } } },
+          { "@type": "ListItem", "position": 2, "item": {
+            "@type": "LandmarksOrHistoricalBuildings", "name": "Kubuswoningen",
+            "description": "Wohnkomplex von Piet Blom, 1977 bis 1984. 38 um 45 Grad gekippte Würfel über der Verkehrsachse Blaak, auch Blaakse Bos genannt.",
+            "url": "https://wijnhaven.com/#kubuswoningen",
+            "address": { "@type": "PostalAddress", "addressLocality": "Rotterdam", "addressCountry": "NL" },
+            "geo": { "@type": "GeoCoordinates", "latitude": 51.92029, "longitude": 4.49047 } } },
+          { "@type": "ListItem", "position": 3, "item": {
+            "@type": "LandmarksOrHistoricalBuildings", "name": "Markthal",
+            "description": "Markthalle und Wohnhaus von MVRDV, 2009 bis 2014. 228 Wohnungen bilden einen Bogen über einem stützenfreien Marktraum.",
+            "url": "https://wijnhaven.com/#markthal",
+            "address": { "@type": "PostalAddress", "addressLocality": "Rotterdam", "addressCountry": "NL" },
+            "geo": { "@type": "GeoCoordinates", "latitude": 51.92011, "longitude": 4.48687 } } },
+          { "@type": "ListItem", "position": 4, "item": {
+            "@type": "LandmarksOrHistoricalBuildings", "name": "CasaNova",
+            "description": "Wohnhochhaus von Barcode Architects, 2018 bis 2023, 110 m und 35 Geschosse an der Spitze der Wijnhaven.",
+            "url": "https://wijnhaven.com/#casanova",
+            "address": { "@type": "PostalAddress", "addressLocality": "Rotterdam", "addressCountry": "NL" },
+            "geo": { "@type": "GeoCoordinates", "latitude": 51.91796, "longitude": 4.48736 } } },
+          { "@type": "ListItem", "position": 5, "item": {
+            "@type": "LandmarksOrHistoricalBuildings", "name": "Red Apple",
+            "description": "Wohnturm von KCAP und Kees Christiaanse, 2009, 124 m mit 231 Wohnungen an der Spitze des Wijnhaveneilands.",
+            "url": "https://wijnhaven.com/#red-apple",
+            "address": { "@type": "PostalAddress", "addressLocality": "Rotterdam", "addressCountry": "NL" },
+            "geo": { "@type": "GeoCoordinates", "latitude": 51.9173, "longitude": 4.48895 } } },
+          { "@type": "ListItem", "position": 6, "item": {
+            "@type": "LandmarksOrHistoricalBuildings", "name": "Wijnhaveneiland",
+            "description": "Stadtquartier nach dem Masterplan von KCAP ab 1993. Türme zwischen 74 und 124 m nach der Regel: höher gleich schlanker.",
+            "url": "https://wijnhaven.com/#wijnhaveneiland",
+            "address": { "@type": "PostalAddress", "addressLocality": "Rotterdam", "addressCountry": "NL" },
+            "geo": { "@type": "GeoCoordinates", "latitude": 51.9166, "longitude": 4.4876 } } },
+          { "@type": "ListItem", "position": 7, "item": {
+            "@type": "LandmarksOrHistoricalBuildings", "name": "EY Netherlands, Boompjes 258",
+            "description": "Bürohochhaus von Philip Johnson und Alan Ritchie mit 01-10 Architecten, 2005, rund 75 m an der Uferpromenade Boompjes.",
+            "url": "https://wijnhaven.com/#ey-netherlands",
+            "address": { "@type": "PostalAddress", "streetAddress": "Boompjes 258", "postalCode": "3011 XZ", "addressLocality": "Rotterdam", "addressCountry": "NL" },
+            "geo": { "@type": "GeoCoordinates", "latitude": 51.91434, "longitude": 4.48652 } } }
+        ]
+      }
+    }
+  ]
+}
+</script>
 <link rel="dns-prefetch" href="https://esm.sh">
 <link rel="dns-prefetch" href="https://unpkg.com">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -781,6 +878,57 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
   border-radius:0;
   pointer-events:none;
   display:none;
+}
+
+/* ═══════════════════════════════════════════
+   ROUTE ZUM LESEN
+   Liegt zwischen Kartenbuehne und Colophon. Deckt die fixe Karte beim
+   Scrollen ab (eigener Hintergrund, z-index ueber der Karte).
+═══════════════════════════════════════════ */
+.route-read {
+  position:relative; z-index:6;
+  background:var(--paper-0);
+  border-top:1px solid var(--ink-1);
+  padding:clamp(2.6rem,8vw,5rem) 6vw clamp(2.6rem,8vw,4.5rem);
+}
+.rr-title {
+  font-family:var(--font-sans); font-weight:600;
+  font-size:clamp(1.35rem,5.2vw,2rem); line-height:1.15; letter-spacing:-.01em;
+  color:var(--ink-1); margin:0 0 1.1rem; max-width:22ch;
+}
+.rr-lead {
+  font-size:.95rem; line-height:1.62; color:var(--ink-2);
+  margin:0 0 2.6rem; max-width:62ch;
+}
+.rr-list { list-style:none; margin:0; padding:0; display:grid; gap:2.2rem; max-width:62ch; }
+.rr-item { border-top:1px solid var(--paper-3); padding-top:1.1rem; }
+.rr-name {
+  font-family:var(--font-sans); font-weight:600;
+  font-size:1.08rem; line-height:1.2; color:var(--ink-1);
+  margin:0 0 .3rem; display:flex; align-items:baseline; gap:.55rem;
+}
+.rr-num {
+  font-family:var(--font-mono); font-size:.6rem; font-weight:500;
+  letter-spacing:.12em; color:var(--ink-1);
+  background:var(--stop-c,var(--accent)); border:1px solid var(--ink-1);
+  padding:.22rem .34rem; line-height:1; flex:0 0 auto;
+}
+.rr-meta {
+  font-family:var(--font-mono); font-size:.55rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 .7rem;
+}
+.rr-item p { font-size:.92rem; line-height:1.6; color:var(--ink-2); margin:0 0 .8rem; }
+.rr-more {
+  display:inline-block; font-family:var(--font-mono); font-size:.55rem;
+  letter-spacing:var(--tr-label); text-transform:uppercase;
+  color:var(--ink-1); text-decoration:none;
+  border-bottom:1px solid var(--ink-1); padding-bottom:.15rem;
+}
+.rr-more:hover, .rr-more:focus-visible { background:var(--accent); outline:none; }
+.rr-foot {
+  font-family:var(--font-mono); font-size:.55rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-3);
+  margin:3rem 0 0; max-width:52ch; line-height:1.9;
 }
 
 /* ═══════════════════════════════════════════
@@ -1815,7 +1963,89 @@ html:has(#route-select.show){ overflow:hidden; }
   </div>
 </div>
 
-<!-- JOURNEY SCROLL HINT -->
+
+<!-- ROUTE ZUM LESEN
+     Bewusst statisches HTML. Die ausfuehrlichen Eintragstexte entstehen erst
+     beim Antippen eines Punktes; ohne diesen Abschnitt haette die Seite fuer
+     Suchmaschinen nur rund 80 Woerter. Kurzfassung, keine Kopie der Eintraege,
+     damit kein doppelter Inhalt entsteht. Die Links fuehren auf die
+     Deep-Link-Anker, die openFromHash() ohnehin schon bedient. -->
+<section class="route-read" id="route-read" aria-labelledby="rr-title">
+  <h2 class="rr-title" id="rr-title">Stadtführung Wijnhaven: sieben Bauten am Wasser</h2>
+  <p class="rr-lead">
+    Diese selbstgeführte Stadtführung verbindet sieben Bauwerke im Wijnhaven-Quartier
+    in Rotterdam zu einem Rundgang von etwa drei Stunden, von der Oude Haven bis an
+    die Boompjes. Sie erzählt die Verwandlung der Hafenkante zum Wohnquartier, vom
+    Witte Huis aus dem Jahr 1898 bis zum CasaNova von 2023. Jede Station lässt sich
+    auf der Karte antippen; im dreidimensionalen Stadtmodell stehen dieselben sieben
+    Marker in denselben Farben.
+  </p>
+  <ol class="rr-list">
+    <li class="rr-item" style="--stop-c:#0072B2">
+      <h3 class="rr-name"><span class="rr-num">01</span> Witte Huis</h3>
+      <p class="rr-meta">Willem Molenbroek · 1897-1898 · rund 43 m</p>
+      <p>Bei seiner Fertigstellung galt das Witte Huis als höchstes Bürohaus Europas.
+        Rund hunderttausend weiß glasierte Steine verkleiden die Fassade. Der Turm
+        überstand das Bombardement von 1940 und steht heute als Solitär zwischen
+        Neubauten an der Oude Haven.</p>
+      <a class="rr-more" href="#witte-huis">Eintrag öffnen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#FFED29">
+      <h3 class="rr-name"><span class="rr-num">02</span> Kubuswoningen</h3>
+      <p class="rr-meta">Piet Blom · 1977-1984 · 38 Würfel</p>
+      <p>Piet Blom kippte 38 Würfel um 45 Grad und stellte jeden auf einen sechseckigen
+        Pfeiler. Das Ensemble überbaut die Verkehrsachse Blaak und trägt darüber eine
+        Fußgängerebene, die Altstadt und Oude Haven verbindet. In OSM heißt der Komplex
+        Blaakse Bos, Bloms eigener Name für das Bild vom Wald aus Wohnungen.</p>
+      <a class="rr-more" href="#kubuswoningen">Eintrag öffnen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#D55E00">
+      <h3 class="rr-name"><span class="rr-num">03</span> Markthal</h3>
+      <p class="rr-meta">MVRDV · 2009-2014 · 228 Wohnungen</p>
+      <p>Die Markthal ist Wohnhaus und Markthalle in einem: 228 Wohnungen bilden einen
+        Bogen über einem stützenfreien Raum von rund 40 Metern Scheitelhöhe. Die
+        Innenschale von 11.000 Quadratmetern trägt das Deckengemälde Hoorn des
+        Overvloeds.</p>
+      <a class="rr-more" href="#markthal">Eintrag öffnen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#E69F00">
+      <h3 class="rr-name"><span class="rr-num">04</span> CasaNova</h3>
+      <p class="rr-meta">Barcode Architects · 2018-2023 · 110 m</p>
+      <p>Der jüngste Turm der Route steht an der Spitze der Wijnhaven. Seine unteren
+        Geschosse ziehen sich ein, wodurch die 35 Etagen wirken, als balancierten sie
+        auf einer Spitze.</p>
+      <a class="rr-more" href="#casanova">Eintrag öffnen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#CC79A7">
+      <h3 class="rr-name"><span class="rr-num">05</span> Red Apple</h3>
+      <p class="rr-meta">KCAP / Kees Christiaanse · 2009 · 124 m</p>
+      <p>Der rote Wohnturm markiert die östliche Spitze des Wijnhaveneilands mit 231
+        Wohnungen auf 40 Geschossen. Ein niedrigerer, fünfeckiger Kopfbau vermittelt
+        zwischen Turm und Kai.</p>
+      <a class="rr-more" href="#red-apple">Eintrag öffnen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#009E73">
+      <h3 class="rr-name"><span class="rr-num">06</span> Wijnhaveneiland</h3>
+      <p class="rr-meta">Masterplan KCAP · ab 1993 · 74 bis 124 m</p>
+      <p>Hier bestimmt kein einzelner Entwurf das Bild, sondern eine Spielregel: Wer
+        höher baut, muss schlanker bauen. Aus diesem Transformationsmodell von 1993
+        wuchs auf dem alten Hafenraster ein Quartier aus Türmen.</p>
+      <a class="rr-more" href="#wijnhaveneiland">Eintrag öffnen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#56B4E9">
+      <h3 class="rr-name"><span class="rr-num">07</span> EY Netherlands</h3>
+      <p class="rr-meta">Philip Johnson / Alan Ritchie · 2005 · rund 75 m</p>
+      <p>Boompjes 258 ist ein spätes Werk aus dem Büro Philip Johnsons, ausgeführt mit
+        Alan Ritchie und den Rotterdamer Architekten 01-10. Die disziplinierte
+        Lochfassade gliedert 21 Geschosse ohne ikonische Geste.</p>
+      <a class="rr-more" href="#ey-netherlands">Eintrag öffnen</a>
+    </li>
+  </ol>
+  <p class="rr-foot">
+    Wahlpflichtmodul Stadt + Raum, Hochschule Wismar, Wintersemester 2026/27.
+    Ein Feldjournal von Nils Kuhlow und Kai-Lars Ehrich.
+  </p>
+</section>
 
 <!-- COLOPHON -->
 <footer class="colophon">
@@ -2803,10 +3033,21 @@ setTimeout(function(){ buildRoute(currentRouteId); }, 0);
   if (!colo || !('IntersectionObserver' in window)) return;
   new IntersectionObserver(function(entries){
     entries.forEach(function(e){
-      _mapEl.classList.toggle('map-hidden', e.isIntersecting);
       document.body.classList.toggle('at-end', e.isIntersecting);   /* obere Steuerung ausblenden */
     });
   }, { threshold:0, rootMargin:'0px 0px -90% 0px' }).observe(colo);
+})();
+
+/* Die fixe Karte ausblenden, sobald der Leseabschnitt heraufkommt. Getrennt
+   vom Colophon-Beobachter oben: der schaltet nur die obere Steuerung ab. */
+(function(){
+  var rr = document.getElementById('route-read');
+  if (!rr || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      _mapEl.classList.toggle('map-hidden', e.isIntersecting);
+    });
+  }, { threshold:0, rootMargin:'0px 0px -70% 0px' }).observe(rr);
 })();
 
 /* ═══════════════════════════════
