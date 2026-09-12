@@ -1366,31 +1366,31 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 }
 .t3d-pin:hover, .t3d-pin:focus-visible { transform:scale(calc(var(--pin-k,1) * 1.25)); outline:none; }
 .t3d-pin:focus-visible { box-shadow:0 0 0 2px var(--paper-0), 0 0 0 4px var(--ink-1); }
-
 /* Eigener Standort im Modell. Bewusst anders als die Bauwerksmarker: rund
-   statt eckig, rot statt Bauwerksfarbe, ohne Nummer.
+   statt eckig, rot statt Bauwerksfarbe, ohne Nummer. Der Marker steht in
+   jeder Ansicht aufrecht und sieht aus jedem Blickwinkel gleich aus.
    Der Hotspot ist auf Augenhoehe verankert, und model-viewer zentriert das
-   Element auf dem Ankerpunkt. Deshalb ist das Element selbst der Standring:
-   er liegt auf dem Punkt, auf dem man steht. Nadel und Kopf stehen darauf und
-   sind in Pixeln versetzt, nicht in Metern - so wandert der Kopf beim Kippen
-   der Kamera nicht vom Standort weg. */
-.t3d-me {          /* Standring auf dem Boden */
+   Element auf dem Ankerpunkt. Deshalb ist das Element selbst der Fussring:
+   er sitzt auf dem Punkt, auf dem man steht. Nadel und Kopf stehen darueber
+   und sind in Pixeln versetzt, nicht in Metern, damit der Kopf beim Kippen
+   der Kamera nicht vom Standort wegwandert. */
+.t3d-me {          /* Fussring auf dem Standort */
   position:relative; display:block; padding:0; margin:0;
-  /* Hoehe folgt der Kameraneigung, damit der Ring in der Bodenebene liegt:
-     von oben rund, beim Kippen flach. --me-flach kommt aus _t3dPinScale. */
-  width:34px; height:calc(34px * var(--me-flach, .4));
+  /* Fester Kreis, unabhaengig von der Kamera: der Marker soll in jeder
+     Ansicht gleich aussehen und aufrecht stehen, nicht mitkippen. */
+  width:34px; height:34px;
   border:2px solid var(--here); border-radius:50%; background:none; cursor:default;
   /* Eigener Massstab: es gibt nur einen davon, er darf in der Uebersicht
      groesser bleiben als die sieben Bauwerksmarker. */
   transform:scale(max(.85, var(--pin-k,1))); transform-origin:50% 50%;
 }
-.t3d-me::before, .t3d-me::after {   /* auslaufende Ringe, wie ein Echo am Boden */
+.t3d-me::before, .t3d-me::after {   /* auslaufende Ringe, wie ein Echo */
   content:''; position:absolute; inset:-2px; border-radius:50%;
   border:2px solid var(--here); opacity:0;
   animation:t3dMePuls 2.6s cubic-bezier(.2,.6,.35,1) infinite;
 }
 .t3d-me::after { animation-delay:1.3s; }
-.t3d-me-lot {      /* Nadel, steht auf dem Ring */
+.t3d-me-lot {      /* Nadel, steht senkrecht auf dem Ring */
   position:absolute; left:50%; bottom:50%; width:2px; height:34px;
   margin-left:-1px; background:var(--here);
 }
@@ -4917,12 +4917,6 @@ function _t3dPinScale(mv){
   var r; try { r = mv.getCameraOrbit().radius; } catch(e){ return; }
   if (!r) return;
   var k = Math.max(0.46, Math.min(1.15, 0.52 * (_pinR0 / r)));
-  /* Neigung des Blicks: cos(phi) ist 1 von senkrecht oben und geht gegen 0,
-     je flacher man auf die Stadt schaut. Traegt den Standring in die Ebene. */
-  var f;
-  try { f = Math.cos(mv.getCameraOrbit().phi); } catch(e){ f = .4; }
-  f = Math.max(.1, Math.round(Math.abs(f) * 100) / 100);
-  if (f !== mv._meF){ mv._meF = f; mv.style.setProperty("--me-flach", f); }
   k = Math.round(k * 100) / 100;
   if (k !== mv._pinK){ mv._pinK = k; mv.style.setProperty("--pin-k", k); }
 }

@@ -141,10 +141,10 @@ Läuft **Smart-Track**, während die 3D-Ansicht offen ist, zeigt ein roter Marke
 man steht. Er ist bewusst anders gebaut als die eckigen, nummerierten
 Bauwerksmarker: rund statt eckig, rot statt Bauwerksfarbe, ohne Nummer.
 
-Er besteht aus drei Teilen. Der **Standring** liegt auf dem Boden und bezeichnet den
-Punkt; aus ihm laufen zwei Ringe aus, damit man ihn im Gewimmel findet
-(`prefers-reduced-motion` friert sie ein). Darauf steht eine **Nadel**, und auf der
-sitzt der **Kopf**, der die Fernwirkung trägt.
+Er besteht aus drei Teilen. Der **Fußring** sitzt auf dem Punkt, auf dem man steht;
+aus ihm laufen zwei Ringe aus, damit man ihn im Gewimmel findet
+(`prefers-reduced-motion` friert sie ein). Darauf steht senkrecht eine **Nadel**, und
+auf der sitzt der **Kopf**, der die Fernwirkung trägt.
 
 Der Ankerpunkt liegt auf Augenhöhe über dem Boden, also dort, wo man wirklich steht,
 und `<model-viewer>` zentriert das Element darauf. Deshalb ist der Standring das
@@ -152,9 +152,11 @@ Element selbst. Nadel und Kopf sind in Pixeln versetzt, nicht in Metern: Ein Ver
 in Metern würde beim Kippen der Kamera perspektivisch mitwandern und am Ende neben
 den Standort zeigen.
 
-Die Höhe des Standrings folgt der Kameraneigung (`--me-flach`, aus `cos(phi)` in
-`_t3dPinScale`). Von senkrecht oben ist er ein Kreis, beim Kippen wird er flach; so
-liegt er in jeder Ansicht in der Bodenebene.
+Der Marker steht in jeder Ansicht **aufrecht** und sieht aus jedem Blickwinkel gleich
+aus. Eine frühere Fassung ließ den Fußring der Kameraneigung folgen, damit er in der
+Bodenebene liegt; beim Kippen las sich das aber, als lege sich der ganze Marker mit um.
+Geprüft an sechs Kamerawinkeln: Ring 39×39, Nadel 2×39 senkrecht, Kopf mittig darüber,
+überall identisch.
 
 Rot (`--here`) ist die einzige Farbe außerhalb der Palette. Sie ist dem Standort
 vorbehalten, kein Bauwerk trägt sie, deshalb ist sie an dieser Stelle eindeutig.
