@@ -33,8 +33,6 @@ const PRECACHE = [
   '/icon-512.png',
   '/icon-512-maskable.png',
   '/apple-touch-icon.png',
-  '/models/kubuswoningen.glb',
-  '/models/markthal.glb',
   /* Eintrags-Abbildungen (frei lizenziert, WebP) — fuer den Offline-Feldeinsatz vorgeladen */
   '/img/witte-huis-then.webp',
   '/img/witte-huis-now.webp',
