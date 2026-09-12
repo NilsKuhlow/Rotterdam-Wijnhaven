@@ -1666,15 +1666,11 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   </div>
 </div>
 
-<button id="return-btn" onclick="returnToGps()" aria-label="Zurück zum Standort">
+<button id="return-btn" onclick="resetMapView()" aria-label="Karte auf die Gesamtansicht zurücksetzen">
   <svg class="r-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-    <circle cx="7" cy="7" r="3.5"/>
-    <line x1="7" y1="0"  x2="7" y2="2.5"/>
-    <line x1="7" y1="11.5" x2="7" y2="14"/>
-    <line x1="0"  y1="7" x2="2.5" y2="7"/>
-    <line x1="11.5" y1="7" x2="14" y2="7"/>
+    <path d="M1 4.5V1h3.5M9.5 1H13v3.5M13 9.5V13H9.5M4.5 13H1V9.5"/>
   </svg>
-  <span data-i18n="return_btn">Standort</span>
+  <span data-i18n="return_btn">Übersicht</span>
 </button>
 <div id="nav-crumb">
   <div class="nav-left">
@@ -2114,7 +2110,6 @@ var toastTmr      = null;
 var galIdx        = 0;
 var galLen        = 0;
 var _galAutoTimer = null;
-var mapUserPanned = false; /* true when user manually panned/zoomed in track mode */
 var lastGpsLat    = null;  /* most recent GPS fix, for "return to location" */
 var lastGpsLon    = null;
 
@@ -2552,6 +2547,11 @@ I18N.ui.forEach(function(u){ I18N_UI[u.key]={de:u.de,nl:u.nl,en:u.en}; });
 
 
 
+/* Kurzgriff auf die Oberflaechentexte. Die Meldungen des Trackers liefen
+   frueher fest auf Deutsch, was seit Niederlaendisch als Startsprache
+   jeder zu sehen bekam. */
+function trkT(key){ var t = LANG[currentLang] || LANG.de; return t[key] || LANG.de[key] || key; }
+
 function uiT(key){ var u=I18N_UI[key]; if(!u) return key; return (currentLang!=='de'&&u[currentLang])?u[currentLang]:(u.de||key); }
 
 function kindT(deKind){ if(currentLang==='de') return deKind; var d=I18N_K[deKind]; return (d&&d[currentLang])?d[currentLang]:deKind; }
@@ -2667,7 +2667,6 @@ var VB = [
    durchgehend die ganze Route. Bewegt wird sie nur im Track-Modus (GPS),
    danach kehrt sie hierher zurueck. Der Fokus liegt auf der 3D-Karte. */
 var MAP_STATIC_VB = "51 105 912 684";
-var _trackZoomed  = false;   /* beim ersten GPS-Fix einmal auf Track-Zoom gehen */
 var MAP_VW = 1000, MAP_VH = 1949;   /* Schwarzplan-Masse (viewBox-Raum) */
 
 /* ═══════════════════════════════
@@ -2720,7 +2719,7 @@ function _ensureStaticVB(){
   if (ps[0] < 50 || ps[1] < 50) return;
   if (_staticVBSize === ps[0] + 'x' + ps[1]) return;
   _computeStaticVB();
-  if (!trackActive) applyStaticVB(false);
+  applyStaticVB(false);   /* auch waehrend der Ortung: die Karte steht ja */
 }
 
 /* Karte auf die statische Ansicht zuruecksetzen. */
@@ -3013,6 +3012,17 @@ const LANG = {
     imp_thesis:      'Vertiefung',
     imp_thesis_link: 'Arbeitsfassung (PDF)',
     tour3dTitle:     'Wijnhaven · 3D-Modell',
+    return_btn:      'Übersicht',
+    trk_on:          'Smart-Track AN',
+    trk_seek:        'Orten…',
+    trk_locating:    'Standort wird ermittelt…',
+    trk_next:        'Nächste Station',
+    trk_far:         'km von Wijnhaven entfernt',
+    trk_nogps:       'GPS nicht verfügbar',
+    trk_denied:      'GPS-Zugriff verweigert, Standort in den Einstellungen erlauben',
+    trk_unavail:     'Standort nicht verfügbar, weiter am Suchen …',
+    trk_timeout:     'GPS-Zeitüberschreitung, weiter am Suchen …',
+    trk_err:         'GPS-Fehler',
     imp_note:        'Diese Website ist ein nicht-kommerzielles Hochschulprojekt und dient ausschließlich akademischen Zwecken. Alle Inhalte sind urheberrechtlich geschützt. Eine kommerzielle Nutzung ist nicht gestattet.',
     modal_station: 'Eintrag',
     modal_of:      'von',
@@ -3082,6 +3092,17 @@ const LANG = {
     imp_thesis:      'Verdieping',
     imp_thesis_link: 'Werkversie (PDF)',
     tour3dTitle:     'Wijnhaven · 3D-model',
+    return_btn:      'Overzicht',
+    trk_on:          'Smart-Track AAN',
+    trk_seek:        'Zoeken…',
+    trk_locating:    'Locatie wordt bepaald…',
+    trk_next:        'Volgende halte',
+    trk_far:         'km van de Wijnhaven',
+    trk_nogps:       'GPS niet beschikbaar',
+    trk_denied:      'Toegang tot GPS geweigerd, sta locatie toe in de instellingen',
+    trk_unavail:     'Locatie niet beschikbaar, we blijven zoeken …',
+    trk_timeout:     'GPS verliep, we blijven zoeken …',
+    trk_err:         'GPS-fout',
     imp_note:        'Deze website is een niet-commercieel hogeschoolproject en dient uitsluitend academische doeleinden. Alle inhoud is auteursrechtelijk beschermd. Commercieel gebruik is niet toegestaan.',
     modal_station: 'Notitie',
     modal_of:      'van',
@@ -3151,6 +3172,17 @@ const LANG = {
     imp_thesis:      'In depth',
     imp_thesis_link: 'Working draft (PDF)',
     tour3dTitle:     'Wijnhaven · 3D model',
+    return_btn:      'Overview',
+    trk_on:          'Smart-Track ON',
+    trk_seek:        'Locating…',
+    trk_locating:    'Getting your location…',
+    trk_next:        'Next stop',
+    trk_far:         'km from Wijnhaven',
+    trk_nogps:       'GPS not available',
+    trk_denied:      'GPS access denied, allow location in your settings',
+    trk_unavail:     'Location unavailable, still searching …',
+    trk_timeout:     'GPS timed out, still searching …',
+    trk_err:         'GPS error',
     imp_note:        'This website is a non-commercial university project for academic purposes only. All content is protected by copyright. Commercial use is not permitted.',
     modal_station: 'Entry',
     modal_of:      'of',
@@ -3477,7 +3509,7 @@ function buildRoute(routeId){
   TRAIL = WAYPOINTS.map(function(w,i){ d += (i===0?'M':' L')+w.x+' '+w.y; return d; });
 
   _computeStaticVB();
-  if (!trackActive) applyStaticVB(false);
+  applyStaticVB(false);   /* auch waehrend der Ortung: die Karte steht ja */
 
 
   /* 3) SVG-Marker neu erzeugen — Z-Ordnung: Ripple < Ring < Dot < Label */
@@ -3620,7 +3652,7 @@ function gpsToSvg(lat, lon) {
 }
 
 function moveGpsDot(lat, lon) {
-  /* Always store last known fix so returnToGps() can re-center */
+  /* Letzten Fix merken: die 3D-Ansicht zieht ihn beim Oeffnen nach. */
   lastGpsLat = lat; lastGpsLon = lon;
 
   var pt = gpsToSvg(lat, lon);
@@ -3634,23 +3666,9 @@ function moveGpsDot(lat, lon) {
   /* Denselben Fix auch im 3D-Modell zeigen, falls es offen ist. */
   if (typeof _t3dMeUpdate === 'function') _t3dMeUpdate(lat, lon);
 
-  /* Auto-pan only when user hasn't manually moved the map */
-  if (mapUserPanned) return;
-
-  var svg = document.getElementById('mapSvg');
-  var vb  = svg.viewBox.baseVal;
-  var w = vb.width, h = vb.height;
-  /* Erster Fix: aus der statischen Gesamtansicht auf Track-Zoom gehen, sonst
-     waere das Mitfuehren bei voller Routenbreite wirkungslos. */
-  if (!_trackZoomed){
-    _trackZoomed = true;
-    animVB(vb.x + ' ' + vb.y + ' ' + w + ' ' + h, _vbFit(pt.x, pt.y, 380, 285), 700);
-    return;
-  }
-  var tx = pt.x - w/2, ty = pt.y - h/2;
-  tx = Math.max(0, Math.min(MAP_VW-w, tx));
-  ty = Math.max(0, Math.min(MAP_VH-h, ty));
-  animVB(vb.x+' '+vb.y+' '+vb.width+' '+vb.height, tx+' '+ty+' '+w+' '+h, 600);
+  /* Die Karte bleibt stehen. Sie zeigt durchgehend die ganze Route, also
+     ist der Punkt ohnehin im Bild; Zoomen oder Mitfuehren wuerde nur den
+     Ueberblick nehmen, den man beim Gehen braucht. */
 }
 
 function onGeoSuccess(pos){
@@ -3658,7 +3676,7 @@ function onGeoSuccess(pos){
   var lat=pos.coords.latitude, lon=pos.coords.longitude;
   var btn = document.getElementById('track-btn');
   btn.classList.remove('acquiring'); btn.classList.add('active');
-  document.getElementById('track-label').textContent = 'Smart-Track AN';
+  document.getElementById('track-label').textContent = trkT('trk_on');
 
   /* Move GPS dot on SVG map */
   moveGpsDot(lat, lon);
@@ -3667,21 +3685,21 @@ function onGeoSuccess(pos){
   var near = nearestStop(lat, lon);
   var idx=near.idx, dist=near.dist;
   if (dist < 800){
-    showToast('Nächste Station: '+STOPS[idx].name+' · '+dist+' m', 4000);
+    showToast(trkT('trk_next')+': '+STOPS[idx].name+' · '+dist+' m', 4000);
     /* 50 m threshold, accounts for real-world GPS accuracy (typ. ±10-30 m) */
     if (dist < 50 && idx !== activeStop) {
       activate(idx);
     }
   } else {
-    showToast((dist/1000).toFixed(1)+' km von Wijnhaven entfernt', 4000);
+    showToast((dist/1000).toFixed(1)+' '+trkT('trk_far'), 4000);
   }
 }
 
 function onGeoError(err){
   const msgs = {
-    1: 'GPS-Zugriff verweigert, Standort in den Einstellungen erlauben',
-    2: 'Standort nicht verfügbar, weiter am Suchen …',
-    3: 'GPS-Zeitüberschreitung, weiter am Suchen …'
+    1: trkT('trk_denied'),
+    2: trkT('trk_unavail'),
+    3: trkT('trk_timeout')
   };
   /* Only a hard permission denial (code 1) is fatal — stop tracking.
      Timeout (3) and temporary unavailability (2) are common in urban
@@ -3691,22 +3709,18 @@ function onGeoError(err){
     stopTrack();                 // calls hideToast() → show the message after
     showToast(msgs[1], 5000);
   } else {
-    showToast(msgs[err.code] || 'GPS-Fehler', 3000);
+    showToast(msgs[err.code] || trkT('trk_err'), 3000);
   }
 }
 
-function returnToGps(){
-  stopMapInertia();    /* kill momentum before animating back */
-  closeInfoCard();     /* dismiss stop card if open */
-  mapUserPanned = false;
+/* Der Knopf erscheint, sobald man die Karte selbst verschoben oder gezoomt
+   hat, und legt sie wieder in die Gesamtansicht. Einen Sprung zum Standort
+   braucht es nicht mehr: die Karte steht, der Punkt ist immer im Bild. */
+function resetMapView(){
+  stopMapInertia();
+  closeInfoCard();
   document.getElementById('return-btn').classList.remove('show');
-  if (lastGpsLat === null) return;
-  var pt = gpsToSvg(lastGpsLat, lastGpsLon);
-  /* Snap back to standard track zoom (320 × 240 SVG units) */
-  var w = 320, h = 240;
-  var tx = Math.max(0, Math.min(1000-w, pt.x - w/2));
-  var ty = Math.max(0, Math.min(750-h,  pt.y - h/2));
-  animVBfromCurrent(tx+' '+ty+' '+w+' '+h, 500);
+  applyStaticVB(true);
 }
 
 function stopTrack(){
@@ -3719,8 +3733,6 @@ function stopTrack(){
   /* Hide GPS dot */
   var g=document.getElementById('gps-group'); if(g){ g.style.opacity='0'; g.classList.remove('tracking'); }
   /* Reset map-pan state + hide touch overlay + close card */
-  mapUserPanned = false;
-  _trackZoomed = false;
   if (typeof _t3dMeHide === 'function') _t3dMeHide();   /* Standort im Modell mit ausblenden */
   clearActiveStop();            /* ohne Messung keine Behauptung ueber die Naehe */
   applyStaticVB(true);          /* zurueck in die statische Gesamtansicht */
@@ -3732,15 +3744,15 @@ function stopTrack(){
 
 function toggleTrack(){
   if (trackActive){ stopTrack(); return; }
-  if (!('geolocation' in navigator)){ showToast('GPS nicht verfügbar',3000); return; }
+  if (!('geolocation' in navigator)){ showToast(trkT('trk_nogps'),3000); return; }
 
   trackActive = true;
   document.getElementById('map-touch-layer').classList.add('active');
   const btn=document.getElementById('track-btn');
   btn.classList.add('acquiring');
   btn.setAttribute('aria-pressed','true');
-  document.getElementById('track-label').textContent='Orten…';
-  showToast('Standort wird ermittelt…');
+  document.getElementById('track-label').textContent=trkT('trk_seek');
+  showToast(trkT('trk_locating'));
   showMapHint(); /* brief gesture hint on first activation */
 
   /* Two-stage fast-first-fix:
@@ -3811,19 +3823,6 @@ function openInfoCard(idx){
   var _ic = document.getElementById('map-info-card');
   _ic.classList.add('show');
   _ic.removeAttribute('inert');   /* A11y: jetzt bedienbar */
-
-  /* Show return-btn, map will move away from GPS position */
-  document.getElementById('return-btn').classList.add('show');
-
-  /* Animate map to center on the tapped stop (keep current zoom level) */
-  stopMapInertia();
-  var wp = WAYPOINTS[idx];
-  var svgEl = document.getElementById('mapSvg');
-  var vb = svgEl.viewBox.baseVal;
-  var w = vb.width, h = vb.height;
-  var tx = Math.max(0, Math.min(1000 - w, wp.x - w / 2));
-  var ty = Math.max(0, Math.min(750  - h, wp.y - h / 2));
-  animVBfromCurrent(tx + ' ' + ty + ' ' + w + ' ' + h, 420);
 }
 
 function closeInfoCard(){
@@ -3851,7 +3850,7 @@ function findNearestStop(sx, sy, vbW, rectW){
   return best;
 }
 
-/* ── stopMapInertia: exposed so returnToGps() can kill momentum before animating ── */
+/* ── stopMapInertia: von resetMapView() gebraucht, um Schwung zu stoppen ── */
 var stopMapInertia = function(){};
 
 (function(){
@@ -3954,7 +3953,6 @@ var stopMapInertia = function(){};
     cancelAnimVB();          /* kill GPS glide animation */
     stopMapInertia();        /* kill any running momentum */
     closeInfoCard();         /* dismiss card on new gesture */
-    mapUserPanned = true;
     _didMove   = false;
     _velX = _velY = 0;
     _vb0 = getVB();
@@ -4064,7 +4062,6 @@ var stopMapInertia = function(){};
       /* All fingers lifted */
       if (!_didMove){
         /* ── TAP: check whether a stop dot was tapped ── */
-        var didOpenCard = false;
         if (_t0){
           var rect2 = layer.getBoundingClientRect();
           var vb2   = getVB();
@@ -4072,15 +4069,11 @@ var stopMapInertia = function(){};
           var svgY  = vb2.y + (_t0.clientY - rect2.top)  / rect2.height * vb2.h;
           var hitIdx = findNearestStop(svgX, svgY, vb2.w, rect2.width);
           if (hitIdx >= 0){
-            openInfoCard(hitIdx);   /* zoom to stop + show info card */
-            didOpenCard = true;
+            openInfoCard(hitIdx);   /* Karte bleibt stehen, nur die Info-Karte kommt */
           }
         }
-        if (!didOpenCard){
-          /* Plain tap on empty map → restore GPS auto-follow */
-          mapUserPanned = false;
-          document.getElementById('return-btn').classList.remove('show');
-        }
+        /* Ein Tipp ins Leere laesst die Karte, wo sie ist. Der Knopf bleibt
+           deshalb stehen, solange die Ansicht verschoben ist. */
       } else if (_t0 && !_t1){
         /* Pan gesture ended → launch momentum */
         startInertia();
@@ -4701,7 +4694,7 @@ document.addEventListener('keydown', e => {
       document.getElementById('map-touch-layer').classList.add('active');
       var btn = document.getElementById('track-btn');
       btn.classList.remove('acquiring'); btn.classList.add('active');
-      document.getElementById('track-label').textContent = 'Smart-Track AN';
+      document.getElementById('track-label').textContent = trkT('trk_on');
     }
     simFakePos(lat, lon);
     simIdx++;
