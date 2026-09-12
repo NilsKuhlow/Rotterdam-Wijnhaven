@@ -1,7 +1,7 @@
 {
   "name": "Wijnhaven Rotterdam: Stadtrundgang",
   "short_name": "Wijnhaven",
-  "description": "Interaktiver Stadtrundgang durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, vom Witte Huis bis CasaNova.",
+  "description": "Interaktiver Stadtrundgang durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, mit GPS-Live-Navigation vor Ort und 3D-Stadtmodell.",
   "id": "/",
   "lang": "de",
   "start_url": "/",
