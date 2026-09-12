@@ -40,11 +40,16 @@ Nummer kommt aus der Route und kann sich ändern, die Identität des Bauwerks ni
 3D-Marker und ihre Legende lesen die Nummer über `_pinNum()` aus der Route, damit beide
 Karten nie auseinanderlaufen.
 
-Bewegt wird die Karte nur noch im **Smart-Track**: Der erste GPS-Fix zoomt auf eine
-Nahansicht (rund 500 m Bildbreite), danach führt sie mit; Wischen und Pinch bleiben
-möglich. Kommt man einem Bauwerk auf 50 m nahe, wird sein Punkt hervorgehoben und die
-Info-Karte erscheint. Beim Beenden kehrt die Karte in die Gesamtansicht zurück und die
-Hervorhebung wird gelöscht.
+Die Karte steht auch im **Smart-Track**. Sie zeigt durchgehend die ganze Route, der
+Punkt wandert darin; gezoomt oder mitgeführt wird nicht. Beides nähme den Überblick,
+den man beim Gehen braucht, und nötig ist es nicht: Der Punkt ist ohnehin im Bild.
+Kommt man einem Bauwerk auf 50 m nahe, wird sein Punkt hervorgehoben und die
+Info-Karte erscheint. Beim Beenden wird die Hervorhebung gelöscht.
+
+Bewegt wird die Karte nur von Hand, mit Wischen und Pinch. Dann erscheint der Knopf
+**Übersicht** (`resetMapView()`), der sie wieder in die Gesamtansicht legt. Ein Sprung
+zum eigenen Standort, den der Knopf früher machte, ergibt keinen Sinn mehr, solange die
+Karte steht.
 
 Den Zuschnitt rechnet `_computeStaticVB()` aus den Wegpunkten. Wichtig: Das SVG nutzt
 `preserveAspectRatio="slice"`, eine viewBox mit falschem Seitenverhältnis würde also
