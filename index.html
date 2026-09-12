@@ -1884,7 +1884,7 @@ html:has(#route-select.show){ overflow:hidden; }
   <div class="intro-hero">
     <h1 class="intro-title">Wijnhaven</h1>
     <div class="intro-accent"></div>
-    <p class="intro-sub">Sieben Bauten am Wasser. Ein Reisetagebuch durch das Wijnhaven-Quartier.</p>
+<p class="intro-sub">Sieben Bauten am Wasser. Das Wijnhaven-Quartier von 1898 bis 2023.</p>
   </div>
   <div class="intro-foot">
     <dl class="intro-meta">
@@ -2167,8 +2167,6 @@ var _galAutoTimer = null;
 var mapUserPanned = false; /* true when user manually panned/zoomed in track mode */
 var lastGpsLat    = null;  /* most recent GPS fix, for "return to location" */
 var lastGpsLon    = null;
-var snapTimer     = null;
-var snapping      = false;
 
 
 /* ═══════════════════════════════
@@ -2977,10 +2975,8 @@ function onScroll(){
     introEl.style.transform = 'translate3d(0,0,0)';
   }
 
-  /* Map visibility, fade in at 70 % of intro to avoid white-gap flash.
-     Keep stop logic gated until near the actual intro end so that a hard
-     swipe from the landing page cannot advance the first dot before the
-     momentum-killing snap in triggerMapIntro() fires. */
+  /* Karte ab 70 % der Introhoehe einblenden, das vermeidet einen weissen
+     Spalt beim Uebergang. */
   if (sy < introH * 0.70) {
     map.classList.remove('map-intro');
     map.style.pointerEvents = 'none';
@@ -2996,7 +2992,7 @@ function onScroll(){
   document.getElementById('nav-crumb').classList.add('show');
   if (!mapShown) _mapSvg.setAttribute('viewBox', MAP_STATIC_VB);
 
-  /* But don't drive stops or snap scroll until we're close to journey start */
+  /* Erst kurz vor der Kartenbuehne wirklich einblenden */
   if (!mapShown && sy < introH - 60) return;
 
   /* Karte einmalig einblenden. Vom Scroll wird nichts mehr gesteuert:
@@ -3068,7 +3064,7 @@ const LANG = {
   de: {
     loaderSub: 'Stadtrundgang · WiSe 2026/27',
     kicker:    'Stadtrundgang · Rotterdam · Niederlande',
-    subHtml:   'Sieben Bauten am Wasser. Ein Reisetagebuch durch das Wijnhaven-Quartier.',
+    subHtml:   'Sieben Bauten am Wasser. Das Wijnhaven-Quartier von 1898 bis 2023.',
     scrollCue: 'Scrollen',
     drawerBtn: 'Eintrag öffnen →',
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
@@ -3137,7 +3133,7 @@ const LANG = {
   nl: {
     loaderSub: 'Stadswandeling · wintersemester 2026/27',
     kicker:    'Stadswandeling · Rotterdam · Nederland',
-    subHtml:   'Zeven gebouwen aan het water. Een reisdagboek door de Wijnhaven-wijk.',
+    subHtml:   'Zeven gebouwen aan het water. De Wijnhaven-wijk van 1898 tot 2023.',
     scrollCue: 'Scroll',
     drawerBtn: 'Notitie openen →',
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
@@ -3206,7 +3202,7 @@ const LANG = {
   en: {
     loaderSub: 'Walking Tour · Winter 2026/27',
     kicker:    'Walking Tour · Rotterdam · Netherlands',
-    subHtml:   'Seven buildings on the water. A travel diary through the Wijnhaven district.',
+    subHtml:   'Seven buildings on the water. The Wijnhaven district from 1898 to 2023.',
     scrollCue: 'Scroll',
     drawerBtn: 'Open entry →',
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
@@ -3274,7 +3270,7 @@ const LANG = {
   }
 };
 
-let currentLang = 'de';
+let currentLang = 'de';   /* Ausgangszustand des statischen HTML; die Startsprache setzt _startLang() weiter unten */
 
 function setLang(lang){
   const t = LANG[lang];
@@ -3415,52 +3411,19 @@ document.querySelectorAll('.lang-btn').forEach(function(btn){
   btn.addEventListener('click', function(){ setLang(btn.getAttribute('data-lang')); });
 });
 
-/* ═══════════════════════════════
-   SCROLL SNAP (JS-based)
-   – Fires 550 ms after scroll ends
-   – Skips if user is still scrolling
-   – Skips past midpoint of last stop
-     so outro/impressum is reachable
-═══════════════════════════════ */
-(function(){
-  var snapTimer = null;
-  var snapping  = false;
-  window.addEventListener('scroll', function(){
-    if (snapping) return;
-    /* Capture position at the moment the scroll event fires */
-    var capturedSy = window.scrollY;
-    clearTimeout(snapTimer);
-    snapTimer = setTimeout(function(){
-      if (trackActive) return;
-      var sy = window.scrollY;
+/* Startsprache: Niederlaendisch. Das statische HTML ist deutsch verfasst,
+   deshalb wird direkt nach dem Verdrahten umgeschaltet, noch waehrend der
+   Ladeschirm liegt, damit kein Sprachwechsel sichtbar aufblitzt. Deutsch und
+   Englisch waehlt man ueber die Knoepfe oben rechts. */
+var START_LANG = 'nl';
+function _startLang(){
+  if (START_LANG && START_LANG !== currentLang) setLang(START_LANG);
+}
+_startLang();
 
-      /* Still scrolling? Position changed since timer was armed → skip */
-      if (Math.abs(sy - capturedSy) > 10) return;
-
-      var introH = getIntroH();
-      if (sy < introH) return;
-
-      var journeyTop = getJourneyTop();
-      var scrollInJ  = sy - journeyTop;
-      if (scrollInJ < 0) return;
-
-      /* Past the midpoint of the last stop → user is heading to outro/impressum.
-         Do NOT snap back to stop 7. */
-      if (scrollInJ >= 7.5 * innerHeight) return;
-
-      var nearestIdx = Math.round(scrollInJ / innerHeight);
-      nearestIdx = Math.max(0, Math.min(7, nearestIdx));
-      var targetY = journeyTop + nearestIdx * innerHeight;
-
-      /* Already close enough – skip to avoid tiny jitter snaps */
-      if (Math.abs(sy - targetY) < 40) return;
-
-      snapping = true;
-      window.scrollTo({ top: targetY, behavior:'smooth' });
-      setTimeout(function(){ snapping = false; }, 800);
-    }, 550);
-  }, { passive:true });
-})();
+/* Der fruehere Scroll-Snap ist entfallen. Er sprang 550 ms nach dem Scrollen
+   auf das naechste Vielfache der Bildschirmhoehe, was zur alten Journey mit
+   sieben Stationen gehoerte. Ohne die Strecke stoert er nur noch. */
 
 /* ═══════════════════════════════
    TRACK BUTTON VISIBILITY
