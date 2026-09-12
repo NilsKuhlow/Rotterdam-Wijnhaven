@@ -2153,7 +2153,6 @@ const SEED7 = [
       {c:"Smit, Ellen: Het verhaal van een andere tekenwijze. De structuralistische architectuurtekening in Het Speelhuis van Piet Blom. In: Bulletin KNOB 117 (2018), Heft 2, S. 80-103. DOI 10.7480/knob.117.2018.2.2453. (Zu Bloms strukturalistischer Entwurfs- und Zeichenpraxis am Speelhuis Helmond, methodisch verwandt mit den Kubuswoningen.)", u:"https://doi.org/10.7480/knob.117.2018.2.2453"},
       {c:"Het Nieuwe Instituut (Nationaal Archief voor Nederlandse Architectuur en Stedenbouw), Rotterdam: Archief Blom, P. (Pieter / Piet), toegangsnummer BLOM. EAD-Inventar. (Enthaelt Entwurfsmaterial zur Blaakoverbouwing / Kubuswoningen Rotterdam.)", u:"https://zoeken.nieuweinstituut.nl/images/archives/pdf/BLOM.ead.pdf"}
     ],
-    model:{src:"models/kubuswoningen.glb", poster:""},
     slides:[
       {bg:"url('img/gal-kubus-1.webp') center/cover no-repeat", tmp:true, cap:"Die gekippte Würfelreihe über der Fußgängerebene.", credit:"Oleg Yunakov, CC BY-SA 4.0, Wikimedia Commons", creditUrl:"https://commons.wikimedia.org/wiki/File:Cube_houses_(Rotterdam)_-_01.jpg"},
       {bg:"url('img/gal-kubus-2.webp') center/cover no-repeat", tmp:true, cap:"Die großen Schau-Würfel über dem Blaak.", credit:"Fred Romero, CC BY 2.0, Wikimedia Commons", creditUrl:"https://commons.wikimedia.org/wiki/File:Rotterdam_-_Kijk_Kubus.jpg"}
@@ -2188,7 +2187,6 @@ const SEED7 = [
       {c:"MVRDV: Markthal, Rotterdam. Offizielle Projektdokumentation des Architekturbueros (Winy Maas, Jacob van Rijs, Nathalie de Vries), Auftraggeber Provast, 2004-2014. MVRDV, Rotterdam.", u:"https://www.mvrdv.com/projects/115/markthal"},
       {c:"Structurae - International Database and Gallery of Structures: Markthal Rotterdam (Rotterdam, 2014). Hrsg. Nicolas Janberg, Berlin.", u:"https://structurae.net/en/structures/markthal-rotterdam"}
     ],
-    model:{src:"models/markthal.glb", poster:""},
     slides:[
       {bg:"url('img/gal-markthal-1.webp') center/cover no-repeat", tmp:true, cap:"Die leuchtende Glas-Stirnseite zur blauen Stunde.", credit:"Radek Kucharski, CC BY 2.0, Wikimedia Commons", creditUrl:"https://commons.wikimedia.org/wiki/File:Market_Hall_in_Rotterdam_(52505656833).jpg"},
       {bg:"url('img/gal-markthal-2.webp') center/cover no-repeat", tmp:true, cap:"Die Markthal mit dem geschwungenen Dach der Station Blaak.", credit:"Paul Arps, CC BY 2.0, Wikimedia Commons", creditUrl:"https://commons.wikimedia.org/wiki/File:Station_Blaak_%26_markthal_covert_market_(Rotterdam,_Netherlands_2014)_(15748384241).jpg"}
@@ -2458,7 +2456,11 @@ var VB = [
   "179 549 380 285",   // 5 EY
   "224 243 380 285",   // 6 CasaNova
 ];
-var MAP_REVEAL_VB = "454 169 209 157";   /* Reveal-Startzoom (eng auf Stop 0), aus dem herausgezoomt wird */
+/* Die 2D-Karte ist statisch: sie folgt dem Scroll NICHT mehr, sondern zeigt
+   durchgehend die ganze Route. Bewegt wird sie nur im Track-Modus (GPS),
+   danach kehrt sie hierher zurueck. Der Fokus liegt auf der 3D-Karte. */
+var MAP_STATIC_VB = "51 105 912 684";
+var _trackZoomed  = false;   /* beim ersten GPS-Fix einmal auf Track-Zoom gehen */
 var MAP_VW = 1000, MAP_VH = 1949;   /* Schwarzplan-Masse (viewBox-Raum) */
 
 /* ═══════════════════════════════
@@ -2468,6 +2470,57 @@ function lerpVB(a, b, t){
   const pa = a.trim().split(/\s+/).map(Number);
   const pb = b.trim().split(/\s+/).map(Number);
   return pa.map((v,i) => v + (pb[i]-v)*t).join(' ');
+}
+
+/* Baut eine viewBox um (cx,cy), die mindestens spanX x spanY abdeckt UND das
+   Seitenverhaeltnis des Kartenfensters trifft. Noetig wegen
+   preserveAspectRatio="slice": eine viewBox mit falschem Verhaeltnis wird
+   beschnitten, Stopps am Rand waeren sonst unsichtbar. */
+function _vbFit(cx, cy, spanX, spanY){
+  var ps = _panelSize();
+  var pw = ps[0] || 1, ph = ps[1] || 1;
+  var pa = pw / ph, w = spanX, h = spanY;
+  if (w / h < pa) w = h * pa; else h = w / pa;
+  if (w > MAP_VW){ w = MAP_VW; h = w / pa; }
+  if (h > MAP_VH){ h = MAP_VH; w = h * pa; }
+  return _clampVB(cx - w / 2, cy - h / 2, Math.round(w * 10) / 10, Math.round(h * 10) / 10);
+}
+
+/* Statische Gesamtansicht aus den Wegpunkten. Rechts mehr Luft, dort stehen
+   die Beschriftungen neben den Punkten. */
+var _staticVBSize = '';
+function _panelSize(){
+  var el = document.getElementById('map-panel');
+  return [ (el && el.clientWidth)  || window.innerWidth  || 0,
+           (el && el.clientHeight) || window.innerHeight || 0 ];
+}
+function _computeStaticVB(){
+  if (!WAYPOINTS || !WAYPOINTS.length) return;
+  var ps = _panelSize();
+  if (ps[0] < 50 || ps[1] < 50) return;   /* Layout steht noch nicht, spaeter erneut */
+  _staticVBSize = ps[0] + 'x' + ps[1];
+  var xs = WAYPOINTS.map(function(w){ return w.x; });
+  var ys = WAYPOINTS.map(function(w){ return w.y; });
+  var x1 = Math.min.apply(null, xs) - 70, x2 = Math.max.apply(null, xs) + 150;
+  var y1 = Math.min.apply(null, ys) - 80, y2 = Math.max.apply(null, ys) + 80;
+  MAP_STATIC_VB = _vbFit((x1 + x2) / 2, (y1 + y2) / 2, x2 - x1, y2 - y1);
+}
+
+/* Zuschnitt nachholen, sobald das Layout steht oder sich das Fenster
+   geaendert hat. Billig genug fuer den Aufruf beim Einblenden. */
+function _ensureStaticVB(){
+  var ps = _panelSize();
+  if (ps[0] < 50 || ps[1] < 50) return;
+  if (_staticVBSize === ps[0] + 'x' + ps[1]) return;
+  _computeStaticVB();
+  if (!trackActive) applyStaticVB(false);
+}
+
+/* Karte auf die statische Ansicht zuruecksetzen. */
+function applyStaticVB(animate){
+  var svg = document.getElementById('mapSvg'); if (!svg) return;
+  if (animate) { animVBfromCurrent(MAP_STATIC_VB, 500); }
+  else { cancelAnimVB(); svg.setAttribute('viewBox', MAP_STATIC_VB); }
 }
 
 /* ═══════════════════════════════
@@ -2480,11 +2533,9 @@ function lerpVB(a, b, t){
    Zooms out from Stop-0 zoom level to give a "reveal" feel,
    then settles back to Stop-0 view.
 ═══════════════════════════════ */
-var _revealing = false;   /* waehrend des Reveal-Zooms treibt onScroll die viewBox NICHT (sonst kaempfen beide) */
 function triggerMapIntro(){
   if (mapShown) return;
   mapShown = true;
-  _revealing = true;
 
   /* Snap scroll to the exact start of the journey section and kill momentum.
      overflow:hidden trick stops native iOS/Android touch inertia; scrollTo
@@ -2502,25 +2553,15 @@ function triggerMapIntro(){
   void sl.offsetWidth;          /* force reflow to restart animation */
   sl.classList.add('sweep');
 
-  /* Start from a tighter zoom (closer into stop 0) */
-  const zoomIn = MAP_REVEAL_VB;     /* zoomed on stop 0 */
-  const target  = VB[0];             /* normal stop-0 view */
+  /* Kein Zoom-Reveal mehr: die Karte erscheint direkt in der statischen
+     Gesamtansicht. Die Einblendung des Panels (clip-path + fade) bleibt. */
+  _ensureStaticVB();
+  svg.setAttribute('viewBox', MAP_STATIC_VB);
+  map.classList.add('map-intro');
 
-  svg.setAttribute('viewBox', zoomIn);
-  map.classList.add('map-intro'); /* trigger CSS clip-path + scale + fade */
-
-  /* After clip-path reveal settles (~1.05s), animate viewBox to normal */
-  setTimeout(() => {
-    animVB(zoomIn, target, 900);
-  }, 400);
-  /* Reveal-Fenster (Hold 400 + Zoom 900): erst danach folgt die Karte wieder dem Scroll */
-  setTimeout(function(){ _revealing = false; onScroll(); }, 1360);
-
-  /* Immediately activate stop 0 so drawer + sketch appear as map reveals.
-     Set _fromScroll so activate() doesn't fight the animVB above. */
-  activate._fromScroll = true;
+  /* Stopp 0 sofort aktivieren, damit Schublade und aktiver Punkt zugleich
+     mit der Karte da sind. */
   activate(0, 0);
-  activate._fromScroll = false;
 }
 
 /* Generation counter, increment to cancel any running animVB */
@@ -2592,20 +2633,7 @@ function activate(idx, globalT){
   document.getElementById('drawer').classList.add('open');
 
   /* Heavy updates only on stop change */
-  if (idx === activeStop) {
-    /* ViewBox follows traveller continuously.
-       Use (globalT - idx) so frac stays in [0,1] even when hysteresis holds
-       idx at N while globalT has already crossed into N+1 territory.
-       Without this fix: Math.floor(globalT) = N+1 → frac resets to ~0 →
-       viewport snaps back to VB[N] causing the visible dot-jump. */
-    if (globalT !== undefined){
-      const frac = Math.max(0, Math.min(1, globalT - idx));
-      const next = idx < STOPS.length-1 ? VB[idx+1] : VB[STOPS.length-1];
-      document.getElementById('mapSvg')
-        .setAttribute('viewBox', lerpVB(VB[idx], next, frac));
-    }
-    return;
-  }
+  if (idx === activeStop) return;   /* Karte statisch: keine viewBox-Nachfuehrung */
 
   activeStop = idx;
 
@@ -2639,10 +2667,8 @@ function activate(idx, globalT){
   /* Journey scroll hint, show once on very first stop entry */
   if (idx === 0) showJourneyHint();
 
-  /* ViewBox, only animate programmatically (dotTap/scrollToStop).
-     During scroll  lerpVB already drives the viewBox continuously.
-     During GPS tracking moveGpsDot() drives the viewBox, skip too. */
-  if (!activate._fromScroll && !activate._fromGps) animVBfromCurrent(VB[idx], 650);
+  /* Kein Kameraflug zum Stopp mehr: die Karte bleibt in der Gesamtansicht,
+     der aktive Punkt wird nur hervorgehoben. */
 }
 
 function resetMap(){
@@ -2690,6 +2716,8 @@ var   _journeyTop= null;
 window.addEventListener('resize', function(){
   updateMapH();           /* keep map height accurate on orientation change */
   _introH = null; _journeyTop = null;
+  /* Seitenverhaeltnis geaendert: statische Ansicht neu zuschneiden. */
+  _staticVBSize = ''; _ensureStaticVB();
 }, { passive:true });
 function getIntroH(){
   if (_introH === null) _introH = _introEl.offsetHeight;
@@ -2746,8 +2774,7 @@ function onScroll(){
 
   /* Show map visually as soon as 70 % is crossed */
   map.classList.add('map-intro');
-  /* schon im Reveal-Startzoom einblenden, damit der Reveal spaeter nicht springt */
-  if (!mapShown) _mapSvg.setAttribute('viewBox', MAP_REVEAL_VB);
+  if (!mapShown) _mapSvg.setAttribute('viewBox', MAP_STATIC_VB);
 
   /* But don't drive stops or snap scroll until we're close to journey start */
   if (!mapShown && sy < introH - 60) return;
@@ -2781,13 +2808,10 @@ function onScroll(){
   }
   stopIdx = Math.max(0, Math.min(STOPS.length - 1, stopIdx));
 
-  if (_revealing) return;   /* waehrend des Reveals gehoert die viewBox der Reveal-Animation */
   activate(stopIdx, globalT);
 }
 
-/* RAF-throttled scroll, fires at most once per animation frame.
-   _fromScroll flag tells activate() not to run the 650ms viewBox animation
-   (the lerpVB path already provides smooth continuous following). */
+/* RAF-throttled scroll, fires at most once per animation frame. */
 var _scrollRaf = null, _lastScrollT = 0;
 function _scrollTick(ts){
   _scrollRaf = null;
@@ -2796,9 +2820,7 @@ function _scrollTick(ts){
      A trailing reschedule guarantees the final position is still applied. */
   if (ts - _lastScrollT < 30) { _scrollRaf = requestAnimationFrame(_scrollTick); return; }
   _lastScrollT = ts;
-  activate._fromScroll = true;
   onScroll();
-  activate._fromScroll = false;
 }
 window.addEventListener('scroll', function(){
   if (_scrollRaf) return;
@@ -3361,10 +3383,11 @@ function buildRoute(routeId){
 
   /* 2) Geometrie aus echten Koordinaten */
   WAYPOINTS = STOPS.map(function(s){ return _projWP(s._coord); });
-  VB = WAYPOINTS.map(function(w){ return _clampVB(w.x-190, w.y-142.5, 380, 285); });
+  VB = WAYPOINTS.map(function(w){ return _clampVB(w.x-190, w.y-142.5, 380, 285); });   /* aktuell ungenutzt: Karte ist statisch */
   var d='';
   TRAIL = WAYPOINTS.map(function(w,i){ d += (i===0?'M':' L')+w.x+' '+w.y; return d; });
-  MAP_REVEAL_VB = _clampVB(WAYPOINTS[0].x-104.5, WAYPOINTS[0].y-78.5, 209, 157);
+  _computeStaticVB();
+  if (!trackActive) applyStaticVB(false);
 
   /* 3) SVG-Marker neu erzeugen — Z-Ordnung: Ripple < Ring < Dot < Label */
   var NS='http://www.w3.org/2000/svg';
@@ -3559,6 +3582,13 @@ function moveGpsDot(lat, lon) {
   var svg = document.getElementById('mapSvg');
   var vb  = svg.viewBox.baseVal;
   var w = vb.width, h = vb.height;
+  /* Erster Fix: aus der statischen Gesamtansicht auf Track-Zoom gehen, sonst
+     waere das Mitfuehren bei voller Routenbreite wirkungslos. */
+  if (!_trackZoomed){
+    _trackZoomed = true;
+    animVB(vb.x + ' ' + vb.y + ' ' + w + ' ' + h, _vbFit(pt.x, pt.y, 380, 285), 700);
+    return;
+  }
   var tx = pt.x - w/2, ty = pt.y - h/2;
   tx = Math.max(0, Math.min(MAP_VW-w, tx));
   ty = Math.max(0, Math.min(MAP_VH-h, ty));
@@ -3582,9 +3612,7 @@ function onGeoSuccess(pos){
     showToast('Nächste Station: '+STOPS[idx].name+' · '+dist+' m', 4000);
     /* 50 m threshold, accounts for real-world GPS accuracy (typ. ±10-30 m) */
     if (dist < 50 && idx !== activeStop) {
-      activate._fromGps = true;   /* suppress lerpVB, GPS already drives viewBox */
       activate(idx);
-      activate._fromGps = false;
     }
   } else {
     showToast((dist/1000).toFixed(1)+' km von Wijnhaven entfernt', 4000);
@@ -3634,6 +3662,8 @@ function stopTrack(){
   var g=document.getElementById('gps-group'); if(g){ g.style.opacity='0'; g.classList.remove('tracking'); }
   /* Reset map-pan state + hide touch overlay + close card */
   mapUserPanned = false;
+  _trackZoomed = false;
+  applyStaticVB(true);          /* zurueck in die statische Gesamtansicht */
   closeInfoCard();
   document.getElementById('return-btn').classList.remove('show');
   document.getElementById('map-touch-layer').classList.remove('active');

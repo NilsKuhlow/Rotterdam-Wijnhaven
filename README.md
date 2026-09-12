@@ -20,12 +20,31 @@ Gruppe 4. Nils Kuhlow & Kai-Lars Ehrich.
 ## Technik
 
 - Single-File `index.html` (HTML + CSS + Vanilla-JS), keine Build-Pipeline
-- Karte: inline SVG-Figure-Ground (Platzhalter), scroll-getriebene Kamerafahrt, GPS Smart-Track
-- 3D je Eintrag: `<model-viewer>`, `.glb` in `/models`
+- 2D-Karte: inline SVG-Figure-Ground (OSM), **statisch** (zeigt durchgehend die ganze Route),
+  GPS Smart-Track bewegt sie weiterhin
 - 3D-Gesamtmodell (Button „3D" oben links): `<model-viewer>`-Drehteller, Draco-Mesh + WebP-Texturen
 - PWA: `manifest.json` + `sw.js` (offline-fähig)
 - Sprachen: DE / NL / EN
 - Akkuschonend: Animationen + GPS pausieren im Hintergrund, ~30fps-Scroll-Cap, kein Idle-Rendering
+
+## 2D-Karte: statisch, außer beim Tracking
+
+Die 2D-Karte folgt dem Scrollen **nicht** mehr. Sie zeigt durchgehend die ganze Route;
+beim Scrollen durch die Stationen wandert nur der Läufer-Punkt, der aktive Punkt wird
+hervorgehoben und die Schublade wechselt. Der Fokus liegt auf dem 3D-Gesamtmodell.
+
+Bewegt wird die Karte nur noch im **Smart-Track**: Der erste GPS-Fix zoomt auf eine
+Nahansicht (rund 500 m Bildbreite), danach führt sie mit; Wischen und Pinch bleiben
+möglich. Beim Beenden kehrt sie in die Gesamtansicht zurück.
+
+Den Zuschnitt rechnet `_computeStaticVB()` aus den Wegpunkten. Wichtig: Das SVG nutzt
+`preserveAspectRatio="slice"`, eine viewBox mit falschem Seitenverhältnis würde also
+beschnitten und Stationen am Rand verschwinden. `_vbFit()` zieht die viewBox deshalb
+immer auf das Seitenverhältnis des Kartenfensters und rechnet bei Drehung des Geräts neu.
+
+Einzelne Häuser haben **kein** eigenes 3D-Modell mehr (Qualität nicht ausreichend). Der
+Renderer dafür steht weiterhin bereit: ein `model:{src,poster}` an einem Eintrag genügt,
+so wie `voices` auf die Interviews wartet.
 
 ## 3D-Gesamtmodell: eigenes Modell bauen
 
