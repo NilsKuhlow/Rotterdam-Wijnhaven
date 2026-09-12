@@ -7,6 +7,14 @@
 <meta name="description" content="Selbstgeführte Stadtführung durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten von 1898 bis 2023, mit GPS-Live-Navigation vor Ort und 3D-Stadtmodell.">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="canonical" href="https://wijnhaven.com/">
+<!-- GOOGLE SEARCH CONSOLE
+     Die Bestaetigung laeuft ueber einen Tag, den Google beim Anlegen der
+     Property anzeigt. Zeile darunter einkommentieren und den Token
+     einsetzen, dann in der Search Console auf "Bestaetigen" druecken.
+     Absichtlich leer gelassen: ein erfundener Token laesst die Pruefung
+     fehlschlagen und waere schlimmer als gar keiner.
+<meta name="google-site-verification" content="HIER_DEN_TOKEN_VON_GOOGLE_EINSETZEN">
+-->
 <!-- Open Graph / Twitter: Link-Vorschau beim Teilen -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Wijnhaven Rotterdam">
@@ -4650,6 +4658,7 @@ function _clearEntryHash(){ try { history.replaceState(null, '', location.pathna
 function openModal(idx, _placeObj){
   const s = _placeObj || ((idx >= 0 && idx < STOPS.length) ? STOPS[idx] : STOPS[activeStop]);
   if (!s) return;
+  if (typeof countEntry === 'function') countEntry(s.slug, s.name);
   galIdx = 0; galLen = s.slides.length;
 
   const t = LANG[currentLang] || LANG.de;
@@ -5862,6 +5871,42 @@ window.mapGeoSet = function(o){ if (o) for (var k in o) MAP_GEO[k] = o[k]; if (w
     else window.addEventListener('load', function(){ setTimeout(openFromHash, 350); });
   }
 })();
+
+/* ═══════════════════════════════
+   BESUCHERZAEHLUNG (GoatCounter)
+   Cookiefrei und quelloffen, deshalb ohne Einwilligungsbanner ueblich.
+   Site-Code ist der Teil vor .goatcounter.com, hier nilsklw. Auswertung
+   unter https://nilsklw.goatcounter.com. Ist das Feld leer, wird kein
+   Skript geladen und nichts gezaehlt.
+═══════════════════════════════ */
+var GOATCOUNTER_CODE = 'nilsklw';
+
+function _gcAktiv(){
+  if (!GOATCOUNTER_CODE) return false;                       /* nicht eingerichtet */
+  var h = location.hostname;
+  if (h === 'localhost' || h === '127.0.0.1' || h === '') return false;   /* eigene Tests nicht mitzaehlen */
+  if (navigator.doNotTrack === '1' || window.doNotTrack === '1') return false;   /* Wunsch des Besuchers achten */
+  return true;
+}
+
+(function(){
+  if (!_gcAktiv()) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter',
+                 'https://' + GOATCOUNTER_CODE + '.goatcounter.com/count');
+  document.head.appendChild(s);
+})();
+
+/* Zusaetzlich zaehlen, welcher Eintrag geoeffnet wird. Das beantwortet die
+   eigentlich interessante Frage: welches Bauwerk wird gelesen. Uebertragen
+   wird nur der Slug, keine Personendaten. */
+function countEntry(slug, name){
+  if (!_gcAktiv() || !slug) return;
+  if (!window.goatcounter || !window.goatcounter.count) return;
+  window.goatcounter.count({ path: 'eintrag/' + slug, title: name || slug });
+}
 
 /* ── Service Worker registration ── */
 if ('serviceWorker' in navigator) {
