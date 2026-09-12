@@ -224,18 +224,16 @@ liegen also unter der tatsächlichen Nutzung.
 
 ## Google Search Console
 
-Zeigt, mit welchen Suchbegriffen die Seite gefunden wird. Der Platz für den
-Bestätigungs-Tag liegt im `<head>`, auskommentiert und beschriftet. Die Schritte, die
-einen Google-Login brauchen und deshalb nur von Hand gehen:
+Zeigt, mit welchen Suchbegriffen die Seite gefunden wird, wie oft sie erscheint und auf
+welcher Position.
 
-1. <https://search.google.com/search-console> öffnen, **Property hinzufügen**
-2. Typ **URL-Präfix** wählen (nicht Domain, das bräuchte einen DNS-Eintrag beim
-   Registrar) und `https://wijnhaven.com/` eintragen
-3. Bestätigungsmethode **HTML-Tag**, den Wert aus `content="…"` kopieren
-4. In `index.html` den Block `GOOGLE SEARCH CONSOLE` einkommentieren und den Token
-   einsetzen, committen und pushen
-5. Nach dem Pages-Build in der Search Console auf **Bestätigen** drücken
-6. Danach **Sitemaps** öffnen und `sitemap.xml` einreichen
+Eingerichtet als **Domain-Property**, bestätigt über einen DNS-TXT-Eintrag beim
+Domainanbieter (`google-site-verification=EdSquVP6…`). Diese Variante deckt alle
+Subdomains und beide Protokolle ab. Im `<head>` ist deshalb **kein** Meta-Tag nötig.
+
+Offen bleibt ein Schritt, der einen Google-Login braucht: In der Search Console unter
+**Sitemaps** einmal `sitemap.xml` einreichen. Ohne das dauert die Indexierung deutlich
+länger.
 
 ## Lokal starten
 
