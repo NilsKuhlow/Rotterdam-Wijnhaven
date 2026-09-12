@@ -3980,10 +3980,15 @@ function toggleTrack(){
 
 function startHighAccuracyWatch(){
   if (!trackActive) return;      /* user stopped tracking before GPS kicked in */
+  /* Akku: enableHighAccuracy bleibt noetig, die 50-m-Naeherkennung zwischen
+     Hochhaeusern traegt sonst nicht. maximumAge stand aber auf 0, damit musste
+     das Geraet fuer JEDEN Rueckruf eine frische Ortung erzwingen. 6000 ms lassen
+     eine vorhandene Position wiederverwenden; wer geht, legt in der Zeit rund
+     8 m zurueck, das faellt gegen die 50-m-Schwelle nicht ins Gewicht. */
   watchId = navigator.geolocation.watchPosition(onGeoSuccess, onGeoError, {
     enableHighAccuracy: true,
     timeout: 20000,
-    maximumAge: 0
+    maximumAge: 6000
   });
 }
 
