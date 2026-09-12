@@ -1,7 +1,7 @@
 {
-  "name": "Wijnhaven Feldjournal",
+  "name": "Wijnhaven Rotterdam: Stadtrundgang",
   "short_name": "Wijnhaven",
-  "description": "Interaktives Feldjournal durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, vom Witte Huis bis CasaNova.",
+  "description": "Interaktiver Stadtrundgang durch das Wijnhaven-Quartier in Rotterdam: sieben Bauten am Wasser, vom Witte Huis bis CasaNova.",
   "id": "/",
   "lang": "de",
   "start_url": "/",

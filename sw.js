@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   Wijnhaven Feldjournal — Service Worker
+   Wijnhaven Rotterdam — Service Worker
    Strategy:
      • install  → precache every local app-shell asset (bypass HTTP cache)
      • activate → delete stale caches, claim all tabs
