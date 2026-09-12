@@ -40,6 +40,12 @@ Nummer kommt aus der Route und kann sich ändern, die Identität des Bauwerks ni
 3D-Marker und ihre Legende lesen die Nummer über `_pinNum()` aus der Route, damit beide
 Karten nie auseinanderlaufen.
 
+Der eigene Standort trägt dasselbe Signalrot (`--here`) wie der Marker im 3D-Modell:
+roter Kern, weißer Ring, dunkle Haarlinie, damit er auf hellem Grund ebenso steht wie
+auf schwarzem Baukörper. Er ist mit 16 px etwas größer als ein Stopp-Punkt (14 px),
+denn es gibt nur einen davon. Der Genauigkeitskreis ist eine Haarlinie und keine
+Fläche, sonst läge ein weicher Schleier über dem harten Schwarzplan.
+
 Die Karte steht auch im **Smart-Track**. Sie zeigt durchgehend die ganze Route, der
 Punkt wandert darin; gezoomt oder mitgeführt wird nicht. Beides nähme den Überblick,
 den man beim Gehen braucht, und nötig ist es nicht: Der Punkt ist ohnehin im Bild.
