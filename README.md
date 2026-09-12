@@ -174,6 +174,31 @@ Lese-Abschnitt sind weiterhin deutsch, damit die Seite unter *Stadtführung* gef
 wird. Ein niederländischer Besucher sieht deshalb unter der Karte einen deutschen
 Textblock. Sauber lösen ließe sich das nur mit eigenen URLs je Sprache plus `hreflang`.
 
+## Offline
+
+Ein Service Worker legt Seite, Bilder und Symbole beim ersten Besuch ab. Das 3D-Modell
+(23,5 MB) wird bewusst **nicht** vorgeladen, sondern erst beim ersten Öffnen der
+3D-Ansicht gecacht.
+
+Wichtig: `www.gstatic.com` steht in `CACHEABLE_HOSTS`, denn von dort kommt der
+Draco-Decoder (59 KB Wrapper + 286 KB WebAssembly). Ohne ihn läge zwar das Modell im
+Cache, ließe sich offline aber nicht auspacken, die 3D-Ansicht blieb leer.
+
+**Vor der Reise einmal über WLAN die 3D-Ansicht öffnen.** Erst dann liegen Modell und
+Decoder im Cache. Geprüft mit gekappter Verbindung: Seite lädt, Modell lädt, alle
+sieben Marker stehen.
+
+## Datenschutz
+
+Die Erklärung steht aufklappbar im Colophon, dreisprachig über `[data-lang-block]`,
+das `setLang()` mitschaltet. Sie beschreibt, was die Seite technisch tut: Hosting bei
+GitHub Pages, cookiefreie Zählung mit GoatCounter, Ortung ausschließlich auf dem Gerät,
+Schriften von Google Fonts, 3D-Bausteine von unpkg und gstatic, keine Cookies, keine
+Formulare.
+
+Der Text ist eine sachliche Beschreibung, **keine juristische Prüfung**. Ob er für eure
+Abgabe genügt, klärt ihr mit der Hochschule.
+
 ## SEO
 
 Der Kern des Problems war nicht Technik, sondern Inhalt: Die Eintragstexte entstehen erst
