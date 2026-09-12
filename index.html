@@ -1364,6 +1364,29 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 .t3d-pin:hover, .t3d-pin:focus-visible { transform:scale(calc(var(--pin-k,1) * 1.25)); outline:none; }
 .t3d-pin:focus-visible { box-shadow:0 0 0 2px var(--paper-0), 0 0 0 4px var(--ink-1); }
 
+/* Eigener Standort im Modell. Bewusst anders als die Bauwerksmarker:
+   rund statt eckig, ohne Nummer, damit man beides nie verwechselt. */
+.t3d-me {
+  position:relative; display:block; width:22px; height:22px; padding:0; margin:0;
+  border-radius:50%; background:var(--ink-1); border:3px solid var(--paper-0);
+  box-shadow:0 0 0 1px var(--ink-1); cursor:default;
+  transform:scale(var(--pin-k,1));
+}
+.t3d-me::after {   /* Lot zum Boden */
+  content:''; position:absolute; left:50%; top:100%; width:1px; height:26px;
+  margin-left:-.5px; background:var(--ink-1);
+}
+.t3d-me::before {  /* Puls, damit der Punkt auffindbar bleibt */
+  content:''; position:absolute; inset:-9px; border-radius:50%;
+  border:2px solid var(--ink-1); opacity:0;
+  animation:t3dMePuls 2.2s ease-out infinite;
+}
+@keyframes t3dMePuls {
+  0%   { transform:scale(.55); opacity:.55; }
+  100% { transform:scale(1.35); opacity:0; }
+}
+@media (prefers-reduced-motion:reduce){ .t3d-me::before { animation:none; } }
+
 #tour3d-legend {
   position:absolute; left:1.1rem; bottom:1.3rem; z-index:3;
   background:rgba(255,255,255,.93); border:1px solid var(--ink-1);
@@ -3561,13 +3584,11 @@ function nearestStop(lat, lon){
   return { idx:best, dist:Math.round(bestD) };
 }
 
-/* Project real GPS coords onto SVG coordinate space.
-   Calibrated with two anchors verified against all 8 WAYPOINTS:
-     Campo  (43.3185, 11.3318) → SVG (614, 438)
-     Mercato(43.3174, 11.3329) → SVG (680, 560)
-   Anker: Witte Huis (51.9201, 4.4889) → (430,250);
-          CasaNova   (51.9150, 4.4870) → (300,545).
-   Beim Einsetzen des echten Schwarzplans neu kalibrieren. */
+/* GPS auf den Koordinatenraum des Schwarzplans abbilden.
+   Exakt, nicht kalibriert: der Plan stammt massstabsgetreu aus OSM, die
+   Projektion ist dieselbe. Ursprung ist lon 4.4795 / lat 51.9225,
+   0,7664 SVG-Einheiten je Meter. Beim Einsetzen eines handgezeichneten
+   Plans muss hier neu kalibriert werden. */
 function gpsToSvg(lat, lon) {
   /* Exakte Projektion des OSM-Schwarzplans (massstabsgetreu, 1 Einheit ~1,3 m) */
   var x = (lon - 4.4795) * 68671.61405376215 * 0.7664240847195386;
@@ -3586,6 +3607,9 @@ function moveGpsDot(lat, lon) {
     if (el) { el.setAttribute('cx', pt.x); el.setAttribute('cy', pt.y); }
   });
   var _gg = document.getElementById('gps-group'); _gg.style.opacity = '1'; _gg.classList.add('tracking');
+
+  /* Denselben Fix auch im 3D-Modell zeigen, falls es offen ist. */
+  if (typeof _t3dMeUpdate === 'function') _t3dMeUpdate(lat, lon);
 
   /* Auto-pan only when user hasn't manually moved the map */
   if (mapUserPanned) return;
@@ -3674,6 +3698,7 @@ function stopTrack(){
   /* Reset map-pan state + hide touch overlay + close card */
   mapUserPanned = false;
   _trackZoomed = false;
+  if (typeof _t3dMeHide === 'function') _t3dMeHide();   /* Standort im Modell mit ausblenden */
   clearActiveStop();            /* ohne Messung keine Behauptung ueber die Naehe */
   applyStaticVB(true);          /* zurueck in die statische Gesamtansicht */
   closeInfoCard();
@@ -4585,76 +4610,32 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft')  galStep(-1);
 });
 
-/* ══════════════════════════════════════════
-   DEBUG MODE  (?debug in URL)
-   Simulates a GPS walk through the route.
-   Activate: add ?debug to the URL.
-   Use the floating debug panel to control.
-══════════════════════════════════════════ */
+/* ═══════════════════════════════
+   TESTMODUS  (?debug an die Adresse haengen)
+   Simuliert einen Rundgang, damit sich Ortung, Naeherkennung und der
+   Standort im 3D-Modell ohne Anreise pruefen lassen. Die Route wird aus
+   STOP_COORDS erzeugt, folgt also automatisch jeder Routenaenderung.
+   Eingespeist wird ueber onGeoSuccess, also genau den Weg, den auch das
+   echte GPS nimmt.
+═══════════════════════════════ */
 (function(){
   if (!/[?&]debug/.test(location.search)) return;
 
-  /* Simulated walking route through all 8 stops in order.
-     Each cluster of coords brings the user into the stop's 50 m radius,
-     then walks to the next one. Matches STOPS[] indices 0-7. */
-  const SIM_ROUTE = [
-    /*, STOP 0: Banca Monte dei Paschi / Piazza Salimbeni, */
-    [43.3220, 11.3306],
-    [43.3218, 11.3304],
-    [43.3216, 11.3303], /* ★ stop 0, within 50 m */
-    [43.3214, 11.3301],
-    /* walk west toward Fontebranda */
-    [43.3210, 11.3294],
-    [43.3205, 11.3284],
-    [43.3199, 11.3272],
-    /*, STOP 1: Fontebranda, */
-    [43.3197, 11.3265],
-    [43.3195, 11.3261], /* ★ stop 1, within 50 m */
-    [43.3193, 11.3260],
-    /* walk south-east toward Battistero */
-    [43.3191, 11.3265],
-    [43.3188, 11.3272],
-    [43.3185, 11.3278],
-    /*, STOP 2: Battistero di San Giovanni, */
-    [43.3183, 11.3281],
-    [43.3182, 11.3282], /* ★ stop 2, within 50 m */
-    [43.3181, 11.3282],
-    /* walk south (Duomo is very close) */
-    [43.3180, 11.3280],
-    [43.3178, 11.3278],
-    /*, STOP 3: Duomo di Siena, */
-    [43.3177, 11.3277],
-    [43.3176, 11.3276], /* ★ stop 3, within 50 m */
-    [43.3175, 11.3276],
-    /* walk east toward Campo */
-    [43.3176, 11.3285],
-    [43.3178, 11.3295],
-    [43.3181, 11.3307],
-    /*, STOP 4: Piazza del Campo, */
-    [43.3184, 11.3315],
-    [43.3185, 11.3318], /* ★ stop 4, within 50 m */
-    [43.3184, 11.3320],
-    /* walk south (Palazzo Pubblico is immediately adjacent) */
-    [43.3184, 11.3322],
-    /*, STOP 5: Palazzo Pubblico, */
-    [43.3184, 11.3323], /* ★ stop 5, within 50 m */
-    [43.3183, 11.3324],
-    /* walk south-east toward Mercato */
-    [43.3181, 11.3326],
-    [43.3178, 11.3327],
-    [43.3176, 11.3328],
-    /*, STOP 6: Piazza del Mercato, */
-    [43.3175, 11.3329],
-    [43.3174, 11.3329], /* ★ stop 6, within 50 m */
-    [43.3173, 11.3329],
-    /* walk north toward Piccolomini */
-    [43.3176, 11.3330],
-    [43.3181, 11.3331],
-    [43.3187, 11.3331],
-    /*, STOP 7: Palazzo Piccolomini, */
-    [43.3192, 11.3332],
-    [43.3194, 11.3332], /* ★ stop 7, within 50 m */
-  ];
+  /* Gehweg aus den echten Stationen: zwischen je zwei Stopps wird
+     interpoliert, damit die 50-m-Naeherkennung unterwegs anspricht. */
+  function _simPfad(schritte){
+    var pfad = [];
+    for (var i = 0; i < STOP_COORDS.length - 1; i++){
+      var a = STOP_COORDS[i], b = STOP_COORDS[i + 1];
+      for (var s = 0; s < schritte; s++){
+        var t = s / schritte;
+        pfad.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+      }
+    }
+    pfad.push(STOP_COORDS[STOP_COORDS.length - 1]);
+    return pfad;
+  }
+  const SIM_ROUTE = _simPfad(6);
 
   let simIdx = 0;
   let simTimer = null;
@@ -4665,18 +4646,18 @@ document.addEventListener('keydown', e => {
   panel.style.cssText = `
     position:fixed; bottom:6rem; left:50%; transform:translateX(-50%);
     z-index:9999; background:var(--ink-1); border-radius:0;
-    display:flex; align-items:center; gap:.5rem; padding:.5rem .9rem;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
+    gap:.4rem .5rem; padding:.5rem .7rem; max-width:calc(100vw - 1.5rem);
     font-family:var(--font-sans); font-size:.6rem; letter-spacing:.12em;
     color:var(--paper-1); text-transform:uppercase; box-shadow:none;
-    white-space:nowrap;
   `;
   panel.innerHTML = `
     <span style="color:#C49A3C;">⬤</span>
-    <span>Debug-GPS</span>
+    <span>Testmodus GPS</span>
     <button id="dbg-start" style="background:var(--accent);color:var(--accent-fg);border:none;border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">▶ Start</button>
     <button id="dbg-step"  style="background:rgba(255,255,255,.1);color:var(--paper-1);border:none;border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">Schritt</button>
     <button id="dbg-reset" style="background:rgba(255,255,255,.1);color:var(--paper-1);border:none;border-radius:0;padding:.3rem .75rem;font-family:inherit;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">↺</button>
-    <span id="dbg-pos" style="color:#9A8878;"></span>
+    <span id="dbg-pos" style="color:#9A8878;white-space:nowrap;"></span>
   `;
   document.body.appendChild(panel);
 
@@ -4721,7 +4702,7 @@ document.addEventListener('keydown', e => {
     clearInterval(simTimer); simRunning = false;
     simIdx = 0;
     document.getElementById('dbg-start').textContent = '▶ Start';
-    document.getElementById('dbg-pos').textContent = 'Zurückgesetzt';
+    document.getElementById('dbg-pos').textContent = 'zurückgesetzt';
   };
 
 })();
@@ -4750,9 +4731,9 @@ document.addEventListener('visibilitychange', function(){
 ═══════════════════════════════ */
 
 var T3D_TXT = {
-  de:{sceneLoad:'3D wird geladen …',sceneNote:'Photogrammetrie · 23,5 MB',legend:'Legende',sceneErr:'3D konnte nicht geladen werden (Internet?)'},
-  nl:{sceneLoad:'3D wordt geladen …',sceneNote:'Fotogrammetrie · 23,5 MB',legend:'Legenda',sceneErr:'3D kon niet worden geladen (internet?)'},
-  en:{sceneLoad:'Loading 3D …',sceneNote:'Photogrammetry · 23.5 MB',legend:'Legend',sceneErr:'3D could not be loaded (internet?)'}
+  de:{sceneLoad:'3D wird geladen …',sceneNote:'Photogrammetrie · 23,5 MB',me:'Ihr Standort',legend:'Legende',sceneErr:'3D konnte nicht geladen werden (Internet?)'},
+  nl:{sceneLoad:'3D wordt geladen …',sceneNote:'Fotogrammetrie · 23,5 MB',me:'Uw locatie',legend:'Legenda',sceneErr:'3D kon niet worden geladen (internet?)'},
+  en:{sceneLoad:'Loading 3D …',sceneNote:'Photogrammetry · 23.5 MB',me:'Your location',legend:'Legend',sceneErr:'3D could not be loaded (internet?)'}
 };
 function t3dt(){ var l=(typeof currentLang!=='undefined'&&T3D_TXT[currentLang])?currentLang:'de'; return T3D_TXT[l]; }
 
@@ -4773,6 +4754,7 @@ function openTour3D(){
   if (lg && lg.hidden === false && window.innerWidth < 560){ lg.hidden = true; if (lb) lb.setAttribute('aria-pressed', 'false'); }
   loadModelViewer();                       /* stellt sicher, dass <model-viewer> definiert ist */
   if (mv.getAttribute('src')){                            /* schon geladen, nur wieder einblenden */
+    if (trackActive && lastGpsLat != null) _t3dMeUpdate(lastGpsLat, lastGpsLon);
     if (mv.loaded) _t3dBuildPins(mv);                     /* Sicherheitsnetz, falls load verpasst wurde */
     _t3dShowHint(); return;
   }
@@ -4832,6 +4814,48 @@ var TOUR_PINS = [
   p.c = s.c; p.fg = s.fg;
   return p;
 });
+
+/* ── Eigener Standort im 3D-Modell ──
+   Dieselbe Umrechnung wie fuer die Bauwerksmarker, hergeleitet aus der
+   Registrierung des Hoehenrasters gegen die OSM-Grundrisse. Der Punkt
+   schwebt 30 m ueber dem Bodenniveau, sonst verschwindet er zwischen den
+   Haeusern. Wird nur gezeigt, solange Smart-Track laeuft. */
+var MODEL_LON0 = 4.486400, MODEL_LAT0 = 51.916868;
+var MODEL_MLON = 68671.61405, MODEL_MLAT = 110540;
+var MODEL_GRUND = 41.6;        /* Bodenniveau im Modellraum */
+var MODEL_AUGEN = 30;          /* Hoehe des Punktes ueber dem Boden */
+
+function gpsToModel(lat, lon){
+  return { x: (lon - MODEL_LON0) * MODEL_MLON,
+           z: (MODEL_LAT0 - lat) * MODEL_MLAT };
+}
+
+function _t3dMeUpdate(lat, lon){
+  var mv = document.getElementById('tour3d-mv');
+  if (!mv || !mv.loaded) return;                 /* Modell noch nicht da */
+  var m = gpsToModel(lat, lon);
+  var pos = m.x.toFixed(1) + 'm ' + (MODEL_GRUND + MODEL_AUGEN).toFixed(1) + 'm ' + m.z.toFixed(1) + 'm';
+  var el = mv.querySelector('.t3d-me');
+  if (!el){
+    el = document.createElement('div');
+    el.className = 't3d-me';
+    el.slot = 'hotspot-me';
+    el.setAttribute('data-position', pos);
+    el.setAttribute('data-normal', '0m 1m 0m');
+    el.setAttribute('aria-label', t3dt().me || 'Ihr Standort');
+    mv.appendChild(el);
+  } else {
+    /* Beides: updateHotspot bewegt den Punkt in der Szene, das Attribut haelt
+       den Zustand im Dokument nach (und traegt aeltere Fassungen mit). */
+    el.setAttribute('data-position', pos);
+    if (typeof mv.updateHotspot === 'function') mv.updateHotspot({ name: 'hotspot-me', position: pos });
+  }
+}
+
+function _t3dMeHide(){
+  var el = document.querySelector('#tour3d-mv .t3d-me');
+  if (el) el.remove();
+}
 
 /* Nummer kommt aus der Route, damit 2D-Karte und 3D-Modell nie auseinanderlaufen. */
 function _pinNum(slug){
@@ -4941,6 +4965,7 @@ function _t3dShowHint(){
 function _t3dReveal(mv){
   _t3dSetProgress(1);   /* totalProgress endet oft bei 98%: Balken sauber schliessen */
   _t3dBuildPins(mv);    /* Hotspots brauchen das geladene Modell */
+  if (trackActive && lastGpsLat != null) _t3dMeUpdate(lastGpsLat, lastGpsLon);
   var host    = document.getElementById('tour3d');
   var loading = document.getElementById('tour3d-loading');
   var r = 0;

@@ -130,6 +130,25 @@ rund 45 m südwestlich des tatsächlichen Schwerpunkts; in OSM heißt der Komple
 Wert, `COORDS` ist unverändert, weil davon Karte und GPS-Tracker abhängen. Vor Ort
 prüfen und dann gemeinsam nachziehen.
 
+### Eigener Standort im Modell
+
+Läuft **Smart-Track**, während die 3D-Ansicht offen ist, schwebt der eigene Standort
+als runder Punkt im Modell — bewusst anders als die eckigen, nummerierten
+Bauwerksmarker, damit man beides nie verwechselt. Ein Lot zeigt auf den Boden, ein
+ruhiger Puls macht ihn auffindbar (`prefers-reduced-motion` schaltet ihn ab).
+
+`gpsToModel()` nutzt dieselbe Registrierung wie die Bauwerksmarker, nur umgekehrt
+gelesen. Gegenprobe: Die Koordinate der Markthal aus `STOP_COORDS` landet auf
+`32.3 / -358.4` und trifft damit ihren Marker auf den Zehntelmeter.
+
+Der Punkt liegt 30 m über dem Bodenniveau (`MODEL_GRUND + MODEL_AUGEN`), sonst
+verschwindet er zwischen den Häusern. Er wird angelegt, wenn der erste Fix kommt,
+beim Öffnen der 3D-Ansicht nachgezogen, falls schon geortet wird, und beim Beenden
+des Trackers entfernt.
+
+Eine Fallgrube: `mv.updateHotspot()` bewegt den Punkt zwar in der Szene, schreibt
+aber `data-position` nicht zurück. `_t3dMeUpdate()` setzt deshalb immer beides.
+
 ### Volldetail-Modell und App (geplant)
 
 Der frühere Umschalter **Abstrakt / Realistisch** gehörte zum Three.js-Walkthrough und ist mit
@@ -266,6 +285,18 @@ länger.
 python -m http.server 8097
 # http://localhost:8097
 ```
+
+## Testmodus (`?debug`)
+
+`index.html?debug` blendet ein kleines Bedienfeld ein, das einen GPS-Verlauf
+vortäuscht — nützlich am Schreibtisch, wo der Browser mitten in Wismar steht.
+Ohne `?debug` ist der Testmodus vollständig inaktiv.
+
+Die Route entsteht aus den echten `STOP_COORDS`: `_simPfad(6)` legt zwischen je zwei
+Stationen sechs Zwischenschritte, man läuft die Tour also der Reihe nach ab. Damit
+prüft ein Durchlauf Kartenführung, 50-m-Näherung, Info-Karte und den Standortpunkt
+im 3D-Modell in einem Rutsch.
+
 
 ## Status & nächste Schritte
 
