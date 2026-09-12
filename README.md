@@ -200,6 +200,43 @@ nicht. Das zu lösen hieße eigene URLs je Sprache plus `hreflang`.
 **Nicht automatisierbar:** Die Sitemap muss in der Google Search Console eingereicht
 werden, das ist der wirksamste einzelne Schritt und braucht euren Zugang.
 
+## Besucherzahlen
+
+**GoatCounter** ist eingebaut und aktiv: `GOATCOUNTER_CODE = 'nilsklw'` in `index.html`.
+Auswertung unter <https://nilsklw.goatcounter.com>. Cookiefrei und quelloffen, deshalb
+ohne Einwilligungsbanner üblich.
+
+Drei Dinge sind bewusst geregelt:
+
+- Auf `localhost` und `127.0.0.1` wird **nicht** gezählt, eigene Tests verfälschen die
+  Zahlen also nicht.
+- Bei gesetztem `doNotTrack` wird das Skript gar nicht erst geladen.
+- Ist `GOATCOUNTER_CODE` leer, passiert nichts. Ein Fehlkonfigurieren kann nichts kaputt
+  machen.
+
+Zusätzlich meldet `countEntry()` aus `openModal()`, **welcher Eintrag** geöffnet wurde,
+als Pfad `eintrag/<slug>`. Damit sieht man, welches Bauwerk gelesen wird. Übertragen wird
+nur der Slug.
+
+Grenze: Der Service Worker liefert die Seite offline aus dem Cache, der Zähl-Aufruf geht
+aber ans Netz. Ohne Empfang vor Ort zählt nichts mit, die Zahlen der Exkursionswoche
+liegen also unter der tatsächlichen Nutzung.
+
+## Google Search Console
+
+Zeigt, mit welchen Suchbegriffen die Seite gefunden wird. Der Platz für den
+Bestätigungs-Tag liegt im `<head>`, auskommentiert und beschriftet. Die Schritte, die
+einen Google-Login brauchen und deshalb nur von Hand gehen:
+
+1. <https://search.google.com/search-console> öffnen, **Property hinzufügen**
+2. Typ **URL-Präfix** wählen (nicht Domain, das bräuchte einen DNS-Eintrag beim
+   Registrar) und `https://wijnhaven.com/` eintragen
+3. Bestätigungsmethode **HTML-Tag**, den Wert aus `content="…"` kopieren
+4. In `index.html` den Block `GOOGLE SEARCH CONSOLE` einkommentieren und den Token
+   einsetzen, committen und pushen
+5. Nach dem Pages-Build in der Search Console auf **Bestätigen** drücken
+6. Danach **Sitemaps** öffnen und `sitemap.xml` einreichen
+
 ## Lokal starten
 
 ```
