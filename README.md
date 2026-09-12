@@ -20,27 +20,40 @@ Gruppe 4. Nils Kuhlow & Kai-Lars Ehrich.
 ## Technik
 
 - Single-File `index.html` (HTML + CSS + Vanilla-JS), keine Build-Pipeline
-- 2D-Karte: inline SVG-Figure-Ground (OSM), **statisch** (zeigt durchgehend die ganze Route),
+- 2D-Karte: inline SVG-Figure-Ground (OSM), **statisch und antippbar** wie eine normale Karte;
   GPS Smart-Track bewegt sie weiterhin
 - 3D-Gesamtmodell (Button „3D" oben links): `<model-viewer>`-Drehteller, Draco-Mesh + WebP-Texturen
 - PWA: `manifest.json` + `sw.js` (offline-fähig)
 - Sprachen: DE / NL / EN
 - Akkuschonend: Animationen + GPS pausieren im Hintergrund, ~30fps-Scroll-Cap, kein Idle-Rendering
 
-## 2D-Karte: statisch, außer beim Tracking
+## 2D-Karte: lesen und antippen
 
-Die 2D-Karte folgt dem Scrollen **nicht** mehr. Sie zeigt durchgehend die ganze Route;
-beim Scrollen durch die Stationen wandert nur der Läufer-Punkt, der aktive Punkt wird
-hervorgehoben und die Schublade wechselt. Der Fokus liegt auf dem 3D-Gesamtmodell.
+Die 2D-Karte ist eine **normale Karte**: Sie zeigt durchgehend die ganze Route, bewegt sich
+nicht mit dem Scrollen, und man öffnet ein Bauwerk, indem man seinen Punkt antippt. Die
+frühere Scroll-Strecke (sieben Bildschirme, die die Kamera von Ort zu Ort zogen) und die
+Schublade darunter sind entfallen; der Schwerpunkt liegt auf dem 3D-Gesamtmodell.
+
+Die sieben Punkte tragen **dieselben Farben wie die Marker im 3D-Modell**. Einzige Quelle
+ist `STOP_COLORS` in `index.html`, zugeordnet über den Slug und nicht über die Nummer: Die
+Nummer kommt aus der Route und kann sich ändern, die Identität des Bauwerks nicht. Auch die
+3D-Marker und ihre Legende lesen die Nummer über `_pinNum()` aus der Route, damit beide
+Karten nie auseinanderlaufen.
 
 Bewegt wird die Karte nur noch im **Smart-Track**: Der erste GPS-Fix zoomt auf eine
 Nahansicht (rund 500 m Bildbreite), danach führt sie mit; Wischen und Pinch bleiben
-möglich. Beim Beenden kehrt sie in die Gesamtansicht zurück.
+möglich. Kommt man einem Bauwerk auf 50 m nahe, wird sein Punkt hervorgehoben und die
+Info-Karte erscheint. Beim Beenden kehrt die Karte in die Gesamtansicht zurück und die
+Hervorhebung wird gelöscht.
 
 Den Zuschnitt rechnet `_computeStaticVB()` aus den Wegpunkten. Wichtig: Das SVG nutzt
 `preserveAspectRatio="slice"`, eine viewBox mit falschem Seitenverhältnis würde also
 beschnitten und Stationen am Rand verschwinden. `_vbFit()` zieht die viewBox deshalb
 immer auf das Seitenverhältnis des Kartenfensters und rechnet bei Drehung des Geräts neu.
+
+Die beiden Pausen (APARTT., FLOATS) sind aus der Route entfernt; die Route zählt wieder
+01 bis 07. Die generische Pausen-Unterstützung in `buildRoute()` bleibt bestehen, ein
+`{type:'break',…}` in `ROUTES` genügt, um sie zurückzuholen.
 
 Einzelne Häuser haben **kein** eigenes 3D-Modell mehr (Qualität nicht ausreichend). Der
 Renderer dafür steht weiterhin bereit: ein `model:{src,poster}` an einem Eintrag genügt,
