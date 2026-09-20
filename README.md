@@ -264,17 +264,24 @@ Kein Skript des Anbieters liegt auf der Seite. Es gibt genau einen `POST` an
 Worker fasst das nicht an, er behandelt nur `GET`. Ein Köderfeld `botcheck` fängt
 einfache Roboter ab.
 
-> **Noch zu tun:** In `index.html` steht im Feld `access_key` der Platzhalter
-> `BITTE-WEB3FORMS-SCHLUESSEL-EINSETZEN`. Solange er dort steht, sendet das Formular
-> nicht und sagt das dem Besucher auch.
->
-> Den Schlüssel gibt es kostenlos auf web3forms.com. Wichtig: **Bei Web3Forms hängt die
-> Zieladresse am Schlüssel, nicht am Formular** — es gibt kein Feld `to`. Der Schlüssel
-> muss deshalb für **nils.kuhlow@gmail.com** erzeugt werden, dann landen die Kommentare
-> dort. Der Schlüssel selbst ist öffentlich und darf im Quelltext stehen.
->
-> Antworten gehen an die Adresse, die der Besucher eingetragen hat: Web3Forms setzt
-> `replyto` aus dem Feld `email`.
+Der Schlüssel steht in `index.html` im Feld `access_key`; Kommentare gehen an
+**nils.kuhlow@gmail.com**. **Bei Web3Forms hängt die Zieladresse am Schlüssel, nicht am
+Formular** — es gibt kein Feld `to`. Für eine andere Adresse braucht es also einen neuen
+Schlüssel. Der Schlüssel ist öffentlich und gehört in den Quelltext. Antworten gehen an
+den Besucher, weil Web3Forms `replyto` aus dem Feld `email` setzt.
+
+**Zwei Stolperstellen, beide schon gelöst:**
+
+`FormData` geht **direkt und ohne eigene Header** raus. Ein
+`Content-Type: application/json` ist nicht CORS-sicher und löst eine OPTIONS-Vorabfrage
+aus; die beantwortet die API von Web3Forms grundsätzlich mit `403 This method is not
+allowed`, auch von beliebigen anderen Herkünften. Die Dokumentation sagt es ebenso:
+*Don't add headers or content-type*.
+
+Ein Test mit **headless Chrome** schlägt fehl, auch wenn alles richtig ist: Der
+Bot-Schutz weist die Kennung `HeadlessChrome` ab, und die Fehlerantwort trägt dann
+keinen CORS-Header. Wer den Versand prüft, muss die User-Agent-Kennung überschreiben
+(`Network.setUserAgentOverride`). Steht so in `test_versand_live.mjs`.
 
 Die Datenschutzerklärung hat dafür einen eigenen Abschnitt in allen drei Sprachen
 (Anbieter, übertragene Daten, Rechtsgrundlage Einwilligung, Freiwilligkeit von Name und
