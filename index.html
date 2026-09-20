@@ -1401,6 +1401,105 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   background:var(--here); border:4px solid var(--paper-0);
   box-shadow:0 0 0 1.5px var(--ink-1);
 }
+
+/* Interview-Blasen im Modell. Bewusst leiser als alles andere dort: klein,
+   weiss, nur eine Haarlinie, halbe Deckkraft. Wer sie sucht, findet sie;
+   wer die Bauten liest, wird nicht gestoert. */
+.t3d-blase {
+  position:relative; display:block; width:18px; height:13px; padding:0; margin:0;
+  background:var(--paper-0); border:1px solid var(--ink-1); border-radius:2px;
+  cursor:pointer; opacity:.6;
+  transform:scale(max(.62, min(1, var(--pin-k,1))));
+  transition:opacity .18s var(--easing), transform .18s var(--easing);
+}
+.t3d-blase::before {  /* Tippflaeche, haelt 40 px auch bei kleiner Blase */
+  content:''; position:absolute; left:50%; top:50%; width:40px; height:40px;
+  margin:-20px 0 0 -20px;
+}
+.t3d-blase::after {   /* Schwanz der Sprechblase */
+  content:''; position:absolute; left:4px; top:100%; width:5px; height:5px;
+  margin-top:-3px; background:var(--paper-0);
+  border-right:1px solid var(--ink-1); border-bottom:1px solid var(--ink-1);
+  transform:rotate(45deg);
+}
+.t3d-blase:hover, .t3d-blase:focus-visible { opacity:1; outline:none;
+  transform:scale(calc(max(.62, min(1, var(--pin-k,1))) * 1.18)); }
+.t3d-blase:focus-visible { box-shadow:0 0 0 2px var(--paper-0), 0 0 0 4px var(--ink-1); }
+.t3d-blase.offen { opacity:1; background:var(--accent); }
+.t3d-blase.offen::after { background:var(--accent); }
+
+/* Das Zitat selbst, im Modell eingeblendet. */
+#t3d-zitat {
+  position:absolute; left:50%; transform:translateX(-50%); bottom:4.2rem;
+  z-index:7; width:min(30rem, calc(100vw - 2.4rem));
+  background:var(--paper-0); border:1px solid var(--ink-1);
+  padding:1.1rem 1.2rem 1rem; text-align:left;
+}
+#t3d-zitat[hidden] { display:none; }
+.t3z-text { font-size:.92rem; line-height:1.5; color:var(--ink-1); margin:0 1.4rem 0 0; }
+.t3z-meta { margin-top:.7rem; display:flex; flex-wrap:wrap; align-items:baseline; gap:.5rem; }
+.t3z-who { font-family:var(--font-mono); font-size:.58rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-1); }
+.t3z-ctx { font-family:var(--font-mono); font-size:.55rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-3); }
+.t3z-ctx[hidden] { display:none; }
+.t3z-mehr { margin-left:auto; font-family:var(--font-mono); font-size:.55rem;
+  letter-spacing:var(--tr-label); text-transform:uppercase; color:var(--ink-1);
+  background:none; border:none; padding:0; cursor:pointer; text-decoration:underline; }
+.t3z-close { position:absolute; top:.5rem; right:.5rem; width:1.7rem; height:1.7rem;
+  background:none; border:none; color:var(--ink-1); font-size:.9rem; cursor:pointer;
+  line-height:1; }
+.t3z-close:hover, .t3z-close:focus-visible { background:var(--accent); outline:none; }
+
+/* Abschnitt unter der Seite. */
+.stimmen {
+  /* Sprungziele sollen unter der festen Leiste landen, nicht dahinter. */
+  scroll-margin-top:5.5rem;
+  position:relative; z-index:6; background:var(--paper-0);
+  border-top:1px solid var(--ink-1);
+  padding:clamp(2.6rem,8vw,5rem) 6vw clamp(2.6rem,8vw,4.5rem);
+}
+.st-title { font-size:clamp(1.5rem,5vw,2.2rem); line-height:1.12; letter-spacing:-.02em;
+  color:var(--ink-1); font-weight:600; max-width:22ch; margin:0; }
+.st-lead { margin:1.1rem 0 0; max-width:62ch; font-size:.95rem; line-height:1.6; color:var(--ink-2); }
+.st-list { margin-top:2.4rem; display:grid; gap:1.6rem;
+  grid-template-columns:repeat(auto-fit, minmax(17rem, 1fr)); }
+.st-item { margin:0; border-top:1px solid var(--ink-1); padding-top:1rem; scroll-margin-top:5.5rem; }
+.st-item blockquote { margin:0; font-size:.92rem; line-height:1.55; color:var(--ink-1); }
+.st-item figcaption { margin-top:.8rem; display:flex; flex-wrap:wrap; gap:.55rem; align-items:baseline; }
+.st-who { font-family:var(--font-mono); font-size:.58rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-1); }
+.st-ctx { font-family:var(--font-mono); font-size:.55rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-3); }
+.st-item:target { background:var(--accent); margin:0 -1rem; padding:1rem; }
+.st-note { margin:2.2rem 0 0; max-width:62ch; font-size:.78rem; line-height:1.6; color:var(--ink-3); }
+
+/* Kommentarfeld. Gleiche Sprache wie der Rest: rechte Winkel, Haarlinien,
+   Gelb nur fuer die eine Handlung. */
+.st-form-wrap { margin-top:3rem; border-top:1px solid var(--ink-1); padding-top:1.8rem; max-width:44rem; }
+.st-form-title { margin:0; font-size:1.05rem; font-weight:600; color:var(--ink-1); }
+.st-form-lead { margin:.7rem 0 0; max-width:62ch; font-size:.85rem; line-height:1.6; color:var(--ink-2); }
+#st-form { margin-top:1.4rem; }
+.st-row { margin-bottom:1rem; }
+.st-label { display:block; font-family:var(--font-mono); font-size:.55rem;
+  letter-spacing:var(--tr-label); text-transform:uppercase; color:var(--ink-3); margin-bottom:.4rem; }
+.st-input { width:100%; font-family:var(--font-sans); font-size:.9rem; color:var(--ink-1);
+  background:var(--paper-1); border:1px solid var(--paper-3); border-radius:0;
+  padding:.6rem .7rem; }
+.st-input:focus { outline:none; border-color:var(--ink-1); background:var(--paper-0); }
+.st-textarea { resize:vertical; min-height:6.5rem; line-height:1.5; }
+.st-hp { position:absolute; left:-9999px; width:1px; height:1px; opacity:0; }
+.st-actions { display:flex; flex-wrap:wrap; align-items:center; gap:.9rem 1.2rem; margin-top:1.2rem; }
+.st-send { font-family:var(--font-mono); font-size:.58rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--accent-fg); background:var(--accent);
+  border:none; border-radius:0; padding:.7rem 1.4rem; cursor:pointer; }
+.st-send:hover, .st-send:focus-visible { background:var(--accent-700); outline:none; }
+.st-send[disabled] { background:var(--paper-3); color:var(--ink-3); cursor:default; }
+.st-hinweis { margin:0; flex:1 1 16rem; font-size:.72rem; line-height:1.5; color:var(--ink-3); }
+.st-status { margin:1rem 0 0; font-size:.85rem; line-height:1.5; padding:.7rem .8rem;
+  border-left:3px solid var(--ink-1); color:var(--ink-1); background:var(--paper-1); }
+.st-status[hidden] { display:none; }
+.st-status.gut { border-left-color:var(--accent); }
 @keyframes t3dMePuls {
   0%   { transform:scale(.4);  opacity:.9; }
   70%  { opacity:.22; }
@@ -2042,6 +2141,50 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   </div>
 </section>
 
+<!-- Stimmen aus dem Quartier. Inhalt kommt aus STIMMEN und wird von
+     _renderStimmen() gesetzt, damit eine neue Stimme nur an einer Stelle
+     eingetragen werden muss. -->
+<section class="stimmen" id="stimmen" aria-labelledby="st-title">
+  <h2 class="st-title" id="st-title">Stimmen aus dem Quartier</h2>
+  <p class="st-lead"></p>
+  <div class="st-list"></div>
+  <p class="st-note"></p>
+
+  <!-- Kommentar hinterlassen. Bewusst ohne Veroeffentlichung: der Text geht
+       per Formulardienst als E-Mail an uns, eingepflegt wird er von Hand in
+       STIMMEN. Nichts erscheint automatisch auf der Seite. -->
+  <div class="st-form-wrap">
+    <h3 class="st-form-title"></h3>
+    <p class="st-form-lead"></p>
+    <form id="st-form" novalidate>
+      <!-- Zugangsschluessel von web3forms.com. Solange hier der Platzhalter
+           steht, sendet das Formular nicht und sagt das auch. -->
+      <input type="hidden" name="access_key" value="BITTE-WEB3FORMS-SCHLUESSEL-EINSETZEN">
+      <input type="hidden" name="subject" value="Kommentar von wijnhaven.com">
+      <input type="hidden" name="from_name" value="wijnhaven.com">
+      <!-- Koederfeld gegen Roboter; Menschen sehen es nicht. -->
+      <input type="checkbox" name="botcheck" class="st-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="st-row">
+        <label class="st-label" for="st-name"></label>
+        <input class="st-input" id="st-name" name="name" type="text" autocomplete="name" maxlength="80">
+      </div>
+      <div class="st-row">
+        <label class="st-label" for="st-mail"></label>
+        <input class="st-input" id="st-mail" name="email" type="email" autocomplete="email" maxlength="120">
+      </div>
+      <div class="st-row">
+        <label class="st-label" for="st-text"></label>
+        <textarea class="st-input st-textarea" id="st-text" name="message" rows="5" maxlength="1200" required></textarea>
+      </div>
+      <div class="st-actions">
+        <button class="st-send" id="st-send" type="submit"></button>
+        <p class="st-hinweis"></p>
+      </div>
+      <p class="st-status" id="st-status" role="status" aria-live="polite" hidden></p>
+    </form>
+  </div>
+</section>
+
 <!-- COLOPHON -->
 <footer class="colophon">
   <div class="colophon-mark" aria-hidden="true"></div>
@@ -2098,10 +2241,24 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
         erst, wenn Sie sie öffnen.</p>
 
       <p><strong>Keine Cookies, keine Konten</strong><br>
-        Die Seite setzt keine Cookies, hat keine Anmeldung und keine Formulare.
+        Die Seite setzt keine Cookies und hat keine Anmeldung. Das einzige
+        Formular ist das Kommentarfeld, siehe unten.
         Damit sie offline funktioniert, legt Ihr Browser Dateien lokal ab. Diese
         liegen nur auf Ihrem Gerät und lassen sich über die Browsereinstellungen
         jederzeit löschen.</p>
+
+      <p><strong>Kommentarfeld</strong><br>
+        Am Ende der Seite lässt sich ein Kommentar hinterlassen. Er wird über den
+        Dienst Web3Forms (Ashish Kumar, Indien) verschickt und erreicht uns als
+        E-Mail. Übertragen werden der von Ihnen eingegebene Text sowie, falls
+        angegeben, Name und E-Mail-Adresse; technisch bedingt auch Ihre IP-Adresse.
+        Das geschieht erst, wenn Sie „Absenden“ drücken, und nur dann. Auf der Seite
+        liegt kein Skript dieses Anbieters. Grundlage ist Ihre Einwilligung durch das
+        Absenden (Art. 6 Abs. 1 lit. a DSGVO). Angaben zu Name und E-Mail sind
+        freiwillig; ohne sie können wir nicht zurückschreiben. Kommentare erscheinen
+        <strong>nicht automatisch</strong> auf der Seite: Wir lesen sie und stellen sie
+        gegebenenfalls von Hand zu den Stimmen, mit Ihrem Einverständnis, wenn Sie
+        erkennbar sein möchten.</p>
 
       <p><strong>Ihre Rechte</strong><br>
         Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Widerspruch.
@@ -2143,9 +2300,22 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
         wanneer u haar opent.</p>
 
       <p><strong>Geen cookies, geen accounts</strong><br>
-        De site plaatst geen cookies, kent geen inlog en geen formulieren. Om
+        De site plaatst geen cookies en kent geen inlog. Het enige formulier is
+        het reactieveld, zie hieronder. Om
         offline te werken bewaart uw browser bestanden lokaal. Die staan alleen op
         uw apparaat en kunt u via de browserinstellingen verwijderen.</p>
+
+      <p><strong>Reactieveld</strong><br>
+        Onderaan de site kunt u een reactie achterlaten. Zij wordt verstuurd via de
+        dienst Web3Forms (Ashish Kumar, India) en bereikt ons als e-mail. Verstuurd
+        worden de tekst die u invult en, als u die opgeeft, naam en e-mailadres;
+        technisch ook uw IP-adres. Dat gebeurt pas wanneer u op „Versturen” drukt, en
+        alleen dan. Er staat geen script van deze aanbieder op de site. Grondslag is
+        uw toestemming door het versturen (art. 6 lid 1 sub a AVG). Naam en e-mail zijn
+        optioneel; zonder die gegevens kunnen wij niet terugschrijven. Reacties
+        verschijnen <strong>niet automatisch</strong> op de site: wij lezen ze en zetten
+        ze eventueel met de hand bij de stemmen, met uw instemming als u herkenbaar
+        wilt zijn.</p>
 
       <p><strong>Uw rechten</strong><br>
         U heeft recht op inzage, rectificatie, verwijdering en bezwaar. Omdat wij
@@ -2186,9 +2356,21 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
         to these providers. The 3D view only loads when you open it.</p>
 
       <p><strong>No cookies, no accounts</strong><br>
-        The site sets no cookies and has no login and no forms. To work offline, your
+        The site sets no cookies and has no login. The only form is the comment
+        field, see below. To work offline, your
         browser stores files locally. They stay on your device and can be deleted in
         your browser settings at any time.</p>
+
+      <p><strong>Comment field</strong><br>
+        At the foot of the site you can leave a comment. It is sent via the service
+        Web3Forms (Ashish Kumar, India) and reaches us as an email. Transmitted are the
+        text you enter and, if you give them, your name and email address; for technical
+        reasons your IP address as well. This happens only when you press “Send”, and
+        only then. No script of this provider runs on the site. The legal basis is your
+        consent given by sending (Art. 6(1)(a) GDPR). Name and email are optional;
+        without them we cannot write back. Comments do <strong>not</strong> appear on the
+        site automatically: we read them and may add them to the voices by hand, with
+        your agreement if you wish to be identifiable.</p>
 
       <p><strong>Your rights</strong><br>
         You have the right to information, correction, deletion and objection. As we
@@ -2216,6 +2398,16 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     <div class="t3d-actions">
       <button id="tour3d-legend-btn" type="button" onclick="toggleTourLegend()" aria-pressed="true" data-i18n="tour3dLegend">Legende</button>
       <button id="tour3d-close" onclick="closeTour3D()" aria-label="3D schließen">✕</button>
+    </div>
+  </div>
+  <!-- Zitat einer Interview-Blase. Liegt im Modell, nicht als eigener Dialog:
+       man soll weiterdrehen koennen, waehrend das Zitat steht. -->
+  <div id="t3d-zitat" hidden>
+    <button class="t3z-close" type="button" onclick="schliesseStimme()" aria-label="Zitat schließen">✕</button>
+    <p class="t3z-text"></p>
+    <div class="t3z-meta">
+      <span class="t3z-who"></span><span class="t3z-ctx" hidden></span>
+      <button class="t3z-mehr" type="button" onclick="zuDenStimmen()">Alle Stimmen</button>
     </div>
   </div>
   <div id="tour3d-hint" data-i18n="tour3dHint">Drehen · Zoomen</div>
@@ -3187,6 +3379,21 @@ const LANG = {
     imp_thesis_link: 'Arbeitsfassung (PDF)',
     tour3dTitle:     'Wijnhaven · 3D-Modell',
     return_btn:      'Übersicht',
+    st_form_title:   'Selbst einen Kommentar hinterlassen',
+    st_form_lead:    'Was fällt Ihnen hier auf? Der Kommentar geht als E-Mail an uns. Er erscheint nicht von selbst auf der Seite; wir lesen ihn und stellen ihn gegebenenfalls von Hand zu den Stimmen.',
+    st_f_name:       'Name (freiwillig)',
+    st_f_mail:       'E-Mail (freiwillig, für Rückfragen)',
+    st_f_text:       'Kommentar',
+    st_f_send:       'Absenden',
+    st_f_hint:       'Versand über Web3Forms; dabei gehen Ihr Text und Ihre IP-Adresse an diesen Anbieter. Einzelheiten im Datenschutz.',
+    st_f_ok:         'Danke, der Kommentar ist angekommen.',
+    st_f_err:        'Das hat nicht geklappt. Bitte später noch einmal versuchen oder uns eine E-Mail schreiben.',
+    st_f_leer:       'Bitte schreiben Sie zuerst einen Kommentar.',
+    st_f_key:        'Das Formular ist noch nicht scharfgeschaltet: Es fehlt der Zugangsschlüssel.',
+    st_f_wait:       'Wird gesendet …',
+    st_title:        'Stimmen aus dem Quartier',
+    st_lead:         'Sechs Gespräche mit Menschen, die hier studieren, arbeiten oder zugezogen sind. Sie widersprechen dieser Seite an einer Stelle, und genau deshalb stehen sie hier.',
+    st_note:         'Gesprochen wurde auf Deutsch und Englisch. Die Notizen entstanden im Gespräch; die Stimmen sind sinngemäß wiedergegeben und nicht wörtlich protokolliert. Die Sprechblasen im 3D-Modell führen zu denselben Sätzen; ihre Position ist frei gewählt und sagt nicht, wo gesprochen wurde.',
     trk_on:          'Smart-Track AN',
     trk_seek:        'Orten…',
     trk_locating:    'Standort wird ermittelt…',
@@ -3267,6 +3474,21 @@ const LANG = {
     imp_thesis_link: 'Werkversie (PDF)',
     tour3dTitle:     'Wijnhaven · 3D-model',
     return_btn:      'Overzicht',
+    st_form_title:   'Zelf een reactie achterlaten',
+    st_form_lead:    'Wat valt u hier op? De reactie gaat als e-mail naar ons. Zij verschijnt niet vanzelf op de site; wij lezen haar en zetten haar eventueel met de hand bij de stemmen.',
+    st_f_name:       'Naam (optioneel)',
+    st_f_mail:       'E-mail (optioneel, voor vragen)',
+    st_f_text:       'Reactie',
+    st_f_send:       'Versturen',
+    st_f_hint:       'Verzending via Web3Forms; daarbij gaan uw tekst en uw IP-adres naar die aanbieder. Meer onder Privacy.',
+    st_f_ok:         'Dank u, de reactie is aangekomen.',
+    st_f_err:        'Dat is niet gelukt. Probeer het later nog eens of stuur ons een e-mail.',
+    st_f_leer:       'Schrijf eerst een reactie.',
+    st_f_key:        'Het formulier is nog niet actief: de toegangssleutel ontbreekt.',
+    st_f_wait:       'Wordt verstuurd …',
+    st_title:        'Stemmen uit de wijk',
+    st_lead:         'Zes gesprekken met mensen die hier studeren, werken of net zijn komen wonen. Zij spreken deze site op één punt tegen, en juist daarom staan zij hier.',
+    st_note:         'Er is Duits en Engels gesproken. De aantekeningen ontstonden tijdens het gesprek; de stemmen zijn naar de strekking weergegeven en niet woordelijk vastgelegd. De tekstballonnen in het 3D-model leiden naar dezelfde zinnen; hun plek is vrij gekozen en zegt niet waar er gesproken is.',
     trk_on:          'Smart-Track AAN',
     trk_seek:        'Zoeken…',
     trk_locating:    'Locatie wordt bepaald…',
@@ -3347,6 +3569,21 @@ const LANG = {
     imp_thesis_link: 'Working draft (PDF)',
     tour3dTitle:     'Wijnhaven · 3D model',
     return_btn:      'Overview',
+    st_form_title:   'Leave a comment yourself',
+    st_form_lead:    'What strikes you here? The comment is sent to us by email. It does not appear on the site by itself; we read it and may add it to the voices by hand.',
+    st_f_name:       'Name (optional)',
+    st_f_mail:       'Email (optional, for questions)',
+    st_f_text:       'Comment',
+    st_f_send:       'Send',
+    st_f_hint:       'Sent via Web3Forms; your text and IP address are transmitted to that provider. Details under Privacy.',
+    st_f_ok:         'Thank you, the comment has arrived.',
+    st_f_err:        'That did not work. Please try again later or send us an email.',
+    st_f_leer:       'Please write a comment first.',
+    st_f_key:        'The form is not live yet: the access key is missing.',
+    st_f_wait:       'Sending …',
+    st_title:        'Voices from the quarter',
+    st_lead:         'Six conversations with people who study, work or have just moved here. They contradict this site on one point, and that is exactly why they are here.',
+    st_note:         'The conversations were in German and English. The notes were taken as we spoke; the voices are rendered in substance, not verbatim. The speech bubbles in the 3D model lead to the same sentences; their position is freely chosen and does not say where anything was said.',
     trk_on:          'Smart-Track ON',
     trk_seek:        'Locating…',
     trk_locating:    'Getting your location…',
@@ -3424,6 +3661,18 @@ function setLang(lang){
   document.querySelectorAll('[data-lang-block]').forEach(function(b){
     b.hidden = (b.getAttribute('data-lang-block') !== lang);
   });
+
+  /* Stimmen neu setzen; ein offenes Zitat wechselt gleich mit. */
+  if (typeof _renderStimmen === 'function') _renderStimmen();
+  if (typeof _stFormText === 'function') _stFormText();
+  var _zb = document.getElementById('t3d-zitat');
+  if (_zb && !_zb.hidden && _zb.dataset.stimme) zeigeStimme(_zb.dataset.stimme);
+  document.querySelectorAll('.t3d-blase').forEach(function(b){
+    var s = STIMMEN.filter(function(x){ return x.id === b.dataset.stimme; })[0];
+    if (s) b.setAttribute('aria-label', _stT(T3D_TXT_ST.quoteBy) + ' ' + s.who);
+  });
+  var _zm = document.querySelector('.t3z-mehr'); if (_zm) _zm.textContent = _stT(T3D_TXT_ST.alle);
+  var _zc = document.querySelector('.t3z-close'); if (_zc) _zc.setAttribute('aria-label', _stT(T3D_TXT_ST.zu));
 
   /* ── Button active states ── */
   document.querySelectorAll('.lang-btn').forEach(function(b){
@@ -5048,6 +5297,207 @@ function _t3dMeHide(){
   if (el) el.remove();
 }
 
+/* ═══════════════════════════════
+   STIMMEN AUS DEM QUARTIER
+   Sechs Gespraeche, im Gespraech notiert und sinngemaess wiedergegeben.
+   Die Positionen im Modell sind frei gewaehlt und ueber das Quartier
+   verteilt; sie behaupten NICHT, dass dort gesprochen wurde. Nur zwei
+   Gespraeche nennen ueberhaupt einen Ort (Sirano die Markthal, die
+   Dreiergruppe den Blaak), deren Blasen stehen in deren Naehe.
+   Neue Stimmen: einfach einen Eintrag anhaengen, alles andere ergibt
+   sich daraus (Blase, Abschnitt, Zaehler).
+═══════════════════════════════ */
+var STIMMEN = [
+  { id:'shyvanna', who:'Shyvanna', pos:'150m 74m -180m',
+    ctx:{ de:'', nl:'', en:'' },
+    q:{ de:'Die Wijnhaven ist ein Bezirk, in dem weniger gelebt als gearbeitet wird. Kein Ort der Ruhe, eher ein Ort des Alltags.',
+        nl:'De Wijnhaven is een wijk waar minder wordt gewoond dan gewerkt. Geen plek van rust, eerder een plek van alledag.',
+        en:'Wijnhaven is a district where there is less living than working. Not a place of rest, more a place of everyday life.' } },
+
+  { id:'friedrich', who:'Friedrich', pos:'60m 74m 150m',
+    ctx:{ de:'', nl:'', en:'' },
+    q:{ de:'Die Transformation der Kante hatte zum Ziel, die funktionale Arbeitsstelle ins Wohnen zu überführen. Gemessen an diesem Ziel ist sie gescheitert.',
+        nl:'De transformatie van de kade had als doel de functionele werkplek om te zetten naar wonen. Afgemeten aan dat doel is zij mislukt.',
+        en:'The transformation of the waterfront set out to turn a functional workplace into housing. Measured against that aim, it has failed.' } },
+
+  { id:'boars', who:'Boars', pos:'140m 74m -110m',
+    ctx:{ de:'seit vier Jahren in Rotterdam', nl:'vier jaar in Rotterdam', en:'four years in Rotterdam' },
+    q:{ de:'Die Hochschule macht den größten Teil aus. Eine Industriestraße, nicht die schönste. Zu teuer, und dadurch eine große Trennung zwischen jungen Leuten und großen Unternehmen. Identitäten gehen hier verloren.',
+        nl:'De hogeschool is het grootste deel. Een industriestraat, niet de mooiste. Te duur, en daardoor een grote scheiding tussen jonge mensen en grote bedrijven. Identiteiten gaan hier verloren.',
+        en:'The school is the biggest part. An industrial street, not the prettiest. Too expensive, and so a big separation between young people and big companies. Identities get lost here.' } },
+
+  { id:'patrick', who:'Patrick', pos:'230m 74m -300m',
+    ctx:{ de:'gerade zugezogen', nl:'net verhuisd', en:'just moved here' },
+    q:{ de:'Es kann wie eine feindliche Gegend wirken. Zugleich ist da Vertrautheit, wegen der Leute aus der Hochschule. Große Gebäude, in denen man die Gedanken fliegen lassen kann.',
+        nl:'Het kan overkomen als een vijandige omgeving. Tegelijk is er vertrouwdheid, door de mensen van de hogeschool. Grote gebouwen waarin je je gedachten kunt laten gaan.',
+        en:'It can look like a hostile area. At the same time there is comfort, because of the school people here. Big buildings where you can let your thoughts fly.' } },
+
+  { id:'sirano', who:'Sirano', pos:'95m 74m -330m',
+    ctx:{ de:'erstes Studienjahr', nl:'eerste studiejaar', en:'first year' },
+    q:{ de:'Das große Industriegeschäft versucht, einem die Identität zu nehmen; die Hochschule ist der Brennpunkt, an dem sie noch da ist. Den Hafen in ein Wohnquartier zu verwandeln, ist gescheitert: Es fehlen Farbe und Kultur, Parks zum Beispiel.',
+        nl:'Het grote industriële bedrijfsleven probeert je je identiteit af te nemen; de hogeschool is het brandpunt waar die er nog is. De haven omvormen tot woonwijk is mislukt: kleur en cultuur ontbreken, parken bijvoorbeeld.',
+        en:'The big industrial business is trying to take away your identity; the school is the hotspot where it is still there. Transforming the harbour into a housing project has failed, since it lacks colour and culture, parks for example.' } },
+
+  { id:'timo-nora-diana', who:'Timo, Nora, Diana', pos:'220m 74m -400m',
+    ctx:{ de:'erstes Studienjahr', nl:'eerste studiejaar', en:'first year' },
+    q:{ de:'Eine Person aus der Gruppe lebt ihr ganzes Leben in Rotterdam und war noch nie auf dem Wijnhaveneiland. Der Blaak dagegen ist ein architektonischer Erfolg. Hierher würden wir mit Freunden nicht gehen.',
+        nl:'Iemand uit de groep woont haar hele leven in Rotterdam en is nog nooit op het Wijnhaveneiland geweest. De Blaak is daarentegen een architectonisch succes. Hierheen zouden wij niet met vrienden gaan.',
+        en:'One of the group has lived in Rotterdam their whole life and has never been to the Wijnhaveneiland. The Blaak, by contrast, is an architectural success. We would not come here with friends.' } },
+];
+
+function _stT(o){ return (o && (o[currentLang] || o.de)) || ''; }
+
+/* ── Sprechblasen im Modell ──
+   Leiser als die Bauwerksmarker: klein, weiss, nur eine Haarlinie. Wer sie
+   antippt, bekommt das Zitat im Modell zu lesen. */
+function _t3dBuildBlasen(mv){
+  if (!mv || mv.querySelector('.t3d-blase')) return;
+  STIMMEN.forEach(function(s){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 't3d-blase';
+    b.slot = 'hotspot-stimme-' + s.id;
+    b.dataset.stimme = s.id;
+    b.setAttribute('data-position', s.pos);
+    b.setAttribute('data-normal', '0m 1m 0m');
+    b.setAttribute('aria-label', _stT(T3D_TXT_ST.quoteBy) + ' ' + s.who);
+    b.addEventListener('click', function(ev){ ev.stopPropagation(); zeigeStimme(s.id); });
+    mv.appendChild(b);
+  });
+}
+
+var T3D_TXT_ST = {
+  quoteBy: { de:'Zitat von', nl:'Citaat van', en:'Quote by' },
+  alle:    { de:'Alle Stimmen', nl:'Alle stemmen', en:'All voices' },
+  zu:      { de:'Zitat schließen', nl:'Citaat sluiten', en:'Close quote' }
+};
+
+/* Zitat im Modell zeigen. Nur eines zur Zeit. */
+function zeigeStimme(id){
+  var s = STIMMEN.filter(function(x){ return x.id === id; })[0];
+  var box = document.getElementById('t3d-zitat');
+  if (!s || !box) return;
+  document.querySelectorAll('.t3d-blase').forEach(function(b){
+    b.classList.toggle('offen', b.dataset.stimme === id);
+  });
+  box.querySelector('.t3z-text').textContent = _stT(s.q);
+  box.querySelector('.t3z-who').textContent  = s.who;
+  var ctx = _stT(s.ctx);
+  var c = box.querySelector('.t3z-ctx');
+  c.textContent = ctx; c.hidden = !ctx;
+  box.dataset.stimme = id;
+  box.hidden = false;
+}
+
+function schliesseStimme(){
+  var box = document.getElementById('t3d-zitat');
+  if (box){ box.hidden = true; box.removeAttribute('data-stimme'); }
+  document.querySelectorAll('.t3d-blase.offen').forEach(function(b){ b.classList.remove('offen'); });
+}
+
+/* Aus dem Modell in den Abschnitt springen. */
+/* Aus dem Modell in den Abschnitt springen. Ueber den Anker, nicht ueber
+   scrollIntoView: nur so faerbt :target die angesprungene Stimme ein. Der
+   Hash-Router laesst unbekannte Anker in Ruhe, geprueft in openFromHash(). */
+function zuDenStimmen(){
+  var box = document.getElementById('t3d-zitat');
+  var ziel = (box && box.dataset.stimme) ? 'stimme-' + box.dataset.stimme : 'stimmen';
+  closeTour3D();
+  setTimeout(function(){ location.hash = ziel; }, 260);
+}
+
+/* ── Abschnitt unter der Seite ──
+   Aus denselben Daten gebaut, damit eine neue Stimme an genau einer Stelle
+   eingetragen wird. */
+function _renderStimmen(){
+  var wrap = document.getElementById('stimmen');
+  if (!wrap) return;
+  var t = LANG[currentLang] || LANG.de;
+  wrap.querySelector('.st-title').textContent = t.st_title;
+  wrap.querySelector('.st-lead').textContent  = t.st_lead;
+  wrap.querySelector('.st-note').textContent  = t.st_note;
+  var liste = wrap.querySelector('.st-list');
+  liste.textContent = '';
+  STIMMEN.forEach(function(s){
+    var fig = document.createElement('figure');
+    fig.className = 'st-item';
+    fig.id = 'stimme-' + s.id;
+    var bq = document.createElement('blockquote');
+    bq.textContent = '„' + _stT(s.q) + '“';
+    var cap = document.createElement('figcaption');
+    var who = document.createElement('span');
+    who.className = 'st-who'; who.textContent = s.who;
+    cap.appendChild(who);
+    var ctx = _stT(s.ctx);
+    if (ctx){
+      var c = document.createElement('span');
+      c.className = 'st-ctx'; c.textContent = ctx;
+      cap.appendChild(c);
+    }
+    fig.appendChild(bq); fig.appendChild(cap);
+    liste.appendChild(fig);
+  });
+}
+
+/* Einmal beim Laden aufbauen. Steht hier und nicht bei _startLang(), weil
+   STIMMEN erst an dieser Stelle zugewiesen ist. */
+_renderStimmen();
+
+/* ── Kommentar absenden ──
+   Web3Forms nimmt die Felder per POST entgegen und schickt sie als E-Mail.
+   Kein Skript des Anbieters auf der Seite, kein Cookie: nur dieser eine
+   Aufruf, und erst nachdem jemand Absenden gedrueckt hat. Der Service
+   Worker laesst POST ohnehin durch (er behandelt nur GET). */
+var W3F_PLATZHALTER = 'BITTE-WEB3FORMS-SCHLUESSEL-EINSETZEN';
+
+function _stStatus(text, gut){
+  var el = document.getElementById('st-status');
+  if (!el) return;
+  el.textContent = text || '';
+  el.classList.toggle('gut', !!gut);
+  el.hidden = !text;
+}
+
+function _stFormText(){
+  var t = LANG[currentLang] || LANG.de;
+  var w = document.querySelector('.st-form-wrap');
+  if (!w) return;
+  w.querySelector('.st-form-title').textContent = t.st_form_title;
+  w.querySelector('.st-form-lead').textContent  = t.st_form_lead;
+  w.querySelector('label[for="st-name"]').textContent = t.st_f_name;
+  w.querySelector('label[for="st-mail"]').textContent = t.st_f_mail;
+  w.querySelector('label[for="st-text"]').textContent = t.st_f_text;
+  document.getElementById('st-send').textContent = t.st_f_send;
+  w.querySelector('.st-hinweis').textContent = t.st_f_hint;
+}
+
+(function(){
+  var f = document.getElementById('st-form');
+  if (!f) return;
+  f.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var t = LANG[currentLang] || LANG.de;
+    var text = (f.message.value || '').trim();
+    if (!text){ _stStatus(t.st_f_leer, false); f.message.focus(); return; }
+    if (f.access_key.value === W3F_PLATZHALTER){ _stStatus(t.st_f_key, false); return; }
+    var knopf = document.getElementById('st-send');
+    knopf.disabled = true;
+    _stStatus(t.st_f_wait, false);
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(Object.fromEntries(new FormData(f)))
+    }).then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.success){ f.reset(); _stStatus(t.st_f_ok, true); }
+        else _stStatus(t.st_f_err, false);
+      })
+      .catch(function(){ _stStatus(t.st_f_err, false); })
+      .then(function(){ knopf.disabled = false; });
+  });
+  _stFormText();
+})();
+
 /* Nummer kommt aus der Route, damit 2D-Karte und 3D-Modell nie auseinanderlaufen. */
 function _pinNum(slug){
   var b = (typeof BYSLUG !== 'undefined') ? BYSLUG[slug] : null;
@@ -5078,6 +5528,7 @@ function _t3dBuildPins(mv){
     mv.appendChild(b);
   });
   try { _pinR0 = mv.getCameraOrbit().radius; } catch(e){ _pinR0 = 0; }
+  _t3dBuildBlasen(mv);   /* die leisen Interview-Blasen dazu */
   _t3dPinScale(mv);
   mv.addEventListener("camera-change", function(){ _t3dPinScale(mv); });
 }
@@ -5202,6 +5653,7 @@ function _t3dReveal(mv){
 }
 
 function closeTour3D(){
+  if (typeof schliesseStimme === 'function') schliesseStimme();
   var host = document.getElementById('tour3d');
   if (host) host.hidden = true;
   document.body.style.overflow = '';
