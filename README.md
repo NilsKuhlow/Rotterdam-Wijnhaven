@@ -266,9 +266,15 @@ einfache Roboter ab.
 
 > **Noch zu tun:** In `index.html` steht im Feld `access_key` der Platzhalter
 > `BITTE-WEB3FORMS-SCHLUESSEL-EINSETZEN`. Solange er dort steht, sendet das Formular
-> nicht und sagt das dem Besucher auch. Den Schlüssel gibt es kostenlos auf
-> web3forms.com gegen Angabe der Empfängeradresse; er ist öffentlich und darf im
-> Quelltext stehen.
+> nicht und sagt das dem Besucher auch.
+>
+> Den Schlüssel gibt es kostenlos auf web3forms.com. Wichtig: **Bei Web3Forms hängt die
+> Zieladresse am Schlüssel, nicht am Formular** — es gibt kein Feld `to`. Der Schlüssel
+> muss deshalb für **nils.kuhlow@gmail.com** erzeugt werden, dann landen die Kommentare
+> dort. Der Schlüssel selbst ist öffentlich und darf im Quelltext stehen.
+>
+> Antworten gehen an die Adresse, die der Besucher eingetragen hat: Web3Forms setzt
+> `replyto` aus dem Feld `email`.
 
 Die Datenschutzerklärung hat dafür einen eigenen Abschnitt in allen drei Sprachen
 (Anbieter, übertragene Daten, Rechtsgrundlage Einwilligung, Freiwilligkeit von Name und
