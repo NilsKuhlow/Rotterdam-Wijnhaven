@@ -3557,11 +3557,11 @@ document.querySelectorAll('.lang-btn').forEach(function(btn){
   btn.addEventListener('click', function(){ setLang(btn.getAttribute('data-lang')); });
 });
 
-/* Startsprache: Niederlaendisch. Das statische HTML ist deutsch verfasst,
-   deshalb wird direkt nach dem Verdrahten umgeschaltet, noch waehrend der
-   Ladeschirm liegt, damit kein Sprachwechsel sichtbar aufblitzt. Deutsch und
-   Englisch waehlt man ueber die Knoepfe oben rechts. */
-var START_LANG = 'nl';
+/* Startsprache: Deutsch, wie das statische HTML. _startLang() schaltet dann
+   nichts um, die Seite steht sofort richtig da und es blitzt kein
+   Sprachwechsel auf. Niederlaendisch und Englisch waehlt man ueber die
+   Knoepfe oben rechts. Ein anderer Wert hier genuegt, um das zu aendern. */
+var START_LANG = 'de';
 function _startLang(){
   if (START_LANG && START_LANG !== currentLang) setLang(START_LANG);
 }
