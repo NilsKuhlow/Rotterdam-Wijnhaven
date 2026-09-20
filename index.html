@@ -2157,9 +2157,15 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     <h3 class="st-form-title"></h3>
     <p class="st-form-lead"></p>
     <form id="st-form" novalidate>
-      <!-- Zugangsschluessel von web3forms.com. Solange hier der Platzhalter
-           steht, sendet das Formular nicht und sagt das auch. -->
+      <!-- Zugangsschluessel von web3forms.com. Bei Web3Forms haengt die
+           Zieladresse am Schluessel, nicht am Formular: Es gibt kein Feld
+           "to". Der Schluessel muss deshalb fuer nils.kuhlow@gmail.com
+           erzeugt werden, dann landen die Kommentare dort.
+           Solange hier der Platzhalter steht, sendet das Formular nicht und
+           sagt das dem Besucher auch. -->
       <input type="hidden" name="access_key" value="BITTE-WEB3FORMS-SCHLUESSEL-EINSETZEN">
+      <!-- Antworten gehen an die Adresse, die der Besucher eingetragen hat:
+           Web3Forms setzt replyto aus dem Feld email. -->
       <input type="hidden" name="subject" value="Kommentar von wijnhaven.com">
       <input type="hidden" name="from_name" value="wijnhaven.com">
       <!-- Koederfeld gegen Roboter; Menschen sehen es nicht. -->
