@@ -255,8 +255,14 @@ Abgabe genügt, klärt ihr mit der Hochschule.
 Der Kern des Problems war nicht Technik, sondern Inhalt: Die Eintragstexte entstehen erst
 beim Antippen eines Punktes, das gerenderte Dokument enthielt deshalb nur **77 Wörter**.
 Der statische Abschnitt `#route-read` (Kurzfassung der sieben Bauten, keine Kopie der
-Einträge) bringt das auf **481 Wörter** mit sauberer Hierarchie H1 zu H2 zu sieben H3 und
-sieben internen Links auf die Deep-Link-Anker.
+Einträge) bringt das auf **439 gerenderte Wörter** mit sauberer Hierarchie H1 zu H2 zu
+sieben H3 und sieben internen Links auf die Deep-Link-Anker.
+
+Der Abschnitt liegt **dreisprachig** im Dokument und wird über `data-lang-block`
+umgeschaltet, genau wie die Datenschutzerklärung. Im Quelltext stehen damit alle drei
+Fassungen (1346 Wörter), gerendert ist immer nur die gewählte. Die drei Blöcke tragen
+je ein eigenes `lang`; die frühere `id="rr-title"` musste weichen, weil drei
+Überschriften nicht dieselbe id tragen können.
 
 Weiter: `<title>` und Beschreibungen auf *Wijnhaven Rotterdam* und *Stadtführung*
 ausgerichtet, strukturierte Daten als `TouristTrip` mit allen sieben Stationen samt
@@ -329,6 +335,16 @@ Stationen sechs Zwischenschritte, man läuft die Tour also der Reihe nach ab. Da
 prüft ein Durchlauf Kartenführung, 50-m-Näherung, Info-Karte und den Standortpunkt
 im 3D-Modell in einem Rutsch.
 
+
+## Vorläufig draußen
+
+Die **Arbeitsfassung (PDF)** ist aus dem Impressum genommen und die Datei aus
+`downloads/` entfernt, bis die Fassung als fertig gilt. Der Verweis steht
+auskommentiert an seiner Stelle in `index.html`, die Schlüssel `imp_thesis` und
+`imp_thesis_link` bleiben in allen drei Sprachen stehen. Zurückholen: Zeile wieder
+einkommentieren und die Datei aus der Git-Geschichte wiederherstellen.
+
+Ebenso wartet die **ladungsfähige Anschrift** im Impressum auf Freigabe.
 
 ## Status & nächste Schritte
 

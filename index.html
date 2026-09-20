@@ -1710,7 +1710,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <div class="intro-hero">
     <h1 class="intro-title">Wijnhaven</h1>
     <div class="intro-accent"></div>
-<p class="intro-sub">Sieben Bauten am Wasser. Das Wijnhaven-Quartier von 1898 bis 2023.</p>
+<p class="intro-sub">Eine digitale Stadtführung durch das historische Hafenquartier. Sieben Bauten am Wasser, von 1898 bis 2023.</p>
   </div>
   <div class="intro-foot">
     <dl class="intro-meta">
@@ -1801,16 +1801,24 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
      Suchmaschinen nur rund 80 Woerter. Kurzfassung, keine Kopie der Eintraege,
      damit kein doppelter Inhalt entsteht. Die Links fuehren auf die
      Deep-Link-Anker, die openFromHash() ohnehin schon bedient. -->
-<section class="route-read" id="route-read" aria-labelledby="rr-title">
-  <h2 class="rr-title" id="rr-title">Stadtführung Wijnhaven: sieben Bauten am Wasser</h2>
+<!-- Leseabschnitt unter der Karte. Dreisprachig im Dokument, umgeschaltet
+     ueber data-lang-block wie die Datenschutzerklaerung. Die deutsche Fassung
+     steht ungefiltert in der Quelle, damit ein Crawler ohne JavaScript sie
+     sieht; das ist der Text, der auf "Stadtfuehrung Wijnhaven" zielt.
+     aria-labelledby faellt weg: drei Ueberschriften koennen nicht dieselbe
+     id tragen. Die h2 in jedem Block ordnen den Abschnitt weiterhin ein. -->
+<section class="route-read" id="route-read">
+  <div class="rr-body" data-lang-block="de" lang="de">
+  <h2 class="rr-title">Stadtführung Wijnhaven: sieben Bauten am Wasser</h2>
   <p class="rr-lead">
     Diese selbstgeführte Stadtführung verbindet sieben Bauwerke im Wijnhaven-Quartier
     in Rotterdam zu einem Rundgang von etwa drei Stunden, von der Oude Haven bis an
     die Boompjes. Sie erzählt die Verwandlung der Hafenkante zum Wohnquartier, vom
     Witte Huis aus dem Jahr 1898 bis zum CasaNova von 2023. Jede Station lässt sich
     auf der Karte antippen; im dreidimensionalen Stadtmodell stehen dieselben sieben
-    Marker in denselben Farben. Vor Ort führt eine GPS-Live-Navigation: Die Karte
-    folgt dem eigenen Standort und meldet, sobald eine Station in der Nähe liegt.
+    Marker in denselben Farben. Vor Ort führt eine GPS-Live-Navigation: Der eigene
+    Standort erscheint auf der Karte und im 3D-Modell, und sobald eine Station in der
+    Nähe liegt, meldet sie sich.
   </p>
   <ol class="rr-list">
     <li class="rr-item" style="--stop-c:#0072B2">
@@ -1877,6 +1885,161 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     Wahlpflichtmodul Stadt + Raum, Hochschule Wismar, Wintersemester 2026/27.
     Zusammengestellt von Nils Kuhlow und Kai-Lars Ehrich.
   </p>
+  </div>
+
+  <div class="rr-body" data-lang-block="nl" lang="nl" hidden>
+  <h2 class="rr-title">Stadswandeling Wijnhaven: zeven gebouwen aan het water</h2>
+  <p class="rr-lead">
+    Deze zelfgeleide stadswandeling verbindt zeven bouwwerken in de Wijnhaven in
+    Rotterdam tot een rondgang van ongeveer drie uur, van de Oude Haven tot aan de
+    Boompjes. Zij vertelt de verandering van havenkade naar woonwijk, van het Witte
+    Huis uit 1898 tot CasaNova uit 2023. Elke halte is op de kaart aan te tikken; in
+    het driedimensionale stadsmodel staan dezelfde zeven markers in dezelfde kleuren.
+    Ter plaatse helpt een GPS-live-navigatie: uw eigen locatie verschijnt op de kaart
+    en in het 3D-model, en zodra een halte dichtbij is, meldt die zich.
+  </p>
+  <ol class="rr-list">
+    <li class="rr-item" style="--stop-c:#0072B2">
+      <h3 class="rr-name"><span class="rr-num">01</span> Witte Huis</h3>
+      <p class="rr-meta">Willem Molenbroek · 1897-1898 · circa 43 m</p>
+      <p>Bij de oplevering gold het Witte Huis als het hoogste kantoorgebouw van
+        Europa. Ongeveer honderdduizend wit geglazuurde stenen bekleden de gevel. De
+        toren doorstond het bombardement van 1940 en staat vandaag als solitair tussen
+        nieuwbouw aan de Oude Haven.</p>
+      <a class="rr-more" href="#witte-huis">Notitie openen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#FFED29">
+      <h3 class="rr-name"><span class="rr-num">02</span> Kubuswoningen</h3>
+      <p class="rr-meta">Piet Blom · 1977-1984 · 38 kubussen</p>
+      <p>Piet Blom kantelde 38 kubussen 45 graden en zette elke kubus op een zeshoekige
+        pijler. Het ensemble overbrugt de verkeersader Blaak en draagt daarboven een
+        voetgangersniveau dat de oude stad met de Oude Haven verbindt. In OSM heet het
+        complex Blaakse Bos, Bloms eigen naam voor het beeld van een bos van woningen.</p>
+      <a class="rr-more" href="#kubuswoningen">Notitie openen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#D55E00">
+      <h3 class="rr-name"><span class="rr-num">03</span> Markthal</h3>
+      <p class="rr-meta">MVRDV · 2009-2014 · 228 woningen</p>
+      <p>De Markthal is woongebouw en markthal in één: 228 woningen vormen een boog
+        boven een kolomvrije ruimte van ruim 40 meter hoog. De binnenschil van 11.000
+        vierkante meter draagt de plafondschildering Hoorn des Overvloeds.</p>
+      <a class="rr-more" href="#markthal">Notitie openen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#E69F00">
+      <h3 class="rr-name"><span class="rr-num">04</span> CasaNova</h3>
+      <p class="rr-meta">Barcode Architects · 2018-2023 · 110 m</p>
+      <p>De jongste toren van de route staat op de punt van de Wijnhaven. Zijn onderste
+        verdiepingen versmallen, waardoor de 35 lagen lijken te balanceren op een
+        punt.</p>
+      <a class="rr-more" href="#casanova">Notitie openen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#CC79A7">
+      <h3 class="rr-name"><span class="rr-num">05</span> Red Apple</h3>
+      <p class="rr-meta">KCAP / Kees Christiaanse · 2009 · 124 m</p>
+      <p>De rode woontoren markeert de oostelijke punt van het Wijnhaveneiland met 231
+        woningen op 40 lagen. Een lager, vijfhoekig kopgebouw bemiddelt tussen toren en
+        kade.</p>
+      <a class="rr-more" href="#red-apple">Notitie openen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#009E73">
+      <h3 class="rr-name"><span class="rr-num">06</span> Wijnhaveneiland</h3>
+      <p class="rr-meta">Masterplan KCAP · vanaf 1993 · 74 tot 124 m</p>
+      <p>Hier bepaalt geen enkel ontwerp het beeld, maar een spelregel: wie hoger bouwt,
+        moet slanker bouwen. Uit dit transformatiemodel van 1993 groeide op het oude
+        havenraster een wijk van torens.</p>
+      <a class="rr-more" href="#wijnhaveneiland">Notitie openen</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#56B4E9">
+      <h3 class="rr-name"><span class="rr-num">07</span> EY Netherlands</h3>
+      <p class="rr-meta">Philip Johnson / Alan Ritchie · 2005 · circa 75 m</p>
+      <p>Boompjes 258 is een laat werk uit het bureau van Philip Johnson, uitgevoerd met
+        Alan Ritchie en de Rotterdamse architecten 01-10. De strakke, regelmatige gevel
+        ordent 21 lagen zonder iconisch gebaar.</p>
+      <a class="rr-more" href="#ey-netherlands">Notitie openen</a>
+    </li>
+  </ol>
+  <p class="rr-foot">
+    Keuzevak Stadt + Raum, Hochschule Wismar, wintersemester 2026/27. Samengesteld door
+    Nils Kuhlow en Kai-Lars Ehrich.
+  </p>
+  </div>
+
+  <div class="rr-body" data-lang-block="en" lang="en" hidden>
+  <h2 class="rr-title">Wijnhaven walking tour: seven buildings on the water</h2>
+  <p class="rr-lead">
+    This self-guided walking tour links seven buildings in the Wijnhaven quarter of
+    Rotterdam into a walk of about three hours, from the Oude Haven to the Boompjes. It
+    traces the change from harbour edge to residential quarter, from the Witte Huis of
+    1898 to CasaNova of 2023. Every stop can be tapped on the map; the same seven
+    markers stand in the same colours in the three-dimensional city model. On site,
+    live GPS navigation helps: your own position appears on the map and in the 3D
+    model, and a stop announces itself as soon as you are near.
+  </p>
+  <ol class="rr-list">
+    <li class="rr-item" style="--stop-c:#0072B2">
+      <h3 class="rr-name"><span class="rr-num">01</span> Witte Huis</h3>
+      <p class="rr-meta">Willem Molenbroek · 1897-1898 · about 43 m</p>
+      <p>On completion the Witte Huis was regarded as the tallest office building in
+        Europe. Some hundred thousand white glazed bricks clad the facade. The tower
+        survived the bombardment of 1940 and stands today as a solitary figure among
+        new buildings on the Oude Haven.</p>
+      <a class="rr-more" href="#witte-huis">Open entry</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#FFED29">
+      <h3 class="rr-name"><span class="rr-num">02</span> Kubuswoningen</h3>
+      <p class="rr-meta">Piet Blom · 1977-1984 · 38 cubes</p>
+      <p>Piet Blom tilted 38 cubes by 45 degrees and set each one on a hexagonal pier.
+        The ensemble bridges the Blaak traffic axis and carries a pedestrian level above
+        it that links the old town with the Oude Haven. In OSM the complex is called
+        Blaakse Bos, the name Blom himself gave to the image of a forest of dwellings.</p>
+      <a class="rr-more" href="#kubuswoningen">Open entry</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#D55E00">
+      <h3 class="rr-name"><span class="rr-num">03</span> Markthal</h3>
+      <p class="rr-meta">MVRDV · 2009-2014 · 228 apartments</p>
+      <p>The Markthal is housing and market hall in one: 228 apartments form an arch
+        over a column-free space some 40 metres high at its crown. The 11,000 square
+        metre inner shell carries the ceiling painting Hoorn des Overvloeds.</p>
+      <a class="rr-more" href="#markthal">Open entry</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#E69F00">
+      <h3 class="rr-name"><span class="rr-num">04</span> CasaNova</h3>
+      <p class="rr-meta">Barcode Architects · 2018-2023 · 110 m</p>
+      <p>The newest tower on the route stands at the tip of the Wijnhaven. Its lower
+        floors taper inward, making the 35 storeys look as if they balance on a
+        point.</p>
+      <a class="rr-more" href="#casanova">Open entry</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#CC79A7">
+      <h3 class="rr-name"><span class="rr-num">05</span> Red Apple</h3>
+      <p class="rr-meta">KCAP / Kees Christiaanse · 2009 · 124 m</p>
+      <p>The red residential tower marks the eastern tip of the Wijnhaveneiland with 231
+        apartments on 40 storeys. A lower, pentagonal head building mediates between
+        tower and quay.</p>
+      <a class="rr-more" href="#red-apple">Open entry</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#009E73">
+      <h3 class="rr-name"><span class="rr-num">06</span> Wijnhaveneiland</h3>
+      <p class="rr-meta">Master plan KCAP · from 1993 · 74 to 124 m</p>
+      <p>Here no single design sets the image; a rule does: build higher and you must
+        build slimmer. From this transformation model of 1993, a quarter of towers grew
+        on the old harbour grid.</p>
+      <a class="rr-more" href="#wijnhaveneiland">Open entry</a>
+    </li>
+    <li class="rr-item" style="--stop-c:#56B4E9">
+      <h3 class="rr-name"><span class="rr-num">07</span> EY Netherlands</h3>
+      <p class="rr-meta">Philip Johnson / Alan Ritchie · 2005 · about 75 m</p>
+      <p>Boompjes 258 is a late work from the office of Philip Johnson, carried out with
+        Alan Ritchie and the Rotterdam architects 01-10. Its disciplined punched facade
+        orders 21 storeys without an iconic gesture.</p>
+      <a class="rr-more" href="#ey-netherlands">Open entry</a>
+    </li>
+  </ol>
+  <p class="rr-foot">
+    Elective module Stadt + Raum, Hochschule Wismar, winter semester 2026/27. Compiled
+    by Nils Kuhlow and Kai-Lars Ehrich.
+  </p>
+  </div>
 </section>
 
 <!-- COLOPHON -->
@@ -1888,7 +2051,12 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     <div><dt data-i18n="imp_institution">Institution</dt><dd>Hochschule Wismar · Fakultät Gestaltung</dd></div>
     <div><dt data-i18n="imp_course">Lehrveranstaltung</dt><dd>WPM Stadt + Raum · WiSe 2026/27</dd></div>
     <div><dt data-i18n="imp_contact">Kontakt</dt><dd><a href="mailto:n.kuhlow@stud.hs-wismar.de">n.kuhlow@stud.hs-wismar.de</a><br><a href="tel:+4917664435873">+49 176 644 358 73</a> · wijnhaven.com</dd></div>
-    <div><dt data-i18n="imp_thesis">Vertiefung</dt><dd><a href="downloads/wijnhaven-thesis-arbeitsfassung.pdf" download data-i18n="imp_thesis_link">Arbeitsfassung (PDF)</a></dd></div>
+    <!-- Arbeitsfassung (PDF) vorlaeufig aus der Website genommen, bis die
+         Fassung als fertig gilt. Zum Zurueckholen: die naechste Zeile wieder
+         einkommentieren und downloads/wijnhaven-thesis-arbeitsfassung.pdf
+         wiederherstellen; die Datei liegt weiterhin in der Git-Geschichte.
+         Die Schluessel imp_thesis und imp_thesis_link bleiben stehen. -->
+    <!-- <div><dt data-i18n="imp_thesis">Vertiefung</dt><dd><a href="downloads/wijnhaven-thesis-arbeitsfassung.pdf" download data-i18n="imp_thesis_link">Arbeitsfassung (PDF)</a></dd></div> -->
   </dl>
   <p class="colophon-note" data-i18n="imp_note">Diese Website ist ein nicht-kommerzielles Hochschulprojekt und dient ausschließlich akademischen Zwecken. Eine kommerzielle Nutzung ist nicht gestattet.</p>
   <details class="dsg">
@@ -3004,7 +3172,7 @@ const LANG = {
   de: {
     loaderSub: 'Stadtrundgang · WiSe 2026/27',
     kicker:    'Stadtrundgang · Rotterdam · Niederlande',
-    subHtml:   'Sieben Bauten am Wasser. Das Wijnhaven-Quartier von 1898 bis 2023.',
+    subHtml:   'Eine digitale Stadtführung durch das historische Hafenquartier. Sieben Bauten am Wasser, von 1898 bis 2023.',
     scrollCue: 'Scrollen',
     drawerBtn: 'Eintrag öffnen →',
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
@@ -3084,7 +3252,7 @@ const LANG = {
   nl: {
     loaderSub: 'Stadswandeling · wintersemester 2026/27',
     kicker:    'Stadswandeling · Rotterdam · Nederland',
-    subHtml:   'Zeven gebouwen aan het water. De Wijnhaven-wijk van 1898 tot 2023.',
+    subHtml:   'Een digitale stadswandeling door het historische havenkwartier. Zeven gebouwen aan het water, van 1898 tot 2023.',
     scrollCue: 'Scroll',
     drawerBtn: 'Notitie openen →',
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
@@ -3164,7 +3332,7 @@ const LANG = {
   en: {
     loaderSub: 'Walking Tour · Winter 2026/27',
     kicker:    'Walking Tour · Rotterdam · Netherlands',
-    subHtml:   'Seven buildings on the water. The Wijnhaven district from 1898 to 2023.',
+    subHtml:   'A digital walking tour through the historic harbour quarter. Seven buildings on the water, from 1898 to 2023.',
     scrollCue: 'Scroll',
     drawerBtn: 'Open entry →',
     outroH2:   'De stad is een boek.<br>Haar lezen is al reizen.',
