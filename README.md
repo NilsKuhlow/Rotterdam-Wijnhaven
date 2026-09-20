@@ -233,7 +233,7 @@ je Sprache plus `hreflang`.
 
 ## Stimmen und Kommentare
 
-Sechs Gespräche aus dem Quartier stehen im Abschnitt **Stimmen** am Fuß der Seite und
+Sechs Gespräche aus dem Viertel stehen im Abschnitt **Stimmen** am Fuß der Seite und
 als kleine Sprechblasen im 3D-Modell. Beides kommt aus einem einzigen Array `STIMMEN`
 in `index.html`: Wer eine Stimme ergänzt, trägt sie dort ein, und Blase, Abschnitt und
 Beschriftung entstehen daraus. Jede Stimme führt Text und Kontext in allen drei
