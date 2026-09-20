@@ -231,6 +231,50 @@ Deutsch als Startsprache decken sich immerhin gerenderte Seite und indexierter T
 was vorher nicht der Fall war. Sauber lösen ließe sich der Rest nur mit eigenen URLs
 je Sprache plus `hreflang`.
 
+## Stimmen und Kommentare
+
+Sechs Gespräche aus dem Quartier stehen im Abschnitt **Stimmen** am Fuß der Seite und
+als kleine Sprechblasen im 3D-Modell. Beides kommt aus einem einzigen Array `STIMMEN`
+in `index.html`: Wer eine Stimme ergänzt, trägt sie dort ein, und Blase, Abschnitt und
+Beschriftung entstehen daraus. Jede Stimme führt Text und Kontext in allen drei
+Sprachen.
+
+**Die Position der Blasen ist frei gewählt.** Nur zwei Gespräche nennen überhaupt einen
+Ort: Sirano die Markthal, die Dreiergruppe den Blaak; deren Blasen stehen in der Nähe
+des jeweiligen Baus. Die übrigen vier gelten dem Quartier als Ganzem und sind über das
+Modell verteilt. Die Oberfläche behauptet deshalb nirgends, dort sei gesprochen worden,
+und der Hinweis unter dem Abschnitt sagt es ausdrücklich.
+
+Gestalterisch sind die Blasen bewusst leiser als alles andere im Modell: 18 × 13 px,
+weiß, eine Haarlinie, 60 % Deckkraft, und ihr Maßstab ist bei 1 gedeckelt, während die
+Bauwerksmarker bis 1,15 wachsen. Antippen öffnet das Zitat in einem Feld über dem
+Modell; man kann weiterdrehen, während es steht. Die offene Blase färbt sich gelb.
+`Alle Stimmen` schließt das Modell und springt auf den Anker der Stimme, die dann über
+`:target` kurz hervorgehoben wird. Der Hash-Router lässt unbekannte Anker in Ruhe, das
+ist in `openFromHash()` geprüft.
+
+### Kommentarfeld
+
+Unter den Stimmen kann man selbst einen Kommentar hinterlassen. Er geht über
+**Web3Forms** als E-Mail an uns und erscheint **nicht** von selbst auf der Seite;
+eingepflegt wird er von Hand in `STIMMEN`.
+
+Kein Skript des Anbieters liegt auf der Seite. Es gibt genau einen `POST` an
+`api.web3forms.com`, und zwar erst, nachdem jemand Absenden gedrückt hat. Der Service
+Worker fasst das nicht an, er behandelt nur `GET`. Ein Köderfeld `botcheck` fängt
+einfache Roboter ab.
+
+> **Noch zu tun:** In `index.html` steht im Feld `access_key` der Platzhalter
+> `BITTE-WEB3FORMS-SCHLUESSEL-EINSETZEN`. Solange er dort steht, sendet das Formular
+> nicht und sagt das dem Besucher auch. Den Schlüssel gibt es kostenlos auf
+> web3forms.com gegen Angabe der Empfängeradresse; er ist öffentlich und darf im
+> Quelltext stehen.
+
+Die Datenschutzerklärung hat dafür einen eigenen Abschnitt in allen drei Sprachen
+(Anbieter, übertragene Daten, Rechtsgrundlage Einwilligung, Freiwilligkeit von Name und
+E-Mail, keine automatische Veröffentlichung). Der frühere Satz „keine Formulare“ stimmte
+damit nicht mehr und ist ersetzt.
+
 ## Offline
 
 Ein Service Worker legt Seite, Bilder und Symbole beim ersten Besuch ab. Das 3D-Modell
