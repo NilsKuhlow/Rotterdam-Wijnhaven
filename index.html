@@ -5490,10 +5490,15 @@ function _stFormText(){
     var knopf = document.getElementById('st-send');
     knopf.disabled = true;
     _stStatus(t.st_f_wait, false);
+    /* FormData direkt und ohne eigene Header senden. Ein
+       Content-Type: application/json loest einen CORS-Preflight aus, und
+       den beantwortet die API von Web3Forms grundsaetzlich mit 403
+       ("This method is not allowed"). multipart/form-data ist dagegen
+       CORS-sicher, der Browser setzt es selbst, und es geht ohne Vorabfrage
+       durch. */
     fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(Object.fromEntries(new FormData(f)))
+      body: new FormData(f)
     }).then(function(r){ return r.json(); })
       .then(function(d){
         if (d && d.success){ f.reset(); _stStatus(t.st_f_ok, true); }
