@@ -215,15 +215,21 @@ nach Erlaubnis für Bewegungssensoren; ohne Kompass folgt nur die Position, Umse
 
 ## Sprache
 
-Die Seite startet auf **Niederländisch** (`START_LANG` in `index.html`). Das statische
-HTML ist deutsch verfasst; direkt nach dem Verdrahten der Sprachknöpfe schaltet
-`_startLang()` um, noch während der Ladeschirm liegt, damit kein Wechsel aufblitzt.
-Deutsch und Englisch wählt man über die Knöpfe oben rechts.
+Die Seite startet auf **Deutsch** (`START_LANG` in `index.html`), wie das statische
+HTML. `_startLang()` schaltet dann nichts um, die Seite steht sofort richtig da.
+Niederländisch und Englisch wählt man über die Knöpfe oben rechts. Ein anderer Wert
+in `START_LANG` genügt, um die Startsprache zu wechseln; stand sie auf `nl`, schaltete
+`_startLang()` noch während des Ladeschirms um, damit kein Wechsel aufblitzt.
 
-**Achtung, offener Widerspruch:** Titel, Beschreibung, strukturierte Daten und der
-Lese-Abschnitt sind weiterhin deutsch, damit die Seite unter *Stadtführung* gefunden
-wird. Ein niederländischer Besucher sieht deshalb unter der Karte einen deutschen
-Textblock. Sauber lösen ließe sich das nur mit eigenen URLs je Sprache plus `hreflang`.
+Umgeschaltet werden drei Dinge: die Texte über `data-i18n`, die drei Sprachblöcke
+(Lese-Abschnitt und Datenschutz) über `data-lang-block`, und die Meldungen des
+Trackers über `trkT()`.
+
+**Offen bleibt:** NL und EN haben keine eigenen URLs. Google indexiert deshalb nur die
+deutsche Fassung; niederländische Suchen finden den niederländischen Text nicht. Mit
+Deutsch als Startsprache decken sich immerhin gerenderte Seite und indexierter Text,
+was vorher nicht der Fall war. Sauber lösen ließe sich der Rest nur mit eigenen URLs
+je Sprache plus `hreflang`.
 
 ## Offline
 
