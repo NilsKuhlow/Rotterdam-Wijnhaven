@@ -873,7 +873,7 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
    PHOTO COUNTER , "1 / 5" overlay in gallery
 ═══════════════════════════════════════════ */
 #gal-counter {
-  position:absolute; top:.55rem; right:.65rem; z-index:3;
+  position:absolute; top:.55rem; right:3.5rem; z-index:3;   /* neben dem Schliessen-Knopf, nicht darunter */
   font-family:var(--font-sans); font-weight:500;
   font-size:.58rem; letter-spacing:.08em;
   color:rgba(255,255,255,.9);
@@ -2613,7 +2613,7 @@ window.addEventListener('load', function(){
       Reportage-Absätze (paras) und voices sind PLATZHALTER (Ich-Perspektive),
       werden nach der Reise durch eigene Beobachtungen/Interviews ersetzt.
       Galerien und Abbildungen der sieben Eintraege sind seit September 2026
-      EIGENE Aufnahmen, drei je Bauwerk. Historisch bleiben das Luftbild von
+      EIGENE Aufnahmen, alle 65 der Exkursion. Historisch bleiben das Luftbild von
       1940 und der Vergleich Damals/Heute beim Witte Huis; dessen Haelften
       sind aufeinander eingemessen. Die 24 Orte ausserhalb der Route tragen
       weiterhin frei lizenzierte Bilder. ── */
@@ -2650,7 +2650,13 @@ const SEED7 = [
     slides:[
       {bg:"url('img/gal-witte-huis-1.webp') center/cover no-repeat", cap:"Das Witte Huis über der Oude Haven, dahinter die rote Willemsbrug."},
       {bg:"url('img/gal-witte-huis-2.webp') center/cover no-repeat", cap:"Der Turm von 1898 zwischen den Neubauten am Hafenbecken."},
-      {bg:"url('img/gal-witte-huis-3.webp') center/cover no-repeat", cap:"Die Fassade aus weiß glasierten Steinen, mit den grünen Markisen."}
+      {bg:"url('img/gal-witte-huis-3.webp') center/cover no-repeat", cap:"Die Fassade aus weiß glasierten Steinen, mit den grünen Markisen."},
+      {bg:"url('img/gal-witte-huis-4.webp') center/cover no-repeat", cap:"Vom Kai aus, zwischen den historischen Booten der Oude Haven."},
+      {bg:"url('img/gal-witte-huis-5.webp') center/cover no-repeat", cap:"Vom Wasser her, die jüngeren Türme dahinter."},
+      {bg:"url('img/gal-witte-huis-6.webp') center/cover no-repeat", cap:"Über die Brüstung hinweg auf das Hafenbecken."},
+      {bg:"url('img/gal-witte-huis-7.webp') center/cover no-repeat", cap:"Die Oude Haven mit dem Witte Huis in der Häuserzeile."},
+      {bg:"url('img/gal-witte-huis-8.webp') center/cover no-repeat", cap:"Vom Platz aus, hinter den Bäumen."},
+      {bg:"url('img/gal-witte-huis-9.webp') center/cover no-repeat", cap:"Erker, Balkone und Markisen im Detail."}
     ]
   },
   {
@@ -2677,7 +2683,29 @@ const SEED7 = [
     slides:[
       {bg:"url('img/gal-kubuswoningen-1.webp') center/cover no-repeat", cap:"Die gelben Würfel über der Oude Haven."},
       {bg:"url('img/gal-kubuswoningen-2.webp') center/cover no-repeat", cap:"Von der Fußgängerebene hinauf in die gekippten Würfel."},
-      {bg:"url('img/gal-kubuswoningen-3.webp') center/cover no-repeat", cap:"Die Wohnstraße Overblaak zwischen den Würfeln."}
+      {bg:"url('img/gal-kubuswoningen-3.webp') center/cover no-repeat", cap:"Die Wohnstraße Overblaak zwischen den Würfeln."},
+      {bg:"url('img/gal-kubuswoningen-4.webp') center/cover no-repeat", cap:"Die Würfelreihe über der Verkehrsachse Blaak."},
+      {bg:"url('img/gal-kubuswoningen-5.webp') center/cover no-repeat", cap:"Die Dachlandschaft der Würfel gegen den Himmel."},
+      {bg:"url('img/gal-kubuswoningen-6.webp') center/cover no-repeat", cap:"Die Reihe entlang der Straße, mit den Fahrrädern davor."},
+      {bg:"url('img/gal-kubuswoningen-7.webp') center/cover no-repeat", cap:"Die Unterseiten der gekippten Würfel."},
+      {bg:"url('img/gal-kubuswoningen-8.webp') center/cover no-repeat", cap:"Die Reihung über den Ladenzeilen."},
+      {bg:"url('img/gal-kubuswoningen-9.webp') center/cover no-repeat", cap:"Eine Würfelecke von unten."},
+      {bg:"url('img/gal-kubuswoningen-10.webp') center/cover no-repeat", cap:"Die Kante eines Würfels gegen den Himmel."},
+      {bg:"url('img/gal-kubuswoningen-11.webp') center/cover no-repeat", cap:"Zwischen Pfeiler und Würfel hindurch."},
+      {bg:"url('img/gal-kubuswoningen-12.webp') center/cover no-repeat", cap:"Der Durchgang unter der Wohnebene."},
+      {bg:"url('img/gal-kubuswoningen-13.webp') center/cover no-repeat", cap:"Die Treppe hinauf zur Wohnebene."},
+      {bg:"url('img/gal-kubuswoningen-14.webp') center/cover no-repeat", cap:"Blick zwischen zwei Würfeln hindurch."},
+      {bg:"url('img/gal-kubuswoningen-15.webp') center/cover no-repeat", cap:"Fenster und rote Rahmen im Schatten."},
+      {bg:"url('img/gal-kubuswoningen-16.webp') center/cover no-repeat", cap:"Die Unterseite über dem Fußweg."},
+      {bg:"url('img/gal-kubuswoningen-17.webp') center/cover no-repeat", cap:"Ein Mast zwischen den Würfeln."},
+      {bg:"url('img/gal-kubuswoningen-18.webp') center/cover no-repeat", cap:"Die Wohnstraße mit Passanten."},
+      {bg:"url('img/gal-kubuswoningen-19.webp') center/cover no-repeat", cap:"Dieselbe Achse, einen Schritt weiter."},
+      {bg:"url('img/gal-kubuswoningen-20.webp') center/cover no-repeat", cap:"Die Ladenzeile unter den Wohnungen."},
+      {bg:"url('img/gal-kubuswoningen-21.webp') center/cover no-repeat", cap:"Fenster in der gelben Fläche."},
+      {bg:"url('img/gal-kubuswoningen-22.webp') center/cover no-repeat", cap:"Durchblick nach draußen, an der Kante entlang."},
+      {bg:"url('img/gal-kubuswoningen-23.webp') center/cover no-repeat", cap:"Aus dem Durchgang heraus, gegen das Licht."},
+      {bg:"url('img/gal-kubuswoningen-24.webp') center/cover no-repeat", cap:"Die Spitze eines Würfels von unten."},
+      {bg:"url('img/gal-kubuswoningen-25.webp') center/cover no-repeat", cap:"Durch den Torbogen auf das Witte Huis und die Oude Haven."}
     ]
   },
   {
@@ -2708,7 +2736,18 @@ const SEED7 = [
     slides:[
       {bg:"url('img/gal-markthal-1.webp') center/cover no-repeat", cap:"Der Bogen der Markthal über dem Platz an der Binnenrotte."},
       {bg:"url('img/gal-markthal-2.webp') center/cover no-repeat", cap:"Das Deckengemälde im Inneren, über den Marktständen."},
-      {bg:"url('img/gal-markthal-3.webp') center/cover no-repeat", cap:"Die verglaste Stirnseite; im Bogen darüber liegen die Wohnungen."}
+      {bg:"url('img/gal-markthal-3.webp') center/cover no-repeat", cap:"Die verglaste Stirnseite; im Bogen darüber liegen die Wohnungen."},
+      {bg:"url('img/gal-markthal-4.webp') center/cover no-repeat", cap:"Der Platz vor der Halle, mit den Passanten davor."},
+      {bg:"url('img/gal-markthal-5.webp') center/cover no-repeat", cap:"Der Bogen vom Platz aus, hinter dem Baum."},
+      {bg:"url('img/gal-markthal-6.webp') center/cover no-repeat", cap:"Die gekrümmte Glasfassade der Stirnseite."},
+      {bg:"url('img/gal-markthal-7.webp') center/cover no-repeat", cap:"Die Krümmung im Detail, Scheibe an Scheibe."},
+      {bg:"url('img/gal-markthal-8.webp') center/cover no-repeat", cap:"Das Gemälde der Innenschale, Blüten und Früchte."},
+      {bg:"url('img/gal-markthal-9.webp') center/cover no-repeat", cap:"Der Bogen von innen, dem Scheitel entgegen."},
+      {bg:"url('img/gal-markthal-10.webp') center/cover no-repeat", cap:"Die Wölbung über der Halle."},
+      {bg:"url('img/gal-markthal-11.webp') center/cover no-repeat", cap:"Der Scheitel, mit den Fenstern der Wohnungen darin."},
+      {bg:"url('img/gal-markthal-12.webp') center/cover no-repeat", cap:"Die Innenschale trifft auf die Glasfassade."},
+      {bg:"url('img/gal-markthal-13.webp') center/cover no-repeat", cap:"Die Ladenzeile im Erdgeschoss."},
+      {bg:"url('img/gal-markthal-14.webp') center/cover no-repeat", cap:"Die Rolltreppen im Untergeschoss."}
     ]
   },
   {
@@ -2737,7 +2776,8 @@ const SEED7 = [
     slides:[
       {bg:"url('img/gal-red-apple-1.webp') center/cover no-repeat", cap:"Der auskragende Sockel, dahinter der Wohnturm."},
       {bg:"url('img/gal-red-apple-2.webp') center/cover no-repeat", cap:"Die roten Lisenen ziehen den Turm in die Höhe."},
-      {bg:"url('img/gal-red-apple-3.webp') center/cover no-repeat", cap:"Blick an der Fassade hinauf."}
+      {bg:"url('img/gal-red-apple-3.webp') center/cover no-repeat", cap:"Blick an der Fassade hinauf."},
+      {bg:"url('img/gal-red-apple-4.webp') center/cover no-repeat", cap:"Die Kante des Turms gegen den Himmel."}
     ]
   },
   {
@@ -2772,7 +2812,8 @@ const SEED7 = [
     slides:[
       {bg:"url('img/gal-wijnhaveneiland-1.webp') center/cover no-repeat", cap:"Das Hafenbecken mit den historischen Booten, dahinter die Türme."},
       {bg:"url('img/gal-wijnhaveneiland-2.webp') center/cover no-repeat", cap:"Die Verdichtung geht weiter: ein Kran über dem Wijnhaveneiland."},
-      {bg:"url('img/gal-wijnhaveneiland-3.webp') center/cover no-repeat", cap:"Die Kaikante mit den Wohnschiffen."}
+      {bg:"url('img/gal-wijnhaveneiland-3.webp') center/cover no-repeat", cap:"Die Kaikante mit den Wohnschiffen."},
+      {bg:"url('img/gal-wijnhaveneiland-4.webp') center/cover no-repeat", cap:"Ein schlanker Turm zwischen den älteren Bauten."}
     ]
   },
   {
@@ -2828,7 +2869,10 @@ const SEED7 = [
     slides:[
       {bg:"url('img/gal-casanova-1.webp') center/cover no-repeat", cap:"Die Sockelgeschosse ziehen sich ein, der Turm steht darüber."},
       {bg:"url('img/gal-casanova-2.webp') center/cover no-repeat", cap:"Der Sockel an der Straße, Backstein mit tiefen Laibungen."},
-      {bg:"url('img/gal-casanova-3.webp') center/cover no-repeat", cap:"CasaNova von der gegenüberliegenden Kaikante."}
+      {bg:"url('img/gal-casanova-3.webp') center/cover no-repeat", cap:"CasaNova von der gegenüberliegenden Kaikante."},
+      {bg:"url('img/gal-casanova-4.webp') center/cover no-repeat", cap:"Die dreieckige Grundform, von unten gesehen."},
+      {bg:"url('img/gal-casanova-5.webp') center/cover no-repeat", cap:"Der Turm über dem Wasser, zwischen den Bäumen."},
+      {bg:"url('img/gal-casanova-6.webp') center/cover no-repeat", cap:"Die Straße am Fuß des Turms."}
     ]
   }
 ];
@@ -4882,7 +4926,7 @@ function openModal(idx, _placeObj){
       : '';
     return `
     <div class="gallery-slide">
-      <div class="slide-bg" style="background:${isPh ? 'var(--paper-1)' : sl.bg}"></div>
+      <div class="slide-bg"${isPh ? ' style="background:var(--paper-1)"' : ` data-bg="${sl.bg.replace(/"/g, '&quot;')}"`}></div>
       ${(!isPh && sl.tmp) ? `<span class="slide-tmp">${phTag}</span>` : ''}
       ${isPh
         ? `<div class="slide-ph"><span class="slide-ph-tag">${phTag}</span>${sl.cap ? `<span class="slide-ph-cap">${sl.cap}</span>` : ''}</div>`
@@ -4890,8 +4934,14 @@ function openModal(idx, _placeObj){
     </div>`;
   }).join('');
 
-  document.getElementById('galNav').innerHTML = s.slides.map((_,i) =>
-    `<div class="gal-pip${i===0?' on':''}" onclick="galTo(${i})"></div>`).join('');
+  /* Ab zwoelf Aufnahmen passen die Punkte nicht mehr nebeneinander; der
+     Zaehler oben rechts sagt ohnehin, an welcher Stelle man ist. */
+  /* Ab zwoelf Aufnahmen passen die Punkte nicht mehr nebeneinander; die
+     Zaehlung oben rechts sagt dann, an welcher Stelle man ist. */
+  document.getElementById('galNav').innerHTML = s.slides.length > 12 ? '' :
+    s.slides.map((_,i) =>
+      `<div class="gal-pip${i===0?' on':''}" onclick="galTo(${i})"></div>`).join('');
+  _galLaden(0);
 
   /* Show "Eintrag X von 07" only for route stops, not extra places */
   const numLine = (_placeObj || s.isBreak)
@@ -5000,9 +5050,19 @@ function closeModal(){
 function _prefersReducedMotion(){
   return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 }
+/* Ab sieben Aufnahmen blaettert die Galerie nicht mehr von selbst. Sonst
+   liefe sie bei 25 Bildern minutenlang weiter, man kaeme mit dem Lesen der
+   Unterschriften nicht nach, und das verzoegerte Laden waere umsonst: nach
+   einer Runde haette der Browser doch alle Bilder geholt. */
+var GAL_AUTO_MAX = 6;
+
 function startGalAuto(){
   stopGalAuto();
-  if (galLen <= 1) return;
+  if (galLen <= 1 || galLen > GAL_AUTO_MAX){
+    var _p = document.getElementById('galProgress');
+    if (_p) _p.style.display = 'none';
+    return;
+  }
   /* Kein automatisches Weiterblaettern, wenn der Nutzer reduzierte Bewegung
      eingestellt hat — die Galerie bleibt still und wird nur manuell bedient. */
   if (_prefersReducedMotion()){
@@ -5029,8 +5089,22 @@ function _restartProgressAnim(){
   fill.parentNode.replaceChild(clone, fill);
 }
 
+/* Nur die gezeigte Folie und ihre Nachbarn laden. Bei 25 Aufnahmen in
+   einem Eintrag holte der Browser sonst mehrere Megabyte auf einmal. */
+function _galLaden(mitte){
+  /* Alle Folien greifen, nicht nur die ungeladenen: sonst schrumpft die
+     Liste beim Laden und der Index zeigt auf die falschen Nachbarn. */
+  var fs = document.querySelectorAll('#galSlides .slide-bg');
+  for (var d = -1; d <= 1; d++){
+    var j = ((mitte + d) % fs.length + fs.length) % fs.length;
+    var el = fs[j];
+    if (el && el.dataset.bg){ el.style.background = el.dataset.bg; delete el.dataset.bg; }
+  }
+}
+
 function galTo(i, _auto){
   galIdx = ((i % galLen) + galLen) % galLen;
+  _galLaden(galIdx);
   document.getElementById('galSlides').style.transform = `translateX(-${galIdx*100}%)`;
   document.querySelectorAll('.gal-pip').forEach((p,j) => p.classList.toggle('on', j===galIdx));
   /* Photo counter */
