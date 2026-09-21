@@ -437,11 +437,29 @@ im 3D-Modell in einem Rutsch.
 
 ## Abbildungen
 
-Die sieben Einträge tragen seit September 2026 **eigene Aufnahmen**, drei je Bauwerk:
-eine, die den Bau im Viertel zeigt, eine nähere und ein Detail. Sie liegen als WebP mit
-1500 px an der längeren Kante, zusammen 3,2 MB, und werden erst beim Öffnen eines
-Eintrags geladen. Vorgeladen wird nur die erste Aufnahme je Bauwerk, damit die Seite
-auch ohne Empfang etwas zeigt.
+Die sieben Einträge tragen seit September 2026 **alle 65 eigenen Aufnahmen** der
+Exkursion: Kubuswoningen 25, Markthal 14, Witte Huis 9, CasaNova 6, Red Apple 4,
+Wijnhaveneiland 4, EY 3. Sie liegen als WebP mit 1500 px an der längeren Kante,
+zusammen 8,9 MB. An erster Stelle steht je Bauwerk die beste Übersicht, dahinter
+nähere Aufnahmen und Details.
+
+Drei Dinge waren dafür an der Galerie nötig, sonst hätte ein Eintrag mit 25 Bildern
+mehrere Megabyte auf einmal geholt:
+
+* **Verzögertes Laden.** Die Adresse steht in `data-bg`, geladen wird nur die gezeigte
+  Folie samt ihren beiden Nachbarn (`_galLaden()`). Beim Öffnen sind das **drei** Bilder
+  statt 25; nachgeladen wird beim Blättern. Eine Fallgrube dabei: Die Funktion muss
+  *alle* Folien greifen, nicht nur die noch ungeladenen. Sonst schrumpft die Liste beim
+  Laden und der Index zeigt auf die falschen Nachbarn.
+* **Kein automatisches Weiterblättern** ab sieben Aufnahmen (`GAL_AUTO_MAX`). Sonst
+  liefe die Galerie bei 25 Bildern minutenlang weiter, man käme mit dem Lesen nicht
+  nach, und nach einer Runde wären doch alle Bilder geholt.
+* **Keine Punktleiste** ab zwölf Aufnahmen; 25 Punkte passen nicht nebeneinander. Die
+  Zählung oben rechts übernimmt. Sie stand bisher hinter dem Schließen-Knopf und sitzt
+  jetzt daneben.
+
+Vorgeladen wird nur die erste Aufnahme je Bauwerk, damit die Seite auch ohne Empfang
+etwas zeigt. Die übrigen holt der Worker beim ersten Ansehen.
 
 Mit den eigenen Fotos entfallen das Kennzeichen `tmp` (der Hinweis „Foto folgt") und die
 Lizenzangaben. **Historisch bleiben** das Luftbild von 1940 und der Vergleich
