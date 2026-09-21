@@ -10,7 +10,7 @@
    ⚠ Bump CACHE version on every deploy that changes files.
 ═══════════════════════════════════════════════════════════ */
 
-const CACHE = 'wijnhaven-v51';
+const CACHE = 'wijnhaven-v52';
 
 /* Cross-origin hosts we are allowed to cache (all send CORS headers, so the
    responses are readable/cacheable — needed for offline fonts + 3D on-site).
@@ -35,18 +35,20 @@ const PRECACHE = [
   '/icon-512.png',
   '/icon-512-maskable.png',
   '/apple-touch-icon.png',
-  /* Eintrags-Abbildungen (frei lizenziert, WebP) — fuer den Offline-Feldeinsatz vorgeladen */
+  /* Eintrags-Abbildungen fuer den Offline-Feldeinsatz vorgeladen: je Bauwerk
+     die erste eigene Aufnahme, dazu die historischen Vergleichsbilder. Die
+     uebrigen Galeriebilder holt der Worker beim ersten Oeffnen nach. */
   '/img/witte-huis-then.webp',
   '/img/witte-huis-now.webp',
   '/img/luftbild-1940.webp',
-  '/img/kubuswoningen.webp',
-  '/img/markthal.webp',
-  '/img/markthal-innen.webp',
-  '/img/red-apple.webp',
-  '/img/wijnhaveneiland.webp',
   '/img/wederopbouw-1950.webp',
-  '/img/ey.webp',
-  '/img/casanova.webp',
+  '/img/gal-witte-huis-1.webp',
+  '/img/gal-kubuswoningen-1.webp',
+  '/img/gal-markthal-1.webp',
+  '/img/gal-casanova-1.webp',
+  '/img/gal-red-apple-1.webp',
+  '/img/gal-wijnhaveneiland-1.webp',
+  '/img/gal-ey-netherlands-1.webp',
 ];
 /* Bewusst NICHT precachen (gross / Opt-in, werden bei Bedarf zur Laufzeit gecacht):
    models/wijnhaven.glb (~23,5 MB), downloads/wijnhaven-volldetail-demo.glb, Thesis-PDF. */

@@ -435,6 +435,22 @@ prüft ein Durchlauf Kartenführung, 50-m-Näherung, Info-Karte und den Standort
 im 3D-Modell in einem Rutsch.
 
 
+## Abbildungen
+
+Die sieben Einträge tragen seit September 2026 **eigene Aufnahmen**, drei je Bauwerk:
+eine, die den Bau im Viertel zeigt, eine nähere und ein Detail. Sie liegen als WebP mit
+1500 px an der längeren Kante, zusammen 3,2 MB, und werden erst beim Öffnen eines
+Eintrags geladen. Vorgeladen wird nur die erste Aufnahme je Bauwerk, damit die Seite
+auch ohne Empfang etwas zeigt.
+
+Mit den eigenen Fotos entfallen das Kennzeichen `tmp` (der Hinweis „Foto folgt") und die
+Lizenzangaben. **Historisch bleiben** das Luftbild von 1940 und der Vergleich
+Damals/Heute beim Witte Huis: dessen beide Hälften sind aufeinander eingemessen, ein
+anders stehendes Foto würde den Regler entwerten.
+
+Die 24 Orte außerhalb der Route tragen weiterhin frei lizenzierte Bilder, jeweils am
+Bild ausgewiesen.
+
 ## Vorläufig draußen
 
 Die **Arbeitsfassung (PDF)** ist aus dem Impressum genommen und die Datei aus
@@ -450,7 +466,7 @@ Ebenso wartet die **ladungsfähige Anschrift** im Impressum auf Freigabe.
 Phase A (Gerüst) steht: Identität, Karte, Tracker, 7 Einträge, 3D-Demos, Trilingualität, Deploy.
 Inhalte sind teils Platzhalter.
 
-- **Phase B (vor Ort, 24.10.–01.11.2026):** eigene Fotos, Interviews (`voices`), echte GPS-Pins
+- **Phase B (vor Ort, 24.10.–01.11.2026):** Interviews je Bauwerk (`voices`), echte GPS-Pins
   (`STOP_COORDS`), Photogrammetrie/Modelle (`/models`), Routenreihenfolge bestätigen.
 - **Phase C (nach der Reise):** Reportage-Texte + Steckbriefe füllen, handgezeichneten Schwarzplan
   einsetzen und Karte neu kalibrieren (`gpsToSvg`, `VB`), Print-Handout (A4) erzeugen.
