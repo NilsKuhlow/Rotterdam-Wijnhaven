@@ -57,6 +57,42 @@ Bewegt wird die Karte nur von Hand, mit Wischen und Pinch. Dann erscheint der Kn
 zum eigenen Standort, den der Knopf früher machte, ergibt keinen Sinn mehr, solange die
 Karte steht.
 
+### Die Grundkarte
+
+Seit September 2026 liegt der eigene **Schwarzplan** zugrunde, ein Vektor-PDF im
+Format A3. Er loest den vorherigen OSM-Auszug ab. Drei Ebenen kommen daraus in die
+Seite: die Wasserflaeche, rund 1700 Baukoerper und rund 15000 Strassen- und
+Parzellenkanten (`.water-fill`, `.city-block`, `.plot-line`).
+
+**Georeferenziert ist er gemessen, nicht geschaetzt.** Das PDF traegt keine
+Georeferenz. Seine Wasserflaeche wurde deshalb gegen die des alten Plans
+kreuzkorreliert, dessen Projektion bekannt war, mit mittelwertfreier und oertlich
+normierter Korrelation auf einer Kreisscheibe um die Wijnhaven. Das Maximum sass bei
+**0 Grad Drehung** und **0,5669 pt je Meter**, also auf den Zehntelprozent genau bei
+**1:5000**, mit einer Korrelation von **0,90**. Die Seite deckt damit 1486 x 2100 m,
+genau A3 in diesem Massstab.
+
+Gegenprobe an den sieben Bauten: alle liegen 4 bis 12 m neben ihrem Hauskoerper, die
+meisten mittendrin. Das ist feiner als die GPS-Genauigkeit vor Ort.
+
+Eine SVG-Einheit bleibt bewusst **1,3048 m** wie beim alten Plan. Nur so gelten
+Punktgroessen, Strichstaerken, Beschriftungen und der 50-m-Radius unveraendert
+weiter; geaendert hat sich allein der Ursprung (`gpsToSvg`) und die Planmasse
+(`MAP_VW` 1138, `MAP_VH` 1609).
+
+Die Werkzeuge liegen in `tools/schwarzplan/` samt Kontrollbildern. Sie werden nur
+gebraucht, wenn der Plan neu gezeichnet oder neu exportiert wird.
+
+**Preis:** Die Karte wiegt jetzt 130 KB gzip statt 62 KB, das Dokument insgesamt
+259 KB statt 190 KB. Den groessten Posten machen die Parzellenkanten aus (52 KB); sie
+tragen die Handschrift der Zeichnung. Wer sie opfern will, loescht den Pfad
+`.plot-line`.
+
+Zwei Fallgruben stecken in `tools/schwarzplan/schwarzplan.py` beschrieben, beide
+haben schon einmal zugeschlagen: `'%.0f'` liefert keinen Dezimalpunkt, ein
+anschliessendes `rstrip('0')` macht aus 180 eine 18 und die Karte zum Wollknaeuel;
+und die ungefuellten Objekte des PDF sind Striche, keine Flaechen.
+
 Den Zuschnitt rechnet `_computeStaticVB()` aus den Wegpunkten. Wichtig: Das SVG nutzt
 `preserveAspectRatio="slice"`, eine viewBox mit falschem Seitenverhältnis würde also
 beschnitten und Stationen am Rand verschwinden. `_vbFit()` zieht die viewBox deshalb
