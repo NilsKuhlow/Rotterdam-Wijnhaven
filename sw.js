@@ -10,7 +10,7 @@
    ⚠ Bump CACHE version on every deploy that changes files.
 ═══════════════════════════════════════════════════════════ */
 
-const CACHE = 'wijnhaven-v52';
+const CACHE = 'wijnhaven-v53';
 
 /* Cross-origin hosts we are allowed to cache (all send CORS headers, so the
    responses are readable/cacheable — needed for offline fonts + 3D on-site).
@@ -38,6 +38,7 @@ const PRECACHE = [
   /* Eintrags-Abbildungen fuer den Offline-Feldeinsatz vorgeladen: je Bauwerk
      die erste eigene Aufnahme, dazu die historischen Vergleichsbilder. Die
      uebrigen Galeriebilder holt der Worker beim ersten Oeffnen nach. */
+  '/img/schwarzplan.webp',      /* die Karte selbst, 253 KB */
   '/img/witte-huis-then.webp',
   '/img/witte-huis-now.webp',
   '/img/luftbild-1940.webp',

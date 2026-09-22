@@ -59,39 +59,42 @@ Karte steht.
 
 ### Die Grundkarte
 
-Seit September 2026 liegt der eigene **Schwarzplan** zugrunde, ein Vektor-PDF im
-Format A3. Er loest den vorherigen OSM-Auszug ab. Drei Ebenen kommen daraus in die
-Seite: die Wasserflaeche, rund 1700 Baukoerper und rund 15000 Strassen- und
-Parzellenkanten (`.water-fill`, `.city-block`, `.plot-line`).
+Zugrunde liegt der eigene **Schwarzplan**, Stand September 2026. Er kam zuletzt als
+**Rasterbild** (3094 × 4724 px, 300 dpi) und liegt deshalb als `img/schwarzplan.webp`
+unter dem SVG, nicht mehr als Pfade darin. **Verlustfrei sind das 253 KB** — bei einer
+Strichzeichnung aus vier flachen Farben komprimiert verlustfrei besser als
+verlustbehaftet: dieselbe Datei mit q=90 wäre 1,4 MB, also fünfmal so groß.
 
-**Georeferenziert ist er gemessen, nicht geschaetzt.** Das PDF traegt keine
-Georeferenz. Seine Wasserflaeche wurde deshalb gegen die des alten Plans
-kreuzkorreliert, dessen Projektion bekannt war, mit mittelwertfreier und oertlich
-normierter Korrelation auf einer Kreisscheibe um die Wijnhaven. Das Maximum sass bei
-**0 Grad Drehung** und **0,5669 pt je Meter**, also auf den Zehntelprozent genau bei
-**1:5000**, mit einer Korrelation von **0,90**. Die Seite deckt damit 1486 x 2100 m,
-genau A3 in diesem Massstab.
+**Georeferenziert ist er gemessen, nicht geschätzt.** Das Bild trägt keine Georeferenz.
+Seine Wasserfläche wurde deshalb gegen die des alten OSM-Plans kreuzkorreliert, dessen
+Projektion bekannt war, mit mittelwertfreier und örtlich normierter Korrelation auf
+einer Kreisscheibe um die Wijnhaven. Das Maximum saß bei **0 Grad Drehung** und
+**1:4989**, also glatt **1:5000**, mit einer Korrelation von **0,93**. Die Seite deckt
+1307 × 1996 m.
 
-Gegenprobe an den sieben Bauten: alle liegen 4 bis 12 m neben ihrem Hauskoerper, die
-meisten mittendrin. Das ist feiner als die GPS-Genauigkeit vor Ort.
+Gegenprobe an den sieben Bauten: **fünf liegen im Gebäude**, die beiden anderen 4 m und
+11 m daneben (Kubuswoningen, wo zwischen den Würfeln Lücken sind). Das ist feiner als
+GPS vor Ort.
 
-Eine SVG-Einheit bleibt bewusst **1,3048 m** wie beim alten Plan. Nur so gelten
-Punktgroessen, Strichstaerken, Beschriftungen und der 50-m-Radius unveraendert
-weiter; geaendert hat sich allein der Ursprung (`gpsToSvg`) und die Planmasse
-(`MAP_VW` 1138, `MAP_VH` 1609).
+Eine SVG-Einheit bleibt **1,3048 m** wie in allen Fassungen davor. Nur so gelten
+Punktgrößen, Strichstärken, Beschriftungen und der 50-m-Radius unverändert weiter;
+geändert haben sich allein der Ursprung (`gpsToSvg`) und die Planmaße (`MAP_VW` 1002,
+`MAP_VH` 1530).
 
-Die Werkzeuge liegen in `tools/schwarzplan/` samt Kontrollbildern. Sie werden nur
-gebraucht, wenn der Plan neu gezeichnet oder neu exportiert wird.
+**Was Raster statt Vektor kostet:** Bei stärkstem Zoom (`MIN_VB_W` 80 Einheiten, also
+104 m Bildbreite) wird das Bild weich, weil es 2,37 px je Meter trägt. Im normalen
+Zuschnitt der Karte ist es scharf. Außerdem lässt sich die Karte nicht mehr über CSS
+umfärben; Wasser- und Bauwerksfarbe stecken im Bild. Kommt wieder ein Vektor-Export,
+ist der Weg zurück offen: `tools/schwarzplan/schwarzplan.py` erzeugt daraus die drei
+Pfade.
 
-**Preis:** Die Karte wiegt jetzt 130 KB gzip statt 62 KB, das Dokument insgesamt
-259 KB statt 190 KB. Den groessten Posten machen die Parzellenkanten aus (52 KB); sie
-tragen die Handschrift der Zeichnung. Wer sie opfern will, loescht den Pfad
-`.plot-line`.
+**Was die Rasterfassung dafür bringt:** Sie zeichnet Innenstrukturen, die der
+Vektorplan als massive Flächen zeigte — die Markthal mit ihren Ständen, der Bahnhof
+Blaak. Verglichen wurden beide Fassungen Ebene für Ebene: Baukörper decken sich zu
+85 %, Wasser zu 90 %, der Rest ist Rasterversatz an den Kanten und der engere
+Ausschnitt.
 
-Zwei Fallgruben stecken in `tools/schwarzplan/schwarzplan.py` beschrieben, beide
-haben schon einmal zugeschlagen: `'%.0f'` liefert keinen Dezimalpunkt, ein
-anschliessendes `rstrip('0')` macht aus 180 eine 18 und die Karte zum Wollknaeuel;
-und die ungefuellten Objekte des PDF sind Striche, keine Flaechen.
+Die Werkzeuge liegen in `tools/schwarzplan/` samt Kontrollbildern.
 
 Den Zuschnitt rechnet `_computeStaticVB()` aus den Wegpunkten. Wichtig: Das SVG nutzt
 `preserveAspectRatio="slice"`, eine viewBox mit falschem Seitenverhältnis würde also
