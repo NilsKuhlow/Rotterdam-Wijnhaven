@@ -276,6 +276,20 @@ Schwelle dafür ist `MAP_EIN` (70 % der Introhöhe) und gilt für beide: Vorher 
 Smart-Track-Schalter an einer eigenen Marke dicht vor der Kartenbühne und kam spürbar
 später als der Rest.
 
+### Der Knopf zum Modell
+
+Er war eine schwarze Pille von 56 × 26 px mit der Aufschrift „3D“, kleiner als der
+Smart-Track-Schalter daneben, und damit das leiseste Element auf der Karte, obwohl er
+das Beste öffnet, was die Seite hat. Jetzt misst er 135 × 37 px, heißt **3D-Modell**
+(NL `3D-model`, EN `3D model`, über `data-i18n="tour3dBtn"`) und trägt als einziges
+Bedienelement auf der Karte das Hausgelb.
+
+Das ist keine Ausnahme von der Regel, sondern die Regel: Gelb markiert im ganzen
+Dokument die eine Handlung — der Absenden-Knopf unter den Stimmen, die angesprungene
+Stimme, die geöffnete Sprechblase. Auf der Karte ist das Modell diese Handlung.
+Schwarze Schrift und schwarze Haarlinie halten ihn gezeichnet; er leuchtet nicht, er
+liegt vorn. Platz ist da: Auch auf 360 px bleiben 96 px Lücke zum Smart-Track.
+
 ## Sprache
 
 Die Seite startet auf **Deutsch** (`START_LANG` in `index.html`), wie das statische
@@ -534,5 +548,13 @@ Inhalte sind teils Platzhalter.
   (`STOP_COORDS`), Photogrammetrie/Modelle (`/models`), Routenreihenfolge bestätigen.
 - **Phase C (nach der Reise):** Reportage-Texte + Steckbriefe füllen, handgezeichneten Schwarzplan
   einsetzen und Karte neu kalibrieren (`gpsToSvg`, `VB`), Print-Handout (A4) erzeugen.
+
+
+**Bekannt und offen:** Sobald die Karte einsetzt, legt sich der Smart-Track-Schalter
+genau über den Sprachschalter (DE · NL · EN). Gemessen auf 360, 390 und 430 px:
+`elementFromPoint()` in der Mitte des Sprachschalters trifft jedes Mal den Tracker,
+die Sprache lässt sich auf der Karte also nicht mehr wechseln. Das ist eine
+Überdeckung, keine Absicht — zu entscheiden bleibt, wohin der Sprachschalter dort
+gehört.
 
 Deploy: GitHub Pages aus `main`, Domain `wijnhaven.com` via `CNAME`.
