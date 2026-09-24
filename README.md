@@ -252,22 +252,29 @@ anpassen, Norden = -z) und `GPS_HEADING` (Grad-Offset für die Blickrichtung). D
 Platzhalter und müssen am echten Modell vor Ort feinjustiert werden. iOS fragt beim ersten Mal
 nach Erlaubnis für Bewegungssensoren; ohne Kompass folgt nur die Position, Umsehen bleibt manuell.
 
-## Das Verzeichnis
+## Kein Verzeichnis mehr
 
-Der Knopf **Orte** öffnet ein Verzeichnis der Route: die sieben Bauten und die Pause,
-in der Reihenfolge des Gehens, mit der aktiven Station hervorgehoben. Sonst nichts.
+Neben **3D** stand bis September 2026 ein Knopf **Orte**, der ein Blatt von unten
+hereinschob: die sieben Stationen in der Reihenfolge des Gehens, darunter eine zweite
+Liste mit 24 weiteren Häusern des Hafengebiets. Beides ist heraus.
 
-Darunter stand früher eine zweite Liste, „Alle Bauwerke im Hafengebiet“, mit 24
-weiteren Häusern von der Laurenskerk bis zur Rijnhavenbrug. Sie ist heraus: Wer beim
-Gehen das Verzeichnis öffnet, sucht die nächste Station und nicht ein Haus, das nicht
-auf der Route liegt. Die Daten der 24 stehen weiter in `NEWBUILDINGS`, samt
-Übersetzungen und Bildern, und ein Link auf `#slug` öffnet sie nach wie vor; sichtbar
-verlinkt sind sie nirgends mehr.
+Der Grund ist die Karte selbst. Sie zeigt dieselben sieben Stationen schon, mit
+Nummer, Farbe, Namen und Lage, und man tippt sie dort an. Ein Verzeichnis daneben
+war dieselbe Liste ein zweites Mal, nur ohne Ort.
 
-Erscheinen tut der Knopf zusammen mit **3D** und **Smart-Track**, sobald die Karte
-einsetzt. Die Schwelle dafür ist `MAP_EIN` (70 % der Introhöhe) und gilt für alle
-drei: Vorher hing der Smart-Track-Schalter an einer eigenen Marke dicht vor der
-Kartenbühne und kam spürbar später als die beiden anderen.
+Mit dem Knopf fielen das Blatt, sein CSS, `renderPlacesList()`, `openPlaces()`,
+`closePlaces()`, `openExtraPlace()`, das Wischen zum Schließen, der Escape-Zweig,
+`EXTRA_PLACES` samt Übersetzungspflege und zehn Beschriftungen in DE/NL/EN. Geblieben
+ist `openBuilding()`: Daran hängen die Marker im 3D-Modell.
+
+Die 24 Bauwerke außerhalb der Route stehen weiter in `NEWBUILDINGS`, mit
+Übersetzungen und Bildern, und ein Link auf `#slug` öffnet sie nach wie vor. Von der
+Oberfläche aus führt kein Weg mehr dorthin.
+
+**3D** und **Smart-Track** erscheinen gemeinsam, sobald die Karte einsetzt. Die
+Schwelle dafür ist `MAP_EIN` (70 % der Introhöhe) und gilt für beide: Vorher hing der
+Smart-Track-Schalter an einer eigenen Marke dicht vor der Kartenbühne und kam spürbar
+später als der Rest.
 
 ## Sprache
 
