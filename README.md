@@ -252,6 +252,23 @@ anpassen, Norden = -z) und `GPS_HEADING` (Grad-Offset für die Blickrichtung). D
 Platzhalter und müssen am echten Modell vor Ort feinjustiert werden. iOS fragt beim ersten Mal
 nach Erlaubnis für Bewegungssensoren; ohne Kompass folgt nur die Position, Umsehen bleibt manuell.
 
+## Das Verzeichnis
+
+Der Knopf **Orte** öffnet ein Verzeichnis der Route: die sieben Bauten und die Pause,
+in der Reihenfolge des Gehens, mit der aktiven Station hervorgehoben. Sonst nichts.
+
+Darunter stand früher eine zweite Liste, „Alle Bauwerke im Hafengebiet“, mit 24
+weiteren Häusern von der Laurenskerk bis zur Rijnhavenbrug. Sie ist heraus: Wer beim
+Gehen das Verzeichnis öffnet, sucht die nächste Station und nicht ein Haus, das nicht
+auf der Route liegt. Die Daten der 24 stehen weiter in `NEWBUILDINGS`, samt
+Übersetzungen und Bildern, und ein Link auf `#slug` öffnet sie nach wie vor; sichtbar
+verlinkt sind sie nirgends mehr.
+
+Erscheinen tut der Knopf zusammen mit **3D** und **Smart-Track**, sobald die Karte
+einsetzt. Die Schwelle dafür ist `MAP_EIN` (70 % der Introhöhe) und gilt für alle
+drei: Vorher hing der Smart-Track-Schalter an einer eigenen Marke dicht vor der
+Kartenbühne und kam spürbar später als die beiden anderen.
+
 ## Sprache
 
 Die Seite startet auf **Deutsch** (`START_LANG` in `index.html`), wie das statische
@@ -272,7 +289,7 @@ je Sprache plus `hreflang`.
 
 ## Stimmen und Kommentare
 
-Sechs Gespräche aus dem Viertel stehen im Abschnitt **Stimmen** am Fuß der Seite und
+Fünf Gespräche aus dem Viertel stehen im Abschnitt **Stimmen** am Fuß der Seite und
 als kleine Sprechblasen im 3D-Modell. Beides kommt aus einem einzigen Array `STIMMEN`
 in `index.html`: Wer eine Stimme ergänzt, trägt sie dort ein, und Blase, Abschnitt und
 Beschriftung entstehen daraus. Jede Stimme führt Text und Kontext in allen drei
@@ -326,6 +343,24 @@ Die Datenschutzerklärung hat dafür einen eigenen Abschnitt in allen drei Sprac
 (Anbieter, übertragene Daten, Rechtsgrundlage Einwilligung, Freiwilligkeit von Name und
 E-Mail, keine automatische Veröffentlichung). Der frühere Satz „keine Formulare“ stimmte
 damit nicht mehr und ist ersetzt.
+
+## Kein Notizbuch
+
+Die Eintragstexte trugen aus der Vorbereitung Sätze mit sich, die ankündigten, was vor
+Ort noch zu prüfen sei: die Materialfrage beim Witte Huis, Höhe und Wohnungsschlüssel
+beim Red Apple, der belebte oder unbelebte Straßenraum am Wijnhaveneiland. Auf der
+Seite lasen sie sich wie ein fremdes Notizbuch. Sie sind heraus, nach einer festen
+Linie:
+
+* Ein Satz, der nur ankündigt, was vor Ort geprüft wird, fällt weg.
+* Ein Satz, der eine Feststellung im Notizton trägt („Wir notieren die städtebauliche
+  Pointe: …“), behält die Feststellung und verliert den Ton.
+* Nichts Neues wird behauptet. Wo ein Absatz nur aus Vorhaben bestand — Markthal,
+  dritter Absatz — bleibt allein der Satz, den die Verfasser selbst als Befund
+  geschrieben hatten.
+
+Jeder deutsche Satz steht zweimal im Dokument, in den Einträgen und im Sprachblock;
+Niederländisch und Englisch je einmal. Wer hier etwas ändert, ändert es viermal.
 
 ## Offline
 
@@ -470,8 +505,8 @@ Lizenzangaben. **Historisch bleiben** das Luftbild von 1940 und der Vergleich
 Damals/Heute beim Witte Huis: dessen beide Hälften sind aufeinander eingemessen, ein
 anders stehendes Foto würde den Regler entwerten.
 
-Die 24 Orte außerhalb der Route tragen weiterhin frei lizenzierte Bilder, jeweils am
-Bild ausgewiesen.
+Die 24 Bauwerke außerhalb der Route sind nicht mehr im Verzeichnis aufgeführt, siehe
+**Das Verzeichnis**. Ihre Daten stehen noch in `NEWBUILDINGS`.
 
 ## Vorläufig draußen
 
