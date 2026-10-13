@@ -737,6 +737,48 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
 #stop-counter { display:none; }
 
 /* ═══════════════════════════════════════════
+   KARTENEBENEN
+   Zwei Schalter unter der Karte: das Schema des Basisplans von 1946 und
+   eine gemeinfreie Karte von 1913. Immer nur eine, zwei uebereinander
+   waeren nicht mehr lesbar.
+═══════════════════════════════════════════ */
+#ebenen {
+  position:absolute; left:max(1rem, env(safe-area-inset-left)); bottom:1rem; z-index:7;
+  display:flex; gap:.4rem; flex-wrap:wrap; max-width:calc(100%% - 2rem);
+}
+.eb-schalter {
+  font-family:var(--font-mono); font-size:.56rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-1);
+  background:rgba(255,255,255,.95); border:1px solid var(--ink-1); border-radius:0;
+  padding:.42rem .7rem; cursor:pointer; -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation; white-space:nowrap;
+  opacity:0; pointer-events:none; transition:opacity .4s, background .2s;
+}
+#ebenen.show .eb-schalter { opacity:1; pointer-events:auto; }
+/* SVG kennt das HTML-Attribut hidden nicht, nur display. Deshalb hier
+   ausdruecklich, sonst stuenden beide Ebenen dauerhaft im Bild. */
+#ov-1946[hidden], #ov-hist[hidden] { display:none; }
+.eb-schalter[aria-pressed="true"] { background:var(--accent); }
+.eb-schalter:hover, .eb-schalter:focus-visible { background:var(--accent); outline:none; }
+.eb-quelle {
+  font-family:var(--font-mono); font-size:.5rem; letter-spacing:.08em;
+  color:var(--ink-2); background:rgba(255,255,255,.9); padding:.3rem .5rem;
+  max-width:26rem; line-height:1.5; text-transform:none;
+}
+.eb-quelle[hidden] { display:none; }
+/* Die Zeichnung selbst */
+.ov-achse { fill:none; stroke:var(--accent); stroke-opacity:.5; stroke-linecap:round;
+  stroke-linejoin:round; }
+.ov-kante { fill:none; stroke:var(--ink-1); stroke-width:2; stroke-dasharray:10 7; }
+.ov-flaeche { fill:var(--accent); fill-opacity:.14; stroke:var(--ink-1);
+  stroke-width:2; stroke-dasharray:6 5; }
+.ov-punkt { fill:var(--accent); stroke:var(--ink-1); stroke-width:3; }
+.ov-text { font-family:var(--font-mono); font-size:19px; letter-spacing:1.5px;
+  fill:var(--ink-1); paint-order:stroke; stroke:var(--paper-0); stroke-width:5;
+  text-transform:uppercase; }
+.ov-text.klein { font-size:16px; }
+
+/* ═══════════════════════════════════════════
    BASISPLAN + FAZIT
    Erben die Flaeche von .route-read. Eigen ist nur das Urteil: ein
    gelb markierter Satz, der haelt, was der Abschnitt behauptet.
@@ -1749,6 +1791,24 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
      es ein Vielfaches. preserveAspectRatio="none" ist richtig: Das Bild
      deckt den viewBox-Raum genau ab, es wird nichts verzerrt. -->
 <image class="plan-bild" href="img/schwarzplan.webp" x="0" y="0" width="3010" height="2175" preserveAspectRatio="none"/>
+    <!-- Zuschaltbare Ebenen. Die historische Karte liegt als Bild, das Schema
+         von 1946 als eigene Zeichnung im selben Koordinatenraum. -->
+    <image id="ov-hist" href="img/plan-1913.webp" x="0" y="0" width="1233" height="1403"
+           transform="translate(797.0 476.5) scale(0.62310)" opacity=".9" hidden/>
+    <g id="ov-1946" hidden aria-hidden="true">
+      <path class="ov-achse" style="stroke-width:46" d="M718 544 L755 756 L787 985 L808 1163 L824 1256"/>
+      <path class="ov-achse" style="stroke-width:40" d="M603 1180 L876 1103 L1139 1052 L1455 1027 L1750 959 L1887 866"/>
+      <path class="ov-achse" style="stroke-width:34" d="M1260 1518 L1445 1459 L1655 1366 L1855 1281"/>
+      <path class="ov-flaeche" d="M1308 1095 L1539 1052 L1608 1247 L1455 1391 L1308 1315 Z"/>
+      <path class="ov-kante" d="M1208 1180 L1218 1315 L1234 1476"/>
+      <circle class="ov-punkt" cx="718" cy="544" r="30"/>
+      <text class="ov-text " x="762" y="554" text-anchor="start">HOFPLEIN</text>
+      <text class="ov-text " x="823" y="908" text-anchor="start">COOLSINGEL 80 M</text>
+      <text class="ov-text " x="1700" y="985" text-anchor="middle">BLAAK</text>
+      <text class="ov-text " x="1760" y="1330" text-anchor="middle">BOOMPJES</text>
+      <text class="ov-text klein" x="1182" y="1315" text-anchor="end">FENSTER ZUM FLUSS</text>
+      <text class="ov-text klein" x="1400" y="1360" text-anchor="middle">WIJNHAVEN: BÜROS 1946</text>
+    </g>
     </g>
     <path class="route-trail" id="routeTrail" d=""/>
     <g id="stop-markers"></g>
@@ -1765,6 +1825,14 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     </g>
   </svg>
   </div><!-- /map-svg-wrap -->
+  <!-- Schalter fuer die Kartenebenen. Stehen im Kartenfeld, erscheinen mit ihm. -->
+  <div id="ebenen">
+    <button class="eb-schalter" type="button" data-ebene="ov-1946" aria-pressed="false"
+            onclick="ebeneUm('ov-1946')">1946 Basisplan</button>
+    <button class="eb-schalter" type="button" data-ebene="ov-hist" aria-pressed="false"
+            onclick="ebeneUm('ov-hist')">1913 Plan</button>
+    <p class="eb-quelle" id="eb-quelle" hidden></p>
+  </div>
 </div><!-- /map-panel -->
 
 <!-- Touch-capture overlay, only active in track mode (touch-action:none prevents scroll) -->
@@ -3109,7 +3177,11 @@ function _computeStaticVB(){
   var ys = WAYPOINTS.map(function(w){ return w.y; });
   var x1 = Math.min.apply(null, xs) - 70, x2 = Math.max.apply(null, xs) + 150;
   var y1 = Math.min.apply(null, ys) - 80, y2 = Math.max.apply(null, ys) + 80;
-  MAP_STATIC_VB = _vbFit((x1 + x2) / 2, (y1 + y2) / 2, x2 - x1, y2 - y1);
+  /* Ein Viertel mehr Luft als der blosse Rahmen um die Route. Der groessere
+     Plan ist dafuer da, dass man sieht, woran die Route liegt. */
+  var LUFT = 1.25;
+  MAP_STATIC_VB = _vbFit((x1 + x2) / 2, (y1 + y2) / 2,
+                         (x2 - x1) * LUFT, (y2 - y1) * LUFT);
 }
 
 /* Zuschnitt nachholen, sobald das Layout steht oder sich das Fenster
@@ -3233,6 +3305,7 @@ function clearActiveStop(){
 function resetMap(){
   clearActiveStop();
   document.getElementById('nav-crumb').classList.remove('show');
+  if (typeof _ebenenZeigen === 'function') _ebenenZeigen(false);
   /* Der Routenpfad bleibt gezeichnet: die Karte ist eine Karte. */
 }
 
@@ -3328,6 +3401,7 @@ function onScroll(){
      dauerhaft unbedienbar und die Punkte lassen sich nicht antippen. */
   map.style.pointerEvents = '';
   document.getElementById('nav-crumb').classList.add('show');
+  if (typeof _ebenenZeigen === 'function') _ebenenZeigen(true);
   if (!mapShown) _mapSvg.setAttribute('viewBox', MAP_STATIC_VB);
 
   /* Erst kurz vor der Kartenbuehne wirklich einblenden */
@@ -3757,6 +3831,7 @@ function setLang(lang){
   /* Stimmen neu setzen; ein offenes Zitat wechselt gleich mit. */
   if (typeof _renderStimmen === 'function') _renderStimmen();
   if (typeof _stFormText === 'function') _stFormText();
+  if (typeof _ebeneQuelle === 'function') _ebeneQuelle();
   var _zb = document.getElementById('t3d-zitat');
   if (_zb && !_zb.hidden && _zb.dataset.stimme) zeigeStimme(_zb.dataset.stimme);
   document.querySelectorAll('.t3d-blase').forEach(function(b){
@@ -5431,6 +5506,53 @@ function _renderStimmen(){
    STIMMEN erst an dieser Stelle zugewiesen ist. */
 _renderStimmen();
 
+/* ── Kartenebenen ──
+   Zwei zuschaltbare Ebenen ueber dem Schwarzplan: das Schema des Basisplans
+   von 1946 als eigene Zeichnung und der Plan von 1913 als gefundene
+   historische Karte. Immer nur eine; zwei uebereinander sind nicht lesbar. */
+var EBENEN_QUELLE = {
+  'ov-1946': {
+    de: 'Eigene Zeichnung, schematisch: Achsen, Hofplein, Fenster zum Fluss und das Wijnhavengebiet als Bueroquartier. Kein Abbild des Originalplans.',
+    nl: 'Eigen tekening, schematisch: assen, Hofplein, venster naar de rivier en het Wijnhavengebied als kantoorwijk. Geen afbeelding van het originele plan.',
+    en: 'Own drawing, schematic: axes, Hofplein, window to the river and the Wijnhaven area as an office quarter. Not a reproduction of the original plan.'
+  },
+  'ov-hist': {
+    de: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, 1:2500. Stadsarchief Rotterdam ueber Wikimedia Commons, gemeinfrei. Ueber zwei Passpunkte eingepasst, nicht vermessen.',
+    nl: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, 1:2500. Stadsarchief Rotterdam via Wikimedia Commons, publiek domein. Op twee passpunten ingepast, niet ingemeten.',
+    en: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, 1:2500. Stadsarchief Rotterdam via Wikimedia Commons, public domain. Fitted on two control points, not surveyed.'
+  }
+};
+var _ebeneAktiv = null;
+
+function ebeneUm(id){
+  var neu = (_ebeneAktiv === id) ? null : id;
+  ['ov-1946', 'ov-hist'].forEach(function(k){
+    var el = document.getElementById(k);
+    /* hidden ist eine Eigenschaft von HTMLElement, nicht von SVGElement.
+       Im SVG muss das Attribut selbst gesetzt und entfernt werden. */
+    if (el){ if (k === neu) el.removeAttribute('hidden'); else el.setAttribute('hidden', ''); }
+    var kn = document.querySelector('.eb-schalter[data-ebene="' + k + '"]');
+    if (kn) kn.setAttribute('aria-pressed', String(k === neu));
+  });
+  _ebeneAktiv = neu;
+  _ebeneQuelle();
+}
+
+function _ebeneQuelle(){
+  var p = document.getElementById('eb-quelle');
+  if (!p) return;
+  var q = _ebeneAktiv && EBENEN_QUELLE[_ebeneAktiv];
+  p.textContent = q ? (q[currentLang] || q.de) : '';
+  p.hidden = !q;
+}
+
+/* Die Schalter erscheinen mit der Karte. Geschaltet wird in onScroll,
+   zusammen mit der Leiste, damit beide denselben Zeitpunkt haben. */
+function _ebenenZeigen(an){
+  var box = document.getElementById('ebenen');
+  if (box) box.classList.toggle('show', !!an);
+}
+
 /* ── Kommentar absenden ──
    Web3Forms nimmt die Felder per POST entgegen und schickt sie als E-Mail.
    Kein Skript des Anbieters auf der Seite, kein Cookie: nur dieser eine
@@ -5768,4 +5890,3 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
-
