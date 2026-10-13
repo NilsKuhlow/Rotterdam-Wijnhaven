@@ -60,26 +60,37 @@ Karte steht.
 
 ### Die Grundkarte
 
-Zugrunde liegt der eigene **Schwarzplan**, Stand September 2026. Er kam zuletzt als
-**Rasterbild** (3094 × 4724 px, 300 dpi) und liegt deshalb als `img/schwarzplan.webp`
-unter dem SVG, nicht mehr als Pfade darin. **Verlustfrei sind das 253 KB** — bei einer
-Strichzeichnung aus vier flachen Farben komprimiert verlustfrei besser als
-verlustbehaftet: dieselbe Datei mit q=90 wäre 1,4 MB, also fünfmal so groß.
+Zugrunde liegt der eigene **Schwarzplan**, Stand Oktober 2026. Die Fassung davor zeigte
+1307 × 1996 m und endete an der Maas. Auf den Wunsch, mehr von der Umgebung zu sehen,
+zeigt die aktuelle **3.928 × 2.837 m**, also rund das Neunfache der Fläche: die ganze
+Innenstadt, den Fluss und die Kop van Zuid.
 
-**Georeferenziert ist er gemessen, nicht geschätzt.** Das Bild trägt keine Georeferenz.
+Sie kommt als **Rasterbild** (A3, 4960 × 3507 px bei 300 dpi) und liegt deshalb als
+`img/schwarzplan.webp` unter dem SVG, nicht als Pfade darin. Auf die Zeichenfläche
+beschnitten sind das 4578 × 3307 px und **verlustfrei 612 KB**. Verlustbehaftet wäre
+dieselbe Datei mit q=90 bei 3,3 MB. Kurios, aber gemessen: Eine **halbierte Auflösung
+ist verlustfrei größer** als die volle (1,5 MB), weil das Verkleinern Zwischentöne
+erzeugt und die flache Farbigkeit zerstört, von der die Kompression lebt.
+
+**Georeferenziert ist sie gemessen, nicht geschätzt.** Das Bild trägt keine Georeferenz.
 Seine Wasserfläche wurde deshalb gegen die des alten OSM-Plans kreuzkorreliert, dessen
 Projektion bekannt war, mit mittelwertfreier und örtlich normierter Korrelation auf
-einer Kreisscheibe um die Wijnhaven. Das Maximum saß bei **0 Grad Drehung** und
-**1:4989**, also glatt **1:5000**, mit einer Korrelation von **0,93**. Die Seite deckt
-1307 × 1996 m.
+einer Kreisscheibe um die Wijnhaven. Weil der Ausschnitt größer ist, wird die Vorlage
+nicht mehr mit festem Radius in Metern gebaut, sondern mit festem Radius im Suchraster:
+So bleibt sie bei jedem geprüften Maßstab gleich aussagekräftig. Das Maximum saß bei
+**−0,1 Grad Drehung** und **1:10134**, einem krummen Maßstab, wie ihn ein auf das Blatt
+gerechneter Export ergibt; die Korrelation liegt bei **0,65**, niedriger als die 0,93 der
+engeren Fassung, weil der neue Plan weit mehr Wasser zeigt, als die Vergleichsgeometrie
+abdeckt.
 
-Gegenprobe an den sieben Bauten: **fünf liegen im Gebäude**, die beiden anderen 4 m und
-11 m daneben (Kubuswoningen, wo zwischen den Würfeln Lücken sind). Das ist feiner als
-GPS vor Ort.
+Gegenprobe an den sieben Bauten, und die zählt: **fünf liegen im Gebäude**, die beiden
+anderen 6 m und 13 m daneben (Kubuswoningen, wo zwischen den Würfeln Lücken sind). Sie
+benutzt andere Information als die Korrelation und fällt genauso gut aus wie bei der
+engeren Fassung.
 
 Eine SVG-Einheit bleibt **1,3048 m** wie in allen Fassungen davor. Nur so gelten
 Punktgrößen, Strichstärken, Beschriftungen und der 50-m-Radius unverändert weiter;
-geändert haben sich allein der Ursprung (`gpsToSvg`) und die Planmaße (`MAP_VW` 1002,
+geändert haben sich allein der Ursprung (`gpsToSvg`) und die Planmaße (`MAP_VW` 3010,
 `MAP_VH` 1530).
 
 **Was Raster statt Vektor kostet:** Bei stärkstem Zoom (`MIN_VB_W` 80 Einheiten, also

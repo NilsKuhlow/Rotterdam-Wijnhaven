@@ -1704,7 +1704,7 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
      Vektor; verlustfrei als WebP sind es 250 KB, verlustbehaftet waere
      es ein Vielfaches. preserveAspectRatio="none" ist richtig: Das Bild
      deckt den viewBox-Raum genau ab, es wird nichts verzerrt. -->
-<image class="plan-bild" href="img/schwarzplan.webp" x="0" y="0" width="1002" height="1530" preserveAspectRatio="none"/>
+<image class="plan-bild" href="img/schwarzplan.webp" x="0" y="0" width="3010" height="2175" preserveAspectRatio="none"/>
     </g>
     <path class="route-trail" id="routeTrail" d=""/>
     <g id="stop-markers"></g>
@@ -2925,8 +2925,8 @@ var VB = [
 /* Die 2D-Karte ist statisch: sie folgt dem Scroll NICHT mehr, sondern zeigt
    durchgehend die ganze Route. Bewegt wird sie nur im Track-Modus (GPS),
    danach kehrt sie hierher zurueck. Der Fokus liegt auf der 3D-Karte. */
-var MAP_STATIC_VB = "257 385 494 649";   /* Startwert, bis _computeStaticVB() misst */
-var MAP_VW = 1002, MAP_VH = 1530;   /* Schwarzplan-Masse (viewBox-Raum), 1:5000 */
+var MAP_STATIC_VB = "1307 694 494 1070";   /* Startwert, bis _computeStaticVB() misst */
+var MAP_VW = 3010, MAP_VH = 2175;   /* Schwarzplan-Masse (viewBox-Raum), 1:10134 */
 
 /* ═══════════════════════════════
    HELPERS
@@ -3989,18 +3989,19 @@ function nearestStop(lat, lon){
   return { idx:best, dist:Math.round(bestD) };
 }
 /* GPS auf den Koordinatenraum des Schwarzplans abbilden.
-   Der Plan liegt als Rasterbild vor, 3094 x 4724 px bei 300 dpi, im
-   Massstab 1:5000 und nordorientiert. Wo er liegt, wurde gemessen und
-   nicht geschaetzt: seine Wasserflaeche gegen die des alten OSM-Plans
-   kreuzkorreliert, mittelwertfrei und oertlich normiert. Das Maximum sass
-   bei 0 Grad Drehung und 1:4989, also glatt 1:5000, mit einer Korrelation
-   von 0,93. Gegenprobe: alle sieben Bauten liegen hoechstens 12 m neben
-   ihrem Hauskoerper.
+   Der Plan liegt als Rasterbild vor, 4578 x 3307 px bei 300 dpi, und zeigt
+   3.9 x 2.8 km: die Innenstadt, die Maas und die Kop van Zuid. Wo er
+   liegt, wurde gemessen und nicht geschaetzt: seine Wasserflaeche gegen
+   die des alten OSM-Plans kreuzkorreliert, mittelwertfrei und oertlich
+   normiert. Das Maximum sass bei -0.1 Grad Drehung und 1:10134, einem
+   krummen Massstab, wie ihn ein auf das Blatt gerechneter Export ergibt.
+   Gegenprobe: fuenf der sieben Bauten liegen im eigenen Hauskoerper, die
+   beiden anderen 6 m und 13 m daneben.
    Eine SVG-Einheit bleibt 1,3048 m wie zuvor, damit Punktgroessen,
    Strichstaerken und der 50-m-Radius unveraendert gelten. */
 function gpsToSvg(lat, lon) {
-  var x = (lon - 4.480310) * 68671.61405376215 * 0.7664240847195386;
-  var y = (51.925598 - lat) * 110540 * 0.7664240847195386;
+  var x = (lon - 4.460351) * 68671.61405376215 * 0.7664240847195386;
+  var y = (51.931723 - lat) * 110540 * 0.7664240847195386;
   return { x: x, y: y };
 }
 
