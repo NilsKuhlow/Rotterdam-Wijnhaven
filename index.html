@@ -744,60 +744,55 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
 ═══════════════════════════════════════════ */
 #ebenen {
   position:absolute; left:max(1rem, env(safe-area-inset-left)); bottom:1rem; z-index:7;
-  display:flex; gap:.4rem; flex-wrap:wrap; max-width:calc(100%% - 2rem);
+  display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;
+  max-width:calc(100% - 2rem);
+  opacity:0; pointer-events:none; transition:opacity .4s;
 }
+#ebenen.show { opacity:1; pointer-events:auto; }
+.eb-regler {
+  display:flex; align-items:center; gap:.55rem;
+  background:rgba(255,255,255,.95); border:1px solid var(--ink-1);
+  padding:.4rem .7rem;
+}
+.eb-mark, .eb-wert {
+  font-family:var(--font-mono); font-size:.56rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-1); white-space:nowrap;
+}
+.eb-wert { min-width:4.2ch; text-align:right; font-variant-numeric:tabular-nums; }
+/* Der Regler. Eigene Spur und eigener Griff, damit er zum Haus passt:
+   rechte Winkel, Haarlinie, Gelb nur fuer den Griff. */
+#eb-deckung {
+  -webkit-appearance:none; appearance:none; width:min(42vw, 9rem); height:16px;
+  background:none; cursor:pointer; margin:0;
+}
+#eb-deckung::-webkit-slider-runnable-track {
+  height:4px; background:var(--paper-3); border:1px solid var(--ink-1);
+}
+#eb-deckung::-moz-range-track {
+  height:4px; background:var(--paper-3); border:1px solid var(--ink-1);
+}
+#eb-deckung::-webkit-slider-thumb {
+  -webkit-appearance:none; width:14px; height:14px; margin-top:-6px;
+  background:var(--accent); border:1px solid var(--ink-1); border-radius:0;
+}
+#eb-deckung::-moz-range-thumb {
+  width:14px; height:14px; background:var(--accent);
+  border:1px solid var(--ink-1); border-radius:0;
+}
+#eb-deckung:focus-visible { outline:2px solid var(--ink-1); outline-offset:3px; }
 .eb-schalter {
   font-family:var(--font-mono); font-size:.56rem; letter-spacing:var(--tr-label);
-  text-transform:uppercase; color:var(--ink-1);
-  background:rgba(255,255,255,.95); border:1px solid var(--ink-1); border-radius:0;
-  padding:.42rem .7rem; cursor:pointer; -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation; white-space:nowrap;
-  opacity:0; pointer-events:none; transition:opacity .4s, background .2s;
+  text-transform:uppercase; border-radius:0; padding:.45rem .8rem; cursor:pointer;
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation; white-space:nowrap;
 }
-#ebenen.show .eb-schalter { opacity:1; pointer-events:auto; }
-/* SVG kennt das HTML-Attribut hidden nicht, nur display. Deshalb hier
-   ausdruecklich, sonst stuenden beide Ebenen dauerhaft im Bild. */
-#ov-1946[hidden] { display:none; }
-.eb-schalter[aria-pressed="true"] { background:var(--accent); }
-.eb-schalter:hover, .eb-schalter:focus-visible { background:var(--accent); outline:none; }
+/* Der Kapitelknopf schaltet nichts, er oeffnet. Deshalb ohne Zustand. */
+.eb-kapitel { background:var(--ink-1); color:var(--paper-0); border:1px solid var(--ink-1); }
+.eb-kapitel:hover, .eb-kapitel:focus-visible { background:var(--accent); color:var(--ink-1); outline:none; }
 .eb-quelle {
-  font-family:var(--font-mono); font-size:.5rem; letter-spacing:.08em;
-  color:var(--ink-2); background:rgba(255,255,255,.9); padding:.3rem .5rem;
-  max-width:26rem; line-height:1.5; text-transform:none;
+  font-family:var(--font-mono); font-size:.5rem; letter-spacing:.06em;
+  color:var(--ink-2); background:rgba(255,255,255,.92); padding:.3rem .5rem;
+  max-width:28rem; line-height:1.55; text-transform:none; margin:0;
 }
-.eb-quelle[hidden] { display:none; }
-/* Die Zeichnung von 1946. Mittel einer Planzeichnung: Band und Achslinie,
-   Schraffur fuer die Festlegung, Ring fuer den Kreisel. */
-.ov-band   { fill:none; stroke:var(--accent); stroke-opacity:.42;
-             stroke-linecap:butt; stroke-linejoin:round; }
-.ov-achse  { fill:none; stroke:var(--ink-1); stroke-opacity:.55; stroke-width:1.6;
-             stroke-dasharray:22 10 4 10; stroke-linecap:butt; }
-.ov-zone   { fill:url(#ov-schraffur); stroke:var(--ink-1); stroke-width:2.2; }
-.ov-zone2  { fill:url(#ov-schraffur2); stroke:var(--ink-1); stroke-width:2.2; }
-/* Die Brandgrenze von 1940: die eine Linie, die den ganzen Plan erklaert. */
-.ov-brand  { fill:none; stroke:var(--ink-1); stroke-width:4.5;
-             stroke-dasharray:26 12; stroke-linejoin:round; }
-.ov-ring   { fill:var(--paper-0); stroke:var(--ink-1); stroke-width:3.5; }
-.ov-kern   { fill:var(--accent); stroke:none; }
-.ov-korr   { fill:none; stroke:var(--ink-1); stroke-width:2.2; }
-.ov-text   { font-family:var(--font-mono); font-size:17px; letter-spacing:1.4px;
-             fill:var(--ink-1); paint-order:stroke; stroke:var(--paper-0);
-             stroke-width:5; stroke-linejoin:round; }
-.ov-text.klein { font-size:14px; }
-.ov-fuehr  { stroke:var(--ink-1); stroke-width:1.4; fill:none; }
-/* Legende, als HTML neben den Schaltern: im Plan wuerde sie mitzoomen. */
-#eb-legende { display:none; gap:.5rem 1rem; flex-wrap:wrap; align-items:center;
-  background:rgba(255,255,255,.92); padding:.45rem .6rem; max-width:26rem; }
-#ebenen.zeigt-1946 #eb-legende { display:flex; }
-.lg-eintrag { display:flex; align-items:center; gap:.4rem;
-  font-family:var(--font-mono); font-size:.52rem; letter-spacing:.08em;
-  text-transform:uppercase; color:var(--ink-2); white-space:nowrap; }
-.lg-probe { width:22px; height:11px; flex:0 0 auto; border:1px solid var(--ink-1); }
-.lg-probe.band { background:rgba(255,237,41,.45); border-color:rgba(10,10,10,.25); }
-.lg-probe.zone { background:repeating-linear-gradient(45deg, var(--ink-1) 0 1px,
-  transparent 1px 5px); }
-.lg-probe.ring { border-radius:50%; width:12px; height:12px; background:var(--accent); }
-.lg-probe.brand { border:none; height:0; border-top:3px dashed var(--ink-1); }
 
 /* ═══════════════════════════════════════════
    BASISPLAN + FAZIT
@@ -1812,74 +1807,15 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
      es ein Vielfaches. preserveAspectRatio="none" ist richtig: Das Bild
      deckt den viewBox-Raum genau ab, es wird nichts verzerrt. -->
 <image class="plan-bild" href="img/schwarzplan.webp" x="0" y="0" width="3010" height="2175" preserveAspectRatio="none"/>
+    <!-- Wiederaufbauschicht: die roten Bauten der Revisiekarte, aus ihr
+         geloest, alles andere durchsichtig. Am Wasser eingemessen,
+         nordgerichtet, 2.270 m je Bildpunkt, Korrelation 0.44. Die Deckung
+         stellt der Regler unter der Karte, Startwert 0. -->
+    <image id="ov-revisie" href="img/wiederaufbau.webp" x="0" y="0"
+           width="1600" height="1248" opacity="0"
+           transform="translate(441.4 -93.1) scale(1.73952)" aria-hidden="true"/>
     <!-- Zuschaltbare Ebenen. Die historische Karte liegt als Bild, das Schema
          von 1946 als eigene Zeichnung im selben Koordinatenraum. -->
-    <g id="ov-1946" hidden aria-hidden="true">
-      <defs>
-        <pattern id="ov-schraffur" patternUnits="userSpaceOnUse" width="14" height="14"
-                 patternTransform="rotate(45)">
-          <line x1="0" y1="0" x2="0" y2="14" stroke="#0A0A0A" stroke-width="1.4" stroke-opacity=".5"/>
-        </pattern>
-        <pattern id="ov-schraffur2" patternUnits="userSpaceOnUse" width="14" height="14"
-                 patternTransform="rotate(-45)">
-          <line x1="0" y1="0" x2="0" y2="14" stroke="#0A0A0A" stroke-width="1.4" stroke-opacity=".5"/>
-        </pattern>
-        <marker id="ov-pfeil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5"
-                markerHeight="5" orient="auto-start-reverse">
-          <path d="M0 1 L9 5 L0 9 Z" fill="#0A0A0A"/>
-        </marker>
-      </defs>
-
-      <!-- Die Flaeche, die am 14. Mai 1940 ausbrannte. Sie ist der Grund fuer
-           alles Weitere: Der Basisplan baut genau dieses Gebiet wieder auf.
-           Verlauf schematisch, aus Koordinaten gesetzt. -->
-      <path class="ov-brand" d="M718 578 L1087 595 L1445 722 L1782 892 L1866 1180 L1508 1417 L1245 1544 L1139 1510 L929 1264 L745 1180 L571 951 L508 722 Z"/>
-
-      <!-- Die Achsen. Band = Breite, Strichpunktlinie = Fuehrung. Der
-           Coolsingel traegt seine belegten 80 m massstaeblich. -->
-      <path class="ov-band" style="stroke-width:61.3" d="M718 544 L755 756 L787 985 L808 1163 L824 1256"/>
-      <path class="ov-band" style="stroke-width:34.5" d="M603 1180 L876 1103 L1139 1052 L1455 1027 L1750 959 L1887 866"/>
-      <path class="ov-band" style="stroke-width:30.7" d="M1260 1518 L1445 1459 L1655 1366 L1855 1281"/>
-      <path class="ov-band" style="stroke-width:38.3" d="M455 612 L718 587 L982 603 L1182 637"/>
-      <path class="ov-band" style="stroke-width:26.8" d="M1087 595 L1445 722 L1708 841"/>
-      <path class="ov-achse" d="M718 544 L755 756 L787 985 L808 1163 L824 1256"/>
-      <path class="ov-achse" d="M603 1180 L876 1103 L1139 1052 L1455 1027 L1750 959 L1887 866"/>
-      <path class="ov-achse" d="M1260 1518 L1445 1459 L1655 1366 L1855 1281"/>
-      <path class="ov-achse" d="M455 612 L718 587 L982 603 L1182 637"/>
-      <path class="ov-achse" d="M1087 595 L1445 722 L1708 841"/>
-
-      <!-- Zweckbestimmungen: das Wijnhavengebiet den Bueros der Schifffahrt,
-           die Lijnbaan dem Einkaufen. Schraffur statt Tonflaeche, damit der
-           Schwarzplan darunter lesbar bleibt. -->
-      <path class="ov-zone" d="M1308 1095 L1539 1052 L1608 1247 L1455 1391 L1308 1315 Z"/>
-      <path class="ov-zone2" d="M587 654 L750 654 L766 942 L603 942 Z"/>
-
-      <!-- Hofplein, Kreisel am Kopf des Coolsingel -->
-      <circle class="ov-ring" cx="718" cy="544" r="26"/>
-      <circle class="ov-kern" cx="718" cy="544" r="9"/>
-
-      <!-- Fenster zum Fluss am Leuvehaven: der Plan hielt hier die Sicht frei. -->
-      <path class="ov-korr" d="M1179 1180 L1201 1476"/>
-      <path class="ov-korr" d="M1237 1180 L1267 1476"/>
-      <path class="ov-korr" marker-end="url(#ov-pfeil)" style="stroke-dasharray:9 7" d="M1208 1215 L1234 1451"/>
-
-      <!-- Beschriftung -->
-      <path class="ov-fuehr" d="M718 544 L818 518"/>
-      <text class="ov-text" x="818" y="518" text-anchor="start">HOFPLEIN</text>
-      <path class="ov-fuehr" d="M787 985 L863 969"/>
-      <text class="ov-text" x="863" y="969" text-anchor="start">COOLSINGEL 80 M</text>
-      <text class="ov-text" x="1750" y="929" text-anchor="middle">BLAAK</text>
-      <text class="ov-text" x="1751" y="1412" text-anchor="middle">BOOMPJES</text>
-      <text class="ov-text" x="982" y="575" text-anchor="middle">WEENA</text>
-      <text class="ov-text" x="1531" y="702" text-anchor="start">GOUDSESINGEL</text>
-      <path class="ov-fuehr" d="M1208 1315 L1156 1319"/>
-      <text class="ov-text klein" x="1156" y="1319" text-anchor="end">FENSTER ZUM FLUSS</text>
-      <text class="ov-text klein" x="1434" y="1247" text-anchor="middle">WIJNHAVEN</text>
-      <text class="ov-text klein" x="1434" y="1269" text-anchor="middle">BÜROQUARTIER</text>
-      <text class="ov-text klein" x="676" y="798" text-anchor="middle">LIJNBAAN</text>
-      <text class="ov-text klein" x="676" y="820" text-anchor="middle">EINKAUFEN</text>
-      <text class="ov-text klein" x="1111" y="556" text-anchor="start">BRANDGRENZE 14. MAI 1940</text>
-    </g>
     </g>
     <path class="route-trail" id="routeTrail" d=""/>
     <g id="stop-markers"></g>
@@ -1897,16 +1833,19 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   </svg>
   </div><!-- /map-svg-wrap -->
   <!-- Schalter fuer die Kartenebenen. Stehen im Kartenfeld, erscheinen mit ihm. -->
+  <!-- Regler fuer die Wiederaufbauschicht und der Griff zum Kapitel. Ein
+       Regler statt eines Schalters, weil sich zwei Schichten nur im
+       Uebergang vergleichen lassen. Startwert 0. -->
   <div id="ebenen">
-    <button class="eb-schalter" type="button" data-ebene="ov-1946" aria-pressed="false"
-            onclick="ebeneUm('ov-1946')">1946 Basisplan</button>
-    <div id="eb-legende" aria-hidden="true">
-    <span class="lg-eintrag"><span class="lg-probe band"></span>Verkehrsachse</span>
-    <span class="lg-eintrag"><span class="lg-probe zone"></span>Büroquartier</span>
-    <span class="lg-eintrag"><span class="lg-probe ring"></span>Hofplein</span>
-    <span class="lg-eintrag"><span class="lg-probe brand"></span>Brandgrenze 1940</span>
-  </div>
-  <p class="eb-quelle" id="eb-quelle" hidden></p>
+    <div class="eb-regler">
+      <label class="eb-mark" for="eb-deckung" id="eb-mark">Wiederaufbau</label>
+      <input type="range" id="eb-deckung" min="0" max="100" step="1" value="0"
+             aria-describedby="eb-quelle" oninput="deckungSetzen(this.value)"/>
+      <output class="eb-wert" id="eb-wert" for="eb-deckung">0 %</output>
+    </div>
+    <button class="eb-schalter eb-kapitel" type="button" id="eb-kapitel"
+            onclick="openBasisplan()">Kapitel 1946</button>
+    <p class="eb-quelle" id="eb-quelle"></p>
   </div>
 </div><!-- /map-panel -->
 
@@ -2186,59 +2125,6 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <!-- Stimmen aus dem Viertel. Inhalt kommt aus STIMMEN und wird von
      _renderStimmen() gesetzt, damit eine neue Stimme nur an einer Stelle
      eingetragen werden muss. -->
-<!-- Der Basisplan von 1946: das Scharnier, auf das sich die sieben
-     Eintraege beziehen. Dreisprachig ueber data-lang-block. -->
-<section class="basisplan" id="basisplan" aria-labelledby="bp-title">
-  <div class="bp-body" data-lang-block="de" lang="de">
-  <p class="bp-eyebrow">Kapitel · 1946</p>
-  <h2 class="bp-title">Der Basisplan von Van Traa</h2>
-  <p class="bp-text">Am <strong>14. Mai 1940</strong> zerstörte die Bombardierung das Zentrum Rotterdams nahezu vollständig. Im Wijnhavengebiet überstanden nur die Regentessebrug und das Gebäude von R. Mees die Feuersbrunst. Mit der gewachsenen Schichtung von dreieinhalb Jahrhunderten verschwand auch die Selbstverständlichkeit der bebauten Kante: Was an ihre Stelle treten sollte, wurde zu einer planerischen Entscheidung.</p>
-  <p class="bp-text">Zwei Antworten standen gegeneinander. W. G. Witteveen hatte noch während des Krieges einen dreidimensional durchgestalteten Plan vorgelegt, der die künftige Stadt als Bild vorwegnahm. An seine Stelle trat der <strong>Basisplan von Cornelis van Traa, angenommen am 28. Mai 1946</strong>. Der entscheidende Unterschied lag nicht im Inhalt, sondern in der Methode: Van Traa legte Funktionen, Achsen und Baufelder fest und ließ die konkrete Bebauung offen. Nicht die Form, sondern die Regel wurde zum Planungsinstrument.</p>
-  <p class="bp-text">Inhaltlich folgte er dem Leitbild der <strong>funktionsgetrennten Stadt</strong>. Die Innenstadt wurde für Handel, Verwaltung und Verkehr reserviert, das Wohnen an den Stadtrand verlagert. Breite Achsen ordneten das neue Zentrum; der Coolsingel wurde von 44 auf <strong>80 Meter</strong> verbreitert. Für das Verhältnis von Stadt und Wasser traf der Plan eine bewusste Setzung: Er suchte den Kontrast zwischen der Weite der Maas und einer hohen, rhythmisch gegliederten Uferbebauung und sah am Leuvehaven ausdrücklich ein <strong>Fenster zum Fluss</strong> vor. Das Wasser wird damit zum Gegenüber und zur Aussicht, nicht mehr zur Arbeitsfläche.</p>
-  <p class="bp-text">Für das Wijnhavengebiet bedeutete das eine eindeutige Zweckbestimmung: Büros und Geschäftsbauten des Schifffahrtssektors. Bis Anfang der 1960er Jahre war daraus ein <strong>nahezu reines Büroquartier ohne eine einzige Wohnung</strong> geworden. Genau dieser Zustand ist der Ausgangspunkt, gegen den alle späteren Bauten dieses Rundgangs anarbeiten.</p>
-  <p class="bp-urteil">Der Basisplan ist der Urahn des Masterplans, der das Wijnhaveneiland heute bestimmt. Beide steuern die Stadt über Regeln statt über ein Bild. Was 1946 die Funktionstrennung war, ist seit 1993 die Volumenregel. Und beide lassen dieselbe Frage offen: was im Erdgeschoss passiert.</p>
-  <figure class="bp-bild">
-    <img src="img/plan-1913.webp" width="1233" height="1403" loading="lazy"
-         alt="Plan der Rotterdamer Innenstadt von 1913 mit den geplanten Verkehrsdurchbruechen in Rot"/>
-    <figcaption class="bp-bildunter">Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, Maßstab 1:2500. Die Innenstadt, wie sie bis zum 14. Mai 1940 bestand: die Waterstad mit ihren Hafenbecken, der noch schmale Coolsingel, die dichte Parzellierung rund um die Laurenskerk. Rot eingetragen sind die damals geplanten Verkehrsdurchbrüche, darunter die Verbreiterung des Coolsingel, die der Basisplan 1946 auf 80 Meter fortschrieb.</figcaption>
-    <p class="bp-bildquelle">Stadsarchief Rotterdam, Sammlung Karten und Pläne 1980-353, über Wikimedia Commons. Gemeinfrei, anonymes Werk, Schutzfrist abgelaufen. Nicht eingemessen: Das Blatt liegt hier als Abbildung und nicht als Ebene über dem Plan, weil sich außer der Laurenskerk kein Punkt zweifelsfrei wiederfinden lässt.</p>
-  </figure>
-  <p class="bp-quelle">Quellen: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). Ausführlich in der Begleitarbeit, Kapitel 4.</p>
-  </div>
-  <div class="bp-body" data-lang-block="nl" lang="nl" hidden>
-  <p class="bp-eyebrow">Hoofdstuk · 1946</p>
-  <h2 class="bp-title">Het Basisplan van Van Traa</h2>
-  <p class="bp-text">Op <strong>14 mei 1940</strong> verwoestte het bombardement het centrum van Rotterdam vrijwel volledig. In het Wijnhavengebied doorstonden alleen de Regentessebrug en het gebouw van R. Mees de vuurzee. Met de gegroeide gelaagdheid van drieënhalve eeuw verdween ook de vanzelfsprekendheid van de bebouwde kade: wat ervoor in de plaats moest komen, werd een planologisch besluit.</p>
-  <p class="bp-text">Twee antwoorden stonden tegenover elkaar. W. G. Witteveen had tijdens de oorlog een driedimensionaal uitgewerkt plan gemaakt dat de toekomstige stad als beeld vooruitnam. Daarvoor in de plaats kwam het <strong>Basisplan van Cornelis van Traa, aangenomen op 28 mei 1946</strong>. Het beslissende verschil lag niet in de inhoud maar in de methode: Van Traa legde functies, assen en bouwvelden vast en liet de concrete bebouwing open. Niet de vorm maar de regel werd het planningsinstrument.</p>
-  <p class="bp-text">Inhoudelijk volgde hij het beeld van de <strong>functiegescheiden stad</strong>. De binnenstad werd gereserveerd voor handel, bestuur en verkeer, het wonen verhuisde naar de rand. Brede assen ordenden het nieuwe centrum; de Coolsingel werd van 44 naar <strong>80 meter</strong> verbreed. Voor de verhouding van stad en water deed het plan een bewuste keuze: het zocht het contrast tussen de weidsheid van de Maas en een hoge, ritmisch gelede oeverbebouwing en voorzag bij de Leuvehaven uitdrukkelijk een <strong>venster naar de rivier</strong>. Het water wordt daarmee tegenover en uitzicht, niet langer werkvloer.</p>
-  <p class="bp-text">Voor het Wijnhavengebied betekende dat een eenduidige bestemming: kantoren en bedrijfsgebouwen van de scheepvaartsector. Begin jaren zestig was daaruit een <strong>vrijwel zuivere kantoorwijk zonder één woning</strong> ontstaan. Juist die toestand is het vertrekpunt waar alle latere gebouwen van deze rondgang tegenin werken.</p>
-  <p class="bp-urteil">Het Basisplan is de stamvader van het masterplan dat het Wijnhaveneiland vandaag bepaalt. Beide sturen de stad met regels in plaats van met een beeld. Wat in 1946 de functiescheiding was, is sinds 1993 de volumeregel. En beide laten dezelfde vraag open: wat er op de begane grond gebeurt.</p>
-  <figure class="bp-bild">
-    <img src="img/plan-1913.webp" width="1233" height="1403" loading="lazy"
-         alt="Plan der Rotterdamer Innenstadt von 1913 mit den geplanten Verkehrsdurchbruechen in Rot"/>
-    <figcaption class="bp-bildunter">Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, schaal 1:2500. De binnenstad zoals zij tot 14 mei 1940 bestond: de Waterstad met haar havenbekkens, de nog smalle Coolsingel, de dichte parcellering rond de Laurenskerk. In rood de toen geplande verkeersdoorbraken, waaronder de verbreding van de Coolsingel die het Basisplan in 1946 tot 80 meter doortrok.</figcaption>
-    <p class="bp-bildquelle">Stadsarchief Rotterdam, collectie kaarten en plattegronden 1980-353, via Wikimedia Commons. Publiek domein, anoniem werk, beschermingstermijn verstreken. Niet ingemeten: het blad staat hier als afbeelding en niet als laag over de kaart, omdat buiten de Laurenskerk geen punt eenduidig terug te vinden is.</p>
-  </figure>
-  <p class="bp-quelle">Bronnen: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). Uitvoeriger in de begeleidende scriptie, hoofdstuk 4.</p>
-  </div>
-  <div class="bp-body" data-lang-block="en" lang="en" hidden>
-  <p class="bp-eyebrow">Chapter · 1946</p>
-  <h2 class="bp-title">Van Traa's Basisplan</h2>
-  <p class="bp-text">On <strong>14 May 1940</strong> the bombing destroyed the centre of Rotterdam almost completely. In the Wijnhaven area only the Regentessebrug and the R. Mees building survived the firestorm. With three and a half centuries of grown layering, the self-evidence of the built edge disappeared as well: what should take its place became a planning decision.</p>
-  <p class="bp-text">Two answers stood against each other. During the war W. G. Witteveen had produced a fully three-dimensional plan that anticipated the future city as an image. In its place came the <strong>Basisplan by Cornelis van Traa, adopted on 28 May 1946</strong>. The decisive difference lay not in the content but in the method: Van Traa fixed functions, axes and building fields and left the actual buildings open. Not form but rule became the instrument of planning.</p>
-  <p class="bp-text">In substance it followed the model of the <strong>functionally separated city</strong>. The inner city was reserved for trade, administration and traffic, housing moved to the edge. Wide axes ordered the new centre; the Coolsingel was widened from 44 to <strong>80 metres</strong>. On the relation of city and water the plan made a deliberate choice: it sought the contrast between the breadth of the Maas and a tall, rhythmically articulated riverfront, and at the Leuvehaven it explicitly provided a <strong>window to the river</strong>. The water thereby becomes a counterpart and a view, no longer a working surface.</p>
-  <p class="bp-text">For the Wijnhaven area this meant an unambiguous designation: offices and commercial buildings of the shipping sector. By the early 1960s it had become an <strong>almost purely office quarter without a single dwelling</strong>. Precisely that state is the starting point against which every later building on this walk works.</p>
-  <p class="bp-urteil">The Basisplan is the ancestor of the masterplan that governs the Wijnhaveneiland today. Both steer the city by rules rather than by an image. What in 1946 was the separation of functions has since 1993 been the volume rule. And both leave the same question open: what happens at ground level.</p>
-  <figure class="bp-bild">
-    <img src="img/plan-1913.webp" width="1233" height="1403" loading="lazy"
-         alt="Plan der Rotterdamer Innenstadt von 1913 mit den geplanten Verkehrsdurchbruechen in Rot"/>
-    <figcaption class="bp-bildunter">Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, scale 1:2500. The inner city as it stood until 14 May 1940: the Waterstad with its harbour basins, the still narrow Coolsingel, the dense plot structure around the Laurenskerk. In red, the traffic breakthroughs planned at the time, among them the widening of the Coolsingel that the Basisplan carried on to 80 metres in 1946.</figcaption>
-    <p class="bp-bildquelle">Stadsarchief Rotterdam, collection of maps and plans 1980-353, via Wikimedia Commons. Public domain, anonymous work, term expired. Not surveyed: the sheet appears here as a figure and not as a layer over the map, because apart from the Laurenskerk no point can be identified unambiguously.</p>
-  </figure>
-  <p class="bp-quelle">Sources: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). In detail in the accompanying thesis, chapter 4.</p>
-  </div>
-</section>
-
 <section class="stimmen" id="stimmen" aria-labelledby="st-title">
   <h2 class="st-title" id="st-title">Stimmen aus dem Viertel</h2>
   <p class="st-lead"></p>
@@ -3924,7 +3810,7 @@ function setLang(lang){
   /* Stimmen neu setzen; ein offenes Zitat wechselt gleich mit. */
   if (typeof _renderStimmen === 'function') _renderStimmen();
   if (typeof _stFormText === 'function') _stFormText();
-  if (typeof _ebeneQuelle === 'function') _ebeneQuelle();
+  if (typeof _ebeneTexte === 'function') _ebeneTexte();
   var _zb = document.getElementById('t3d-zitat');
   if (_zb && !_zb.hidden && _zb.dataset.stimme) zeigeStimme(_zb.dataset.stimme);
   document.querySelectorAll('.t3d-blase').forEach(function(b){
@@ -5599,67 +5485,109 @@ function _renderStimmen(){
    STIMMEN erst an dieser Stelle zugewiesen ist. */
 _renderStimmen();
 
-/* ── Kartenebenen ──
-   Zwei zuschaltbare Ebenen ueber dem Schwarzplan: das Schema des Basisplans
-   von 1946 als eigene Zeichnung und der Plan von 1913 als gefundene
-   historische Karte. Immer nur eine; zwei uebereinander sind nicht lesbar. */
-var EBENEN_QUELLE = {
-  'ov-1946': {
-    de: 'Eigene Zeichnung, schematisch: die Brandgrenze vom 14. Mai 1940, die Achsen Coolsingel, Weena, Blaak, Goudsesingel und Boompjes, das Hofplein, das Fenster zum Fluss und die Zweckbestimmungen Wijnhaven und Lijnbaan. Verl\u00e4ufe von Hand gesetzt, kein Abbild des Originalplans.',
-    nl: 'Eigen tekening, schematisch: de brandgrens van 14 mei 1940, de assen Coolsingel, Weena, Blaak, Goudsesingel en Boompjes, het Hofplein, het venster naar de rivier en de bestemmingen Wijnhaven en Lijnbaan. Trac\u00e9s met de hand gezet, geen afbeelding van het originele plan.',
-    en: 'Own drawing, schematic: the fire boundary of 14 May 1940, the axes Coolsingel, Weena, Blaak, Goudsesingel and Boompjes, the Hofplein, the window to the river and the designations Wijnhaven and Lijnbaan. Alignments set by hand, not a reproduction of the original plan.'
+/* ── Der Basisplan als Kapitel ──
+   Kein Abschnitt in der Seite mehr, sondern ein Eintrag wie die sieben
+   Bauten: Er oeffnet sich im selben Fenster und kostet in der Seite keine
+   Zeile. Die Texte stehen hier dreisprachig. */
+var BASISPLAN_TEXTE = {
+  de: {
+    name: 'Der Basisplan von Van Traa',
+    sub: 'Cornelis van Traa · angenommen 28. Mai 1946',
+    kopf: 'Die Innenstadt 1950: die ausgeräumte Fläche, auf der der Basisplan baute.',
+    bildunter: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, Maßstab 1:2500. Die Innenstadt, wie sie bis zum 14. Mai 1940 bestand: die Waterstad mit ihren Hafenbecken, der noch schmale Coolsingel, die dichte Parzellierung rund um die Laurenskerk. Rot eingetragen sind die damals geplanten Verkehrsdurchbrüche, darunter die Verbreiterung des Coolsingel, die der Basisplan 1946 auf 80 Meter fortschrieb.',
+    bildquelle: 'Stadsarchief Rotterdam, Sammlung Karten und Pläne 1980-353, über Wikimedia Commons. Gemeinfrei, anonymes Werk, Schutzfrist abgelaufen. Nicht eingemessen: Das Blatt liegt hier als Abbildung und nicht als Ebene über dem Plan, weil sich außer der Laurenskerk kein Punkt zweifelsfrei wiederfinden lässt.',
+    quelle: 'Quellen: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). Ausführlich in der Begleitarbeit, Kapitel 4.',
+    paras: [
+      'Am <strong>14. Mai 1940</strong> zerstörte die Bombardierung das Zentrum Rotterdams nahezu vollständig. Im Wijnhavengebiet überstanden nur die Regentessebrug und das Gebäude von R. Mees die Feuersbrunst. Mit der gewachsenen Schichtung von dreieinhalb Jahrhunderten verschwand auch die Selbstverständlichkeit der bebauten Kante: Was an ihre Stelle treten sollte, wurde zu einer planerischen Entscheidung.',
+      'Zwei Antworten standen gegeneinander. W. G. Witteveen hatte noch während des Krieges einen dreidimensional durchgestalteten Plan vorgelegt, der die künftige Stadt als Bild vorwegnahm. An seine Stelle trat der <strong>Basisplan von Cornelis van Traa, angenommen am 28. Mai 1946</strong>. Der entscheidende Unterschied lag nicht im Inhalt, sondern in der Methode: Van Traa legte Funktionen, Achsen und Baufelder fest und ließ die konkrete Bebauung offen. Nicht die Form, sondern die Regel wurde zum Planungsinstrument.',
+      'Inhaltlich folgte er dem Leitbild der <strong>funktionsgetrennten Stadt</strong>. Die Innenstadt wurde für Handel, Verwaltung und Verkehr reserviert, das Wohnen an den Stadtrand verlagert. Breite Achsen ordneten das neue Zentrum; der Coolsingel wurde von 44 auf <strong>80 Meter</strong> verbreitert. Für das Verhältnis von Stadt und Wasser traf der Plan eine bewusste Setzung: Er suchte den Kontrast zwischen der Weite der Maas und einer hohen, rhythmisch gegliederten Uferbebauung und sah am Leuvehaven ausdrücklich ein <strong>Fenster zum Fluss</strong> vor. Das Wasser wird damit zum Gegenüber und zur Aussicht, nicht mehr zur Arbeitsfläche.',
+      'Für das Wijnhavengebiet bedeutete das eine eindeutige Zweckbestimmung: Büros und Geschäftsbauten des Schifffahrtssektors. Bis Anfang der 1960er Jahre war daraus ein <strong>nahezu reines Büroquartier ohne eine einzige Wohnung</strong> geworden. Genau dieser Zustand ist der Ausgangspunkt, gegen den alle späteren Bauten dieses Rundgangs anarbeiten.',
+      'Der Basisplan ist der Urahn des Masterplans, der das Wijnhaveneiland heute bestimmt. Beide steuern die Stadt über Regeln statt über ein Bild. Was 1946 die Funktionstrennung war, ist seit 1993 die Volumenregel. Und beide lassen dieselbe Frage offen: was im Erdgeschoss passiert.',
+    ]
+  },
+  nl: {
+    name: 'Het Basisplan van Van Traa',
+    sub: 'Cornelis van Traa · aangenomen 28 mei 1946',
+    kopf: 'De binnenstad in 1950: het geruimde vlak waarop het Basisplan bouwde.',
+    bildunter: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, schaal 1:2500. De binnenstad zoals zij tot 14 mei 1940 bestond: de Waterstad met haar havenbekkens, de nog smalle Coolsingel, de dichte parcellering rond de Laurenskerk. In rood de toen geplande verkeersdoorbraken, waaronder de verbreding van de Coolsingel die het Basisplan in 1946 tot 80 meter doortrok.',
+    bildquelle: 'Stadsarchief Rotterdam, collectie kaarten en plattegronden 1980-353, via Wikimedia Commons. Publiek domein, anoniem werk, beschermingstermijn verstreken. Niet ingemeten: het blad staat hier als afbeelding en niet als laag over de kaart, omdat buiten de Laurenskerk geen punt eenduidig terug te vinden is.',
+    quelle: 'Bronnen: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). Uitvoeriger in de begeleidende scriptie, hoofdstuk 4.',
+    paras: [
+      'Op <strong>14 mei 1940</strong> verwoestte het bombardement het centrum van Rotterdam vrijwel volledig. In het Wijnhavengebied doorstonden alleen de Regentessebrug en het gebouw van R. Mees de vuurzee. Met de gegroeide gelaagdheid van drieënhalve eeuw verdween ook de vanzelfsprekendheid van de bebouwde kade: wat ervoor in de plaats moest komen, werd een planologisch besluit.',
+      'Twee antwoorden stonden tegenover elkaar. W. G. Witteveen had tijdens de oorlog een driedimensionaal uitgewerkt plan gemaakt dat de toekomstige stad als beeld vooruitnam. Daarvoor in de plaats kwam het <strong>Basisplan van Cornelis van Traa, aangenomen op 28 mei 1946</strong>. Het beslissende verschil lag niet in de inhoud maar in de methode: Van Traa legde functies, assen en bouwvelden vast en liet de concrete bebouwing open. Niet de vorm maar de regel werd het planningsinstrument.',
+      'Inhoudelijk volgde hij het beeld van de <strong>functiegescheiden stad</strong>. De binnenstad werd gereserveerd voor handel, bestuur en verkeer, het wonen verhuisde naar de rand. Brede assen ordenden het nieuwe centrum; de Coolsingel werd van 44 naar <strong>80 meter</strong> verbreed. Voor de verhouding van stad en water deed het plan een bewuste keuze: het zocht het contrast tussen de weidsheid van de Maas en een hoge, ritmisch gelede oeverbebouwing en voorzag bij de Leuvehaven uitdrukkelijk een <strong>venster naar de rivier</strong>. Het water wordt daarmee tegenover en uitzicht, niet langer werkvloer.',
+      'Voor het Wijnhavengebied betekende dat een eenduidige bestemming: kantoren en bedrijfsgebouwen van de scheepvaartsector. Begin jaren zestig was daaruit een <strong>vrijwel zuivere kantoorwijk zonder één woning</strong> ontstaan. Juist die toestand is het vertrekpunt waar alle latere gebouwen van deze rondgang tegenin werken.',
+      'Het Basisplan is de stamvader van het masterplan dat het Wijnhaveneiland vandaag bepaalt. Beide sturen de stad met regels in plaats van met een beeld. Wat in 1946 de functiescheiding was, is sinds 1993 de volumeregel. En beide laten dezelfde vraag open: wat er op de begane grond gebeurt.',
+    ]
+  },
+  en: {
+    name: 'Van Traa\'s Basisplan',
+    sub: 'Cornelis van Traa · adopted 28 May 1946',
+    kopf: 'The inner city in 1950: the cleared ground the Basisplan built on.',
+    bildunter: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, scale 1:2500. The inner city as it stood until 14 May 1940: the Waterstad with its harbour basins, the still narrow Coolsingel, the dense plot structure around the Laurenskerk. In red, the traffic breakthroughs planned at the time, among them the widening of the Coolsingel that the Basisplan carried on to 80 metres in 1946.',
+    bildquelle: 'Stadsarchief Rotterdam, collection of maps and plans 1980-353, via Wikimedia Commons. Public domain, anonymous work, term expired. Not surveyed: the sheet appears here as a figure and not as a layer over the map, because apart from the Laurenskerk no point can be identified unambiguously.',
+    quelle: 'Sources: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). In detail in the accompanying thesis, chapter 4.',
+    paras: [
+      'On <strong>14 May 1940</strong> the bombing destroyed the centre of Rotterdam almost completely. In the Wijnhaven area only the Regentessebrug and the R. Mees building survived the firestorm. With three and a half centuries of grown layering, the self-evidence of the built edge disappeared as well: what should take its place became a planning decision.',
+      'Two answers stood against each other. During the war W. G. Witteveen had produced a fully three-dimensional plan that anticipated the future city as an image. In its place came the <strong>Basisplan by Cornelis van Traa, adopted on 28 May 1946</strong>. The decisive difference lay not in the content but in the method: Van Traa fixed functions, axes and building fields and left the actual buildings open. Not form but rule became the instrument of planning.',
+      'In substance it followed the model of the <strong>functionally separated city</strong>. The inner city was reserved for trade, administration and traffic, housing moved to the edge. Wide axes ordered the new centre; the Coolsingel was widened from 44 to <strong>80 metres</strong>. On the relation of city and water the plan made a deliberate choice: it sought the contrast between the breadth of the Maas and a tall, rhythmically articulated riverfront, and at the Leuvehaven it explicitly provided a <strong>window to the river</strong>. The water thereby becomes a counterpart and a view, no longer a working surface.',
+      'For the Wijnhaven area this meant an unambiguous designation: offices and commercial buildings of the shipping sector. By the early 1960s it had become an <strong>almost purely office quarter without a single dwelling</strong>. Precisely that state is the starting point against which every later building on this walk works.',
+      'The Basisplan is the ancestor of the masterplan that governs the Wijnhaveneiland today. Both steer the city by rules rather than by an image. What in 1946 was the separation of functions has since 1993 been the volume rule. And both leave the same question open: what happens at ground level.',
+    ]
   }
 };
-var _ebeneAktiv = null;
 
-function ebeneUm(id){
-  var neu = (_ebeneAktiv === id) ? null : id;
-  ['ov-1946'].forEach(function(k){
-    var el = document.getElementById(k);
-    /* hidden ist eine Eigenschaft von HTMLElement, nicht von SVGElement.
-       Im SVG muss das Attribut selbst gesetzt und entfernt werden. */
-    if (el){ if (k === neu) el.removeAttribute('hidden'); else el.setAttribute('hidden', ''); }
-    var kn = document.querySelector('.eb-schalter[data-ebene="' + k + '"]');
-    if (kn) kn.setAttribute('aria-pressed', String(k === neu));
-  });
-  _ebeneAktiv = neu;
-  var box = document.getElementById('ebenen');
-  if (box) box.classList.toggle('zeigt-1946', neu === 'ov-1946');
-  _ebeneQuelle();
-  _ebeneRahmen(neu);
+var BASISPLAN = { slug: "basisplan" };
+
+function _basisplanFuellen(){
+  var t = BASISPLAN_TEXTE[currentLang] || BASISPLAN_TEXTE.de;
+  BASISPLAN.name = t.name;
+  BASISPLAN.sub = t.sub;
+  BASISPLAN.paras = t.paras.slice();
+  BASISPLAN.slides = [{ bg: "url('img/wederopbouw-1950.webp') center/cover no-repeat",
+                        cap: t.kopf }];
+  BASISPLAN.figures = [{ src: "img/plan-1913.webp", w: 1233, h: 1403,
+                         alt: t.bildunter, cap: t.bildunter }];
+  BASISPLAN.facts = [];
+  BASISPLAN.sources = [{ c: t.bildquelle, u: "" }, { c: t.quelle, u: "" }];
 }
 
-/* Beim Einschalten auf den Umfang der Zeichnung aufziehen, beim Ausschalten
-   zurueck auf den Rundgang. Die Zeichnung reicht vom Weena bis an die Maas
-   und waere im Rundgangsausschnitt nur zur Haelfte zu sehen. */
-function _ebeneRahmen(id){
-  var svg = document.getElementById('mapSvg');
-  if (!svg || typeof animVBfromCurrent !== 'function') return;
-  if (!id){ animVBfromCurrent(MAP_STATIC_VB, 520); return; }
-  var g = document.getElementById(id);
-  if (!g || !g.getBBox) return;
-  var b;
-  try { b = g.getBBox(); } catch(e){ return; }
-  if (!b || !b.width) return;
-  var luft = 130;   /* Platz fuer die Beschriftung am Rand der Zeichnung */
-  animVBfromCurrent(_vbFit(b.x + b.width / 2, b.y + b.height / 2,
-                           b.width + 2 * luft, b.height + 2 * luft), 520);
+function openBasisplan(){ _basisplanFuellen(); openModal(-99, BASISPLAN); }
+/* ── Kartenebene: Wiederaufbau ──
+   Die roten Bauten der Revisiekarte liegen als Bild im Koordinatenraum der
+   Karte. Geregelt wird nur ihre Deckung; ein Schalter waere hier das
+   falsche Werkzeug, weil man die beiden Schichten im Uebergang vergleicht
+   und nicht im Entweder-oder. */
+var EBENE_QUELLE = {"de": "Rot: was nach 1940 neu gebaut wurde. Aus der Revisiekarte der Wiederaufbau von Rotterdam, Frans Blok, 3develop.nl. Am Wasser eingemessen, nordgerichtet, 2,27 m je Bildpunkt.", "nl": "Rood: wat na 1940 nieuw werd gebouwd. Uit de Revisiekaart van de Wederopbouw van Rotterdam, Frans Blok, 3develop.nl. Op het water ingemeten, noordgericht, 2,27 m per beeldpunt.", "en": "Red: what was newly built after 1940. From the revision map of the reconstruction of Rotterdam, Frans Blok, 3develop.nl. Fitted on the water, north-up, 2.27 m per pixel."};
+var EBENE_MARKE = {"de": "Wiederaufbau", "nl": "Wederopbouw", "en": "Reconstruction"};
+
+function deckungSetzen(v){
+  var p = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
+  var el = document.getElementById('ov-revisie');
+  if (el) el.setAttribute('opacity', (p / 100).toFixed(3));
+  var w = document.getElementById('eb-wert');
+  if (w) w.textContent = p + ' %';
+  /* Auch bei Aufrufen aus dem Code soll der Griff mitwandern. */
+  var r = document.getElementById('eb-deckung');
+  if (r && String(p) !== r.value) r.value = String(p);
 }
 
-function _ebeneQuelle(){
-  var p = document.getElementById('eb-quelle');
-  if (!p) return;
-  var q = _ebeneAktiv && EBENEN_QUELLE[_ebeneAktiv];
-  p.textContent = q ? (q[currentLang] || q.de) : '';
-  p.hidden = !q;
+function _ebeneTexte(){
+  var q = document.getElementById('eb-quelle');
+  if (q) q.textContent = EBENE_QUELLE[currentLang] || EBENE_QUELLE.de;
+  var m = document.getElementById('eb-mark');
+  if (m) m.textContent = EBENE_MARKE[currentLang] || EBENE_MARKE.de;
+  var k = document.getElementById('eb-kapitel');
+  if (k) k.textContent = ({"de": "Kapitel 1946", "nl": "Hoofdstuk 1946", "en": "Chapter 1946"})[currentLang] || 'Kapitel 1946';
 }
 
-/* Die Schalter erscheinen mit der Karte. Geschaltet wird in onScroll,
-   zusammen mit der Leiste, damit beide denselben Zeitpunkt haben. */
+/* Die Leiste erscheint mit der Karte. */
 function _ebenenZeigen(an){
   var box = document.getElementById('ebenen');
   if (box) box.classList.toggle('show', !!an);
 }
+
+_ebeneTexte();
 
 /* ── Kommentar absenden ──
    Web3Forms nimmt die Felder per POST entgegen und schickt sie als E-Mail.
@@ -5908,12 +5836,13 @@ function closeTour3D(){
     var idx = -1;
     STOPS.forEach(function(s,i){ if (s.slug===h) idx=i; });
     if (idx>=0){ activeStop = idx; openModal(idx); return true; }
+    if (h === 'basisplan'){ openBasisplan(); return true; }
     if (typeof BYSLUG!=='undefined' && BYSLUG[h]){ openModal(-99, BYSLUG[h]); return true; }
     return false;
   }
   window.addEventListener('hashchange', function(){
     var h = (location.hash || '').replace(/^#/, '').toLowerCase();
-    if ((typeof BYSLUG!=='undefined' && BYSLUG[h])) openFromHash();
+    if (h === 'basisplan' || (typeof BYSLUG!=='undefined' && BYSLUG[h])) openFromHash();
     else if (document.getElementById('modal').classList.contains('open')) closeModal();  /* Zurueck-Taste schliesst */
   });
   /* Beim Laden: kommt jemand per NFC-Tag/QR mit #slug, direkt den Eintrag zeigen. */
