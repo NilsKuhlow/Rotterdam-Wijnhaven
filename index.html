@@ -744,7 +744,7 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
 ═══════════════════════════════════════════ */
 #ebenen {
   position:absolute; left:max(1rem, env(safe-area-inset-left)); bottom:1rem; z-index:7;
-  display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;
+  display:flex; gap:.4rem .5rem; flex-wrap:wrap; align-items:center;
   max-width:calc(100% - 2rem);
   opacity:0; pointer-events:none; transition:opacity .4s;
 }
@@ -761,25 +761,25 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
 .eb-wert { min-width:4.2ch; text-align:right; font-variant-numeric:tabular-nums; }
 /* Der Regler. Eigene Spur und eigener Griff, damit er zum Haus passt:
    rechte Winkel, Haarlinie, Gelb nur fuer den Griff. */
-#eb-deckung {
+.eb-regler input[type="range"] {
   -webkit-appearance:none; appearance:none; width:min(42vw, 9rem); height:16px;
   background:none; cursor:pointer; margin:0;
 }
-#eb-deckung::-webkit-slider-runnable-track {
+.eb-regler input[type="range"]::-webkit-slider-runnable-track {
   height:4px; background:var(--paper-3); border:1px solid var(--ink-1);
 }
-#eb-deckung::-moz-range-track {
+.eb-regler input[type="range"]::-moz-range-track {
   height:4px; background:var(--paper-3); border:1px solid var(--ink-1);
 }
-#eb-deckung::-webkit-slider-thumb {
+.eb-regler input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance:none; width:14px; height:14px; margin-top:-6px;
   background:var(--accent); border:1px solid var(--ink-1); border-radius:0;
 }
-#eb-deckung::-moz-range-thumb {
+.eb-regler input[type="range"]::-moz-range-thumb {
   width:14px; height:14px; background:var(--accent);
   border:1px solid var(--ink-1); border-radius:0;
 }
-#eb-deckung:focus-visible { outline:2px solid var(--ink-1); outline-offset:3px; }
+.eb-regler input[type="range"]:focus-visible { outline:2px solid var(--ink-1); outline-offset:3px; }
 .eb-schalter {
   font-family:var(--font-mono); font-size:.56rem; letter-spacing:var(--tr-label);
   text-transform:uppercase; border-radius:0; padding:.45rem .8rem; cursor:pointer;
@@ -1811,6 +1811,13 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
          geloest, alles andere durchsichtig. Am Wasser eingemessen,
          nordgerichtet, 2.270 m je Bildpunkt, Korrelation 0.44. Die Deckung
          stellt der Regler unter der Karte, Startwert 0. -->
+    <!-- Platzhalter fuer die Stadt vor 1940. Deckt sich mit dem Schwarzplan,
+         weil er in dessen Raster gezeichnet ist: gleiche Groesse, kein
+         Versatz, kein Massstab. Wird durch die wirklichen Grundrisse
+         ersetzt, dann aendert sich nur die Datei. -->
+    <image id="ov-vorkrieg" href="img/vorkrieg.webp" x="0" y="0"
+           width="3010" height="2175" opacity="0" preserveAspectRatio="none"
+           aria-hidden="true"/>
     <image id="ov-revisie" href="img/wiederaufbau.webp" x="0" y="0"
            width="3200" height="2496" opacity="0"
            transform="translate(442.3 -93.8) scale(0.86976)" aria-hidden="true"/>
@@ -1838,9 +1845,15 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
        Uebergang vergleichen lassen. Startwert 0. -->
   <div id="ebenen">
     <div class="eb-regler">
+      <label class="eb-mark" for="eb-vor" id="eb-mark-vor">Vor 1940</label>
+      <input type="range" id="eb-vor" min="0" max="100" step="1" value="0"
+             aria-describedby="eb-quelle" oninput="deckungSetzen('ov-vorkrieg', this.value)"/>
+      <output class="eb-wert" id="eb-wert-vor" for="eb-vor">0 %</output>
+    </div>
+    <div class="eb-regler">
       <label class="eb-mark" for="eb-deckung" id="eb-mark">Wiederaufbau</label>
       <input type="range" id="eb-deckung" min="0" max="100" step="1" value="0"
-             aria-describedby="eb-quelle" oninput="deckungSetzen(this.value)"/>
+             aria-describedby="eb-quelle" oninput="deckungSetzen('ov-revisie', this.value)"/>
       <output class="eb-wert" id="eb-wert" for="eb-deckung">0 %</output>
     </div>
     <button class="eb-schalter eb-kapitel" type="button" id="eb-kapitel"
@@ -5559,22 +5572,42 @@ function openBasisplan(){ _basisplanFuellen(); openModal(-99, BASISPLAN); }
    falsche Werkzeug, weil man die beiden Schichten im Uebergang vergleicht
    und nicht im Entweder-oder. */
 var EBENE_QUELLE = {"de": "Rot: was nach 1940 neu gebaut wurde. Aus der Revisiekarte der Wiederaufbau von Rotterdam, Frans Blok, 3develop.nl. Am Wasser eingemessen, nordgerichtet, 2,27 m je Bildpunkt.", "nl": "Rood: wat na 1940 nieuw werd gebouwd. Uit de Revisiekaart van de Wederopbouw van Rotterdam, Frans Blok, 3develop.nl. Op het water ingemeten, noordgericht, 2,27 m per beeldpunt.", "en": "Red: what was newly built after 1940. From the revision map of the reconstruction of Rotterdam, Frans Blok, 3develop.nl. Fitted on the water, north-up, 2.27 m per pixel."};
+var EBENE_QUELLE_VOR = {"de": "Platzhalter, nicht erhoben: das Korn der Vorkriegsstadt, schmale Parzellen und geschlossene Blockränder im Gebiet, das am 14. Mai 1940 ausbrannte. Wird durch die wirklichen Grundrisse ersetzt.", "nl": "Plaatshouder, niet ingewonnen: de korrel van de vooroorlogse stad, smalle percelen en gesloten bouwblokken in het gebied dat op 14 mei 1940 uitbrandde. Wordt vervangen door de werkelijke plattegronden.", "en": "Placeholder, not surveyed: the grain of the pre-war city, narrow plots and closed perimeter blocks in the area that burned on 14 May 1940. To be replaced by the actual footprints."};
+var EBENE_MARKE_VOR = {"de": "Vor 1940", "nl": "Vóór 1940", "en": "Before 1940"};
 var EBENE_MARKE = {"de": "Wiederaufbau", "nl": "Wederopbouw", "en": "Reconstruction"};
 
-function deckungSetzen(v){
+var EBENEN_REGLER = {
+  'ov-revisie':  { regler: 'eb-deckung', wert: 'eb-wert' },
+  'ov-vorkrieg': { regler: 'eb-vor',     wert: 'eb-wert-vor' }
+};
+
+function deckungSetzen(id, v){
+  var k = EBENEN_REGLER[id];
+  if (!k) return;
   var p = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
-  var el = document.getElementById('ov-revisie');
+  var el = document.getElementById(id);
   if (el) el.setAttribute('opacity', (p / 100).toFixed(3));
-  var w = document.getElementById('eb-wert');
+  var w = document.getElementById(k.wert);
   if (w) w.textContent = p + ' %';
   /* Auch bei Aufrufen aus dem Code soll der Griff mitwandern. */
-  var r = document.getElementById('eb-deckung');
+  var r = document.getElementById(k.regler);
   if (r && String(p) !== r.value) r.value = String(p);
+  if (typeof _ebeneTexte === 'function') _ebeneTexte();
 }
 
 function _ebeneTexte(){
   var q = document.getElementById('eb-quelle');
-  if (q) q.textContent = EBENE_QUELLE[currentLang] || EBENE_QUELLE.de;
+  if (q){
+    var t = [];
+    if (parseInt((document.getElementById('eb-vor') || {}).value || 0, 10) > 0)
+      t.push(EBENE_QUELLE_VOR[currentLang] || EBENE_QUELLE_VOR.de);
+    if (parseInt((document.getElementById('eb-deckung') || {}).value || 0, 10) > 0)
+      t.push(EBENE_QUELLE[currentLang] || EBENE_QUELLE.de);
+    q.textContent = t.join('  ·  ');
+    q.hidden = !t.length;
+  }
+  var mv = document.getElementById('eb-mark-vor');
+  if (mv) mv.textContent = EBENE_MARKE_VOR[currentLang] || EBENE_MARKE_VOR.de;
   var m = document.getElementById('eb-mark');
   if (m) m.textContent = EBENE_MARKE[currentLang] || EBENE_MARKE.de;
   var k = document.getElementById('eb-kapitel');
