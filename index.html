@@ -757,7 +757,7 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
 #ebenen.show .eb-schalter { opacity:1; pointer-events:auto; }
 /* SVG kennt das HTML-Attribut hidden nicht, nur display. Deshalb hier
    ausdruecklich, sonst stuenden beide Ebenen dauerhaft im Bild. */
-#ov-1946[hidden], #ov-hist[hidden] { display:none; }
+#ov-1946[hidden] { display:none; }
 .eb-schalter[aria-pressed="true"] { background:var(--accent); }
 .eb-schalter:hover, .eb-schalter:focus-visible { background:var(--accent); outline:none; }
 .eb-quelle {
@@ -777,6 +777,14 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
   fill:var(--ink-1); paint-order:stroke; stroke:var(--paper-0); stroke-width:5;
   text-transform:uppercase; }
 .ov-text.klein { font-size:16px; }
+
+/* Abbildung im Kapitel. Kein Overlay: Das Blatt ist nicht eingemessen. */
+.bp-bild { margin:2rem 0 0; max-width:46rem; }
+.bp-bild img { width:100%; height:auto; display:block; border:1px solid var(--ink-1);
+  background:var(--paper-0); }
+.bp-bildunter { margin:.7rem 0 0; font-size:.85rem; line-height:1.6; color:var(--ink-2); }
+.bp-bildquelle { margin:.5rem 0 0; font-family:var(--font-mono); font-size:.58rem;
+  line-height:1.65; letter-spacing:.04em; color:var(--ink-3); }
 
 /* ═══════════════════════════════════════════
    BASISPLAN + FAZIT
@@ -1793,8 +1801,6 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <image class="plan-bild" href="img/schwarzplan.webp" x="0" y="0" width="3010" height="2175" preserveAspectRatio="none"/>
     <!-- Zuschaltbare Ebenen. Die historische Karte liegt als Bild, das Schema
          von 1946 als eigene Zeichnung im selben Koordinatenraum. -->
-    <image id="ov-hist" href="img/plan-1913.webp" x="0" y="0" width="1233" height="1403"
-           transform="translate(797.0 476.5) scale(0.62310)" opacity=".9" hidden/>
     <g id="ov-1946" hidden aria-hidden="true">
       <path class="ov-achse" style="stroke-width:46" d="M718 544 L755 756 L787 985 L808 1163 L824 1256"/>
       <path class="ov-achse" style="stroke-width:40" d="M603 1180 L876 1103 L1139 1052 L1455 1027 L1750 959 L1887 866"/>
@@ -1829,8 +1835,6 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <div id="ebenen">
     <button class="eb-schalter" type="button" data-ebene="ov-1946" aria-pressed="false"
             onclick="ebeneUm('ov-1946')">1946 Basisplan</button>
-    <button class="eb-schalter" type="button" data-ebene="ov-hist" aria-pressed="false"
-            onclick="ebeneUm('ov-hist')">1913 Plan</button>
     <p class="eb-quelle" id="eb-quelle" hidden></p>
   </div>
 </div><!-- /map-panel -->
@@ -2122,6 +2126,12 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <p class="bp-text">Inhaltlich folgte er dem Leitbild der <strong>funktionsgetrennten Stadt</strong>. Die Innenstadt wurde für Handel, Verwaltung und Verkehr reserviert, das Wohnen an den Stadtrand verlagert. Breite Achsen ordneten das neue Zentrum; der Coolsingel wurde von 44 auf <strong>80 Meter</strong> verbreitert. Für das Verhältnis von Stadt und Wasser traf der Plan eine bewusste Setzung: Er suchte den Kontrast zwischen der Weite der Maas und einer hohen, rhythmisch gegliederten Uferbebauung und sah am Leuvehaven ausdrücklich ein <strong>Fenster zum Fluss</strong> vor. Das Wasser wird damit zum Gegenüber und zur Aussicht, nicht mehr zur Arbeitsfläche.</p>
   <p class="bp-text">Für das Wijnhavengebiet bedeutete das eine eindeutige Zweckbestimmung: Büros und Geschäftsbauten des Schifffahrtssektors. Bis Anfang der 1960er Jahre war daraus ein <strong>nahezu reines Büroquartier ohne eine einzige Wohnung</strong> geworden. Genau dieser Zustand ist der Ausgangspunkt, gegen den alle späteren Bauten dieses Rundgangs anarbeiten.</p>
   <p class="bp-urteil">Der Basisplan ist der Urahn des Masterplans, der das Wijnhaveneiland heute bestimmt. Beide steuern die Stadt über Regeln statt über ein Bild. Was 1946 die Funktionstrennung war, ist seit 1993 die Volumenregel. Und beide lassen dieselbe Frage offen: was im Erdgeschoss passiert.</p>
+  <figure class="bp-bild">
+    <img src="img/plan-1913.webp" width="1233" height="1403" loading="lazy"
+         alt="Plan der Rotterdamer Innenstadt von 1913 mit den geplanten Verkehrsdurchbruechen in Rot"/>
+    <figcaption class="bp-bildunter">Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, Maßstab 1:2500. Die Innenstadt, wie sie bis zum 14. Mai 1940 bestand: die Waterstad mit ihren Hafenbecken, der noch schmale Coolsingel, die dichte Parzellierung rund um die Laurenskerk. Rot eingetragen sind die damals geplanten Verkehrsdurchbrüche, darunter die Verbreiterung des Coolsingel, die der Basisplan 1946 auf 80 Meter fortschrieb.</figcaption>
+    <p class="bp-bildquelle">Stadsarchief Rotterdam, Sammlung Karten und Pläne 1980-353, über Wikimedia Commons. Gemeinfrei, anonymes Werk, Schutzfrist abgelaufen. Nicht eingemessen: Das Blatt liegt hier als Abbildung und nicht als Ebene über dem Plan, weil sich außer der Laurenskerk kein Punkt zweifelsfrei wiederfinden lässt.</p>
+  </figure>
   <p class="bp-quelle">Quellen: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). Ausführlich in der Begleitarbeit, Kapitel 4.</p>
   </div>
   <div class="bp-body" data-lang-block="nl" lang="nl" hidden>
@@ -2132,6 +2142,12 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <p class="bp-text">Inhoudelijk volgde hij het beeld van de <strong>functiegescheiden stad</strong>. De binnenstad werd gereserveerd voor handel, bestuur en verkeer, het wonen verhuisde naar de rand. Brede assen ordenden het nieuwe centrum; de Coolsingel werd van 44 naar <strong>80 meter</strong> verbreed. Voor de verhouding van stad en water deed het plan een bewuste keuze: het zocht het contrast tussen de weidsheid van de Maas en een hoge, ritmisch gelede oeverbebouwing en voorzag bij de Leuvehaven uitdrukkelijk een <strong>venster naar de rivier</strong>. Het water wordt daarmee tegenover en uitzicht, niet langer werkvloer.</p>
   <p class="bp-text">Voor het Wijnhavengebied betekende dat een eenduidige bestemming: kantoren en bedrijfsgebouwen van de scheepvaartsector. Begin jaren zestig was daaruit een <strong>vrijwel zuivere kantoorwijk zonder één woning</strong> ontstaan. Juist die toestand is het vertrekpunt waar alle latere gebouwen van deze rondgang tegenin werken.</p>
   <p class="bp-urteil">Het Basisplan is de stamvader van het masterplan dat het Wijnhaveneiland vandaag bepaalt. Beide sturen de stad met regels in plaats van met een beeld. Wat in 1946 de functiescheiding was, is sinds 1993 de volumeregel. En beide laten dezelfde vraag open: wat er op de begane grond gebeurt.</p>
+  <figure class="bp-bild">
+    <img src="img/plan-1913.webp" width="1233" height="1403" loading="lazy"
+         alt="Plan der Rotterdamer Innenstadt von 1913 mit den geplanten Verkehrsdurchbruechen in Rot"/>
+    <figcaption class="bp-bildunter">Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, schaal 1:2500. De binnenstad zoals zij tot 14 mei 1940 bestond: de Waterstad met haar havenbekkens, de nog smalle Coolsingel, de dichte parcellering rond de Laurenskerk. In rood de toen geplande verkeersdoorbraken, waaronder de verbreding van de Coolsingel die het Basisplan in 1946 tot 80 meter doortrok.</figcaption>
+    <p class="bp-bildquelle">Stadsarchief Rotterdam, collectie kaarten en plattegronden 1980-353, via Wikimedia Commons. Publiek domein, anoniem werk, beschermingstermijn verstreken. Niet ingemeten: het blad staat hier als afbeelding en niet als laag over de kaart, omdat buiten de Laurenskerk geen punt eenduidig terug te vinden is.</p>
+  </figure>
   <p class="bp-quelle">Bronnen: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). Uitvoeriger in de begeleidende scriptie, hoofdstuk 4.</p>
   </div>
   <div class="bp-body" data-lang-block="en" lang="en" hidden>
@@ -2142,6 +2158,12 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <p class="bp-text">In substance it followed the model of the <strong>functionally separated city</strong>. The inner city was reserved for trade, administration and traffic, housing moved to the edge. Wide axes ordered the new centre; the Coolsingel was widened from 44 to <strong>80 metres</strong>. On the relation of city and water the plan made a deliberate choice: it sought the contrast between the breadth of the Maas and a tall, rhythmically articulated riverfront, and at the Leuvehaven it explicitly provided a <strong>window to the river</strong>. The water thereby becomes a counterpart and a view, no longer a working surface.</p>
   <p class="bp-text">For the Wijnhaven area this meant an unambiguous designation: offices and commercial buildings of the shipping sector. By the early 1960s it had become an <strong>almost purely office quarter without a single dwelling</strong>. Precisely that state is the starting point against which every later building on this walk works.</p>
   <p class="bp-urteil">The Basisplan is the ancestor of the masterplan that governs the Wijnhaveneiland today. Both steer the city by rules rather than by an image. What in 1946 was the separation of functions has since 1993 been the volume rule. And both leave the same question open: what happens at ground level.</p>
+  <figure class="bp-bild">
+    <img src="img/plan-1913.webp" width="1233" height="1403" loading="lazy"
+         alt="Plan der Rotterdamer Innenstadt von 1913 mit den geplanten Verkehrsdurchbruechen in Rot"/>
+    <figcaption class="bp-bildunter">Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, scale 1:2500. The inner city as it stood until 14 May 1940: the Waterstad with its harbour basins, the still narrow Coolsingel, the dense plot structure around the Laurenskerk. In red, the traffic breakthroughs planned at the time, among them the widening of the Coolsingel that the Basisplan carried on to 80 metres in 1946.</figcaption>
+    <p class="bp-bildquelle">Stadsarchief Rotterdam, collection of maps and plans 1980-353, via Wikimedia Commons. Public domain, anonymous work, term expired. Not surveyed: the sheet appears here as a figure and not as a layer over the map, because apart from the Laurenskerk no point can be identified unambiguously.</p>
+  </figure>
   <p class="bp-quelle">Sources: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). In detail in the accompanying thesis, chapter 4.</p>
   </div>
 </section>
@@ -5515,18 +5537,13 @@ var EBENEN_QUELLE = {
     de: 'Eigene Zeichnung, schematisch: Achsen, Hofplein, Fenster zum Fluss und das Wijnhavengebiet als Bueroquartier. Kein Abbild des Originalplans.',
     nl: 'Eigen tekening, schematisch: assen, Hofplein, venster naar de rivier en het Wijnhavengebied als kantoorwijk. Geen afbeelding van het originele plan.',
     en: 'Own drawing, schematic: axes, Hofplein, window to the river and the Wijnhaven area as an office quarter. Not a reproduction of the original plan.'
-  },
-  'ov-hist': {
-    de: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, 1:2500. Stadsarchief Rotterdam ueber Wikimedia Commons, gemeinfrei. Ueber zwei Passpunkte eingepasst, nicht vermessen.',
-    nl: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, 1:2500. Stadsarchief Rotterdam via Wikimedia Commons, publiek domein. Op twee passpunten ingepast, niet ingemeten.',
-    en: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, 1:2500. Stadsarchief Rotterdam via Wikimedia Commons, public domain. Fitted on two control points, not surveyed.'
   }
 };
 var _ebeneAktiv = null;
 
 function ebeneUm(id){
   var neu = (_ebeneAktiv === id) ? null : id;
-  ['ov-1946', 'ov-hist'].forEach(function(k){
+  ['ov-1946'].forEach(function(k){
     var el = document.getElementById(k);
     /* hidden ist eine Eigenschaft von HTMLElement, nicht von SVGElement.
        Im SVG muss das Attribut selbst gesetzt und entfernt werden. */
