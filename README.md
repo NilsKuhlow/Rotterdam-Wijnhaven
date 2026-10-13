@@ -503,6 +503,25 @@ zusammen 8,1 MB. Sieben Aufnahmen sind auf Wunsch wieder herausgenommen; die
 Dateien sind fortlaufend nummeriert, die dahinterliegenden rücken deshalb auf. An erster Stelle steht je Bauwerk die beste Übersicht, dahinter
 nähere Aufnahmen und Details.
 
+**Sieben Aufnahmen standen schief** und werden beim Aufbereiten geradegerückt
+(`gerade.py`, Winkel zwischen 0,5 und 3,2 Grad). Die Originale in `Fotos Export`
+bleiben unberührt, gedreht wird erst auf dem Weg zur Website: Winkel aus der Tabelle
+streichen, Bilder neu erzeugen, und der Eingriff ist weg.
+
+Gemessen wurde mit zwei unabhängigen Zeugen, der Richtung der fast senkrechten und
+der der fast waagerechten Kanten. Eine echte Kameradrehung verdreht beide um denselben
+Betrag, Perspektive und Dachschrägen nicht. Nur wo beide innerhalb von 1,2 Grad
+übereinstimmten, galt der Wert; jede Korrektur wurde danach mit einem Gitter im Bild
+gegengeprüft. Nach dem Drehen wird auf den größten zentrierten Ausschnitt gleichen
+Seitenverhältnisses beschnitten, damit keine leeren Ecken bleiben und die Maße in
+`index.html` weiter stimmen.
+
+**Warum nicht alle:** Die Kubuswoningen bestehen aus um 45 Grad gekippten Würfeln, und
+die meisten Aufnahmen blicken nach oben. Dort gibt es keine Senkrechte, an der sich
+eine Messung festhalten könnte. Eine erste Messung über alle Kanten meldete dort acht
+Grad Schieflage, obwohl die Aufnahme gerade ist. Was dort schief aussieht, ist die
+Sache selbst.
+
 Drei Dinge waren dafür an der Galerie nötig, sonst hätte ein Eintrag mit 21 Bildern
 mehrere Megabyte auf einmal geholt:
 
