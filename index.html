@@ -737,6 +737,50 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
 #stop-counter { display:none; }
 
 /* ═══════════════════════════════════════════
+   BASISPLAN + FAZIT
+   Erben die Flaeche von .route-read. Eigen ist nur das Urteil: ein
+   gelb markierter Satz, der haelt, was der Abschnitt behauptet.
+═══════════════════════════════════════════ */
+.basisplan, .fazit {
+  position:relative; z-index:6;
+  background:var(--paper-0);
+  border-top:1px solid var(--ink-1);
+  padding:clamp(2.6rem,8vw,5rem) 6vw clamp(2.6rem,8vw,4.5rem);
+}
+.fazit { background:var(--paper-1); }
+.bp-eyebrow {
+  font-family:var(--font-mono); font-size:.58rem; letter-spacing:var(--tr-label);
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 .9rem;
+}
+.bp-title {
+  font-family:var(--font-sans); font-weight:600;
+  font-size:clamp(1.35rem,5.2vw,2rem); line-height:1.15; letter-spacing:-.01em;
+  color:var(--ink-1); margin:0 0 1.1rem; max-width:24ch;
+}
+.bp-text { font-size:.95rem; line-height:1.68; color:var(--ink-2); margin:0 0 1.2rem; max-width:62ch; }
+.bp-text:last-child { margin-bottom:0; }
+.bp-text strong { color:var(--ink-1); font-weight:600; }
+.bp-sub {
+  font-family:var(--font-sans); font-weight:600; font-size:1.02rem;
+  color:var(--ink-1); margin:2.2rem 0 .6rem; max-width:48ch;
+}
+.bp-list { margin:0 0 1.2rem; padding-left:1.1rem; max-width:62ch; }
+.bp-list li { font-size:.95rem; line-height:1.62; color:var(--ink-2); margin:.45rem 0; }
+.bp-list li::marker { color:var(--ink-3); }
+.bp-urteil {
+  margin:2rem 0; padding:1rem 1.1rem;
+  border-left:6px solid var(--accent); background:var(--paper-0);
+  font-size:1.04rem; line-height:1.5; color:var(--ink-1); font-weight:500;
+  max-width:58ch;
+}
+.fazit .bp-urteil { background:var(--paper-0); }
+.bp-quelle {
+  margin:2.2rem 0 0; padding-top:1rem; border-top:1px solid var(--paper-3);
+  font-size:.78rem; line-height:1.6; color:var(--ink-3); max-width:62ch;
+}
+.bp-quelle a { color:var(--ink-2); }
+
+/* ═══════════════════════════════════════════
    PHOTO COUNTER , "1 / 5" overlay in gallery
 ═══════════════════════════════════════════ */
 #gal-counter {
@@ -1999,6 +2043,41 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <!-- Stimmen aus dem Viertel. Inhalt kommt aus STIMMEN und wird von
      _renderStimmen() gesetzt, damit eine neue Stimme nur an einer Stelle
      eingetragen werden muss. -->
+<!-- Der Basisplan von 1946: das Scharnier, auf das sich die sieben
+     Eintraege beziehen. Dreisprachig ueber data-lang-block. -->
+<section class="basisplan" id="basisplan" aria-labelledby="bp-title">
+  <div class="bp-body" data-lang-block="de" lang="de">
+  <p class="bp-eyebrow">Kapitel · 1946</p>
+  <h2 class="bp-title">Der Basisplan von Van Traa</h2>
+  <p class="bp-text">Am <strong>14. Mai 1940</strong> zerstörte die Bombardierung das Zentrum Rotterdams nahezu vollständig. Im Wijnhavengebiet überstanden nur die Regentessebrug und das Gebäude von R. Mees die Feuersbrunst. Mit der gewachsenen Schichtung von dreieinhalb Jahrhunderten verschwand auch die Selbstverständlichkeit der bebauten Kante: Was an ihre Stelle treten sollte, wurde zu einer planerischen Entscheidung.</p>
+  <p class="bp-text">Zwei Antworten standen gegeneinander. W. G. Witteveen hatte noch während des Krieges einen dreidimensional durchgestalteten Plan vorgelegt, der die künftige Stadt als Bild vorwegnahm. An seine Stelle trat der <strong>Basisplan von Cornelis van Traa, angenommen am 28. Mai 1946</strong>. Der entscheidende Unterschied lag nicht im Inhalt, sondern in der Methode: Van Traa legte Funktionen, Achsen und Baufelder fest und ließ die konkrete Bebauung offen. Nicht die Form, sondern die Regel wurde zum Planungsinstrument.</p>
+  <p class="bp-text">Inhaltlich folgte er dem Leitbild der <strong>funktionsgetrennten Stadt</strong>. Die Innenstadt wurde für Handel, Verwaltung und Verkehr reserviert, das Wohnen an den Stadtrand verlagert. Breite Achsen ordneten das neue Zentrum; der Coolsingel wurde von 44 auf <strong>80 Meter</strong> verbreitert. Für das Verhältnis von Stadt und Wasser traf der Plan eine bewusste Setzung: Er suchte den Kontrast zwischen der Weite der Maas und einer hohen, rhythmisch gegliederten Uferbebauung und sah am Leuvehaven ausdrücklich ein <strong>Fenster zum Fluss</strong> vor. Das Wasser wird damit zum Gegenüber und zur Aussicht, nicht mehr zur Arbeitsfläche.</p>
+  <p class="bp-text">Für das Wijnhavengebiet bedeutete das eine eindeutige Zweckbestimmung: Büros und Geschäftsbauten des Schifffahrtssektors. Bis Anfang der 1960er Jahre war daraus ein <strong>nahezu reines Büroquartier ohne eine einzige Wohnung</strong> geworden. Genau dieser Zustand ist der Ausgangspunkt, gegen den alle späteren Bauten dieses Rundgangs anarbeiten.</p>
+  <p class="bp-urteil">Der Basisplan ist der Urahn des Masterplans, der das Wijnhaveneiland heute bestimmt. Beide steuern die Stadt über Regeln statt über ein Bild. Was 1946 die Funktionstrennung war, ist seit 1993 die Volumenregel. Und beide lassen dieselbe Frage offen: was im Erdgeschoss passiert.</p>
+  <p class="bp-quelle">Quellen: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). Ausführlich in der Begleitarbeit, Kapitel 4.</p>
+  </div>
+  <div class="bp-body" data-lang-block="nl" lang="nl" hidden>
+  <p class="bp-eyebrow">Hoofdstuk · 1946</p>
+  <h2 class="bp-title">Het Basisplan van Van Traa</h2>
+  <p class="bp-text">Op <strong>14 mei 1940</strong> verwoestte het bombardement het centrum van Rotterdam vrijwel volledig. In het Wijnhavengebied doorstonden alleen de Regentessebrug en het gebouw van R. Mees de vuurzee. Met de gegroeide gelaagdheid van drieënhalve eeuw verdween ook de vanzelfsprekendheid van de bebouwde kade: wat ervoor in de plaats moest komen, werd een planologisch besluit.</p>
+  <p class="bp-text">Twee antwoorden stonden tegenover elkaar. W. G. Witteveen had tijdens de oorlog een driedimensionaal uitgewerkt plan gemaakt dat de toekomstige stad als beeld vooruitnam. Daarvoor in de plaats kwam het <strong>Basisplan van Cornelis van Traa, aangenomen op 28 mei 1946</strong>. Het beslissende verschil lag niet in de inhoud maar in de methode: Van Traa legde functies, assen en bouwvelden vast en liet de concrete bebouwing open. Niet de vorm maar de regel werd het planningsinstrument.</p>
+  <p class="bp-text">Inhoudelijk volgde hij het beeld van de <strong>functiegescheiden stad</strong>. De binnenstad werd gereserveerd voor handel, bestuur en verkeer, het wonen verhuisde naar de rand. Brede assen ordenden het nieuwe centrum; de Coolsingel werd van 44 naar <strong>80 meter</strong> verbreed. Voor de verhouding van stad en water deed het plan een bewuste keuze: het zocht het contrast tussen de weidsheid van de Maas en een hoge, ritmisch gelede oeverbebouwing en voorzag bij de Leuvehaven uitdrukkelijk een <strong>venster naar de rivier</strong>. Het water wordt daarmee tegenover en uitzicht, niet langer werkvloer.</p>
+  <p class="bp-text">Voor het Wijnhavengebied betekende dat een eenduidige bestemming: kantoren en bedrijfsgebouwen van de scheepvaartsector. Begin jaren zestig was daaruit een <strong>vrijwel zuivere kantoorwijk zonder één woning</strong> ontstaan. Juist die toestand is het vertrekpunt waar alle latere gebouwen van deze rondgang tegenin werken.</p>
+  <p class="bp-urteil">Het Basisplan is de stamvader van het masterplan dat het Wijnhaveneiland vandaag bepaalt. Beide sturen de stad met regels in plaats van met een beeld. Wat in 1946 de functiescheiding was, is sinds 1993 de volumeregel. En beide laten dezelfde vraag open: wat er op de begane grond gebeurt.</p>
+  <p class="bp-quelle">Bronnen: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). Uitvoeriger in de begeleidende scriptie, hoofdstuk 4.</p>
+  </div>
+  <div class="bp-body" data-lang-block="en" lang="en" hidden>
+  <p class="bp-eyebrow">Chapter · 1946</p>
+  <h2 class="bp-title">Van Traa's Basisplan</h2>
+  <p class="bp-text">On <strong>14 May 1940</strong> the bombing destroyed the centre of Rotterdam almost completely. In the Wijnhaven area only the Regentessebrug and the R. Mees building survived the firestorm. With three and a half centuries of grown layering, the self-evidence of the built edge disappeared as well: what should take its place became a planning decision.</p>
+  <p class="bp-text">Two answers stood against each other. During the war W. G. Witteveen had produced a fully three-dimensional plan that anticipated the future city as an image. In its place came the <strong>Basisplan by Cornelis van Traa, adopted on 28 May 1946</strong>. The decisive difference lay not in the content but in the method: Van Traa fixed functions, axes and building fields and left the actual buildings open. Not form but rule became the instrument of planning.</p>
+  <p class="bp-text">In substance it followed the model of the <strong>functionally separated city</strong>. The inner city was reserved for trade, administration and traffic, housing moved to the edge. Wide axes ordered the new centre; the Coolsingel was widened from 44 to <strong>80 metres</strong>. On the relation of city and water the plan made a deliberate choice: it sought the contrast between the breadth of the Maas and a tall, rhythmically articulated riverfront, and at the Leuvehaven it explicitly provided a <strong>window to the river</strong>. The water thereby becomes a counterpart and a view, no longer a working surface.</p>
+  <p class="bp-text">For the Wijnhaven area this meant an unambiguous designation: offices and commercial buildings of the shipping sector. By the early 1960s it had become an <strong>almost purely office quarter without a single dwelling</strong>. Precisely that state is the starting point against which every later building on this walk works.</p>
+  <p class="bp-urteil">The Basisplan is the ancestor of the masterplan that governs the Wijnhaveneiland today. Both steer the city by rules rather than by an image. What in 1946 was the separation of functions has since 1993 been the volume rule. And both leave the same question open: what happens at ground level.</p>
+  <p class="bp-quelle">Sources: Wederopbouw Rotterdam; Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007). In detail in the accompanying thesis, chapter 4.</p>
+  </div>
+</section>
+
 <section class="stimmen" id="stimmen" aria-labelledby="st-title">
   <h2 class="st-title" id="st-title">Stimmen aus dem Viertel</h2>
   <p class="st-lead"></p>
@@ -2048,6 +2127,68 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 </section>
 
 <!-- COLOPHON -->
+<!-- Kritische Einordnung. Steht ganz am Ende, hinter den Bauten und
+     hinter den Stimmen: erst dort traegt ein Urteil. -->
+<section class="fazit" id="fazit" aria-labelledby="fz-title">
+  <div class="bp-body" data-lang-block="de" lang="de">
+  <p class="bp-eyebrow">Zum Schluss</p>
+  <h2 class="bp-title">Was auf dem Wijnhaveneiland fehlt</h2>
+  <p class="bp-text">Die Regel hat geliefert, was in ihr stand. Sie verlangte Volumen und Schlankheit, und sie hat Volumen und Schlankheit erzeugt: eine dichte, durchlässige Silhouette mit Blickachsen zur Maas, technisch präzise und städtebaulich konsequent. Was nicht in ihr stand, ist auch nicht entstanden.</p>
+  <p class="bp-text">Gemessen wurde die Dichte: <strong>22 m³ Bauvolumen je m² Grundstück</strong>, eine Geschossflächenzahl um 3,9 und im Hochbau bis 6,2. Diese Zahlen sagen, wie viele Wohnungen auf einen Fleck passen. Sie sagen nichts darüber, ob jemand gern dort ist. Genau in dieser Lücke liegt unser Einwand: <strong>Das Wijnhaveneiland ist als Wohnungsmenge gelungen und als Ort misslungen.</strong></p>
+  <p class="bp-urteil">Hier ging es darum, so viele Wohnungen wie möglich auf einen Fleck zu bekommen. Entstanden ist eine Adresse, kein Viertel.</p>
+  <h3 class="bp-sub">Was konkret fehlt</h3>
+  <ul class="bp-list">
+    <li><strong>Kein Platz, kein Park, keine Mitte.</strong> Auf der ganzen Halbinsel gibt es keine Fläche, auf der man ohne Zweck bleiben könnte. Freiraum entsteht hier als Rest zwischen den Türmen, nicht als Entwurf.</li>
+    <li><strong>Erdgeschosse ohne Programm.</strong> Der Masterplan hält die Blockränder bis etwa 20 m, aber ein erhaltener Blockrand ist noch kein öffentlicher Raum. Erhalten wurde die Form, nicht die Nutzung: Tiefgarageneinfahrten, Lobbys und geschlossene Fassaden, wo Läden, Werkstätten und Cafés die Straße tragen müssten.</li>
+    <li><strong>Eine Kante zum Durchgehen.</strong> Die Promenade ersetzt die alte Kai-Parkierung, das ist ein Gewinn. Aber sie ist ein Weg am Wasser und kein Ort am Wasser: keine Treppe hinunter, keine Bank mit Programm dahinter, kein Grund, stehen zu bleiben.</li>
+    <li><strong>Gemeinschaft hinter der Haustür.</strong> Die jüngeren Türme teilen sich Dachgärten, Gemeinschaftsküchen und Coworking. Das ist gut für die Bewohner und leistet für das Viertel nichts: Der gemeinsame Raum liegt im fünften Geschoss, hinter der Zugangskontrolle, und ist für alle anderen unsichtbar.</li>
+    <li><strong>Monokultur.</strong> Wohnen, Büro, Tiefgarage. Was ein Viertel mischt, Schule, Werkstatt, Verein, billiger Raum, kommt in der Regel nicht vor, weil die Regel es nicht verlangt und der Bodenpreis es nicht trägt.</li>
+  </ul>
+  <p class="bp-text">Unsere fünf Gespräche vor Ort sagen unabhängig voneinander dasselbe. Es sei ein Bezirk, in dem weniger gelebt als gearbeitet werde, kein Ort der Ruhe. Eine Industriestraße, nicht die schönste, zu teuer, und <em>Identitäten gehen hier verloren</em>. Den Hafen in ein Wohnquartier zu verwandeln, <em>ist gescheitert: Es fehlen Farbe und Kultur, Parks zum Beispiel</em>. Und am deutlichsten: Eine Frau, die ihr Leben lang in Rotterdam wohnt, war <em>noch nie</em> auf dem Wijnhaveneiland. Hierher, sagt ihre Gruppe, würde man mit Freunden nicht gehen.</p>
+  <p class="bp-text">Dass es anders geht, steht <strong>vierhundert Meter weiter</strong>. Am Blaak hat Piet Blom das Erdgeschoss zum Thema gemacht und die Stadt unter den Wohnungen durchlaufen lassen; MVRDV hat den Markt überwölbt, statt ihn zu privatisieren. Dieselbe Dichte, dasselbe Jahrzehnt der Hochhauspolitik, anderes Ergebnis. Der Unterschied ist nicht die Höhe und nicht die Ausnutzung. Der Unterschied ist, was geregelt wurde.</p>
+  <p class="bp-text">Rotterdam weiß das inzwischen selbst. Die <strong>Hoogbouwvisie von 2019</strong> führt ein eigenes Kapitel zur Sockelzone, fordert aktive und durchsichtige Erdgeschosse und verabschiedet ausdrücklich den freistehenden Turm. Das Wijnhaveneiland ist vor dieser Einsicht gebaut worden. Es ist das Beispiel, das erklärt, warum es sie braucht.</p>
+  <p class="bp-text">Fair bleibt zu sagen: Es ist kein schlechtes Wohnen. Die Wohnungen sind gefragt, der Blick auf die Maas ist echt, die Türme sind sorgfältig gemacht, und die Silhouette ist eine der präzisesten Europas. Was fehlt, ist das, was eine Ansammlung von Wohnungen von einem Viertel unterscheidet: ein Ort, an dem man bleibt, ohne etwas vorzuhaben.</p>
+  </div>
+  <div class="bp-body" data-lang-block="nl" lang="nl" hidden>
+  <p class="bp-eyebrow">Tot slot</p>
+  <h2 class="bp-title">Wat op het Wijnhaveneiland ontbreekt</h2>
+  <p class="bp-text">De regel heeft geleverd wat erin stond. Zij vroeg om volume en slankheid, en zij heeft volume en slankheid voortgebracht: een dicht, doorlaatbaar silhouet met zichtlijnen naar de Maas, technisch precies en stedenbouwkundig consequent. Wat er niet in stond, is ook niet ontstaan.</p>
+  <p class="bp-text">Gemeten werd de dichtheid: <strong>22 m³ bouwvolume per m² kavel</strong>, een vloerindex rond 3,9 en in de hoogbouw tot 6,2. Die getallen zeggen hoeveel woningen op één plek passen. Zij zeggen niets over de vraag of iemand er graag is. Precies in dat gat ligt ons bezwaar: <strong>het Wijnhaveneiland is als woningaantal geslaagd en als plek mislukt.</strong></p>
+  <p class="bp-urteil">Het ging erom zoveel mogelijk woningen op één plek te krijgen. Wat ontstond is een adres, geen wijk.</p>
+  <h3 class="bp-sub">Wat concreet ontbreekt</h3>
+  <ul class="bp-list">
+    <li><strong>Geen plein, geen park, geen midden.</strong> Op het hele schiereiland is er geen plek waar men zonder doel kan blijven. Vrije ruimte ontstaat hier als restant tussen de torens, niet als ontwerp.</li>
+    <li><strong>Begane gronden zonder programma.</strong> Het masterplan houdt de blokranden tot ongeveer 20 m, maar een behouden blokrand is nog geen openbare ruimte. Behouden werd de vorm, niet het gebruik: inritten van parkeergarages, lobby's en gesloten gevels waar winkels, werkplaatsen en cafés de straat zouden moeten dragen.</li>
+    <li><strong>Een kade om door te lopen.</strong> De promenade vervangt het vroegere parkeren op de kade, dat is winst. Maar zij is een weg aan het water en geen plek aan het water: geen trap naar beneden, geen bank met programma erachter, geen reden om te blijven staan.</li>
+    <li><strong>Gemeenschap achter de voordeur.</strong> De jongere torens delen daktuinen, gemeenschapskeukens en coworking. Dat is goed voor de bewoners en levert de wijk niets op: de gedeelde ruimte ligt op de vijfde verdieping, achter de toegangscontrole, en is voor alle anderen onzichtbaar.</li>
+    <li><strong>Monocultuur.</strong> Wonen, kantoor, parkeergarage. Wat een wijk mengt, school, werkplaats, vereniging, goedkope ruimte, komt in de regel niet voor, omdat de regel het niet vraagt en de grondprijs het niet draagt.</li>
+  </ul>
+  <p class="bp-text">Onze vijf gesprekken ter plaatse zeggen onafhankelijk van elkaar hetzelfde. Het zou een wijk zijn waar minder wordt gewoond dan gewerkt, geen plek van rust. Een industriestraat, niet de mooiste, te duur, en <em>identiteiten gaan hier verloren</em>. De haven omvormen tot woonwijk <em>is mislukt: kleur en cultuur ontbreken, parken bijvoorbeeld</em>. En het duidelijkst: een vrouw die haar hele leven in Rotterdam woont, is er <em>nog nooit</em> geweest. Hierheen, zegt haar groep, zou je met vrienden niet gaan.</p>
+  <p class="bp-text">Dat het anders kan, staat <strong>vierhonderd meter verderop</strong>. Aan de Blaak heeft Piet Blom de begane grond tot onderwerp gemaakt en de stad onder de woningen door laten lopen; MVRDV heeft de markt overwelfd in plaats van hem te privatiseren. Dezelfde dichtheid, hetzelfde decennium hoogbouwbeleid, ander resultaat. Het verschil is niet de hoogte en niet de benutting. Het verschil is wat er geregeld werd.</p>
+  <p class="bp-text">Rotterdam weet dat inmiddels zelf. De <strong>Hoogbouwvisie van 2019</strong> kent een eigen hoofdstuk over de plint, vraagt om actieve en transparante begane gronden en neemt uitdrukkelijk afscheid van de standalone toren. Het Wijnhaveneiland is vóór dat inzicht gebouwd. Het is het voorbeeld dat uitlegt waarom het nodig is.</p>
+  <p class="bp-text">Eerlijk blijft te zeggen: het is geen slecht wonen. De woningen zijn gewild, het uitzicht op de Maas is echt, de torens zijn zorgvuldig gemaakt en het silhouet is een van de precieste van Europa. Wat ontbreekt is wat een verzameling woningen van een wijk onderscheidt: een plek waar je blijft zonder iets van plan te zijn.</p>
+  </div>
+  <div class="bp-body" data-lang-block="en" lang="en" hidden>
+  <p class="bp-eyebrow">In closing</p>
+  <h2 class="bp-title">What the Wijnhaveneiland lacks</h2>
+  <p class="bp-text">The rule delivered what was written in it. It asked for volume and slenderness, and it produced volume and slenderness: a dense, permeable silhouette with sight lines to the Maas, technically precise and consistent in urban terms. What was not written in it did not come about either.</p>
+  <p class="bp-text">What was measured was density: <strong>22 m³ of building volume per m² of plot</strong>, a floor space index around 3.9 and up to 6.2 in the high-rise. Those figures say how many dwellings fit on one spot. They say nothing about whether anyone likes being there. Our objection lies exactly in that gap: <strong>the Wijnhaveneiland succeeds as a quantity of housing and fails as a place.</strong></p>
+  <p class="bp-urteil">The point here was to get as many dwellings as possible onto one spot. What came of it is an address, not a quarter.</p>
+  <h3 class="bp-sub">What is concretely missing</h3>
+  <ul class="bp-list">
+    <li><strong>No square, no park, no middle.</strong> On the whole peninsula there is no surface where one could stay without a purpose. Open space arises here as a remnant between the towers, not as a design.</li>
+    <li><strong>Ground floors without programme.</strong> The masterplan keeps the block edges up to about 20 m, but a preserved block edge is not yet public space. The form was preserved, not the use: garage ramps, lobbies and closed facades where shops, workshops and cafés would have to carry the street.</li>
+    <li><strong>An edge to walk along.</strong> The promenade replaces the former quayside parking, which is a gain. But it is a path by the water and not a place by the water: no steps down, no bench with a programme behind it, no reason to stop.</li>
+    <li><strong>Community behind the front door.</strong> The younger towers share roof gardens, communal kitchens and coworking. That is good for the residents and does nothing for the quarter: the shared space sits on the fifth floor, behind access control, invisible to everyone else.</li>
+    <li><strong>Monoculture.</strong> Housing, office, underground parking. What mixes a quarter, a school, a workshop, a club, cheap space, as a rule does not appear, because the rule does not ask for it and the land price will not carry it.</li>
+  </ul>
+  <p class="bp-text">Our five conversations on site say the same thing independently of one another. That it is a district where there is less living than working, not a place of rest. An industrial street, not the prettiest, too expensive, and <em>identities get lost here</em>. Transforming the harbour into a housing quarter <em>has failed, since it lacks colour and culture, parks for example</em>. And most clearly: a woman who has lived in Rotterdam all her life had <em>never</em> been to the Wijnhaveneiland. You would not come here with friends, her group says.</p>
+  <p class="bp-text">That it can be done differently stands <strong>four hundred metres away</strong>. At the Blaak, Piet Blom made the ground floor the subject and let the city run through beneath the dwellings; MVRDV vaulted over the market instead of privatising it. The same density, the same decade of high-rise policy, a different result. The difference is not the height and not the plot ratio. The difference is what was regulated.</p>
+  <p class="bp-text">Rotterdam knows this itself by now. The <strong>Hoogbouwvisie of 2019</strong> carries its own chapter on the plinth, demands active and transparent ground floors and explicitly takes leave of the standalone tower. The Wijnhaveneiland was built before that insight. It is the example that explains why the insight is needed.</p>
+  <p class="bp-text">In fairness: this is not bad housing. The flats are sought after, the view of the Maas is real, the towers are carefully made and the silhouette is one of the most precise in Europe. What is missing is what distinguishes a collection of dwellings from a quarter: a place where you stay without having anything planned.</p>
+  </div>
+</section>
+
 <footer class="colophon">
   <div class="colophon-mark" aria-hidden="true"></div>
   <p class="colophon-motto">De stad is een boek. Haar lezen is al reizen.</p>
