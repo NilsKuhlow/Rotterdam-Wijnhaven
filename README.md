@@ -1,6 +1,7 @@
 # Wijnhaven Rotterdam
 
-Interaktiver Stadtrundgang durch das **Wijnhaven-Quartier in Rotterdam**: sieben Bauten am Wasser,
+Interaktiver Stadtrundgang durch das **Wijnhaven-Quartier in Rotterdam**: wie aus der
+arbeitenden Hafenkante ein Wohnquartier wurde,
 vom Witte Huis (1898) bis CasaNova. Mobile-first Progressive Web App mit scroll-geführter Karte,
 GPS-Tracker und einem Tagebuch-Layout (eigene Einträge, Stimmen vom Ort, interaktive 3D-Modelle).
 
@@ -289,6 +290,34 @@ Dokument die eine Handlung — der Absenden-Knopf unter den Stimmen, die angespr
 Stimme, die geöffnete Sprechblase. Auf der Karte ist das Modell diese Handlung.
 Schwarze Schrift und schwarze Haarlinie halten ihn gezeichnet; er leuchtet nicht, er
 liegt vorn. Platz ist da: Auch auf 360 px bleiben 96 px Lücke zum Smart-Track.
+
+## Die Eintragstexte
+
+Jeder der sieben Einträge trägt **fünf Absätze**, rund 2.100 Zeichen, in DE, NL und EN.
+Die ersten drei sind Beobachtung vor Ort, im Ton des Feldjournals. Die beiden letzten
+stellen den Bau in den Städtebau und stammen aus der Begleitarbeit in `thesis/`
+(Kapitel 04 Rotterdam, 05 Bauten, 06 Synthese):
+
+* **Absatz 4** sagt, woher der Ort kommt und in welcher Etappe der Bau steht: die
+  gegrabenen Becken von 1609 und 1613, der Basisplan von Van Traa vom 28. Mai 1946,
+  die drei Wellen der Hinwendung zum Wasser (Waterstad 1985, Kop van Zuid 1991,
+  Stadsvisie 2030 vom 29. November 2007), das Regelwerk von KCAP ab 1992/93.
+* **Absatz 5** sagt, was der Bau für den Stadtraum bedeutet, und läuft immer bis ins
+  Erdgeschoss hinunter. Dort liegt die Leitfrage: Die Sockelzone macht rund ein Zehntel
+  eines Gebäudes aus und entscheidet über etwa neun Zehntel dessen, was man auf der
+  Straße erlebt. Rotterdams eigene **Hoogbouwvisie (2019)** hat das amtlich übernommen,
+  samt Verabschiedung des freistehenden Turms. Ob die Wijnhaven das einlöst, lässt die
+  Seite offen; entschieden wird es beim Gehen.
+
+Die Zahlen aus dem Regelwerk stehen so, wie die Begleitarbeit sie belegt: 22 m³ je m²
+Grund, höchstens 580 m² Turmgeschossfläche, ein Turm je 2.000 m² erworbener Fläche,
+FSI 3,9 und im Hochbau bis 6,2. Wo die Quellen auseinandergehen, steht das im Text
+(KCAP nennt an anderer Stelle eine höhere Dichte).
+
+Jeder deutsche Absatz steht zweimal im Dokument, in `SEED7` und im Sprachblock
+`stopParas`; Niederländisch und Englisch je einmal. Wer hier etwas ändert, ändert es
+viermal. `_weaveBody()` verteilt die Abbildungen gleichmäßig auf die Absätze, längere
+Texte brauchen also keine Anpassung des Layouts.
 
 ## Sprache
 
