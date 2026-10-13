@@ -766,25 +766,33 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
   max-width:26rem; line-height:1.5; text-transform:none;
 }
 .eb-quelle[hidden] { display:none; }
-/* Die Zeichnung selbst */
-.ov-achse { fill:none; stroke:var(--accent); stroke-opacity:.5; stroke-linecap:round;
-  stroke-linejoin:round; }
-.ov-kante { fill:none; stroke:var(--ink-1); stroke-width:2; stroke-dasharray:10 7; }
-.ov-flaeche { fill:var(--accent); fill-opacity:.14; stroke:var(--ink-1);
-  stroke-width:2; stroke-dasharray:6 5; }
-.ov-punkt { fill:var(--accent); stroke:var(--ink-1); stroke-width:3; }
-.ov-text { font-family:var(--font-mono); font-size:19px; letter-spacing:1.5px;
-  fill:var(--ink-1); paint-order:stroke; stroke:var(--paper-0); stroke-width:5;
-  text-transform:uppercase; }
-.ov-text.klein { font-size:16px; }
-
-/* Abbildung im Kapitel. Kein Overlay: Das Blatt ist nicht eingemessen. */
-.bp-bild { margin:2rem 0 0; max-width:46rem; }
-.bp-bild img { width:100%; height:auto; display:block; border:1px solid var(--ink-1);
-  background:var(--paper-0); }
-.bp-bildunter { margin:.7rem 0 0; font-size:.85rem; line-height:1.6; color:var(--ink-2); }
-.bp-bildquelle { margin:.5rem 0 0; font-family:var(--font-mono); font-size:.58rem;
-  line-height:1.65; letter-spacing:.04em; color:var(--ink-3); }
+/* Die Zeichnung von 1946. Mittel einer Planzeichnung: Band und Achslinie,
+   Schraffur fuer die Festlegung, Ring fuer den Kreisel. */
+.ov-band   { fill:none; stroke:var(--accent); stroke-opacity:.42;
+             stroke-linecap:butt; stroke-linejoin:round; }
+.ov-achse  { fill:none; stroke:var(--ink-1); stroke-opacity:.55; stroke-width:1.6;
+             stroke-dasharray:22 10 4 10; stroke-linecap:butt; }
+.ov-zone   { fill:url(#ov-schraffur); stroke:var(--ink-1); stroke-width:2.2; }
+.ov-ring   { fill:var(--paper-0); stroke:var(--ink-1); stroke-width:3.5; }
+.ov-kern   { fill:var(--accent); stroke:none; }
+.ov-korr   { fill:none; stroke:var(--ink-1); stroke-width:2.2; }
+.ov-text   { font-family:var(--font-mono); font-size:17px; letter-spacing:1.4px;
+             fill:var(--ink-1); paint-order:stroke; stroke:var(--paper-0);
+             stroke-width:5; stroke-linejoin:round; }
+.ov-text.klein { font-size:14px; }
+.ov-fuehr  { stroke:var(--ink-1); stroke-width:1.4; fill:none; }
+/* Legende, als HTML neben den Schaltern: im Plan wuerde sie mitzoomen. */
+#eb-legende { display:none; gap:.5rem 1rem; flex-wrap:wrap; align-items:center;
+  background:rgba(255,255,255,.92); padding:.45rem .6rem; max-width:26rem; }
+#ebenen.zeigt-1946 #eb-legende { display:flex; }
+.lg-eintrag { display:flex; align-items:center; gap:.4rem;
+  font-family:var(--font-mono); font-size:.52rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-2); white-space:nowrap; }
+.lg-probe { width:22px; height:11px; flex:0 0 auto; border:1px solid var(--ink-1); }
+.lg-probe.band { background:rgba(255,237,41,.45); border-color:rgba(10,10,10,.25); }
+.lg-probe.zone { background:repeating-linear-gradient(45deg, var(--ink-1) 0 1px,
+  transparent 1px 5px); }
+.lg-probe.ring { border-radius:50%; width:12px; height:12px; background:var(--accent); }
 
 /* ═══════════════════════════════════════════
    BASISPLAN + FAZIT
@@ -1802,18 +1810,52 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
     <!-- Zuschaltbare Ebenen. Die historische Karte liegt als Bild, das Schema
          von 1946 als eigene Zeichnung im selben Koordinatenraum. -->
     <g id="ov-1946" hidden aria-hidden="true">
-      <path class="ov-achse" style="stroke-width:46" d="M718 544 L755 756 L787 985 L808 1163 L824 1256"/>
-      <path class="ov-achse" style="stroke-width:40" d="M603 1180 L876 1103 L1139 1052 L1455 1027 L1750 959 L1887 866"/>
-      <path class="ov-achse" style="stroke-width:34" d="M1260 1518 L1445 1459 L1655 1366 L1855 1281"/>
-      <path class="ov-flaeche" d="M1308 1095 L1539 1052 L1608 1247 L1455 1391 L1308 1315 Z"/>
-      <path class="ov-kante" d="M1208 1180 L1218 1315 L1234 1476"/>
-      <circle class="ov-punkt" cx="718" cy="544" r="30"/>
-      <text class="ov-text " x="762" y="554" text-anchor="start">HOFPLEIN</text>
-      <text class="ov-text " x="823" y="908" text-anchor="start">COOLSINGEL 80 M</text>
-      <text class="ov-text " x="1700" y="985" text-anchor="middle">BLAAK</text>
-      <text class="ov-text " x="1760" y="1330" text-anchor="middle">BOOMPJES</text>
-      <text class="ov-text klein" x="1182" y="1315" text-anchor="end">FENSTER ZUM FLUSS</text>
-      <text class="ov-text klein" x="1400" y="1360" text-anchor="middle">WIJNHAVEN: BÜROS 1946</text>
+      <defs>
+        <pattern id="ov-schraffur" patternUnits="userSpaceOnUse" width="14" height="14"
+                 patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="14" stroke="#0A0A0A" stroke-width="1.4" stroke-opacity=".5"/>
+        </pattern>
+        <marker id="ov-pfeil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5"
+                markerHeight="5" orient="auto-start-reverse">
+          <path d="M0 1 L9 5 L0 9 Z" fill="#0A0A0A"/>
+        </marker>
+      </defs>
+
+      <!-- Die drei Achsen des Basisplans. Band = Breite, Linie = Fuehrung.
+           Der Coolsingel traegt seine belegten 80 m massstaeblich (61 Einheiten). -->
+      <path class="ov-band"  style="stroke-width:61.3" d="M718 544 L755 756 L787 985 L808 1163 L824 1256"/>
+      <path class="ov-band"  style="stroke-width:34.5" d="M603 1180 L876 1103 L1139 1052 L1455 1027 L1750 959 L1887 866"/>
+      <path class="ov-band"  style="stroke-width:30.7" d="M1260 1518 L1445 1459 L1655 1366 L1855 1281"/>
+      <path class="ov-achse" d="M718 544 L755 756 L787 985 L808 1163 L824 1256"/>
+      <path class="ov-achse" d="M603 1180 L876 1103 L1139 1052 L1455 1027 L1750 959 L1887 866"/>
+      <path class="ov-achse" d="M1260 1518 L1445 1459 L1655 1366 L1855 1281"/>
+
+      <!-- Das Wijnhavengebiet, im Basisplan den Bueros der Schifffahrt zugewiesen.
+           Schraffur statt Tonflaeche: der Schwarzplan bleibt darunter lesbar. -->
+      <path class="ov-zone" d="M1308 1095 L1539 1052 L1608 1247 L1455 1391 L1308 1315 Z"/>
+
+      <!-- Hofplein, Kreisel am Kopf des Coolsingel -->
+      <circle class="ov-ring" cx="718" cy="544" r="26"/>
+      <circle class="ov-kern" cx="718" cy="544" r="9"/>
+
+      <!-- Fenster zum Fluss am Leuvehaven: der Plan hielt hier die Sicht frei. -->
+      <path class="ov-korr" d="M1196 1205 L1188 1470"/>
+      <path class="ov-korr" d="M1253 1200 L1262 1468"/>
+      <path class="ov-korr" marker-end="url(#ov-pfeil)" style="stroke-dasharray:9 7"
+            d="M1224 1240 L1224 1452"/>
+
+      <!-- Beschriftung. Fuehrungsstriche, damit die Worte neben der Sache stehen
+           und nicht auf den Stationspunkten. -->
+      <path class="ov-fuehr" d="M744 544 L812 520"/>
+      <text class="ov-text" x="820" y="524" text-anchor="start">HOFPLEIN</text>
+      <path class="ov-fuehr" d="M800 900 L872 884"/>
+      <text class="ov-text" x="880" y="888" text-anchor="start">COOLSINGEL 80 M</text>
+      <text class="ov-text" x="1700" y="968" text-anchor="middle">BLAAK</text>
+      <text class="ov-text" x="1772" y="1318" text-anchor="middle">BOOMPJES</text>
+      <path class="ov-fuehr" d="M1188 1352 L1118 1352"/>
+      <text class="ov-text klein" x="1110" y="1356" text-anchor="end">FENSTER ZUM FLUSS</text>
+      <text class="ov-text klein" x="1398" y="1332" text-anchor="middle">WIJNHAVEN</text>
+      <text class="ov-text klein" x="1398" y="1354" text-anchor="middle">BÜROQUARTIER 1946</text>
     </g>
     </g>
     <path class="route-trail" id="routeTrail" d=""/>
@@ -1835,7 +1877,12 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <div id="ebenen">
     <button class="eb-schalter" type="button" data-ebene="ov-1946" aria-pressed="false"
             onclick="ebeneUm('ov-1946')">1946 Basisplan</button>
-    <p class="eb-quelle" id="eb-quelle" hidden></p>
+    <div id="eb-legende" aria-hidden="true">
+    <span class="lg-eintrag"><span class="lg-probe band"></span>Verkehrsachse</span>
+    <span class="lg-eintrag"><span class="lg-probe zone"></span>Büroquartier</span>
+    <span class="lg-eintrag"><span class="lg-probe ring"></span>Hofplein</span>
+  </div>
+  <p class="eb-quelle" id="eb-quelle" hidden></p>
   </div>
 </div><!-- /map-panel -->
 
@@ -5534,7 +5581,7 @@ _renderStimmen();
    historische Karte. Immer nur eine; zwei uebereinander sind nicht lesbar. */
 var EBENEN_QUELLE = {
   'ov-1946': {
-    de: 'Eigene Zeichnung, schematisch: Achsen, Hofplein, Fenster zum Fluss und das Wijnhavengebiet als Bueroquartier. Kein Abbild des Originalplans.',
+    de: 'Eigene Zeichnung, schematisch: Achsen, Hofplein, Fenster zum Fluss und das Wijnhavengebiet als Büroquartier. Kein Abbild des Originalplans.',
     nl: 'Eigen tekening, schematisch: assen, Hofplein, venster naar de rivier en het Wijnhavengebied als kantoorwijk. Geen afbeelding van het originele plan.',
     en: 'Own drawing, schematic: axes, Hofplein, window to the river and the Wijnhaven area as an office quarter. Not a reproduction of the original plan.'
   }
@@ -5552,6 +5599,8 @@ function ebeneUm(id){
     if (kn) kn.setAttribute('aria-pressed', String(k === neu));
   });
   _ebeneAktiv = neu;
+  var box = document.getElementById('ebenen');
+  if (box) box.classList.toggle('zeigt-1946', neu === 'ov-1946');
   _ebeneQuelle();
 }
 
