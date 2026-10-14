@@ -863,6 +863,16 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
   border-bottom:1px solid var(--ink-1); padding-bottom:.15rem;
 }
 .rr-more:hover, .rr-more:focus-visible { background:var(--accent); outline:none; }
+/* Die beiden Kapitel stehen nach den sieben Stationen, in derselben Form.
+   Stationen sind sie nicht: darum roemische Ziffern und ein weisses Feld
+   statt einer Stationsfarbe. Die Zwischenueberschrift bleibt eine Marke,
+   keine zweite Hauptzeile. */
+.rr-kapitel-titel {
+  font-family:var(--font-mono); font-weight:500; font-size:.55rem;
+  letter-spacing:var(--tr-label); text-transform:uppercase; color:var(--ink-3);
+  margin:3.2rem 0 1.4rem;
+}
+.rr-kapitel .rr-num { background:var(--paper-0); }
 .rr-foot {
   font-family:var(--font-mono); font-size:.55rem; letter-spacing:var(--tr-label);
   text-transform:uppercase; color:var(--ink-3);
@@ -1913,6 +1923,21 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
       <a class="rr-more" href="#ey-netherlands">Eintrag öffnen</a>
     </li>
   </ol>
+  <h3 class="rr-kapitel-titel">Zwei Kapitel zum Städtebau</h3>
+  <ol class="rr-list rr-kapitel">
+    <li class="rr-item">
+      <h4 class="rr-name"><span class="rr-num">I</span> Die historische Stadt</h4>
+      <p class="rr-meta">Rotterdam am Wasser · 1609 bis 2007</p>
+      <p>Das Viertel ist kein gewachsenes Ufer, sondern eine Konstruktion: 1609 der Leuvehaven, 1613 Wijnhaven und Scheepmakershaven, gegrabene Becken für den Umschlag. Das Kapitel verfolgt den Bogen von dort über den 14. Mai 1940 bis zur Stadsvisie 2030, die das Büroquartier 2007 zum Wohngebiet erklärte.</p>
+      <a class="rr-more" href="#historie">Kapitel öffnen</a>
+    </li>
+    <li class="rr-item">
+      <h4 class="rr-name"><span class="rr-num">II</span> Der Basisplan von Van Traa</h4>
+      <p class="rr-meta">Cornelis van Traa · angenommen 28. Mai 1946</p>
+      <p>Nach der Zerstörung stand nicht die Form zur Entscheidung, sondern die Methode. Van Traa legte Funktionen, Achsen und Baufelder fest und ließ die Bebauung offen. Für das Wijnhavengebiet hieß das Büros: Anfang der 1960er Jahre stand dort keine einzige Wohnung.</p>
+      <a class="rr-more" href="#basisplan">Kapitel öffnen</a>
+    </li>
+  </ol>
   <p class="rr-foot">
     Wahlpflichtmodul Stadt + Raum, Hochschule Wismar, Wintersemester 2026/27.
     Zusammengestellt von Nils Kuhlow und Kai-Lars Ehrich.
@@ -1990,6 +2015,21 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
       <a class="rr-more" href="#ey-netherlands">Notitie openen</a>
     </li>
   </ol>
+  <h3 class="rr-kapitel-titel">Twee hoofdstukken over stedenbouw</h3>
+  <ol class="rr-list rr-kapitel">
+    <li class="rr-item">
+      <h4 class="rr-name"><span class="rr-num">I</span> De historische stad</h4>
+      <p class="rr-meta">Rotterdam aan het water · 1609 tot 2007</p>
+      <p>De wijk is geen gegroeide oever maar een constructie: in 1609 de Leuvehaven, in 1613 Wijnhaven en Scheepmakershaven, gegraven bekkens voor de overslag. Het hoofdstuk volgt de boog daarvandaan over 14 mei 1940 tot de Stadsvisie 2030, die het kantoorkwartier in 2007 tot woongebied verklaarde.</p>
+      <a class="rr-more" href="#historie">Hoofdstuk openen</a>
+    </li>
+    <li class="rr-item">
+      <h4 class="rr-name"><span class="rr-num">II</span> Het Basisplan van Van Traa</h4>
+      <p class="rr-meta">Cornelis van Traa · aangenomen 28 mei 1946</p>
+      <p>Na de verwoesting ging het niet om de vorm maar om de methode. Van Traa legde functies, assen en bouwvelden vast en liet de bebouwing open. Voor het Wijnhavengebied betekende dat kantoren: begin jaren zestig stond er geen enkele woning meer.</p>
+      <a class="rr-more" href="#basisplan">Hoofdstuk openen</a>
+    </li>
+  </ol>
   <p class="rr-foot">
     Keuzevak Stadt + Raum, Hochschule Wismar, wintersemester 2026/27. Samengesteld door
     Nils Kuhlow en Kai-Lars Ehrich.
@@ -2065,6 +2105,21 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
         Alan Ritchie and the Rotterdam architects 01-10. Its disciplined punched facade
         orders 21 storeys without an iconic gesture.</p>
       <a class="rr-more" href="#ey-netherlands">Open entry</a>
+    </li>
+  </ol>
+  <h3 class="rr-kapitel-titel">Two chapters on urban design</h3>
+  <ol class="rr-list rr-kapitel">
+    <li class="rr-item">
+      <h4 class="rr-name"><span class="rr-num">I</span> The historical city</h4>
+      <p class="rr-meta">Rotterdam on the water · 1609 to 2007</p>
+      <p>The quarter is not a grown riverbank but a construction: the Leuvehaven in 1609, Wijnhaven and Scheepmakershaven in 1613, rectangular basins dug for cargo. The chapter follows the arc from there through 14 May 1940 to the Stadsvisie 2030, which in 2007 redefined the office district as a housing area.</p>
+      <a class="rr-more" href="#historie">Open chapter</a>
+    </li>
+    <li class="rr-item">
+      <h4 class="rr-name"><span class="rr-num">II</span> Van Traa's Basisplan</h4>
+      <p class="rr-meta">Cornelis van Traa · adopted 28 May 1946</p>
+      <p>After the destruction the decision was not about form but about method. Van Traa fixed functions, axes and building plots and left the buildings open. For the Wijnhaven area that meant offices: by the early 1960s not a single dwelling was left.</p>
+      <a class="rr-more" href="#basisplan">Open chapter</a>
     </li>
   </ol>
   <p class="rr-foot">
