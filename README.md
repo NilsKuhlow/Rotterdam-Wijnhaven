@@ -111,6 +111,34 @@ Punktgrößen, Strichstärken, Beschriftungen und der 50-m-Radius unverändert w
 Ursprung (`gpsToSvg`) und Planmaße (`MAP_VW` 3010, `MAP_VH` 2175) sind dieselben
 wie bei der Rasterfassung, deshalb hat sich keine Stationsnadel bewegt.
 
+**Vergrößern und verkleinern.** Drei Knöpfe rechts unten in der Karte: näher, weiter,
+zurück auf die Gesamtansicht. Dazu Gesten, aber nur solche, die dem Blättern nicht in
+die Quere kommen: **zwei Finger** auf der Karte für Größe und Lage zugleich, am Rechner
+das **Rad mit Strg oder Befehlstaste** (das ist auch die Geste, die ein Trackpad beim
+Zusammenziehen schickt), **Ziehen mit der Maus** und **Doppelklick**. Der eine Finger
+bleibt dem Scrollen vorbehalten: Die Karte füllt das ganze Fenster, wer ihr den einen
+Finger nimmt, sperrt die Seite ein. Deshalb `touch-action: pan-y` statt `none`.
+
+Die engste Stufe ist `KARTE_MIN_VB` = 60 Einheiten, also **78 m Bildbreite**. Die
+weiteste ergibt sich aus dem Plan selbst: mehr als 3010 × 2175 gibt es nicht, und weil
+das SVG mit `slice` arbeitet, ist auf einem hochformatigen Telefon bei rund 1005
+Einheiten Breite Schluss, dann steht die volle Planhöhe im Bild.
+
+**Dabei kam ein alter Fehler ans Licht.** Die Gestenebene des Smart-Track rechnete noch
+mit `CANVAS_W` 1000 und `CANVAS_H` 750, den Maßen der engen Karte von vor dem Wechsel
+auf den weiten Ausschnitt. Das Schieben war dadurch auf das linke obere Neuntel des
+Plans eingesperrt, und `MAX_VB_W` von 900 ließ ein Herauszoomen auf die ganze Karte gar
+nicht zu. Beide Klemmungen laufen jetzt über dieselbe Funktion, `kartenVBSetzen()`.
+
+**Marken wachsen nicht mit.** Punkte, Ringe und Beschriftungen liegen im Koordinatenraum
+des Plans; bei fünffacher Vergrößerung deckte „05 Red Apple" das halbe Bild zu.
+`_markenMass()` rechnet die Größen gegen, angestoßen von einem `MutationObserver` auf der
+viewBox. Der fasst alle Wege zusammen, auf denen sie gesetzt wird: Knopf, Geste, Schwung,
+Sprung zur Station und die weichen Überblendungen. Strichstärken brauchen das nicht,
+für sie genügt `vector-effect: non-scaling-stroke`; das hält sie in Bildpunkten fest und
+lässt die Zustände für Zeiger und aktive Station in Ruhe. Gemessen: Punkt 5,68 → 5,66
+Bildpunkte, Beschriftung 6,94 → 6,96, über fünf Zoomstufen.
+
 Die Werkzeuge liegen in `tools/schwarzplan/` samt Kontrollbildern.
 
 Den Zuschnitt rechnet `_computeStaticVB()` aus den Wegpunkten. Wichtig: Das SVG nutzt

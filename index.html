@@ -749,6 +749,36 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
   opacity:0; pointer-events:none; transition:opacity .4s;
 }
 #ebenen.show { opacity:1; pointer-events:auto; }
+
+/* Zoom. Die Karte ist eine Zeichnung und bleibt auf jeder Stufe scharf,
+   also darf man auch wirklich hineingehen. Die Knoepfe stehen rechts,
+   gegenueber den Kapiteln, und erscheinen mit der Karte. Quadratisch,
+   weiss, eine Haarlinie Rand: dieselbe Sprache wie die Kapitelknoepfe,
+   nur ohne Wort. Die Raender liegen auf Stoss, darum der negative
+   Abstand. */
+#zoom-stapel {
+  position:absolute; right:max(1rem, env(safe-area-inset-right)); bottom:1rem; z-index:7;
+  display:flex; flex-direction:column; align-items:flex-end;
+  opacity:0; pointer-events:none; transition:opacity .4s;
+}
+#zoom-stapel.show { opacity:1; pointer-events:auto; }
+.zoom-knopf {
+  width:2.2rem; height:2.2rem; margin-bottom:-1px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--paper-0); color:var(--ink-1);
+  border:1px solid var(--ink-1); border-radius:0;
+  font-family:var(--font-mono); font-size:.95rem; font-weight:500; line-height:1;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation; transition:background .2s, opacity .2s;
+}
+.zoom-knopf:last-child { margin-bottom:0; font-size:.5rem; letter-spacing:var(--tr-label); }
+.zoom-knopf:hover, .zoom-knopf:focus-visible { background:var(--accent); outline:none; }
+.zoom-knopf[disabled] { opacity:.3; cursor:default; background:var(--paper-0); }
+
+/* Ein Finger blaettert die Seite, zwei Finger bedienen die Karte. Darum
+   pan-y und nicht none: Sonst sperrt sich die Seite selbst ein, weil die
+   Karte das ganze Fenster fuellt. */
+#map-svg-wrap { touch-action:pan-y; user-select:none; -webkit-user-select:none; }
 .eb-schalter {
   font-family:var(--font-mono); font-size:.56rem; letter-spacing:var(--tr-label);
   text-transform:uppercase; border-radius:0; padding:.45rem .8rem; cursor:pointer;
@@ -932,11 +962,17 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
 .court-layer rect { fill:var(--paper-0); }                                /* Innenhoefe als Papiervoids */
 .piazza-fill { fill:var(--brick); opacity:.16; }
 .street      { fill:none; stroke:var(--paper-3); stroke-width:3.5; }
-.route-future{ fill:none; stroke:var(--ink-1); stroke-width:1.4; stroke-dasharray:1 7; stroke-linecap:round; opacity:.30; }
-.route-trail { fill:none; stroke:var(--ink-1); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:.92; }
-.stop-ring   { fill:none; stroke:var(--ink-1); stroke-width:1; opacity:.16; }
+.route-future{ fill:none; stroke:var(--ink-1); stroke-width:1.4; stroke-dasharray:1 7; stroke-linecap:round; opacity:.30;
+               vector-effect:non-scaling-stroke; }
+/* vector-effect haelt die Strichstaerke in Bildpunkten fest. Ohne das
+   wuerde die Route beim Hineinzoomen zum Balken. Groessen (r, font-size)
+   kann es nicht halten, die rechnet _markenMass() gegen. */
+.route-trail { fill:none; stroke:var(--ink-1); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:.92;
+               vector-effect:non-scaling-stroke; }
+.stop-ring   { fill:none; stroke:var(--ink-1); stroke-width:1; opacity:.16; vector-effect:non-scaling-stroke; }
 /* Punktfarbe je Bauwerk aus STOP_COLORS, gesetzt in buildRoute. */
-.stop-dot    { fill:var(--stop-c, var(--ink-1)); stroke:var(--ink-1); stroke-width:1.4; cursor:pointer; }
+.stop-dot    { fill:var(--stop-c, var(--ink-1)); stroke:var(--ink-1); stroke-width:1.4; cursor:pointer;
+               vector-effect:non-scaling-stroke; }
 .stop-dot:hover, .stop-dot:focus-visible { stroke-width:2.6; outline:none; }
 .stop-dot.active-dot { stroke-width:3; }   /* Smart-Track: naechstes Bauwerk */
 .lbl-district{ font-family:var(--font-mono); font-style:normal; font-size:10px; fill:var(--ink-3); letter-spacing:.18em;
@@ -1796,9 +1832,9 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
            groesser als die sieben Stopps, es gibt nur einen davon. Weisser
            Ring plus dunkle Haarlinie, damit er auch auf schwarzem Baukoerper
            steht. -->
-      <circle id="gps-acc"   cx="0" cy="0" r="24" fill="none" stroke="var(--here)" stroke-opacity=".38" stroke-width="1"/>
+      <circle id="gps-acc"   cx="0" cy="0" r="24" fill="none" stroke="var(--here)" stroke-opacity=".38" stroke-width="1" vector-effect="non-scaling-stroke"/>
       <circle id="gps-halo"  cx="0" cy="0" r="12" fill="var(--here)" fill-opacity=".28"/>
-      <circle id="gps-outer" cx="0" cy="0" r="10" fill="var(--paper)" stroke="var(--ink-1)" stroke-width="1"/>
+      <circle id="gps-outer" cx="0" cy="0" r="10" fill="var(--paper)" stroke="var(--ink-1)" stroke-width="1" vector-effect="non-scaling-stroke"/>
       <circle id="gps-inner" cx="0" cy="0" r="6.5" fill="var(--here)"/>
     </g>
   </svg>
@@ -1812,6 +1848,19 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
             onclick="openHistorie()">Historische Stadt</button>
     <button class="eb-schalter eb-kapitel" type="button" id="eb-kapitel"
             onclick="openBasisplan()">Basisplan 1946</button>
+  </div>
+  <!-- Zoom. Drei Knoepfe, weil Gesten allein zu viel voraussetzen: Plus,
+       Minus und zurueck auf die ganze Karte. -->
+  <div id="zoom-stapel">
+    <button class="zoom-knopf" type="button" id="zoom-rein" aria-hidden="false"
+            data-i18n-aria="zoom_in" aria-label="Karte vergrößern"
+            onclick="kartenZoom(0.625)">+</button>
+    <button class="zoom-knopf" type="button" id="zoom-raus"
+            data-i18n-aria="zoom_out" aria-label="Karte verkleinern"
+            onclick="kartenZoom(1.6)">&#8722;</button>
+    <button class="zoom-knopf" type="button" id="zoom-ganz"
+            data-i18n-aria="zoom_all" aria-label="Ganze Karte zeigen"
+            onclick="kartenGanz()">GANZ</button>
   </div>
 </div><!-- /map-panel -->
 
@@ -3012,7 +3061,7 @@ const ROUTES = [{"id":"fuehrung","name":"Führung","sub":"Wijnhaven · euer Rund
 var STOPS = SEED7.slice();          /* aktive Route (Default: Führung) */
 var currentRouteId = "fuehrung";
 
-const I18N = {"buildings":[{"slug":"laurenskerk","nl":{"sub":"Wederopbouw tot 1968 · Laatgotiek","para":"Rotterdams enige bewaard gebleven middeleeuwse bouwwerk en de grootste laatgotische kerk van de stad. Als enige oude gebouw overleefde ze het bombardement van 1940; na de wederopbouw geldt ze als symbool van veerkracht en wederopbouw."},"en":{"sub":"Post-war reconstruction until 1968 · Late Gothic","para":"Rotterdam's only surviving medieval structure and the city's largest Late Gothic church. The sole old building to survive the bombardment of 1940; after its post-war reconstruction it is regarded as a symbol of resilience and rebuilding."}},{"slug":"bibliotheek","nl":{"sub":"Van den Broek en Bakema · 1983","para":"Structuralistisch grootschalig gebouw met een getrapt terugwijkende gevel en de opvallende gele roltrapbuizen aan de buitenhuid; vaak Rotterdams antwoord op het Centre Pompidou genoemd. Vormt samen met de Kubuswoningen en de Markthal het Blaak-ensemble."},"en":{"sub":"Van den Broek en Bakema · 1983","para":"A large structuralist building with a terraced, stepped-back facade and the striking yellow escalator tubes on its outer skin; often called Rotterdam's answer to the Centre Pompidou. Together with the Kubuswoningen and the Markthal it forms the Blaak ensemble."}},{"slug":"potlood","nl":{"sub":"Piet Blom · 1984","para":"61 m hoge, zeshoekige woontoren met een karakteristiek spits toelopend dak. Ontworpen als verticaal tegenwicht voor Bloms naburige Kubuswoningen en onderdeel van zijn totaalplan voor de Oude Haven."},"en":{"sub":"Piet Blom · 1984","para":"A 61 m tall, hexagonal residential tower with a distinctively tapered, pointed roof. Conceived as a vertical counterpoint to Blom's adjacent Kubuswoningen and part of his overall plan for the Oude Haven."}},{"slug":"station-blaak","nl":{"sub":"Harry Reijnders · 1993","para":"Trein- en metrostation waarvan de ronde, hellende overkapping van staal en glas als een geland vliegend schoteltje boven het verdiepte perron zweeft; een speels hightech-teken midden in het Blaak-ensemble."},"en":{"sub":"Harry Reijnders · 1993","para":"A rail and metro station whose circular, tilted steel-and-glass canopy hovers like a landed flying saucer above the sunken platform; a playful high-tech landmark in the midst of the Blaak ensemble."}},{"slug":"willemsbrug","nl":{"sub":"Gemeentewerken · 1981","para":"Markante rode tuibrug over de Maas met twee 55 m hoge pylonen. Bepaalt samen met de Erasmusbrug het silhouet van de Maasoever; de noordelijke tak werd bewust verlegd om de Oude Haven te ontzien."},"en":{"sub":"Gemeentewerken · 1981","para":"A striking red cable-stayed bridge over the Maas with two 55 m tall pylons. Together with the Erasmusbrug it defines the silhouette of the river's edge; its northern span was deliberately curved to spare the Oude Haven."}},{"slug":"schielandshuis","nl":{"sub":"Pieter Post · 1665","para":"Representatief bestuursgebouw in het Hollands classicisme en een van de weinige vooroorlogse bouwwerken die het bombardement van 1940 overleefden. Rijksmonument, tegenwoordig omkaderd door naoorlogse hoogbouw."},"en":{"sub":"Pieter Post · 1665","para":"A stately administrative building in Dutch Classicism and one of the few pre-war structures to survive the bombardment of 1940. A Rijksmonument, today framed by post-war high-rise construction."}},{"slug":"spaansekade","nl":{"sub":"Piet Blom · 1984","para":"Gebogen woon- en bedrijfsgebouw aan de oostkade van de Oude Haven; de derde bouwsteen van Bloms totaalplan naast de Kubuswoningen en de Blaaktoren en de stedenbouwkundige afronding van het historische havenbekken."},"en":{"sub":"Piet Blom · 1984","para":"Curved residential and commercial building on the eastern quay of the Oude Haven; the third component of Blom's master plan alongside the Kubuswoningen and the Blaaktoren, and the urban conclusion of the historic harbour basin."}},{"slug":"erasmusbrug","nl":{"sub":"UNStudio / Ben van Berkel · 1996","para":"Het onmiskenbare herkenningspunt van Rotterdam, vanwege de 139 m hoge, geknikte asymmetrische pyloon „De Zwaan” genoemd. Verbindt als tuibrug de noordoever met de Kop van Zuid."},"en":{"sub":"UNStudio / Ben van Berkel · 1996","para":"Rotterdam's unmistakable landmark, nicknamed “De Zwaan” (the Swan) for its 139 m high, angled asymmetrical pylon. As a cable-stayed bridge it links the north bank with the Kop van Zuid."}},{"slug":"willemswerf","nl":{"sub":"Wim Quist · 1988","para":"94,5 m hoog kantoorgebouw met een opvallende diagonale knik en een glazen „waterval”-voeg die de loop van de rivier oppakt; wit betegelde betonpanelen geven het een grafische uitstraling. Gebouwd voor de rederij Nedlloyd."},"en":{"sub":"Wim Quist · 1988","para":"94.5 m high office tower with a striking diagonal kink and a glazed “waterfall” joint that echoes the course of the river; white-tiled concrete panels give it a graphic character. Built for the shipping company Nedlloyd."}},{"slug":"maritiem-museum","nl":{"sub":"Wim Quist · 1986","para":"Museumgebouw aan de kop van de Leuvehaven met een driehoekige plattegrond die de rooilijnen volgt; een van de oudste maritieme musea van Nederland, met de openluchthaven ervoor."},"en":{"sub":"Wim Quist · 1986","para":"Museum building at the head of the Leuvehaven with a triangular plan that follows the building lines; one of the oldest maritime museums in the Netherlands, with the open-air harbour in front of it."}},{"slug":"de-boeg","nl":{"sub":"Fred Carasso · 1957","para":"45 m hoog oorlogsmonument aan de Leuvehaven dat als een met aluminium beklede scheepsboeg de golven klieft; herdenkt de in de Tweede Wereldoorlog gevallen zeelieden van de koopvaardij."},"en":{"sub":"Fred Carasso · 1957","para":"45 m high war memorial on the Leuvehaven that cleaves the waves like an aluminium-clad ship's bow; it commemorates the merchant navy seamen who fell in the Second World War."}},{"slug":"boompjestorens","nl":{"sub":"Klunder Architecten · 1989","para":"Drie identieke, 70 m hoge witte woontorens (Clipper, Schoener, Galjoen) die een stedenbouwkundige visie uit 1946 inlossen en de openheid van de Coolsingel naar de Maas waarborgen."},"en":{"sub":"Klunder Architecten · 1989","para":"Three identical, 70 m high white residential towers (Clipper, Schoener, Galjoen) that fulfil an urban vision from 1946 and secure the openness of the Coolsingel towards the Maas."}},{"slug":"wereldmuseum","nl":{"sub":"P.G. Buskens · 1851","para":"Neoclassicistische villa uit 1851, oorspronkelijk het clubhuis van een roeivereniging, sinds 1885 volkenkundig museum; een van de weinige bewaard gebleven historische gebouwen aan de oever van het Scheepvaartkwartier."},"en":{"sub":"P.G. Buskens · 1851","para":"A neoclassical villa from 1851, originally the clubhouse of a rowing club and since 1885 an ethnographic museum; one of the few surviving historic buildings on the Scheepvaartkwartier waterfront."}},{"slug":"leuvehaven","nl":{"sub":"vanaf 1598","para":"De oudste gegraven haven van de Rotterdamse binnenstad (1598), tegenwoordig de openluchthaven van het Maritiem Museum met historische kranen, schepen en werfinstallaties; een centraal getuigenis van de maritieme stadsgeschiedenis."},"en":{"sub":"from 1598","para":"The oldest dug harbour in Rotterdam's city centre (1598), today the open-air harbour of the Maritiem Museum with historic cranes, ships and shipyard installations; a central testament to the city's maritime history."}},{"slug":"de-rotterdam","nl":{"sub":"OMA / Rem Koolhaas · 2013","para":"Opgevat als een „verticale stad” van drie verspringende torens, met circa 160.000 m² het grootste gebouw van Nederland en de meest markante solitair aan de kop van de Wilhelminapier."},"en":{"sub":"OMA / Rem Koolhaas · 2013","para":"Conceived as a “vertical city” of three staggered towers, at roughly 160,000 m² the largest building in the Netherlands and the most striking solitary landmark at the head of the Wilhelminapier."}},{"slug":"hotel-new-york","nl":{"sub":"Müller & Van der Tak · 1901","para":"Het jugendstil-hoofdkantoor van de Holland-Amerika Lijn met zijn twee markante torens was de vertrekplaats van de landverhuizers naar Amerika en vormt het historische identiteitsanker van de Kop van Zuid."},"en":{"sub":"Müller & Van der Tak · 1901","para":"The Art Nouveau headquarters of the Holland-America Line, with its two distinctive towers, was the departure point of emigrants to America and remains the historic identity anchor of the Kop van Zuid."}},{"slug":"montevideo","nl":{"sub":"Mecanoo / Francine Houben · 2005","para":"140 m hoge woontoren met collageachtig gestapelde gevels van baksteen, glas en staal, die de maritieme geschiedenis van de pier citeert en mede de skyline van de Wilhelminapier bepaalt."},"en":{"sub":"Mecanoo / Francine Houben · 2005","para":"A 140 m residential tower with collage-like stacked façades of brick, glass and steel that quotes the pier's maritime history and helps define the skyline of the Wilhelminapier."}},{"slug":"new-orleans","nl":{"sub":"Álvaro Siza · 2010","para":"Met 158 m tot 2022 het hoogste woongebouw van Nederland; Siza's sculpturaal versmallende toren met penthousekroon boven een beglaasde culturele sokkel (LantarenVenster)."},"en":{"sub":"Álvaro Siza · 2010","para":"At 158 m, until 2022 the tallest residential building in the Netherlands; Siza's sculpturally tapering tower with a penthouse crown above a glazed cultural plinth (LantarenVenster)."}},{"slug":"toren-op-zuid","nl":{"sub":"Renzo Piano · 2000","para":"Piano's schuin hellende toren, waarvan de helling het antwoord vormt op de pyloon van de naastgelegen Erasmusbrug, geschraagd door een rode diagonale steunbalk; de enorme led-mediagevel maakt hem tot landmark bij het bruggenhoofd."},"en":{"sub":"Renzo Piano · 2000","para":"Piano's obliquely leaning tower, whose incline answers the pylon of the adjacent Erasmusbrug, propped by a red diagonal strut; the vast LED media façade turns it into a landmark at the bridgehead."}},{"slug":"fenix","nl":{"sub":"MAD Architects · 2025","para":"Verbouwing van een historisch havenpakhuis tot 's werelds eerste migratiemuseum; de spiraalvormige, spiegelende 'Tornado'-trapsculptuur op het dak is MAD's eerste openbare cultuurgebouw in Europa."},"en":{"sub":"MAD Architects · 2025","para":"Conversion of a historic harbour warehouse into the world's first migration museum; the spiralling, mirrored 'Tornado' staircase sculpture on the roof is MAD's first public cultural building in Europe."}},{"slug":"world-port-center","nl":{"sub":"Norman Foster · 2000","para":"Zetel van het Havenbedrijf; Foster ontwierp tegelijk het stedenbouwkundige masterplan van de gehele Wilhelminapier, waardoor de slanke, afgeronde toren de ordelijke basisstructuur van de wijk belichaamt."},"en":{"sub":"Norman Foster · 2000","para":"Seat of the Port Authority; Foster also designed the urban master plan for the entire Wilhelminapier, which is why the slender, rounded tower embodies the district's orderly underlying structure."}},{"slug":"luxor","nl":{"sub":"Bolles+Wilson · 2001","para":"Groot musical- en theaterhuis, waarvan de rondlopende felrode gevel als een toneelgordijn de foyers omhult en het gebouw een bewust tekenachtige rol in de havenwijk geeft."},"en":{"sub":"Bolles+Wilson · 2001","para":"Large musical and theatre house whose wraparound bright-red façade envelops the foyers like a stage curtain, giving the building a deliberately emblematic role in the harbour district."}},{"slug":"cruise-terminal","nl":{"sub":"Brinkman, Van den Broek & Bakema · 1949","para":"Naoorlogse vertrekhal van de Holland-Amerika Lijn met zes wijdgespannen betonschaaldaken en 135 m doorlopende glasgevel; eerste landelijke toepassing van deze schaalbouwwijze, nu Rijksmonument."},"en":{"sub":"Brinkman, Van den Broek & Bakema · 1949","para":"Post-war departure hall of the Holland-America Line with six wide-span concrete shell roofs and a 135 m continuous glass façade; the first nationwide use of this shell construction, today a Rijksmonument."}},{"slug":"rijnhavenbrug","nl":{"sub":"Quist Wintermans · 2012","para":"160 m lange voet- en fietsbrug met beweegbaar segment, waarvan de slanke vorm en kleurstelling de oude havenkranen citeren; verbindt de Wilhelminapier met Katendrecht."},"en":{"sub":"Quist Wintermans · 2012","para":"160 m long pedestrian and cycle bridge with a movable segment, whose slender form and colouring quote the old harbour cranes; it connects the Wilhelminapier with Katendrecht."}}],"factLabels":[{"de":"Stil","nl":"Stijl","en":"Style"},{"de":"Bau","nl":"Bouw","en":"Construction"},{"de":"Wiederaufbau","nl":"wederopbouw","en":"post-war reconstruction"},{"de":"Architekt","nl":"Architect","en":"Architect"},{"de":"Fertigstellung","nl":"Oplevering","en":"Completion"},{"de":"Höhe","nl":"Hoogte","en":"Height"},{"de":"Pylone","nl":"Pylonen","en":"Pylons"},{"de":"Pylon","nl":"Pyloon","en":"Pylon"},{"de":"Künstler","nl":"Kunstenaar","en":"Artist"},{"de":"Angelegt","nl":"Aangelegd","en":"Laid out"},{"de":"Fläche","nl":"Oppervlakte","en":"Area"},{"de":"Länge","nl":"Lengte","en":"Length"}],"routes":[{"id":"fuehrung","nl":{"name":"Rondleiding","sub":"Wijnhaven · jullie rondgang","theme":"De waterfrontrand van de Wijnhaven, van 1898 tot nu."},"en":{"name":"Tour","sub":"Wijnhaven · your walk","theme":"The waterfront edge of the Wijnhaven, from 1898 to today."}},{"id":"oude-haven","nl":{"name":"Oude Haven & wederopbouw","sub":"Piet Bloms Blaak-plan + 1940","theme":"Bloms bewoonde bos boven de Blaak en de overlevenden van het bombardement."},"en":{"name":"Oude Haven & post-war reconstruction","sub":"Piet Blom's Blaak plan + 1940","theme":"Blom's inhabited forest above the Blaak and the survivors of the bombing."}},{"id":"kop-van-zuid","nl":{"name":"Kop van Zuid","sub":"over de Erasmusbrug naar de zuidoever","theme":"Van landverhuizerskade tot „Manhattan aan de Maas”."},"en":{"name":"Kop van Zuid","sub":"across the Erasmusbrug to the south bank","theme":"From emigrants' quay to “Manhattan aan de Maas”."}},{"id":"maasufer","nl":{"name":"Maasoever / Waterkant","sub":"de werkende havenrand","theme":"De Maasboulevard van de Oude Haven tot de Erasmusbrug."},"en":{"name":"Maas waterfront","sub":"the working harbour edge","theme":"The Maas boulevard from the Oude Haven to the Erasmusbrug."}},{"id":"ikonen","nl":{"name":"Iconen-hoogtepunten","sub":"de must-sees, beide oevers","theme":"De grootste bouwwerken van Rotterdam in een compacte lus."},"en":{"name":"Icon highlights","sub":"the must-sees, both banks","theme":"Rotterdam's greatest buildings in one compact loop."}}],"breakKinds":[{"de":"Bar","nl":"Bar","en":"Bar"},{"de":"Restaurant","nl":"Restaurant","en":"Restaurant"},{"de":"Café","nl":"Café","en":"Café"},{"de":"Lunchroom","nl":"Lunchroom","en":"Lunchroom"}],"ui":[{"key":"rs_kicker","de":"Stadtrundgang · Rotterdam","nl":"Stadswandeling · Rotterdam","en":"Walking tour · Rotterdam"},{"key":"rs_title","de":"Wähle deinen Rundgang","nl":"Kies je rondgang","en":"Choose your walk"},{"key":"rs_lede","de":"Fünf Wege durch das zentrale Maasufer, jeder mit eigener Länge, Dauer und eigenem Schwerpunkt. Später jederzeit über Orte wechselbar.","nl":"Vijf routes door de centrale Maasoever, elk met een eigen lengte, duur en accent. Later altijd via locaties te wisselen.","en":"Five routes through the central Maas waterfront, each with its own length, duration and focus. Switchable at any time via places."},{"key":"rs_stops","de":"Stopps","nl":"Stops","en":"Stops"},{"key":"rs_pause_sg","de":"Pause","nl":"Pauze","en":"Break"},{"key":"rs_pause_pl","de":"Pausen","nl":"Pauzes","en":"Breaks"},{"key":"modal_pause","de":"Pause","nl":"Pauze","en":"Break"},{"key":"break_note","de":"Eine eingeplante Pause auf diesem Rundgang, zum Durchatmen und Notieren.","nl":"Een geplande pauze op deze wandeling, om even op adem te komen en aantekeningen te maken.","en":"A planned break on this walk, to catch your breath and jot down notes."},{"key":"break_art","de":"Art","nl":"Soort","en":"Type"}]};
+const I18N = {"buildings":[{"slug":"laurenskerk","nl":{"sub":"Wederopbouw tot 1968 · Laatgotiek","para":"Rotterdams enige bewaard gebleven middeleeuwse bouwwerk en de grootste laatgotische kerk van de stad. Als enige oude gebouw overleefde ze het bombardement van 1940; na de wederopbouw geldt ze als symbool van veerkracht en wederopbouw."},"en":{"sub":"Post-war reconstruction until 1968 · Late Gothic","para":"Rotterdam's only surviving medieval structure and the city's largest Late Gothic church. The sole old building to survive the bombardment of 1940; after its post-war reconstruction it is regarded as a symbol of resilience and rebuilding."}},{"slug":"bibliotheek","nl":{"sub":"Van den Broek en Bakema · 1983","para":"Structuralistisch grootschalig gebouw met een getrapt terugwijkende gevel en de opvallende gele roltrapbuizen aan de buitenhuid; vaak Rotterdams antwoord op het Centre Pompidou genoemd. Vormt samen met de Kubuswoningen en de Markthal het Blaak-ensemble."},"en":{"sub":"Van den Broek en Bakema · 1983","para":"A large structuralist building with a terraced, stepped-back facade and the striking yellow escalator tubes on its outer skin; often called Rotterdam's answer to the Centre Pompidou. Together with the Kubuswoningen and the Markthal it forms the Blaak ensemble."}},{"slug":"potlood","nl":{"sub":"Piet Blom · 1984","para":"61 m hoge, zeshoekige woontoren met een karakteristiek spits toelopend dak. Ontworpen als verticaal tegenwicht voor Bloms naburige Kubuswoningen en onderdeel van zijn totaalplan voor de Oude Haven."},"en":{"sub":"Piet Blom · 1984","para":"A 61 m tall, hexagonal residential tower with a distinctively tapered, pointed roof. Conceived as a vertical counterpoint to Blom's adjacent Kubuswoningen and part of his overall plan for the Oude Haven."}},{"slug":"station-blaak","nl":{"sub":"Harry Reijnders · 1993","para":"Trein- en metrostation waarvan de ronde, hellende overkapping van staal en glas als een geland vliegend schoteltje boven het verdiepte perron zweeft; een speels hightech-teken midden in het Blaak-ensemble."},"en":{"sub":"Harry Reijnders · 1993","para":"A rail and metro station whose circular, tilted steel-and-glass canopy hovers like a landed flying saucer above the sunken platform; a playful high-tech landmark in the midst of the Blaak ensemble."}},{"slug":"willemsbrug","nl":{"sub":"Gemeentewerken · 1981","para":"Markante rode tuibrug over de Maas met twee 55 m hoge pylonen. Bepaalt samen met de Erasmusbrug het silhouet van de Maasoever; de noordelijke tak werd bewust verlegd om de Oude Haven te ontzien."},"en":{"sub":"Gemeentewerken · 1981","para":"A striking red cable-stayed bridge over the Maas with two 55 m tall pylons. Together with the Erasmusbrug it defines the silhouette of the river's edge; its northern span was deliberately curved to spare the Oude Haven."}},{"slug":"schielandshuis","nl":{"sub":"Pieter Post · 1665","para":"Representatief bestuursgebouw in het Hollands classicisme en een van de weinige vooroorlogse bouwwerken die het bombardement van 1940 overleefden. Rijksmonument, tegenwoordig omkaderd door naoorlogse hoogbouw."},"en":{"sub":"Pieter Post · 1665","para":"A stately administrative building in Dutch Classicism and one of the few pre-war structures to survive the bombardment of 1940. A Rijksmonument, today framed by post-war high-rise construction."}},{"slug":"spaansekade","nl":{"sub":"Piet Blom · 1984","para":"Gebogen woon- en bedrijfsgebouw aan de oostkade van de Oude Haven; de derde bouwsteen van Bloms totaalplan naast de Kubuswoningen en de Blaaktoren en de stedenbouwkundige afronding van het historische havenbekken."},"en":{"sub":"Piet Blom · 1984","para":"Curved residential and commercial building on the eastern quay of the Oude Haven; the third component of Blom's master plan alongside the Kubuswoningen and the Blaaktoren, and the urban conclusion of the historic harbour basin."}},{"slug":"erasmusbrug","nl":{"sub":"UNStudio / Ben van Berkel · 1996","para":"Het onmiskenbare herkenningspunt van Rotterdam, vanwege de 139 m hoge, geknikte asymmetrische pyloon „De Zwaan” genoemd. Verbindt als tuibrug de noordoever met de Kop van Zuid."},"en":{"sub":"UNStudio / Ben van Berkel · 1996","para":"Rotterdam's unmistakable landmark, nicknamed “De Zwaan” (the Swan) for its 139 m high, angled asymmetrical pylon. As a cable-stayed bridge it links the north bank with the Kop van Zuid."}},{"slug":"willemswerf","nl":{"sub":"Wim Quist · 1988","para":"94,5 m hoog kantoorgebouw met een opvallende diagonale knik en een glazen „waterval”-voeg die de loop van de rivier oppakt; wit betegelde betonpanelen geven het een grafische uitstraling. Gebouwd voor de rederij Nedlloyd."},"en":{"sub":"Wim Quist · 1988","para":"94.5 m high office tower with a striking diagonal kink and a glazed “waterfall” joint that echoes the course of the river; white-tiled concrete panels give it a graphic character. Built for the shipping company Nedlloyd."}},{"slug":"maritiem-museum","nl":{"sub":"Wim Quist · 1986","para":"Museumgebouw aan de kop van de Leuvehaven met een driehoekige plattegrond die de rooilijnen volgt; een van de oudste maritieme musea van Nederland, met de openluchthaven ervoor."},"en":{"sub":"Wim Quist · 1986","para":"Museum building at the head of the Leuvehaven with a triangular plan that follows the building lines; one of the oldest maritime museums in the Netherlands, with the open-air harbour in front of it."}},{"slug":"de-boeg","nl":{"sub":"Fred Carasso · 1957","para":"45 m hoog oorlogsmonument aan de Leuvehaven dat als een met aluminium beklede scheepsboeg de golven klieft; herdenkt de in de Tweede Wereldoorlog gevallen zeelieden van de koopvaardij."},"en":{"sub":"Fred Carasso · 1957","para":"45 m high war memorial on the Leuvehaven that cleaves the waves like an aluminium-clad ship's bow; it commemorates the merchant navy seamen who fell in the Second World War."}},{"slug":"boompjestorens","nl":{"sub":"Klunder Architecten · 1989","para":"Drie identieke, 70 m hoge witte woontorens (Clipper, Schoener, Galjoen) die een stedenbouwkundige visie uit 1946 inlossen en de openheid van de Coolsingel naar de Maas waarborgen."},"en":{"sub":"Klunder Architecten · 1989","para":"Three identical, 70 m high white residential towers (Clipper, Schoener, Galjoen) that fulfil an urban vision from 1946 and secure the openness of the Coolsingel towards the Maas."}},{"slug":"wereldmuseum","nl":{"sub":"P.G. Buskens · 1851","para":"Neoclassicistische villa uit 1851, oorspronkelijk het clubhuis van een roeivereniging, sinds 1885 volkenkundig museum; een van de weinige bewaard gebleven historische gebouwen aan de oever van het Scheepvaartkwartier."},"en":{"sub":"P.G. Buskens · 1851","para":"A neoclassical villa from 1851, originally the clubhouse of a rowing club and since 1885 an ethnographic museum; one of the few surviving historic buildings on the Scheepvaartkwartier waterfront."}},{"slug":"leuvehaven","nl":{"sub":"vanaf 1598","para":"De oudste gegraven haven van de Rotterdamse binnenstad (1598), tegenwoordig de openluchthaven van het Maritiem Museum met historische kranen, schepen en werfinstallaties; een centraal getuigenis van de maritieme stadsgeschiedenis."},"en":{"sub":"from 1598","para":"The oldest dug harbour in Rotterdam's city centre (1598), today the open-air harbour of the Maritiem Museum with historic cranes, ships and shipyard installations; a central testament to the city's maritime history."}},{"slug":"de-rotterdam","nl":{"sub":"OMA / Rem Koolhaas · 2013","para":"Opgevat als een „verticale stad” van drie verspringende torens, met circa 160.000 m² het grootste gebouw van Nederland en de meest markante solitair aan de kop van de Wilhelminapier."},"en":{"sub":"OMA / Rem Koolhaas · 2013","para":"Conceived as a “vertical city” of three staggered towers, at roughly 160,000 m² the largest building in the Netherlands and the most striking solitary landmark at the head of the Wilhelminapier."}},{"slug":"hotel-new-york","nl":{"sub":"Müller & Van der Tak · 1901","para":"Het jugendstil-hoofdkantoor van de Holland-Amerika Lijn met zijn twee markante torens was de vertrekplaats van de landverhuizers naar Amerika en vormt het historische identiteitsanker van de Kop van Zuid."},"en":{"sub":"Müller & Van der Tak · 1901","para":"The Art Nouveau headquarters of the Holland-America Line, with its two distinctive towers, was the departure point of emigrants to America and remains the historic identity anchor of the Kop van Zuid."}},{"slug":"montevideo","nl":{"sub":"Mecanoo / Francine Houben · 2005","para":"140 m hoge woontoren met collageachtig gestapelde gevels van baksteen, glas en staal, die de maritieme geschiedenis van de pier citeert en mede de skyline van de Wilhelminapier bepaalt."},"en":{"sub":"Mecanoo / Francine Houben · 2005","para":"A 140 m residential tower with collage-like stacked façades of brick, glass and steel that quotes the pier's maritime history and helps define the skyline of the Wilhelminapier."}},{"slug":"new-orleans","nl":{"sub":"Álvaro Siza · 2010","para":"Met 158 m tot 2022 het hoogste woongebouw van Nederland; Siza's sculpturaal versmallende toren met penthousekroon boven een beglaasde culturele sokkel (LantarenVenster)."},"en":{"sub":"Álvaro Siza · 2010","para":"At 158 m, until 2022 the tallest residential building in the Netherlands; Siza's sculpturally tapering tower with a penthouse crown above a glazed cultural plinth (LantarenVenster)."}},{"slug":"toren-op-zuid","nl":{"sub":"Renzo Piano · 2000","para":"Piano's schuin hellende toren, waarvan de helling het antwoord vormt op de pyloon van de naastgelegen Erasmusbrug, geschraagd door een rode diagonale steunbalk; de enorme led-mediagevel maakt hem tot landmark bij het bruggenhoofd."},"en":{"sub":"Renzo Piano · 2000","para":"Piano's obliquely leaning tower, whose incline answers the pylon of the adjacent Erasmusbrug, propped by a red diagonal strut; the vast LED media façade turns it into a landmark at the bridgehead."}},{"slug":"fenix","nl":{"sub":"MAD Architects · 2025","para":"Verbouwing van een historisch havenpakhuis tot 's werelds eerste migratiemuseum; de spiraalvormige, spiegelende 'Tornado'-trapsculptuur op het dak is MAD's eerste openbare cultuurgebouw in Europa."},"en":{"sub":"MAD Architects · 2025","para":"Conversion of a historic harbour warehouse into the world's first migration museum; the spiralling, mirrored 'Tornado' staircase sculpture on the roof is MAD's first public cultural building in Europe."}},{"slug":"world-port-center","nl":{"sub":"Norman Foster · 2000","para":"Zetel van het Havenbedrijf; Foster ontwierp tegelijk het stedenbouwkundige masterplan van de gehele Wilhelminapier, waardoor de slanke, afgeronde toren de ordelijke basisstructuur van de wijk belichaamt."},"en":{"sub":"Norman Foster · 2000","para":"Seat of the Port Authority; Foster also designed the urban master plan for the entire Wilhelminapier, which is why the slender, rounded tower embodies the district's orderly underlying structure."}},{"slug":"luxor","nl":{"sub":"Bolles+Wilson · 2001","para":"Groot musical- en theaterhuis, waarvan de rondlopende felrode gevel als een toneelgordijn de foyers omhult en het gebouw een bewust tekenachtige rol in de havenwijk geeft."},"en":{"sub":"Bolles+Wilson · 2001","para":"Large musical and theatre house whose wraparound bright-red façade envelops the foyers like a stage curtain, giving the building a deliberately emblematic role in the harbour district."}},{"slug":"cruise-terminal","nl":{"sub":"Brinkman, Van den Broek & Bakema · 1949","para":"Naoorlogse vertrekhal van de Holland-Amerika Lijn met zes wijdgespannen betonschaaldaken en 135 m doorlopende glasgevel; eerste landelijke toepassing van deze schaalbouwwijze, nu Rijksmonument."},"en":{"sub":"Brinkman, Van den Broek & Bakema · 1949","para":"Post-war departure hall of the Holland-America Line with six wide-span concrete shell roofs and a 135 m continuous glass façade; the first nationwide use of this shell construction, today a Rijksmonument."}},{"slug":"rijnhavenbrug","nl":{"sub":"Quist Wintermans · 2012","para":"160 m lange voet- en fietsbrug met beweegbaar segment, waarvan de slanke vorm en kleurstelling de oude havenkranen citeren; verbindt de Wilhelminapier met Katendrecht."},"en":{"sub":"Quist Wintermans · 2012","para":"160 m long pedestrian and cycle bridge with a movable segment, whose slender form and colouring quote the old harbour cranes; it connects the Wilhelminapier with Katendrecht."}}],"factLabels":[{"de":"Stil","nl":"Stijl","en":"Style"},{"de":"Bau","nl":"Bouw","en":"Construction"},{"de":"Wiederaufbau","nl":"wederopbouw","en":"post-war reconstruction"},{"de":"Architekt","nl":"Architect","en":"Architect"},{"de":"Fertigstellung","nl":"Oplevering","en":"Completion"},{"de":"Höhe","nl":"Hoogte","en":"Height"},{"de":"Pylone","nl":"Pylonen","en":"Pylons"},{"de":"Pylon","nl":"Pyloon","en":"Pylon"},{"de":"Künstler","nl":"Kunstenaar","en":"Artist"},{"de":"Angelegt","nl":"Aangelegd","en":"Laid out"},{"de":"Fläche","nl":"Oppervlakte","en":"Area"},{"de":"Länge","nl":"Lengte","en":"Length"}],"routes":[{"id":"fuehrung","nl":{"name":"Rondleiding","sub":"Wijnhaven · jullie rondgang","theme":"De waterfrontrand van de Wijnhaven, van 1898 tot nu."},"en":{"name":"Tour","sub":"Wijnhaven · your walk","theme":"The waterfront edge of the Wijnhaven, from 1898 to today."}},{"id":"oude-haven","nl":{"name":"Oude Haven & wederopbouw","sub":"Piet Bloms Blaak-plan + 1940","theme":"Bloms bewoonde bos boven de Blaak en de overlevenden van het bombardement."},"en":{"name":"Oude Haven & post-war reconstruction","sub":"Piet Blom's Blaak plan + 1940","theme":"Blom's inhabited forest above the Blaak and the survivors of the bombing."}},{"id":"kop-van-zuid","nl":{"name":"Kop van Zuid","sub":"over de Erasmusbrug naar de zuidoever","theme":"Van landverhuizerskade tot „Manhattan aan de Maas”."},"en":{"name":"Kop van Zuid","sub":"across the Erasmusbrug to the south bank","theme":"From emigrants' quay to “Manhattan aan de Maas”."}},{"id":"maasufer","nl":{"name":"Maasoever / Waterkant","sub":"de werkende havenrand","theme":"De Maasboulevard van de Oude Haven tot de Erasmusbrug."},"en":{"name":"Maas waterfront","sub":"the working harbour edge","theme":"The Maas boulevard from the Oude Haven to the Erasmusbrug."}},{"id":"ikonen","nl":{"name":"Iconen-hoogtepunten","sub":"de must-sees, beide oevers","theme":"De grootste bouwwerken van Rotterdam in een compacte lus."},"en":{"name":"Icon highlights","sub":"the must-sees, both banks","theme":"Rotterdam's greatest buildings in one compact loop."}}],"breakKinds":[{"de":"Bar","nl":"Bar","en":"Bar"},{"de":"Restaurant","nl":"Restaurant","en":"Restaurant"},{"de":"Café","nl":"Café","en":"Café"},{"de":"Lunchroom","nl":"Lunchroom","en":"Lunchroom"}],"ui":[{"key": "zoom_in", "de": "Karte vergrößern", "nl": "Kaart vergroten", "en": "Zoom in"},{"key": "zoom_out", "de": "Karte verkleinern", "nl": "Kaart verkleinen", "en": "Zoom out"},{"key": "zoom_all", "de": "Ganze Karte zeigen", "nl": "Hele kaart tonen", "en": "Show whole map"},{"key":"rs_kicker","de":"Stadtrundgang · Rotterdam","nl":"Stadswandeling · Rotterdam","en":"Walking tour · Rotterdam"},{"key":"rs_title","de":"Wähle deinen Rundgang","nl":"Kies je rondgang","en":"Choose your walk"},{"key":"rs_lede","de":"Fünf Wege durch das zentrale Maasufer, jeder mit eigener Länge, Dauer und eigenem Schwerpunkt. Später jederzeit über Orte wechselbar.","nl":"Vijf routes door de centrale Maasoever, elk met een eigen lengte, duur en accent. Later altijd via locaties te wisselen.","en":"Five routes through the central Maas waterfront, each with its own length, duration and focus. Switchable at any time via places."},{"key":"rs_stops","de":"Stopps","nl":"Stops","en":"Stops"},{"key":"rs_pause_sg","de":"Pause","nl":"Pauze","en":"Break"},{"key":"rs_pause_pl","de":"Pausen","nl":"Pauzes","en":"Breaks"},{"key":"modal_pause","de":"Pause","nl":"Pauze","en":"Break"},{"key":"break_note","de":"Eine eingeplante Pause auf diesem Rundgang, zum Durchatmen und Notieren.","nl":"Een geplande pauze op deze wandeling, om even op adem te komen en aantekeningen te maken.","en":"A planned break on this walk, to catch your breath and jot down notes."},{"key":"break_art","de":"Art","nl":"Soort","en":"Type"}]};
 
 
 
@@ -3896,6 +3945,12 @@ function setLang(lang){
     if (t[key] !== undefined) el.textContent = t[key];
   });
 
+  /* Beschriftungen, die nur Hilfsmittel hoeren. Die Zoomknoepfe tragen
+     ein Zeichen und kein Wort, ihr Name steht im aria-label. */
+  document.querySelectorAll('[data-i18n-aria]').forEach(function(el){
+    el.setAttribute('aria-label', uiT(el.getAttribute('data-i18n-aria')));
+  });
+
   /* ── Patch stop subtitles in data array ── */
   var SEED_ORDER = ['witte-huis','kubuswoningen','markthal','red-apple','wijnhaveneiland','ey-netherlands','casanova'];
   function _bp(i){ return BYSLUG[SEED_ORDER[i]]; }   /* Original-7 per Slug: route- und pausensicher */
@@ -4447,6 +4502,248 @@ function findNearestStop(sx, sy, vbW, rectW){
 /* ── stopMapInertia: von resetMapView() gebraucht, um Schwung zu stoppen ── */
 var stopMapInertia = function(){};
 
+/* ═══════════════════════════════════════════════════════════════
+   KARTE VERGROESSERN UND VERKLEINERN
+
+   Die Grundkarte ist seit Oktober 2026 eine Zeichnung und kein Bild
+   mehr; sie bleibt auf jeder Stufe scharf, also lohnt das Hineingehen.
+   Bedient wird mit drei Knoepfen, und zusaetzlich mit Gesten, aber nur
+   mit solchen, die dem Blaettern nicht in die Quere kommen:
+
+     zwei Finger auf der Karte   Groesse und Lage zugleich
+     Rad mit Strg oder Befehl    Groesse, am Zeiger verankert
+     Ziehen mit der Maus         Lage, sobald hineingezoomt ist
+     Doppelklick                 eine Stufe naeher
+
+   Ein Finger bleibt dem Scrollen vorbehalten. Die Karte fuellt das
+   ganze Fenster; wer ihr den einen Finger nimmt, sperrt die Seite ein.
+   ═══════════════════════════════════════════════════════════════ */
+var KARTE_MIN_VB = 60;          /* engste Stufe: 60 Einheiten = 78 m Bildbreite */
+
+function _kartenSvg(){ return document.getElementById('mapSvg'); }
+
+function _kartenVB(){
+  var s = _kartenSvg();
+  if (!s) return null;
+  var b = s.viewBox.baseVal;
+  return { x:b.x, y:b.y, w:b.width, h:b.height };
+}
+
+/* Die groesste sinnvolle Breite: mehr als den Plan gibt es nicht, und
+   hoeher als der Plan darf die viewBox auch nicht werden, sonst stuende
+   sie teilweise im Leeren. */
+function _kartenMaxVB(v){
+  return Math.min(MAP_VW, MAP_VH / v);
+}
+
+/* Eine viewBox setzen, die im Plan bleibt. Das Seitenverhaeltnis des
+   Kartenfensters wird nie verlassen: preserveAspectRatio="slice" wuerde
+   sonst am Rand beschneiden und Stationen verschwinden lassen. */
+function kartenVBSetzen(x, y, w, v){
+  var svg = _kartenSvg();
+  if (!svg) return null;
+  var jetzt = _kartenVB();
+  if (!v) v = jetzt ? jetzt.h / jetzt.w : (MAP_VH / MAP_VW);
+  var wMax = _kartenMaxVB(v);
+  w = Math.max(KARTE_MIN_VB, Math.min(w, wMax));
+  var h = w * v;
+  x = Math.max(0, Math.min(x, MAP_VW - w));
+  y = Math.max(0, Math.min(y, MAP_VH - h));
+  svg.setAttribute('viewBox',
+    x.toFixed(2) + ' ' + y.toFixed(2) + ' ' + w.toFixed(2) + ' ' + h.toFixed(2));
+  _zoomKnoepfeStand(w, wMax);
+  return { x:x, y:y, w:w, h:h };
+}
+
+/* Die Knoepfe sagen, wo die Grenze ist, statt sie nur stumm zu halten. */
+function _zoomKnoepfeStand(w, wMax){
+  var rein = document.getElementById('zoom-rein');
+  var raus = document.getElementById('zoom-raus');
+  if (rein) rein.disabled = w <= KARTE_MIN_VB + 0.5;
+  if (raus) raus.disabled = w >= wMax - 0.5;
+}
+
+/* Um einen Punkt herum zoomen. Ohne Punkt um die Bildmitte. Der Punkt
+   unter dem Zeiger bleibt dabei stehen, das ist die ganze Rechnung. */
+function kartenZoom(faktor, px, py){
+  var svg = _kartenSvg();
+  var vb = _kartenVB();
+  if (!svg || !vb) return;
+  if (typeof cancelAnimVB === 'function') cancelAnimVB();
+  if (typeof stopMapInertia === 'function') stopMapInertia();
+  var fx = 0.5, fy = 0.5;
+  if (px !== undefined && py !== undefined){
+    var r = svg.getBoundingClientRect();
+    fx = Math.max(0, Math.min(1, (px - r.left) / r.width));
+    fy = Math.max(0, Math.min(1, (py - r.top) / r.height));
+  }
+  var v = vb.h / vb.w;
+  var ax = vb.x + fx * vb.w, ay = vb.y + fy * vb.h;
+  var wNeu = vb.w * faktor;
+  kartenVBSetzen(ax - fx * wNeu, ay - fy * wNeu * v, wNeu, v);
+}
+
+/* Zurueck auf die Gesamtansicht, die _computeStaticVB() errechnet hat. */
+function kartenGanz(){
+  if (typeof stopMapInertia === 'function') stopMapInertia();
+  if (typeof applyStaticVB === 'function') applyStaticVB(true);
+  setTimeout(function(){
+    var vb = _kartenVB();
+    if (vb) _zoomKnoepfeStand(vb.w, _kartenMaxVB(vb.h / vb.w));
+  }, 600);
+}
+
+/* Die Marken liegen im Koordinatenraum des Plans und wuerden beim
+   Hineinzoomen mitwachsen. Hier bekommen sie ihr Mass zurueck: Bezug ist
+   die Gesamtansicht, naeher heran werden sie im selben Verhaeltnis
+   kleiner gerechnet. Weiter heraus bleiben sie, wie sie sind; sonst
+   waeren sie irgendwann nicht mehr zu treffen. */
+var MARKEN_MASS = {
+  ring: 14, punkt: 9, schrift: 11, kontur: 4, versatzX: 12, versatzY: 4,
+  gps: { 'gps-acc': 24, 'gps-halo': 12, 'gps-outer': 10, 'gps-inner': 6.5 }
+};
+
+function _markenMass(){
+  var svg = _kartenSvg();
+  if (!svg || !svg.viewBox || !svg.viewBox.baseVal) return;
+  var b = svg.viewBox.baseVal;
+  if (!b.width) return;
+  var basis = parseFloat(String(MAP_STATIC_VB).split(/\s+/)[2]) || b.width;
+  var m = b.width / basis;
+  if (m > 1) m = 1;
+  var M = MARKEN_MASS;
+
+  var g = document.getElementById('stop-markers');
+  if (g){
+    var ringe = g.querySelectorAll('.stop-ring');
+    for (var i = 0; i < ringe.length; i++)
+      ringe[i].setAttribute('r', (M.ring * m).toFixed(2));
+    var punkte = g.querySelectorAll('.stop-dot');
+    for (i = 0; i < punkte.length; i++)
+      punkte[i].setAttribute('r', (M.punkt * m).toFixed(2));
+    /* font-size steht im Stylesheet, eine Praesentationsangabe kaeme
+       dagegen nicht an. Also inline. */
+    var lbl = g.querySelectorAll('.stop-lbl');
+    for (i = 0; i < lbl.length; i++){
+      lbl[i].style.fontSize = (M.schrift * m).toFixed(2) + 'px';
+      lbl[i].style.strokeWidth = (M.kontur * m).toFixed(2) + 'px';
+      if (typeof WAYPOINTS !== 'undefined' && WAYPOINTS[i]){
+        lbl[i].setAttribute('x', (WAYPOINTS[i].x + M.versatzX * m).toFixed(2));
+        lbl[i].setAttribute('y', (WAYPOINTS[i].y + M.versatzY * m).toFixed(2));
+      }
+    }
+  }
+  for (var k in M.gps){
+    var e = document.getElementById(k);
+    if (e) e.setAttribute('r', (M.gps[k] * m).toFixed(2));
+  }
+}
+
+(function(){
+  var svg = document.getElementById('mapSvg');
+  if (!svg || typeof MutationObserver !== 'function') return;
+  new MutationObserver(_markenMass)
+    .observe(svg, { attributes:true, attributeFilter:['viewBox'] });
+  _markenMass();
+})();
+
+(function(){
+  var wrap = document.getElementById('map-svg-wrap');
+  if (!wrap) return;
+
+  /* ── Rad: nur mit Strg oder Befehlstaste, und das ist auch die Geste,
+        die ein Mausfeld beim Zusammenziehen schickt. Das blosse Rad
+        bleibt dem Blaettern. ── */
+  wrap.addEventListener('wheel', function(e){
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault();
+    var f = Math.exp(Math.max(-60, Math.min(60, e.deltaY)) * 0.01);
+    kartenZoom(f, e.clientX, e.clientY);
+  }, { passive:false });
+
+  /* ── Doppelklick: eine Stufe naeher, am Zeiger ── */
+  wrap.addEventListener('dblclick', function(e){
+    kartenZoom(0.55, e.clientX, e.clientY);
+  });
+
+  /* ── Ziehen mit der Maus. Erst ab vier Bildpunkten gilt es als Ziehen,
+        damit ein Klick auf eine Station ein Klick bleibt. ── */
+  var zieht = false, gezogen = false, zx = 0, zy = 0, zvb = null;
+  wrap.addEventListener('pointerdown', function(e){
+    if (e.pointerType === 'touch') return;      /* Finger macht der Block unten */
+    zvb = _kartenVB();
+    if (!zvb) return;
+    zieht = true; gezogen = false; zx = e.clientX; zy = e.clientY;
+  });
+  wrap.addEventListener('pointermove', function(e){
+    if (!zieht || !zvb) return;
+    var dx = e.clientX - zx, dy = e.clientY - zy;
+    if (!gezogen){
+      if (dx * dx + dy * dy < 16) return;
+      gezogen = true;
+      wrap.style.cursor = 'grabbing';
+      if (typeof cancelAnimVB === 'function') cancelAnimVB();
+    }
+    e.preventDefault();
+    var r = wrap.getBoundingClientRect();
+    kartenVBSetzen(zvb.x - dx * (zvb.w / r.width),
+                   zvb.y - dy * (zvb.h / r.height),
+                   zvb.w, zvb.h / zvb.w);
+  });
+  function zugEnde(){
+    zieht = false; zvb = null;
+    wrap.style.cursor = '';
+    if (gezogen) setTimeout(function(){ gezogen = false; }, 0);
+  }
+  wrap.addEventListener('pointerup', zugEnde);
+  wrap.addEventListener('pointercancel', zugEnde);
+  wrap.addEventListener('pointerleave', zugEnde);
+  /* Ein Zug darf nicht als Klick auf eine Station enden. */
+  wrap.addEventListener('click', function(e){
+    if (gezogen){ e.stopPropagation(); e.preventDefault(); }
+  }, true);
+
+  /* ── Zwei Finger: Groesse und Lage zugleich. Der Punkt zwischen den
+        Fingern bleibt stehen. Ein Finger wird nicht angefasst, der
+        blaettert weiter die Seite. ── */
+  var g0 = null;
+  function abstand(a, b){
+    var dx = a.clientX - b.clientX, dy = a.clientY - b.clientY;
+    return Math.sqrt(dx * dx + dy * dy) || 1;
+  }
+  wrap.addEventListener('touchstart', function(e){
+    if (e.touches.length < 2){ g0 = null; return; }
+    var vb = _kartenVB();
+    if (!vb) return;
+    e.preventDefault();
+    if (typeof cancelAnimVB === 'function') cancelAnimVB();
+    if (typeof stopMapInertia === 'function') stopMapInertia();
+    var r = wrap.getBoundingClientRect();
+    var mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    var my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    g0 = { vb:vb, d:abstand(e.touches[0], e.touches[1]),
+           ax: vb.x + (mx - r.left) / r.width * vb.w,
+           ay: vb.y + (my - r.top) / r.height * vb.h };
+  }, { passive:false });
+
+  wrap.addEventListener('touchmove', function(e){
+    if (!g0 || e.touches.length < 2) return;
+    e.preventDefault();
+    var r = wrap.getBoundingClientRect();
+    var f = g0.d / abstand(e.touches[0], e.touches[1]);
+    var wNeu = g0.vb.w * f;
+    var v = g0.vb.h / g0.vb.w;
+    var mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    var my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    var fx = (mx - r.left) / r.width, fy = (my - r.top) / r.height;
+    kartenVBSetzen(g0.ax - fx * wNeu, g0.ay - fy * wNeu * v, wNeu, v);
+  }, { passive:false });
+
+  wrap.addEventListener('touchend', function(e){
+    if (e.touches.length < 2) g0 = null;
+  }, { passive:true });
+})();
+
 (function(){
   /* ═══════════════════════════════════════════════════════════════
      MAP TOUCH  –  pan + pinch-zoom + momentum (inertia)
@@ -4464,8 +4761,12 @@ var stopMapInertia = function(){};
   var layer = document.getElementById('map-touch-layer');
   var svg   = document.getElementById('mapSvg');
 
-  var CANVAS_W = 1000, CANVAS_H = 750;
-  var MIN_VB_W = 80,   MAX_VB_W = 900;
+  /* Der Plan, nicht ein alter Zuschnitt. Hier standen bis Oktober 2026
+     noch 1000 x 750 und ein MAX_VB_W von 900, die Masse der engen Karte
+     von davor. Das Schieben war dadurch auf das linke obere Neuntel
+     eingesperrt und ein Herauszoomen auf die ganze Karte unmoeglich. */
+  var CANVAS_W = MAP_VW, CANVAS_H = MAP_VH;
+  var MIN_VB_W = KARTE_MIN_VB;
   var FRICTION  = 0.92;   /* velocity multiplier per frame (~60 fps) */
   var VEL_STOP  = 0.003;  /* SVG-units/ms below which inertia stops   */
   var VEL_ALPHA = 0.6;    /* EMA weight for velocity smoothing         */
@@ -4500,14 +4801,8 @@ var stopMapInertia = function(){};
 
   /* Write a clamped viewBox. Returns the clamped {x,y,w,h}. */
   function applyVB(x, y, w, h){
-    var aspect = _vb0 ? _vb0.h / _vb0.w : (CANVAS_H / CANVAS_W);
-    w = clamp(w, MIN_VB_W, MAX_VB_W);
-    h = clamp(h, MIN_VB_W * aspect, MAX_VB_W * aspect);
-    x = clamp(x, 0, Math.max(0, CANVAS_W - w));
-    y = clamp(y, 0, Math.max(0, CANVAS_H - h));
-    svg.setAttribute('viewBox',
-      x.toFixed(2)+' '+y.toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2));
-    return { x:x, y:y, w:w, h:h };
+    var r = kartenVBSetzen(x, y, w, _vb0 ? _vb0.h / _vb0.w : (CANVAS_H / CANVAS_W));
+    return r || { x:x, y:y, w:w, h:h };
   }
 
   /* ─────────────────── inertia ─────────────────── */
@@ -5684,6 +5979,12 @@ function _ebeneTexte(){
 function _ebenenZeigen(an){
   var box = document.getElementById('ebenen');
   if (box) box.classList.toggle('show', !!an);
+  var zoom = document.getElementById('zoom-stapel');
+  if (zoom) zoom.classList.toggle('show', !!an);
+  if (an && typeof _kartenVB === 'function'){
+    var vb = _kartenVB();
+    if (vb) _zoomKnoepfeStand(vb.w, _kartenMaxVB(vb.h / vb.w));
+  }
 }
 
 _ebeneTexte();
