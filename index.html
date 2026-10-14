@@ -749,37 +749,6 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
   opacity:0; pointer-events:none; transition:opacity .4s;
 }
 #ebenen.show { opacity:1; pointer-events:auto; }
-.eb-regler {
-  display:flex; align-items:center; gap:.55rem;
-  background:rgba(255,255,255,.95); border:1px solid var(--ink-1);
-  padding:.4rem .7rem;
-}
-.eb-mark, .eb-wert {
-  font-family:var(--font-mono); font-size:.56rem; letter-spacing:var(--tr-label);
-  text-transform:uppercase; color:var(--ink-1); white-space:nowrap;
-}
-.eb-wert { min-width:4.2ch; text-align:right; font-variant-numeric:tabular-nums; }
-/* Der Regler. Eigene Spur und eigener Griff, damit er zum Haus passt:
-   rechte Winkel, Haarlinie, Gelb nur fuer den Griff. */
-.eb-regler input[type="range"] {
-  -webkit-appearance:none; appearance:none; width:min(42vw, 9rem); height:16px;
-  background:none; cursor:pointer; margin:0;
-}
-.eb-regler input[type="range"]::-webkit-slider-runnable-track {
-  height:4px; background:var(--paper-3); border:1px solid var(--ink-1);
-}
-.eb-regler input[type="range"]::-moz-range-track {
-  height:4px; background:var(--paper-3); border:1px solid var(--ink-1);
-}
-.eb-regler input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance:none; width:14px; height:14px; margin-top:-6px;
-  background:var(--accent); border:1px solid var(--ink-1); border-radius:0;
-}
-.eb-regler input[type="range"]::-moz-range-thumb {
-  width:14px; height:14px; background:var(--accent);
-  border:1px solid var(--ink-1); border-radius:0;
-}
-.eb-regler input[type="range"]:focus-visible { outline:2px solid var(--ink-1); outline-offset:3px; }
 .eb-schalter {
   font-family:var(--font-mono); font-size:.56rem; letter-spacing:var(--tr-label);
   text-transform:uppercase; border-radius:0; padding:.45rem .8rem; cursor:pointer;
@@ -788,11 +757,6 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
 /* Der Kapitelknopf schaltet nichts, er oeffnet. Deshalb ohne Zustand. */
 .eb-kapitel { background:var(--ink-1); color:var(--paper-0); border:1px solid var(--ink-1); }
 .eb-kapitel:hover, .eb-kapitel:focus-visible { background:var(--accent); color:var(--ink-1); outline:none; }
-.eb-quelle {
-  font-family:var(--font-mono); font-size:.5rem; letter-spacing:.06em;
-  color:var(--ink-2); background:rgba(255,255,255,.92); padding:.3rem .5rem;
-  max-width:28rem; line-height:1.55; text-transform:none; margin:0;
-}
 
 /* ═══════════════════════════════════════════
    BASISPLAN + FAZIT
@@ -1807,20 +1771,6 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
      es ein Vielfaches. preserveAspectRatio="none" ist richtig: Das Bild
      deckt den viewBox-Raum genau ab, es wird nichts verzerrt. -->
 <image class="plan-bild" href="img/schwarzplan.webp" x="0" y="0" width="3010" height="2175" preserveAspectRatio="none"/>
-    <!-- Wiederaufbauschicht: die roten Bauten der Revisiekarte, aus ihr
-         geloest, alles andere durchsichtig. Am Wasser eingemessen,
-         nordgerichtet, 2.270 m je Bildpunkt, Korrelation 0.44. Die Deckung
-         stellt der Regler unter der Karte, Startwert 0. -->
-    <!-- Platzhalter fuer die Stadt vor 1940. Deckt sich mit dem Schwarzplan,
-         weil er in dessen Raster gezeichnet ist: gleiche Groesse, kein
-         Versatz, kein Massstab. Wird durch die wirklichen Grundrisse
-         ersetzt, dann aendert sich nur die Datei. -->
-    <image id="ov-vorkrieg" href="img/vorkrieg.webp" x="0" y="0"
-           width="3010" height="2175" opacity="0" preserveAspectRatio="none"
-           aria-hidden="true"/>
-    <image id="ov-revisie" href="img/wiederaufbau.webp" x="0" y="0"
-           width="3200" height="2496" opacity="0"
-           transform="matrix(0.884635 0.000459 0.004089 0.873231 410.985 -106.431)" aria-hidden="true"/>
     <!-- Zuschaltbare Ebenen. Die historische Karte liegt als Bild, das Schema
          von 1946 als eigene Zeichnung im selben Koordinatenraum. -->
     </g>
@@ -1844,21 +1794,10 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
        Regler statt eines Schalters, weil sich zwei Schichten nur im
        Uebergang vergleichen lassen. Startwert 0. -->
   <div id="ebenen">
-    <div class="eb-regler">
-      <label class="eb-mark" for="eb-vor" id="eb-mark-vor">Vor 1940</label>
-      <input type="range" id="eb-vor" min="0" max="100" step="1" value="0"
-             aria-describedby="eb-quelle" oninput="deckungSetzen('ov-vorkrieg', this.value)"/>
-      <output class="eb-wert" id="eb-wert-vor" for="eb-vor">0 %</output>
-    </div>
-    <div class="eb-regler">
-      <label class="eb-mark" for="eb-deckung" id="eb-mark">Wiederaufbau</label>
-      <input type="range" id="eb-deckung" min="0" max="100" step="1" value="0"
-             aria-describedby="eb-quelle" oninput="deckungSetzen('ov-revisie', this.value)"/>
-      <output class="eb-wert" id="eb-wert" for="eb-deckung">0 %</output>
-    </div>
+    <button class="eb-schalter eb-kapitel" type="button" id="eb-historie"
+            onclick="openHistorie()">Historische Stadt</button>
     <button class="eb-schalter eb-kapitel" type="button" id="eb-kapitel"
-            onclick="openBasisplan()">Kapitel 1946</button>
-    <p class="eb-quelle" id="eb-quelle"></p>
+            onclick="openBasisplan()">Basisplan 1946</button>
   </div>
 </div><!-- /map-panel -->
 
@@ -5498,6 +5437,74 @@ function _renderStimmen(){
    STIMMEN erst an dieser Stelle zugewiesen ist. */
 _renderStimmen();
 
+/* ── Kapitel: die historische Stadt ──
+   Der lange Bogen von den gegrabenen Becken bis zur Stadsvisie 2030.
+   Alles, was vor und nach dem Basisplan liegt; der Basisplan selbst hat
+   sein eigenes Kapitel. */
+var HISTORIE_TEXTE = {
+  de: {
+    name: 'Die historische Stadt',
+    sub: 'Rotterdam am Wasser · 1609 bis 2007',
+    kopf: 'Luftbild von 1940: die Innenstadt kurz vor ihrer Zerstörung.',
+    bildunter: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, Maßstab 1:2500. Die Innenstadt, wie sie bis zum 14. Mai 1940 bestand: die Waterstad mit ihren Hafenbecken, der noch schmale Coolsingel, die dichte Parzellierung rund um die Laurenskerk. Rot eingetragen sind die damals geplanten Verkehrsdurchbrüche.',
+    quelle: 'Stadsarchief Rotterdam, Sammlung Karten und Pläne 1980-353, über Wikimedia Commons. Gemeinfrei, anonymes Werk, Schutzfrist abgelaufen.',
+    quelle2: 'Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007); Meyer, City and Port (1999). Ausführlich in der Begleitarbeit, Kapitel 4.',
+    paras: [
+      'Das Viertel, durch das dieser Rundgang führt, ist kein gewachsenes Ufer, sondern eine Konstruktion. Im frühen 17. Jahrhundert erweiterte Rotterdam seine mittelalterliche Stadt planmäßig zum Fluss hin: der <strong>Leuvehaven 1609</strong>, <strong>Wijnhaven und Scheepmakershaven 1613</strong>. Ein System rechteckiger, gegrabener Becken, das die Stadt zur Maas öffnete und sie zugleich ordnete. Das Wasser diente hier von Anfang an nicht der Anschauung, sondern dem Umschlag; die Kaikante war Arbeitsfläche.',
+      'In den folgenden Jahrhunderten verdichtete sich das Viertel zum Kaufmanns- und Geschäftsquartier. Lagerhäuser, Kontore, Banken und Handelshäuser reihten sich entlang der Becken, und die ökonomische Logik der <strong>Waterstad</strong> war an der Kaikante unmittelbar ablesbar. Gegen Ende des 19. Jahrhunderts überhöhte das Witte Huis diese Verdichtung ins Vertikale: zehn Geschosse, 1898, ein Kontorhaus, das als erstes Hochhaus Europas galt. Stadt und Hafen teilten sich damals noch dieselbe Kante.',
+      'Der <strong>14. Mai 1940</strong> beendete das in einer Nacht. Die Bombardierung zerstörte das Zentrum nahezu vollständig; im Wijnhavengebiet überstanden nur die Regentessebrug und das Gebäude von R. Mees die Feuersbrunst. Mit der gewachsenen Schichtung von dreieinhalb Jahrhunderten verschwand die Selbstverständlichkeit der bebauten Kante. Was an ihre Stelle treten sollte, war von da an eine planerische Entscheidung; wie sie fiel, steht im Kapitel zum Basisplan.',
+      'Die Rückwendung zum Wasser kam in Wellen und nicht in einem Akt. Der <strong>Binnenstadsplan von 1985</strong> entdeckte die alten Becken unter dem Stichwort Waterstad wieder, fasste die Boompjes als Uferboulevard und setzte das Maritiem Museum an den Leuvehaven: das Wasser als Kulisse und Freizeitraum. <strong>1991</strong> folgte der Kop van Zuid, „Manhattan aan de Maas", der das abgehängte Südufer zum Stadtteil machte und den Fluss vom Rücken der Stadt zu ihrer Mitte erklärte.',
+      'Die dritte Welle traf das Maritiem District selbst. Mit der <strong>Stadsvisie Rotterdam 2030, angenommen am 29. November 2007</strong>, wurde das alte Büroquartier programmatisch zum Wohngebiet umdeklariert. Erst damit wurde aus der wohnungslosen Bürozeile des Wiederaufbaus ein künftiges Wohnquartier, und erst damit beginnt die Schicht, die dieser Rundgang an seinen sieben Bauten abliest.',
+    ]
+  },
+  nl: {
+    name: 'De historische stad',
+    sub: 'Rotterdam aan het water · 1609 tot 2007',
+    kopf: 'Luchtfoto uit 1940: de binnenstad kort voor haar verwoesting.',
+    bildunter: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, schaal 1:2500. De binnenstad zoals zij tot 14 mei 1940 bestond: de Waterstad met haar havenbekkens, de nog smalle Coolsingel, de dichte parcellering rond de Laurenskerk. In rood de toen geplande verkeersdoorbraken.',
+    quelle: 'Stadsarchief Rotterdam, collectie kaarten en plattegronden 1980-353, via Wikimedia Commons. Publiek domein, anoniem werk, beschermingstermijn verstreken.',
+    quelle2: 'Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007); Meyer, City and Port (1999). Uitvoeriger in de begeleidende scriptie, hoofdstuk 4.',
+    paras: [
+      'De wijk waar deze rondgang doorheen voert is geen gegroeide oever maar een constructie. In de vroege zeventiende eeuw breidde Rotterdam zijn middeleeuwse stad planmatig uit naar de rivier: de <strong>Leuvehaven in 1609</strong>, <strong>Wijnhaven en Scheepmakershaven in 1613</strong>. Een stelsel van rechthoekige, gegraven bekkens dat de stad naar de Maas opende en haar tegelijk ordende. Het water diende hier van meet af aan niet de aanblik maar de overslag; de kade was werkvloer.',
+      'In de eeuwen daarna verdichtte de wijk zich tot koopmans- en zakenkwartier. Pakhuizen, kantoren, banken en handelshuizen reiden zich langs de bekkens, en de economische logica van de <strong>Waterstad</strong> was aan de kade direct af te lezen. Tegen het einde van de negentiende eeuw verhief het Witte Huis die verdichting naar het verticale: tien verdiepingen, 1898, een kantoorhuis dat gold als het eerste hoogbouwgebouw van Europa. Stad en haven deelden toen nog dezelfde kade.',
+      '<strong>14 mei 1940</strong> maakte daar in één nacht een einde aan. Het bombardement verwoestte het centrum vrijwel volledig; in het Wijnhavengebied doorstonden alleen de Regentessebrug en het gebouw van R. Mees de vuurzee. Met de gegroeide gelaagdheid van drieënhalve eeuw verdween de vanzelfsprekendheid van de bebouwde kade. Wat ervoor in de plaats moest komen was voortaan een planologisch besluit; hoe dat uitviel staat in het hoofdstuk over het Basisplan.',
+      'De terugkeer naar het water kwam in golven en niet in één daad. Het <strong>Binnenstadsplan van 1985</strong> herontdekte de oude bekkens onder het trefwoord Waterstad, vatte de Boompjes als oeverboulevard en zette het Maritiem Museum aan de Leuvehaven: het water als decor en vrijetijdsruimte. In <strong>1991</strong> volgde de Kop van Zuid, „Manhattan aan de Maas", die de afgehangen zuidoever tot stadsdeel maakte en de rivier van de rug van de stad tot haar midden verklaarde.',
+      'De derde golf trof het Maritiem District zelf. Met de <strong>Stadsvisie Rotterdam 2030, aangenomen op 29 november 2007</strong>, werd de oude kantoorwijk programmatisch tot woongebied verklaard. Pas daarmee werd uit de woningloze kantoorzone van de wederopbouw een toekomstige woonwijk, en pas daarmee begint de laag die deze rondgang aan zijn zeven bouwwerken afleest.',
+    ]
+  },
+  en: {
+    name: 'The historical city',
+    sub: 'Rotterdam on the water · 1609 to 2007',
+    kopf: 'Aerial photograph of 1940: the inner city shortly before its destruction.',
+    bildunter: 'Plan tot verbetering van de verkeerswegen in de binnenstad, 1913, scale 1:2500. The inner city as it stood until 14 May 1940: the Waterstad with its harbour basins, the still narrow Coolsingel, the dense plot structure around the Laurenskerk. In red, the traffic breakthroughs planned at the time.',
+    quelle: 'Stadsarchief Rotterdam, collection of maps and plans 1980-353, via Wikimedia Commons. Public domain, anonymous work, term expired.',
+    quelle2: 'Stadsarchief Rotterdam; Gemeente Rotterdam, Stadsvisie 2030 (2007); Meyer, City and Port (1999). In detail in the accompanying thesis, chapter 4.',
+    paras: [
+      'The quarter this walk leads through is not a grown shoreline but a construction. In the early seventeenth century Rotterdam extended its medieval town towards the river by plan: the <strong>Leuvehaven in 1609</strong>, <strong>Wijnhaven and Scheepmakershaven in 1613</strong>. A system of rectangular, dug basins that opened the city to the Maas and ordered it at the same time. From the outset the water here served not the view but the transfer of goods; the quay was a working surface.',
+      'Over the following centuries the quarter densified into a merchant and business district. Warehouses, counting houses, banks and trading houses lined the basins, and the economic logic of the <strong>Waterstad</strong> could be read directly off the quay. Towards the end of the nineteenth century the Witte Huis raised that density into the vertical: ten storeys, 1898, an office building regarded as the first high-rise in Europe. City and harbour still shared the same edge.',
+      '<strong>14 May 1940</strong> ended that in a single night. The bombing destroyed the centre almost completely; in the Wijnhaven area only the Regentessebrug and the R. Mees building survived the firestorm. With three and a half centuries of grown layering, the self-evidence of the built edge disappeared. What should take its place was from then on a planning decision; how it was decided is told in the chapter on the Basisplan.',
+      'The turn back to the water came in waves, not in a single act. The <strong>Binnenstadsplan of 1985</strong> rediscovered the old basins under the heading Waterstad, framed the Boompjes as a waterfront boulevard and placed the Maritiem Museum at the Leuvehaven: water as backdrop and leisure space. <strong>1991</strong> brought the Kop van Zuid, "Manhattan aan de Maas", which made the cut-off south bank into a district and declared the river no longer the back of the city but its middle.',
+      'The third wave struck the Maritiem District itself. With the <strong>Stadsvisie Rotterdam 2030, adopted on 29 November 2007</strong>, the old office quarter was programmatically redeclared a residential area. Only then did the housing-less office strip of the reconstruction become a future residential quarter, and only then begins the layer that this walk reads off its seven buildings.',
+    ]
+  }
+};
+
+var HISTORIE = { slug: "historie" };
+
+function _historieFuellen(){
+  var t = HISTORIE_TEXTE[currentLang] || HISTORIE_TEXTE.de;
+  HISTORIE.name = t.name;
+  HISTORIE.sub = t.sub;
+  HISTORIE.paras = t.paras.slice();
+  HISTORIE.slides = [{ bg: "url('img/luftbild-1940.webp') center/cover no-repeat",
+                       cap: t.kopf }];
+  HISTORIE.figures = [{ src: "img/plan-1913.webp", w: 1233, h: 1403,
+                        alt: t.bildunter, cap: t.bildunter }];
+  HISTORIE.facts = [];
+  HISTORIE.sources = [{ c: t.quelle, u: "" }, { c: t.quelle2, u: "" }];
+}
+
+function openHistorie(){ _historieFuellen(); openModal(-99, HISTORIE); }
 /* ── Der Basisplan als Kapitel ──
    Kein Abschnitt in der Seite mehr, sondern ein Eintrag wie die sieben
    Bauten: Er oeffnet sich im selben Fenster und kostet in der Seite keine
@@ -5559,8 +5566,7 @@ function _basisplanFuellen(){
   BASISPLAN.paras = t.paras.slice();
   BASISPLAN.slides = [{ bg: "url('img/wederopbouw-1950.webp') center/cover no-repeat",
                         cap: t.kopf }];
-  BASISPLAN.figures = [{ src: "img/plan-1913.webp", w: 1233, h: 1403,
-                         alt: t.bildunter, cap: t.bildunter }];
+  BASISPLAN.figures = [];
   BASISPLAN.facts = [];
   BASISPLAN.sources = [{ c: t.bildquelle, u: "" }, { c: t.quelle, u: "" }];
 }
@@ -5571,47 +5577,14 @@ function openBasisplan(){ _basisplanFuellen(); openModal(-99, BASISPLAN); }
    Karte. Geregelt wird nur ihre Deckung; ein Schalter waere hier das
    falsche Werkzeug, weil man die beiden Schichten im Uebergang vergleicht
    und nicht im Entweder-oder. */
-var EBENE_QUELLE = {"de": "Rot: was nach 1940 neu gebaut wurde. Aus der Revisiekarte der Wiederaufbau von Rotterdam, Frans Blok, 3develop.nl. Am Wasser eingemessen, nordgerichtet, 2,27 m je Bildpunkt.", "nl": "Rood: wat na 1940 nieuw werd gebouwd. Uit de Revisiekaart van de Wederopbouw van Rotterdam, Frans Blok, 3develop.nl. Op het water ingemeten, noordgericht, 2,27 m per beeldpunt.", "en": "Red: what was newly built after 1940. From the revision map of the reconstruction of Rotterdam, Frans Blok, 3develop.nl. Fitted on the water, north-up, 2.27 m per pixel."};
-var EBENE_QUELLE_VOR = {"de": "Platzhalter, nicht erhoben: das Korn der Vorkriegsstadt, schmale Parzellen und geschlossene Blockränder im Gebiet, das am 14. Mai 1940 ausbrannte. Wird durch die wirklichen Grundrisse ersetzt.", "nl": "Plaatshouder, niet ingewonnen: de korrel van de vooroorlogse stad, smalle percelen en gesloten bouwblokken in het gebied dat op 14 mei 1940 uitbrandde. Wordt vervangen door de werkelijke plattegronden.", "en": "Placeholder, not surveyed: the grain of the pre-war city, narrow plots and closed perimeter blocks in the area that burned on 14 May 1940. To be replaced by the actual footprints."};
-var EBENE_MARKE_VOR = {"de": "Vor 1940", "nl": "Vóór 1940", "en": "Before 1940"};
-var EBENE_MARKE = {"de": "Wiederaufbau", "nl": "Wederopbouw", "en": "Reconstruction"};
 
-var EBENEN_REGLER = {
-  'ov-revisie':  { regler: 'eb-deckung', wert: 'eb-wert' },
-  'ov-vorkrieg': { regler: 'eb-vor',     wert: 'eb-wert-vor' }
-};
-
-function deckungSetzen(id, v){
-  var k = EBENEN_REGLER[id];
-  if (!k) return;
-  var p = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
-  var el = document.getElementById(id);
-  if (el) el.setAttribute('opacity', (p / 100).toFixed(3));
-  var w = document.getElementById(k.wert);
-  if (w) w.textContent = p + ' %';
-  /* Auch bei Aufrufen aus dem Code soll der Griff mitwandern. */
-  var r = document.getElementById(k.regler);
-  if (r && String(p) !== r.value) r.value = String(p);
-  if (typeof _ebeneTexte === 'function') _ebeneTexte();
-}
-
+/* Beschriftung der beiden Kapitelknoepfe, mit der Sprache. */
+var KAPITEL_KNOPF = { hist: {"de": "Historische Stadt", "nl": "Historische stad", "en": "Historical city"}, bp: {"de": "Basisplan 1946", "nl": "Basisplan 1946", "en": "Basisplan 1946"} };
 function _ebeneTexte(){
-  var q = document.getElementById('eb-quelle');
-  if (q){
-    var t = [];
-    if (parseInt((document.getElementById('eb-vor') || {}).value || 0, 10) > 0)
-      t.push(EBENE_QUELLE_VOR[currentLang] || EBENE_QUELLE_VOR.de);
-    if (parseInt((document.getElementById('eb-deckung') || {}).value || 0, 10) > 0)
-      t.push(EBENE_QUELLE[currentLang] || EBENE_QUELLE.de);
-    q.textContent = t.join('  ·  ');
-    q.hidden = !t.length;
-  }
-  var mv = document.getElementById('eb-mark-vor');
-  if (mv) mv.textContent = EBENE_MARKE_VOR[currentLang] || EBENE_MARKE_VOR.de;
-  var m = document.getElementById('eb-mark');
-  if (m) m.textContent = EBENE_MARKE[currentLang] || EBENE_MARKE.de;
-  var k = document.getElementById('eb-kapitel');
-  if (k) k.textContent = ({"de": "Kapitel 1946", "nl": "Hoofdstuk 1946", "en": "Chapter 1946"})[currentLang] || 'Kapitel 1946';
+  var a = document.getElementById('eb-historie');
+  if (a) a.textContent = KAPITEL_KNOPF.hist[currentLang] || KAPITEL_KNOPF.hist.de;
+  var b = document.getElementById('eb-kapitel');
+  if (b) b.textContent = KAPITEL_KNOPF.bp[currentLang] || KAPITEL_KNOPF.bp.de;
 }
 
 /* Die Leiste erscheint mit der Karte. */
@@ -5870,12 +5843,13 @@ function closeTour3D(){
     STOPS.forEach(function(s,i){ if (s.slug===h) idx=i; });
     if (idx>=0){ activeStop = idx; openModal(idx); return true; }
     if (h === 'basisplan'){ openBasisplan(); return true; }
+    if (h === 'historie'){ openHistorie(); return true; }
     if (typeof BYSLUG!=='undefined' && BYSLUG[h]){ openModal(-99, BYSLUG[h]); return true; }
     return false;
   }
   window.addEventListener('hashchange', function(){
     var h = (location.hash || '').replace(/^#/, '').toLowerCase();
-    if (h === 'basisplan' || (typeof BYSLUG!=='undefined' && BYSLUG[h])) openFromHash();
+    if (h === 'basisplan' || h === 'historie' || (typeof BYSLUG!=='undefined' && BYSLUG[h])) openFromHash();
     else if (document.getElementById('modal').classList.contains('open')) closeModal();  /* Zurueck-Taste schliesst */
   });
   /* Beim Laden: kommt jemand per NFC-Tag/QR mit #slug, direkt den Eintrag zeigen. */
