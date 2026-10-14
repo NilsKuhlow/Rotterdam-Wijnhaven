@@ -1776,11 +1776,15 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
   <svg id="mapSvg" viewBox="51 105 912 684" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
     <!-- OSM Figure-Ground Schwarzplan (zentrales Maasufer), massstabsgetreu; GPS via gpsToSvg -->
     <g class="plan-layer">
-<!-- Der Schwarzplan als Bild. Diese Fassung kam als Raster, nicht als
-     Vektor; verlustfrei als WebP sind es 250 KB, verlustbehaftet waere
-     es ein Vielfaches. preserveAspectRatio="none" ist richtig: Das Bild
-     deckt den viewBox-Raum genau ab, es wird nichts verzerrt. -->
-<image class="plan-bild" href="img/schwarzplan.webp" x="0" y="0" width="3010" height="2175" preserveAspectRatio="none"/>
+<!-- Der Schwarzplan als Zeichnung, nicht mehr als Bild. Die Datei deckt
+     den viewBox-Raum genau ab, darum preserveAspectRatio="none"; verzerrt
+     wird dabei nichts, der Ausschnitt ist derselbe wie zuvor.
+     Zuerst steht sie als verwiesenes Bild da, damit die Karte ohne Umweg
+     erscheint. Gleich danach schreibt planVektorInline() dieselbe Datei in
+     das <g> darunter und nimmt das Bild weg: Ob ein Browser ein verwiesenes
+     SVG beim Zoomen neu rastert, ist nicht garantiert, inline gilt es. -->
+<image class="plan-bild" href="img/schwarzplan.svg" x="0" y="0" width="3010" height="2175" preserveAspectRatio="none"/>
+<g id="plan-vektor" aria-hidden="true"></g>
     <!-- Zuschaltbare Ebenen. Die historische Karte liegt als Bild, das Schema
          von 1946 als eigene Zeichnung im selben Koordinatenraum. -->
     </g>
@@ -2649,6 +2653,39 @@ function loadModelViewer(){
 }
 window.addEventListener('load', function(){
   (window.requestIdleCallback || function(f){ setTimeout(f, 1400); })(loadModelViewer);
+});
+
+/* ── Den Schwarzplan aus dem verwiesenen Bild in das Karten-SVG holen.
+      Dieselbe Datei, nur inline: Erst dann ist sicher, dass jeder Browser
+      sie beim Zoomen neu zeichnet statt ein einmal gerastertes Bild zu
+      vergroessern. Schlaegt es fehl, bleibt das Bild stehen und die Karte
+      sieht aus wie zuvor. Der Service Worker hat die Datei zu diesem
+      Zeitpunkt schon im Cache, es geht also kein zweiter Abruf ins Netz. ── */
+function planVektorInline(){
+  var ziel = document.getElementById('plan-vektor');
+  if (!ziel || ziel.firstChild) return;
+  fetch('img/schwarzplan.svg')
+    .then(function(r){ return r.ok ? r.text() : null; })
+    .then(function(t){
+      if (!t) return;
+      var doc = new DOMParser().parseFromString(t, 'image/svg+xml');
+      if (doc.querySelector('parsererror')) return;
+      /* Nur die Zeichnung uebernehmen. title und desc der Datei blieben
+         sonst als Kurzhinweis ueber der ganzen Karte haengen. */
+      var zeichnung = doc.documentElement.querySelectorAll(':scope > g, :scope > rect');
+      if (!zeichnung.length) return;
+      for (var i = 0; i < zeichnung.length; i++)
+        ziel.appendChild(document.importNode(zeichnung[i], true));
+      ziel.setAttribute('fill-rule', 'evenodd');
+      ziel.setAttribute('stroke-linecap', 'round');
+      ziel.setAttribute('stroke-linejoin', 'round');
+      var bild = document.querySelector('.plan-bild');
+      if (bild && bild.parentNode) bild.parentNode.removeChild(bild);
+    })
+    .catch(function(){ /* Bild bleibt stehen */ });
+}
+window.addEventListener('load', function(){
+  (window.requestIdleCallback || function(f){ setTimeout(f, 900); })(planVektorInline);
 });
 
 /* ═══════════════════════════════
@@ -4191,14 +4228,15 @@ function nearestStop(lat, lon){
   return { idx:best, dist:Math.round(bestD) };
 }
 /* GPS auf den Koordinatenraum des Schwarzplans abbilden.
-   Der Plan liegt als Rasterbild vor, 4578 x 3307 px bei 300 dpi, und zeigt
-   3.9 x 2.8 km: die Innenstadt, die Maas und die Kop van Zuid. Wo er
-   liegt, wurde gemessen und nicht geschaetzt: seine Wasserflaeche gegen
-   die des alten OSM-Plans kreuzkorreliert, mittelwertfrei und oertlich
-   normiert. Das Maximum sass bei -0.1 Grad Drehung und 1:10134, einem
-   krummen Massstab, wie ihn ein auf das Blatt gerechneter Export ergibt.
-   Gegenprobe: fuenf der sieben Bauten liegen im eigenen Hauskoerper, die
-   beiden anderen 6 m und 13 m daneben.
+   Der Plan liegt seit Oktober 2026 als Zeichnung vor und nicht mehr als
+   Bild: 19.146 Zuege statt 4578 x 3307 Bildpunkten, also scharf auf jeder
+   Zoomstufe. Er zeigt 3,9 x 2,8 km, die Innenstadt, die Maas und die Kop
+   van Zuid. Wo er liegt, wurde gemessen und nicht angenommen: seine
+   Wasserflaeche gegen die des bisherigen Rasterplans kreuzkorreliert. Das
+   Maximum sass bei Massstab 1,0000 und Versatz 0/0 Bildpunkten, Jaccard
+   0,947; der Ausschnitt ist also derselbe. Die Hauskoerper kommen auf
+   0,912. Gegenprobe: fuenf der sieben Bauten liegen im eigenen
+   Hauskoerper, die beiden anderen 12 m und 5 m daneben.
    Eine SVG-Einheit bleibt 1,3048 m wie zuvor, damit Punktgroessen,
    Strichstaerken und der 50-m-Radius unveraendert gelten. */
 function gpsToSvg(lat, lon) {

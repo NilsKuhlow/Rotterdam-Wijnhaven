@@ -65,46 +65,51 @@ Zugrunde liegt der eigene **Schwarzplan**, Stand Oktober 2026. Die Fassung davor
 zeigt die aktuelle **3.928 × 2.837 m**, also rund das Neunfache der Fläche: die ganze
 Innenstadt, den Fluss und die Kop van Zuid.
 
-Sie kommt als **Rasterbild** (A3, 4960 × 3507 px bei 300 dpi) und liegt deshalb als
-`img/schwarzplan.webp` unter dem SVG, nicht als Pfade darin. Auf die Zeichenfläche
-beschnitten sind das 4578 × 3307 px und **verlustfrei 612 KB**. Verlustbehaftet wäre
-dieselbe Datei mit q=90 bei 3,3 MB. Kurios, aber gemessen: Eine **halbierte Auflösung
-ist verlustfrei größer** als die volle (1,5 MB), weil das Verkleinern Zwischentöne
-erzeugt und die flache Farbigkeit zerstört, von der die Kompression lebt.
+Seit Oktober 2026 liegt sie als **Vektorzeichnung** vor, `img/schwarzplan.svg`,
+und nicht mehr als Bild. Davor war sie ein Rasterbild mit 4578 × 3307 px auf
+3.928 × 2.837 m, also **0,86 m je Bildpunkt**. Beim Hineinzoomen auf eine Station
+zeigte die Karte deshalb Treppen statt Kanten. Die gelieferte Quelle
+(`Input/neue Karte.pdf`) half dagegen nicht: Sie enthält genau ein Objekt, ein PNG
+mit 4960 × 3507 px, erzeugt in ALLPLAN. Der Vektor ging also schon vor dem Einbau
+verloren, und auf der Website lagen bereits 93 % der Quellauflösung.
 
-**Georeferenziert ist sie gemessen, nicht geschätzt.** Das Bild trägt keine Georeferenz.
-Seine Wasserfläche wurde deshalb gegen die des alten OSM-Plans kreuzkorreliert, dessen
-Projektion bekannt war, mit mittelwertfreier und örtlich normierter Korrelation auf
-einer Kreisscheibe um die Wijnhaven. Weil der Ausschnitt größer ist, wird die Vorlage
-nicht mehr mit festem Radius in Metern gebaut, sondern mit festem Radius im Suchraster:
-So bleibt sie bei jedem geprüften Maßstab gleich aussagekräftig. Das Maximum saß bei
-**−0,1 Grad Drehung** und **1:10134**, einem krummen Maßstab, wie ihn ein auf das Blatt
-gerechneter Export ergibt; die Korrelation liegt bei **0,65**, niedriger als die 0,93 der
-engeren Fassung, weil der neue Plan weit mehr Wasser zeigt, als die Vergleichsgeometrie
-abdeckt.
+**Eingemessen, nicht angenommen.** Die neue Zeichnung kommt als CAD-Export mit
+172.525 Polygonen in flachen Lagen. Ihre Wasserfläche wurde gegen die des bisherigen
+Rasterplans kreuzkorreliert, über einen Maßstabsfächer von ±3 %. Das Maximum sitzt bei
+**Maßstab 1,0000 und Versatz 0/0 Bildpunkten**, der **Jaccard der Wasserflächen bei
+0,947**, der der Baukörper bei **0,912**. Der Ausschnitt ist also derselbe, und die
+Abbildung ist dieselbe, die `preserveAspectRatio="none"` dem Rasterbild angetan hat:
+
+    Rahmen 4375,84..5456,87 / 4524,04..5304,74   →   0..3010 / 0..2175
 
 Gegenprobe an den sieben Bauten, und die zählt: **fünf liegen im Gebäude**, die beiden
-anderen 6 m und 13 m daneben (Kubuswoningen, wo zwischen den Würfeln Lücken sind). Sie
-benutzt andere Information als die Korrelation und fällt genauso gut aus wie bei der
-engeren Fassung.
+anderen 12 m und 5 m daneben (Kubuswoningen, wo zwischen den Würfeln Lücken sind). Das
+ist dieselbe Lagegenauigkeit wie zuvor, mit denselben beiden Ausreißern.
+
+**Aus 516.864 Punkten wurden 167.458.** Der Export zerlegt jede gefüllte Fläche in
+Dreiecke, allein 172.288 Stück für die Baukörper. Gezeichnet sieht man davon nichts,
+weil Füllung und Strich dieselbe Farbe haben, die Datei trägt es aber mit: 6,0 MB. Der
+erste Versuch, die Dreiecke über ihre gemeinsamen Kanten zusammenzusetzen, ist
+gescheitert, denn 60 % der Kanten liegen am Rand, das Netz ist also keine saubere
+Triangulierung; die Flächenprobe kam nur auf 0,92. Die ehrliche Variante, eine echte
+Vereinigung der Flächen mit GEOS, braucht 8 Sekunden und schafft es exakt. Mit
+relativen Wegstücken und 0,1 Einheiten Rundung (13 cm) sind es **2,1 MB, über die
+Leitung gzip-komprimiert rund 640 KB**, praktisch dasselbe wie die 612 KB des
+WebP-Bildes davor, bei beliebiger Schärfe.
+
+**Angezeigt wird sie zweistufig.** Zuerst als verwiesenes Bild, damit die Karte ohne
+Umweg da ist; danach holt `planVektorInline()` im Leerlauf dieselbe Datei und schreibt
+sie in das Karten-SVG, das Bild fällt weg. Grund: Ob ein Browser ein verwiesenes SVG
+beim Zoomen neu rastert, ist nicht garantiert. Chrome tut es, an einer Zoomprobe
+gemessen; inline gilt es überall. Schlägt der Abruf fehl, bleibt das Bild stehen.
+
+**Was der Wechsel sonst noch bringt:** Die Karte lässt sich wieder über CSS umfärben,
+Wasser- und Bauwerksfarbe stecken nicht mehr in einem Bild.
 
 Eine SVG-Einheit bleibt **1,3048 m** wie in allen Fassungen davor. Nur so gelten
-Punktgrößen, Strichstärken, Beschriftungen und der 50-m-Radius unverändert weiter;
-geändert haben sich allein der Ursprung (`gpsToSvg`) und die Planmaße (`MAP_VW` 3010,
-`MAP_VH` 1530).
-
-**Was Raster statt Vektor kostet:** Bei stärkstem Zoom (`MIN_VB_W` 80 Einheiten, also
-104 m Bildbreite) wird das Bild weich, weil es 2,37 px je Meter trägt. Im normalen
-Zuschnitt der Karte ist es scharf. Außerdem lässt sich die Karte nicht mehr über CSS
-umfärben; Wasser- und Bauwerksfarbe stecken im Bild. Kommt wieder ein Vektor-Export,
-ist der Weg zurück offen: `tools/schwarzplan/schwarzplan.py` erzeugt daraus die drei
-Pfade.
-
-**Was die Rasterfassung dafür bringt:** Sie zeichnet Innenstrukturen, die der
-Vektorplan als massive Flächen zeigte — die Markthal mit ihren Ständen, der Bahnhof
-Blaak. Verglichen wurden beide Fassungen Ebene für Ebene: Baukörper decken sich zu
-85 %, Wasser zu 90 %, der Rest ist Rasterversatz an den Kanten und der engere
-Ausschnitt.
+Punktgrößen, Strichstärken, Beschriftungen und der 50-m-Radius unverändert weiter.
+Ursprung (`gpsToSvg`) und Planmaße (`MAP_VW` 3010, `MAP_VH` 2175) sind dieselben
+wie bei der Rasterfassung, deshalb hat sich keine Stationsnadel bewegt.
 
 Die Werkzeuge liegen in `tools/schwarzplan/` samt Kontrollbildern.
 
