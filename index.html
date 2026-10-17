@@ -5960,6 +5960,12 @@ var HISTORIE_TEXTE = {
   }
 };
 
+/* Zwei gemeinfreie Blaetter, im Oktober 2026 dazugekommen. Sie stehen
+   offen und nicht hinter dem Schloss: Was frei ist, gehoert nach vorn.
+   Die Rechtelage steht in der Bildunterschrift, nicht nur hier. */
+var KARTE_1940 = { cap: {"de": "Gemeente Rotterdam en omgeving, Maßstab 1:10.000, herausgegeben vom Gemeentelijke Technische Dienst, 1940. Ausschnitt der Innenstadt: die feinkörnige Parzellierung, die der 14. Mai 1940 beendete. Wijnhaven, Scheepmakershaven und Leuvehaven liegen noch inmitten geschlossener Blockränder.", "nl": "Gemeente Rotterdam en omgeving, schaal 1:10.000, uitgegeven door den Gemeentelijken Technischen Dienst, 1940. Uitsnede van de binnenstad: de fijnkorrelige parcellering waaraan 14 mei 1940 een einde maakte. Wijnhaven, Scheepmakershaven en Leuvehaven liggen nog te midden van gesloten bouwblokken.", "en": "Gemeente Rotterdam en omgeving, scale 1:10,000, published by the municipal technical service, 1940. A detail of the inner city: the fine-grained parcelling that 14 May 1940 brought to an end. Wijnhaven, Scheepmakershaven and Leuvehaven still lie among closed perimeter blocks."}, alt: {"de": "Stadtplan von Rotterdam 1940, Ausschnitt der Innenstadt mit Wijnhaven, Leuvehaven und Oude Haven", "nl": "Plattegrond van Rotterdam 1940, uitsnede binnenstad met Wijnhaven, Leuvehaven en Oude Haven", "en": "City plan of Rotterdam 1940, detail of the inner city with Wijnhaven, Leuvehaven and Oude Haven"}, q: {"de": "Stadsarchief Rotterdam, von dort ausdrücklich als gemeinfrei freigegeben. Über Wikimedia Commons.", "nl": "Stadsarchief Rotterdam, door het archief uitdrukkelijk vrijgegeven als publiek domein. Via Wikimedia Commons.", "en": "Stadsarchief Rotterdam, expressly released by the archive into the public domain. Via Wikimedia Commons."}, u: "https://commons.wikimedia.org/wiki/File:Plattegrond_van_Rotterdam_in_1940.jpg" };
+var KARTE_1955 = { cap: {"de": "Oud en nieuw Rotterdam, Maßstab 1:5.000, Gemeentewerken Rotterdam, Abteilung Kartografie, 18. Mai 1955. Das Blatt legt dreierlei übereinander: den Grundriss vor Mai 1940, den Plan des neuen Stadtkerns und den Stand des Wiederaufbaus an jenem Tag. Gelb die Brandgrenze. Damit zeigt es in einem Bild, was der Basisplan vorsah und was davon nach neun Jahren stand.", "nl": "Oud en nieuw Rotterdam, schaal 1:5.000, Gemeentewerken Rotterdam, afdeling kartografie, 18 mei 1955. Het blad legt drie dingen over elkaar: de plattegrond van vóór mei 1940, het plan van de nieuwe stadskern en de stand van de herbouw op die dag. In geel de brandgrens. Zo laat het in één beeld zien wat het Basisplan voorzag en wat er na negen jaar stond.", "en": "Oud en nieuw Rotterdam, scale 1:5,000, Rotterdam Public Works, cartography division, 18 May 1955. The sheet lays three things over one another: the street plan before May 1940, the plan of the new city core, and how far the rebuilding had got that day. The fire boundary is in yellow. In one image it shows what the Basisplan intended and what of it stood after nine years."}, alt: {"de": "Karte Oud en nieuw Rotterdam von 1955, Vorkriegsgrundriss mit dem Plan des neuen Stadtkerns und der Brandgrenze", "nl": "Kaart Oud en nieuw Rotterdam uit 1955, vooroorlogse plattegrond met het plan van de nieuwe stadskern en de brandgrens", "en": "Map Oud en nieuw Rotterdam from 1955, pre-war street plan with the plan of the new city core and the fire boundary"}, q: {"de": "Gemeinfrei: anonymes Werk, Schutzfrist siebzig Jahre nach Veröffentlichung, abgelaufen 2025. Über Wikimedia Commons.", "nl": "Publiek domein: anoniem werk, beschermingstermijn zeventig jaar na publicatie, verstreken in 2025. Via Wikimedia Commons.", "en": "Public domain: anonymous work, seventy-year term from publication, expired in 2025. Via Wikimedia Commons."}, u: "https://commons.wikimedia.org/wiki/File:Kaart_Rotterdam_(BF3747741ECA9E5D5CE94D17F6082CDA)_1945_%C3%A8n_1955.jpg" };
+
 var HISTORIE = { slug: "historie" };
 
 function _historieFuellen(){
@@ -5969,8 +5975,16 @@ function _historieFuellen(){
   HISTORIE.paras = t.paras.slice();
   HISTORIE.slides = [{ bg: "url('img/luftbild-1940.webp') center/cover no-repeat",
                        cap: t.kopf }];
+  /* Zwei Blaetter: der Verkehrsplan von 1913 und, seit Oktober 2026, der
+     Stadtplan von 1940. Erst mit dem zweiten hat das Kapitel ein Bild des
+     Zustands, den der 14. Mai beendete; vorher stand darueber nur Prosa. */
   HISTORIE.figures = [{ src: "img/plan-1913.webp", w: 1233, h: 1403,
-                        alt: t.bildunter, cap: t.bildunter }]
+                        alt: t.bildunter, cap: t.bildunter },
+                      { src: "img/plan-1940.webp", w: 2200, h: 1408,
+                        alt: KARTE_1940.alt[currentLang] || KARTE_1940.alt.de,
+                        cap: KARTE_1940.cap[currentLang] || KARTE_1940.cap.de,
+                        credit: KARTE_1940.q[currentLang] || KARTE_1940.q.de,
+                        creditUrl: KARTE_1940.u }]
                       .concat(_semFiguren('historie'));
   HISTORIE.facts = [];
   HISTORIE.sources = [{ c: t.quelle, u: "" }, { c: t.quelle2, u: "" }];
@@ -6278,9 +6292,15 @@ function _basisplanFuellen(){
   BASISPLAN.paras = t.paras.slice();
   BASISPLAN.slides = [{ bg: "url('img/wederopbouw-1950.webp') center/cover no-repeat",
                         cap: t.kopf }];
-  /* Leer, solange zugesperrt. Was aus dem Seminarbereich hierher
-     gehoert, kommt erst dazu, wenn der Schluessel da ist. */
-  BASISPLAN.figures = _semFiguren('basisplan');
+  /* Das Blatt von 1955 steht offen: anonymes Werk, Schutzfrist 2025
+     abgelaufen. Was aus dem Seminarbereich dazugehoert, kommt erst, wenn
+     der Schluessel da ist. */
+  BASISPLAN.figures = [{ src: "img/oud-en-nieuw-1955.webp", w: 2200, h: 1521,
+                         alt: KARTE_1955.alt[currentLang] || KARTE_1955.alt.de,
+                         cap: KARTE_1955.cap[currentLang] || KARTE_1955.cap.de,
+                         credit: KARTE_1955.q[currentLang] || KARTE_1955.q.de,
+                         creditUrl: KARTE_1955.u }]
+                       .concat(_semFiguren('basisplan'));
   BASISPLAN.facts = [];
   BASISPLAN.sources = [{ c: t.bildquelle, u: "" }, { c: t.quelle, u: "" }];
 }

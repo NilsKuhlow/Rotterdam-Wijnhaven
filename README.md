@@ -621,6 +621,29 @@ anders stehendes Foto würde den Regler entwerten.
 Die 24 Bauwerke außerhalb der Route sind nicht mehr im Verzeichnis aufgeführt, siehe
 **Das Verzeichnis**. Ihre Daten stehen noch in `NEWBUILDINGS`.
 
+### Zwei historische Karten, gemeinfrei
+
+Im Oktober 2026 dazugekommen, und bewusst **offen** statt hinter dem Schloss: Was frei
+ist, gehört nach vorn.
+
+**`img/plan-1940.webp`** — *Gemeente Rotterdam en omgeving*, 1:10.000, herausgegeben vom
+Gemeentelijke Technische Dienst, 1940. Ausschnitt der Innenstadt aus einem Blatt von
+9894 × 7900 px; zugeschnitten statt verkleinert, sonst wäre der Wijnhaven ein Fleck von
+zwanzig Bildpunkten. Vom Stadsarchief Rotterdam ausdrücklich als gemeinfrei freigegeben.
+Damit hat das Projekt **zum ersten Mal einen Plan der Vorkriegsstadt**: die feinkörnige
+Parzellierung, über die es bisher nur Prosa gab. Für die entfernte Platzhalterzeichnung
+`vorkrieg.webp` ist das der späte Ersatz, diesmal ein echtes Blatt.
+
+**`img/oud-en-nieuw-1955.webp`** — *Oud en nieuw Rotterdam*, 1:5.000, Gemeentewerken
+Rotterdam, Abteilung Kartografie, **18. Mai 1955**. Das Blatt legt dreierlei übereinander:
+den Grundriss vor Mai 1940, den Plan des neuen Stadtkerns und den Stand des Wiederaufbaus
+an jenem Tag, dazu die **Brandgrenze in Gelb**. Es beantwortet in einem Bild genau die
+Frage des Basisplan-Kapitels: was vorgesehen war und was davon nach neun Jahren stand.
+Anonymes Werk, Schutzfrist siebzig Jahre nach Veröffentlichung, **2025 abgelaufen**.
+
+Beide über Wikimedia Commons. Die Rechtelage steht in der Bildunterschrift auf der Seite,
+nicht nur hier.
+
 ## Der Seminarbereich
 
 Ein Teil des Planmaterials gehört uns nicht. Es liegt deshalb hinter einem Schloss,
