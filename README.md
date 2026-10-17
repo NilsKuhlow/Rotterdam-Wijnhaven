@@ -807,6 +807,34 @@ Wijnhaven fand die Maske **null Wasser**. Übrig blieb die Maas, und an einem Fl
 rutscht jede Korrelation entlang. Jetzt wird in voller Auflösung geschwellt und erst
 danach zusammengefasst (`tools/schwarzplan/hist_neu.py`).
 
+### Grundrisse in den Einträgen
+
+Seit dem 17. Oktober 2026 liegen **15 Zeichnungen** im Seminarbereich, die nicht in einem
+eigenen Kapitel stehen, sondern **im Eintrag des Baus selbst**: `ziel` ist dort der Slug
+der Station, und `openModal()` hängt sie an die Abbildungen des Eintrags an. Zugesperrt
+gibt `_semFiguren()` eine leere Liste zurück und der Eintrag sieht aus wie immer.
+
+| Bau | Zeichnungen | Urheber |
+|---|---|---|
+| Kubuswoningen | Lageplan, drei Grundrisse (Straße, Promenade, Wohnen), Längsschnitt | Piet Blom |
+| Markthal | Markthalle, zwei Wohngeschosse, Umgebung, Querschnitt | MVRDV |
+| CasaNova | Lageplan, Erdgeschoss, Sockel, Regelgeschoss, Axonometrie | Barcode Architects |
+
+Gefunden bei ArchDaily, das die Zeichnungen der Büros veröffentlicht. **Eine Lizenz steht
+dort nirgends**, die Rechte liegen bei den Urhebern, und genau deshalb liegen sie hinter
+dem Schloss. Jede Zeichnung trägt diesen Vermerk in ihrer Bildunterschrift.
+
+Ausgewählt ist, was erklärt, nicht alles, was da war: Von den sechs fast gleichen
+Wohnungsgeschossen der Markthal steht hier eines. Die übrigen liegen in
+`Input/Privat/grundrisse/` und sind mit einer Zeile in `quellen.py` nachzutragen.
+
+**Vier der sieben Bauten haben keine.** Für das **Witte Huis**, **Red Apple**,
+**EY Netherlands** und das **Wijnhaveneiland** habe ich nichts Brauchbares gefunden. Beim
+Witte Huis wäre es die Mühe wert: Molenbroek starb 1922, seine Zeichnungen sind damit
+gemeinfrei und könnten offen stehen. Das Stadsarchief Rotterdam führt Bauakten zum
+Gebäude, online auffindbar war nichts. KCAP und die Seite zu Boompjes 258 liefern ihre
+Projektseiten als JavaScript-Anwendung aus, da kam der Abruf nicht durch.
+
 ### Die Rechtelage, ungeschönt
 
 Der Bereich senkt das Risiko, er macht die Nutzung nicht von selbst rechtmäßig. Der

@@ -5423,6 +5423,9 @@ function _initThenNow(root){
 function _setEntryHash(slug){ if (!slug) return; try { history.replaceState(null, '', '#'+slug); } catch(e){} }
 function _clearEntryHash(){ try { history.replaceState(null, '', location.pathname + location.search); } catch(e){} }
 
+/* Zeichnungen aus dem Seminarbereich haengen sich an den Eintrag der
+   Station, deren Slug sie nennen. Zugesperrt gibt _semFiguren() eine
+   leere Liste zurueck, der Eintrag sieht dann aus wie immer. */
 function openModal(idx, _placeObj){
   const s = _placeObj || ((idx >= 0 && idx < STOPS.length) ? STOPS[idx] : STOPS[activeStop]);
   if (!s) return;
@@ -5510,7 +5513,7 @@ function openModal(idx, _placeObj){
     <div class="modal-title">${s.name}</div>
     <span class="modal-sub">${s.sub}</span>
     <div class="modal-rule"></div>
-    ${_weaveBody(s.paras, s.figures, s.thenNow)}
+    ${_weaveBody(s.paras, (s.figures || []).concat(_semFiguren(s.slug)), s.thenNow)}
     ${voicesHtml}
     <div class="modal-facts">
       ${s.facts.map(f=>`<div class="fact"><div class="fact-lbl">${f.l}</div><div class="fact-val">${f.v}</div></div>`).join('')}
