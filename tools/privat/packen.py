@@ -83,14 +83,28 @@ def tabelle_laden(quelle):
     return raum['KAPITEL'], raum['STUECKE']
 
 
-def bilder_aus(pfad):
+def bilder_aus(pfad, durchsichtig=False):
     """Eine Vorlage in eine oder mehrere WebP-Abbildungen verwandeln.
 
     PDF-Seiten werden einzeln gerendert, damit auch ein mehrseitiges
     Planwerk als Folge von Abbildungen erscheint und der vorhandene
     Bildaufbau der Seite unveraendert bleibt.
+
+    Eine Kartenschicht wird durchsichtig gehalten und verlustfrei
+    gespeichert: Sie besteht aus einer einzigen flachen Farbe auf Nichts,
+    da kostet verlustfrei fast gar nichts und verlustbehaftet erzeugte
+    Zwischentoene wuerden als Schleier ueber der Karte liegen.
     """
     from PIL import Image
+    if durchsichtig:
+        im = Image.open(pfad).convert('RGBA')
+        if max(im.size) > LANGE_KANTE:
+            k = LANGE_KANTE / max(im.size)
+            im = im.resize((round(im.width * k), round(im.height * k)),
+                           Image.LANCZOS)
+        puffer = io.BytesIO()
+        im.save(puffer, 'WEBP', lossless=True, quality=100, method=6)
+        return [(puffer.getvalue(), im.width, im.height)]
     raus = []
     if pfad.lower().endswith('.pdf'):
         import pymupdf as fitz
@@ -147,7 +161,8 @@ def main():
         p = os.path.join(quelle, s['datei'])
         if not os.path.exists(p):
             sys.exit('FEHLER: Vorlage fehlt: %s' % p)
-        seiten = bilder_aus(p)
+        ebene = s.get('ziel') == 'ebene'
+        seiten = bilder_aus(p, durchsichtig=ebene)
         for nr, (daten, w, h) in enumerate(seiten):
             datei = name_fuer(k, s['datei'], nr)
             paket = krypto.zu(k, daten)
@@ -157,6 +172,8 @@ def main():
                        'ziel': s.get('ziel', 'plaene'),
                        'credit': s.get('credit', ''),
                        'creditUrl': s.get('creditUrl', '')}
+            if ebene:
+                eintrag['lage'] = s['lage']
             for sprache in ('de', 'nl', 'en'):
                 t = dict(s.get(sprache, {}))
                 if len(seiten) > 1:

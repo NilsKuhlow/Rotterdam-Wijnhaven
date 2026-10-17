@@ -700,6 +700,32 @@ Datei nach `Input/Privat/` legen, in `Input/Privat/quellen.py` eintragen,
 zusätzlich in einem der beiden vorhandenen. Entschlüsselte Bilder werden zu Blob-URLs und
 gehen durch denselben `_figureHtml()`-Aufbau wie jede andere Abbildung.
 
+### Die Kartenebene mit Regler
+
+Im aufgeschlossenen Zustand liegt über der Karte eine zuschaltbare Schicht: die vom
+Basisplan **tatsächlich ausgeführten Bauten**, aus der Revisiekaart gelöst, alles andere
+durchsichtig. Ein **Regler statt eines Schalters**, Startwert 0 Prozent, weil man zwei
+Schichten im Übergang vergleicht und nicht im Entweder-oder.
+
+Die Lage stammt aus der Einmessung vom 13. Oktober und wurde damals mit drei Verfahren
+geprüft: **2,27 m je Bildpunkt**, nordgerichtet, `translate(442,3 −93,8) scale(1,73952)`.
+Der verbleibende Rest von rund **10 m** ist die Auflösung der Vorlage, 1600 Bildpunkte
+auf 3,6 km, und kein Fehler der Einpassung.
+
+Zugesperrt gibt es beides nicht, und zwar wirklich nicht: kein Bild, keine Lage, kein
+Regler, und im Quelltext steht an keiner Stelle, was die Schicht zeigt. Beschriftung und
+Geometrie kommen aus dem verschlüsselten Verzeichnis.
+
+**Was nicht geklappt hat, und warum.** Der Plan von 1940 sollte ursprünglich diese Ebene
+werden. Sechs Anläufe, ihn automatisch einzupassen, sind gescheitert. Das Optimum liegt am
+Ende im Inneren des Suchraums, aber die Wasserdeckung kommt nur auf **Jaccard 0,31**
+(Vektorplan: 0,947), und vier von Hand abgelesene Passpunkte widersprechen sich um bis zu
+70 m in unterschiedliche Richtungen. Widersprüchliche Passpunkte bei flachem Optimum
+heißen: das Blatt ist **nicht gleichmäßig maßstäblich**, ein abfotografiertes Papierblatt
+mit Verzug. Dafür bräuchte es eine Entzerrung über acht bis zwölf Passpunkte in einem GIS.
+Das Blatt steht deshalb als Abbildung im Kapitel und nicht als Ebene. Der Unterschied zur
+Revisiekaart: die ist am Rechner in einem festen Raster gezeichnet.
+
 ### Die Rechtelage, ungeschönt
 
 Der Bereich senkt das Risiko, er macht die Nutzung nicht von selbst rechtmäßig. Der
