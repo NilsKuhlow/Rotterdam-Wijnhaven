@@ -621,6 +621,74 @@ anders stehendes Foto würde den Regler entwerten.
 Die 24 Bauwerke außerhalb der Route sind nicht mehr im Verzeichnis aufgeführt, siehe
 **Das Verzeichnis**. Ihre Daten stehen noch in `NEWBUILDINGS`.
 
+## Der Seminarbereich
+
+Ein Teil des Planmaterials gehört uns nicht. Es liegt deshalb hinter einem Schloss,
+erreichbar nur über einen Link, den der Kurs bekommt.
+
+**Ein Passwort in JavaScript wäre dafür wertlos.** Auf einer statischen Seite stünden die
+Dateien weiter unter öffentlichen Adressen; wer die Adresse kennt, lädt sie, und
+rechtlich ist das Werk damit weiterhin öffentlich zugänglich gemacht. Also wird nicht
+abgefragt, sondern **verschlüsselt**. Veröffentlicht wird nur Geheimtext: ohne Passwort
+kein Bild, sondern Rauschen. Gemessen an `privat/inhalt.bin`: **7,939 Bit Entropie je
+Byte**, von Zufall nicht zu unterscheiden.
+
+| | |
+|---|---|
+| Schlüssel | `PBKDF2-SHA256`, 310.000 Runden (OWASP-Empfehlung), 256 Bit |
+| Verfahren | `AES-256-GCM`, je Datei ein zufälliger 12-Byte-IV, vorangestellt |
+| Bibliothek | keine. WebCrypto bringt beides mit |
+
+GCM authentifiziert mit: Ein falsches Passwort und jede Veränderung am Paket fallen auf,
+statt halb entschlüsselten Unsinn durchzulassen.
+
+### Der Link
+
+```
+https://wijnhaven.com/#seminar=<passwort>
+```
+
+Was hinter der Raute steht, **schickt der Browser nie an einen Server** und auch nicht im
+Referer mit. Es taucht also in keinem Protokoll von GitHub Pages auf. Direkt nach dem
+Aufschließen kürzt `_semHashKuerzen()` die Adresszeile auf `#seminar`; sonst stünde das
+Passwort im Verlauf, in der Zurück-Liste und auf jedem Bildschirmfoto. Unter `#seminar`
+allein erscheint ein Eingabefeld, der gekürzte Link bleibt also brauchbar.
+
+Der abgeleitete Schlüssel liegt danach in `localStorage` (`wij-seminar-v1`), **das
+Passwort nie**. Ein Knopf im Kapitel wirft ihn wieder weg.
+
+### Was bewusst nicht in `index.html` steht
+
+Kein Titel, keine Bildunterschrift, kein Urhebername des geschützten Materials. Das alles
+liegt im verschlüsselten Verzeichnis `privat/inhalt.bin`. Stünde es im Quelltext,
+verriete das Schloss, was es verschließt. Aus demselben Grund liegt die Tabelle
+`quellen.py` **außerhalb des Repos**, in `Input/Privat/`, zusammen mit dem Passwort und
+den Vorlagen. Im Repo steht nur die Maschine, `tools/privat/packen.py`, die nichts verrät.
+
+Die Dateinamen in `privat/` sind aus Passwort und Dateiname abgeleitete Hex-Namen ohne
+Endung: bei jedem Lauf dieselben, damit der Cache nicht vollläuft, und ohne jeden Hinweis
+auf den Inhalt.
+
+### Nachfüllen
+
+Datei nach `Input/Privat/` legen, in `Input/Privat/quellen.py` eintragen,
+`python tools/privat/packen.py` laufen lassen. PDFs werden Seite für Seite zu Abbildungen.
+`ziel` sagt, wo sie erscheint: `plaene` im eigenen Kapitel, `basisplan` oder `historie`
+zusätzlich in einem der beiden vorhandenen. Entschlüsselte Bilder werden zu Blob-URLs und
+gehen durch denselben `_figureHtml()`-Aufbau wie jede andere Abbildung.
+
+### Die Rechtelage, ungeschönt
+
+Der Bereich senkt das Risiko, er macht die Nutzung nicht von selbst rechtmäßig. Der
+Rahmen, der hier trägt, ist **§ 60a UrhG**: Veranschaulichung des Unterrichts für einen
+**bestimmt abgegrenzten Kreis** von Teilnehmern. Genau diesen Kreis stellt das Schloss
+her, und deshalb ist die Verschlüsselung kein Beiwerk, sondern die Bedingung. Jede
+Abbildung trägt ihren tatsächlichen Rechtevermerk. **Keine Genehmigung behaupten, die es
+nicht gibt.** Das ist in diesem Projekt schon einmal passiert und wurde zurückgenommen.
+
+Offen und nachzuhalten: eine Anfrage an den Urheber der Revisiekarte
+(`info@3develop.nl`, er verkauft Drucke davon) und eine Rückfrage beim Lehrstuhl.
+
 ## Vorläufig draußen
 
 Die **Arbeitsfassung (PDF)** ist aus dem Impressum genommen und die Datei aus

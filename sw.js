@@ -10,7 +10,7 @@
    ⚠ Bump CACHE version on every deploy that changes files.
 ═══════════════════════════════════════════════════════════ */
 
-const CACHE = 'wijnhaven-v74';
+const CACHE = 'wijnhaven-v75';
 
 /* Cross-origin hosts we are allowed to cache (all send CORS headers, so the
    responses are readable/cacheable — needed for offline fonts + 3D on-site).
@@ -52,7 +52,11 @@ const PRECACHE = [
   '/img/gal-ey-netherlands-1.webp',
 ];
 /* Bewusst NICHT precachen (gross / Opt-in, werden bei Bedarf zur Laufzeit gecacht):
-   models/wijnhaven.glb (~23,5 MB), downloads/wijnhaven-volldetail-demo.glb, Thesis-PDF. */
+   models/wijnhaven.glb (~23,5 MB), downloads/wijnhaven-volldetail-demo.glb, Thesis-PDF.
+   Ebenso privat/*: der Seminarbereich. Es waere unsinnig, auf jedem Geraet
+   Geheimtext vorzuhalten, den die meisten nie aufmachen koennen. Wer ihn
+   aufschliesst, holt ihn einmal und hat ihn danach ueber die normale
+   cache-first-Regel auch offline. */
 
 /* ── Update trigger from page script ── */
 self.addEventListener('message', event => {

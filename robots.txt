@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+# Der Seminarbereich. Dort liegt nur Geheimtext, zu indizieren gibt es
+# ohnehin nichts; die Zeile sagt es trotzdem ausdruecklich. Sie steht
+# direkt bei Allow, damit sie sicher zur selben Gruppe gehoert.
+Disallow: /privat/
 
 Sitemap: https://wijnhaven.com/sitemap.xml
