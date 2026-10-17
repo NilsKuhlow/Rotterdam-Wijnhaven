@@ -744,6 +744,31 @@ Quellenzeile nennt, was gerade zu sehen ist, und verschwindet wieder. Das Bild d
 Ebene (861 KB) wird **erst beim ersten Aufdrehen** geladen: Wer die Ebene nie anfasst,
 soll sie auch nicht bezahlen.
 
+### Was der Erstaufruf kostet
+
+Gemessen gegen die Live-Seite: **9,68 MB in 67 Dateien**, alles innerhalb von sechs
+Sekunden. Der Schwarzplan sind 680 KB davon, der Löwenanteil sind die **58 Galeriefotos**,
+die `preloadAll()` im Leerlauf vorholt, damit die Seite vor Ort offline funktioniert.
+
+Im WLAN ist das richtig. Im Zug nach Rotterdam über Mobilfunk ist es der teuerste Posten
+der ganzen Seite, in Datenvolumen wie in Energie, und zwar bevor jemand überhaupt einen
+Eintrag geöffnet hat. Seit dem 17. Oktober 2026 **fragt die Seite deshalb nach der
+Leitung**: `_darfVorladen()` prüft `navigator.connection.saveData` und `effectiveType`.
+Wer Datensparen eingeschaltet hat oder in einem 2G- oder 3G-Netz steckt, bekommt die
+Bilder erst beim Öffnen eines Eintrags.
+
+| | Dateien | übertragen |
+|---|---|---|
+| normal | 65 | 11,53 MB |
+| Datensparen | 7 | **3,02 MB** |
+
+(lokal gemessen, ohne gzip auf dem SVG, deshalb mehr als die 9,68 MB live)
+
+Browser ohne `navigator.connection`, also Safari, laden vor wie bisher: Schweigen ist kein
+Nein. Der Precache des Service Workers bleibt unangetastet, 20 Dateien als Offline-Hülle.
+Das ist das Versprechen, dass die Karte in Rotterdam auch ohne Netz steht, und dafür lohnt
+es sich.
+
 ### Was die Seite im Leerlauf kostet
 
 Gemessen über `Performance.getMetrics`, acht Sekunden Ruhe auf der Kartenbühne:

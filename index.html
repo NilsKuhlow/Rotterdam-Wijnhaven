@@ -3208,7 +3208,31 @@ const SEED7 = [
    slide so the browser fetches and caches them
    in the background, gallery + map open instantly.
 ═══════════════════════════════════════════ */
+/* Darf der ganze Bestand vorgeladen werden?
+
+   Gemessen am 17. Oktober 2026: Der Erstaufruf uebertrug 9,68 MB in 67
+   Dateien, alles innerhalb von sechs Sekunden, und der Loewenanteil
+   davon waren die Galeriefotos. Im WLAN ist das richtig, die Seite soll
+   vor Ort offline funktionieren. Im Zug nach Rotterdam ueber Mobilfunk
+   ist es der teuerste Posten der ganzen Seite, in Datenvolumen wie in
+   Energie, und zwar bevor jemand ueberhaupt einen Eintrag geoeffnet hat.
+
+   Also wird gefragt. Wer Datensparen eingeschaltet hat oder in einem
+   langsamen Netz steckt, bekommt die Bilder erst beim Oeffnen eines
+   Eintrags. Benutzbar bleibt die Seite in beiden Faellen; nur offline
+   vollstaendig ist sie dann erst, wenn man sie einmal durchgesehen hat.
+
+   Browser ohne navigator.connection sagen nichts dazu. Dann wird
+   vorgeladen, wie bisher: Schweigen ist kein Nein. */
+function _darfVorladen(){
+  var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (!c) return true;
+  if (c.saveData) return false;
+  return ['slow-2g', '2g', '3g'].indexOf(c.effectiveType) === -1;
+}
+
 function preloadAll(){
+  if (!_darfVorladen()) return;
   /* 1. All slide images (jetzt echte Fotos) — im Leerlauf nach dem ersten
      Aufbau vorladen, damit sie den initialen Seitenaufbau nicht ausbremsen. */
   STOPS.forEach(function(stop){
