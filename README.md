@@ -716,15 +716,39 @@ Zugesperrt gibt es beides nicht, und zwar wirklich nicht: kein Bild, keine Lage,
 Regler, und im Quelltext steht an keiner Stelle, was die Schicht zeigt. Beschriftung und
 Geometrie kommen aus dem verschlüsselten Verzeichnis.
 
-**Was nicht geklappt hat, und warum.** Der Plan von 1940 sollte ursprünglich diese Ebene
-werden. Sechs Anläufe, ihn automatisch einzupassen, sind gescheitert. Das Optimum liegt am
-Ende im Inneren des Suchraums, aber die Wasserdeckung kommt nur auf **Jaccard 0,31**
-(Vektorplan: 0,947), und vier von Hand abgelesene Passpunkte widersprechen sich um bis zu
-70 m in unterschiedliche Richtungen. Widersprüchliche Passpunkte bei flachem Optimum
-heißen: das Blatt ist **nicht gleichmäßig maßstäblich**, ein abfotografiertes Papierblatt
-mit Verzug. Dafür bräuchte es eine Entzerrung über acht bis zwölf Passpunkte in einem GIS.
-Das Blatt steht deshalb als Abbildung im Kapitel und nicht als Ebene. Der Unterschied zur
-Revisiekaart: die ist am Rechner in einem festen Raster gezeichnet.
+### Die Karte als Palimpsest
+
+Drei Schichten übereinander, zwei Regler:
+
+| | |
+|---|---|
+| unten | der Schwarzplan von heute, als Vektorzeichnung |
+| darüber | **die Stadt vor dem 14. Mai 1940**, öffentlich |
+| darüber | **die vom Basisplan ausgeführten Bauten**, hinter dem Schloss |
+
+Beide Regler starten bei 0 Prozent. Das Blatt von 1940 ist gemeinfrei und braucht kein
+Schloss; die Revisiekaart schon. Eine Quellenzeile nennt, was gerade zu sehen ist, und
+verschwindet wieder. Das Bild der 1940er Ebene (861 KB) wird **erst beim ersten
+Aufdrehen** geladen: Wer die Ebene nie anfasst, soll sie auch nicht bezahlen.
+
+**Die Einpassung von 1940 hat sieben Anläufe gekostet, und der Fehler lag bei mir.** Ich
+hatte 300 dpi angenommen, weil die Metadaten bei Wikimedia das an einer Stelle behaupten.
+Das Blatt entspricht aber **200 dpi**, bei 1:10.000 also **1,270 m je Bildpunkt** statt
+0,847. Alle Suchen lagen damit um den Faktor 1,5 im Maßstab daneben, und deshalb ist nie
+etwas eingerastet; die Korrelation rutschte stattdessen der Maas entlang und landete
+einmal sogar auf der Waalhaven.
+
+Mit dem richtigen Wert rastet es sofort ein: **Jaccard der Wasserflächen 0,692**, mit
+sauberem Anstieg und Abfall zu beiden Seiten, Drehung +0,4 Grad. Was übrig bleibt, ist
+kein Fehler, sondern Geschichte: die seither zugeschütteten Singels und die nach dem
+Krieg veränderten Kaikanten.
+
+**Ein zweiter Fehler fiel dabei auf.** Meine Wassermaske hatte die Becken der Innenstadt
+verschluckt. Sie sind 40 bis 80 m breit, also 50 bis 95 Bildpunkte im Blatt und nach dem
+Verkleinern ein Dutzend; im Papierton des Rasterdrucks verschwinden sie dabei. An der
+Wijnhaven fand die Maske **null Wasser**. Übrig blieb die Maas, und an einem Fluss allein
+rutscht jede Korrelation entlang. Jetzt wird in voller Auflösung geschwellt und erst
+danach zusammengefasst (`tools/schwarzplan/hist_neu.py`).
 
 ### Die Rechtelage, ungeschönt
 
