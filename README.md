@@ -726,10 +726,42 @@ Drei Schichten übereinander, zwei Regler:
 | darüber | **die Stadt vor dem 14. Mai 1940**, öffentlich |
 | darüber | **die vom Basisplan ausgeführten Bauten**, hinter dem Schloss |
 
-Beide Regler starten bei 0 Prozent. Das Blatt von 1940 ist gemeinfrei und braucht kein
-Schloss; die Revisiekaart schon. Eine Quellenzeile nennt, was gerade zu sehen ist, und
-verschwindet wieder. Das Bild der 1940er Ebene (861 KB) wird **erst beim ersten
-Aufdrehen** geladen: Wer die Ebene nie anfasst, soll sie auch nicht bezahlen.
+Die Reihenfolge ist die eines Palimpsests: **die älteste Karte zuunterst.** Was darüber
+liegt, blendet man weg, um sie freizulegen. Die Wiederaufbauschicht bleibt oben, weil sie
+bis auf die roten Bauten durchsichtig ist und gegen heute gelesen wird, nicht gegen das
+Papier.
+
+Jede Schicht hat **einen Schalter und einen Regler**. Der Schalter merkt sich den Wert:
+Ausschalten und wieder einschalten macht dort weiter, wo man aufgehört hat. Der Regler
+auf 0 gezogen heißt aus, das ist dieselbe Aussage und soll nicht zwei Zustände ergeben.
+
+Der Regler läuft in **Schritten von 20 Prozent**. Stufenlos zog er bei jedem Zwischenwert
+eine mehrere Megabyte große Ebene neu durch den Compositor, was auf dem Telefon ruckelte.
+Sechs Stufen reichen, und die Bedienung wird dadurch sicherer statt ärmer.
+
+Das Blatt von 1940 ist gemeinfrei und braucht kein Schloss; die Revisiekaart schon. Eine
+Quellenzeile nennt, was gerade zu sehen ist, und verschwindet wieder. Das Bild der 1940er
+Ebene (861 KB) wird **erst beim ersten Aufdrehen** geladen: Wer die Ebene nie anfasst,
+soll sie auch nicht bezahlen.
+
+### Was die Seite im Leerlauf kostet
+
+Gemessen über `Performance.getMetrics`, acht Sekunden Ruhe auf der Kartenbühne:
+
+| | vorher | nachher |
+|---|---|---|
+| Stilberechnung | 4,4 ms/s | **0,0 ms/s** |
+| Layout | 0,0 ms/s | 0,0 ms/s |
+| gesamt | 2,2 % einer CPU | **1,2 %** |
+
+Die Ursache war der **Scroll-Hinweis im Intro**: `cueSlide` lief endlos weiter, auch wenn
+das Intro längst durchgescrollt war, und erzwang dauerhaft Stilberechnung, ohne irgendetwas
+zu zeigen. `document.getAnimations()` im Leerlauf meldet jetzt eine leere Liste. Dazu
+respektiert er `prefers-reduced-motion`.
+
+Zwei Schichten gleichzeitig kosten im Leerlauf nichts zusätzlich (1,65 % statt 1,22 %,
+der Rest ist Messaufwand): Die Ebenen sind statische Bilder, der Compositor arbeitet nur,
+wenn sich etwas ändert.
 
 **Die Einpassung von 1940 hat sieben Anläufe gekostet, und der Fehler lag bei mir.** Ich
 hatte 300 dpi angenommen, weil die Metadaten bei Wikimedia das an einer Stelle behaupten.
