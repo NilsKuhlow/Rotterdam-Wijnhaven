@@ -1,5 +1,7 @@
-/* Der Schichtstapel: Reihenfolge, Schalter, Regler in 20er Schritten,
-   und was das Ganze an Rechenzeit im Leerlauf kostet. */
+/* Der Kartenstand: ein Knopf, zwei Staende, kein Dazwischen.
+   Geprueft wird die Reihenfolge im Stapel, dass die Regler wirklich weg
+   sind, dass die Karte von 1940 erst beim ersten Umschalten geladen wird,
+   und was die Seite im Leerlauf an Rechenzeit kostet. */
 import { spawn } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
@@ -24,58 +26,62 @@ const P=[]; const ok=(n,v,e)=>P.push(`${(typeof e==='function'?e(v):JSON.stringi
 await js('window.scrollTo(0, Math.round(getIntroH()*0.95))'); await sleep(1800);
 
 /* ── Reihenfolge im Stapel ── */
-ok('aelteste Karte zuunterst', await js(`(function(){
+ok('1940 liegt unter heute', await js(`(function(){
   var g=document.getElementById('mapSvg');
   var n=[...g.children].map(function(c){return c.id||c.className.baseVal||c.tagName});
-  return n.slice(0,4);})()`), v=>Array.isArray(v) && v.indexOf('ov-1940')===0
-     && v.indexOf('ov-heute')>0 && v.indexOf('ov-ebene')>v.indexOf('ov-heute'));
-ok('drei Zeilen, oben zuerst', await js("[...document.querySelectorAll('#ebenen .eb-zeile')].map(z=>z.id)"),
-   ['eb-zeile-revisie','eb-zeile-heute','eb-zeile-1940']);
-ok('gesperrte Zeile ist weg', await js("document.getElementById('eb-zeile-revisie').hidden"), true);
+  return [n.indexOf('ov-1940'), n.indexOf('ov-heute')];})()`),
+   v=>Array.isArray(v) && v[0]===0 && v[1]>0);
+
+/* ── Die Regler sind weg, und zwar ganz ── */
+ok('keine Regler mehr im Kartenfeld', await js("document.querySelectorAll('#ebenen input[type=range]').length"), 0);
+ok('keine Regler mehr auf der Seite', await js("document.querySelectorAll('input[type=range]').length"), 0);
+ok('keine Schichtzeilen mehr', await js("document.querySelectorAll('.eb-zeile').length"), 0);
+ok('keine Wiederaufbauebene im Plan', await js("!!document.getElementById('ov-ebene')"), false);
 
 /* ── Anfangszustand ── */
-ok('Heute an', await js("document.getElementById('eb-an-heute').getAttribute('aria-checked')"), 'true');
-ok('Heute voll', await js("document.getElementById('ov-heute').getAttribute('opacity')"), '1.00');
-ok('1940 aus', await js("document.getElementById('eb-an-1940').getAttribute('aria-checked')"), 'false');
-ok('1940 Regler gesperrt', await js("document.getElementById('eb-regler-1940').disabled"), true);
+ok('ein Zeitknopf', await js("document.querySelectorAll('#ebenen .eb-zeit').length"), 1);
+ok('Heute zu sehen', await js("document.getElementById('ov-heute').getAttribute('opacity')"), '1.00');
+ok('1940 nicht zu sehen', await js("document.getElementById('ov-1940').getAttribute('opacity')"), '0.00');
 ok('1940 noch nicht geladen', req.filter(u=>/plan-1940-ebene/.test(u)).length, 0);
+ok('Quellenzeile still', await js("document.getElementById('eb-quelle').hidden"), true);
+/* Der Knopf nennt den naechsten Stand, nicht den jetzigen. */
+ok('Knopf zeigt nach 1940', await js("document.getElementById('eb-zeit').textContent"),
+   t=>typeof t==='string' && t.startsWith('\u2192') && /1940/.test(t));
+await knipse('Q1_heute.png');
 
-/* ── Schritte von 20 ── */
-ok('Regler in 20er Schritten', await js("[...document.querySelectorAll('#ebenen input[type=range]')].map(r=>r.step)"),
-   ['20','20','20']);
-
-/* ── Schalten ── */
-await js("ebeneSchalten('1940')"); await sleep(2500);
-ok('1940 an', await js("document.getElementById('eb-an-1940').getAttribute('aria-checked')"), 'true');
-ok('1940 mit Vorgabewert', await js("document.getElementById('ov-1940').getAttribute('opacity')"), '0.60');
+/* ── Umschlagen, und zwar mit einem echten Klick ── */
+await js("document.getElementById('eb-zeit').click()"); await sleep(2500);
+ok('1940 zu sehen', await js("document.getElementById('ov-1940').getAttribute('opacity')"), '1.00');
+ok('Heute nicht zu sehen', await js("document.getElementById('ov-heute').getAttribute('opacity')"), '0.00');
 ok('1940 jetzt geladen', req.filter(u=>/plan-1940-ebene/.test(u)).length, n=>n>=1);
 ok('Quellenzeile da', await js("document.getElementById('eb-quelle').hidden"), false);
+ok('Quellenzeile nennt das Stadsarchief', await js("document.getElementById('eb-quelle').textContent"),
+   t=>typeof t==='string' && /Stadsarchief/.test(t));
+ok('Knopf zeigt zurueck nach heute', await js("document.getElementById('eb-zeit').textContent"),
+   t=>typeof t==='string' && t.startsWith('\u2192') && !/1940/.test(t));
+await knipse('Q2_1940.png');
 
-await js("ebeneSchalten('heute')"); await sleep(700);
-ok('Heute aus: durchsichtig', await js("document.getElementById('ov-heute').getAttribute('opacity')"), '0.00');
-ok('Heute aus: Regler gesperrt', await js("document.getElementById('eb-regler-heute').disabled"), true);
-ok('Heute aus: Wert bleibt stehen', await js("EBENEN['heute'].wert"), 100);
-await knipse('Q1_nur1940.png');
-await js("ebeneSchalten('heute')"); await sleep(700);
-ok('Heute wieder an, mit altem Wert', await js("document.getElementById('ov-heute').getAttribute('opacity')"), '1.00');
+/* ── Und zurueck ── */
+await js("document.getElementById('eb-zeit').click()"); await sleep(900);
+ok('wieder heute', await js("document.getElementById('ov-heute').getAttribute('opacity')"), '1.00');
+ok('1940 wieder weg', await js("document.getElementById('ov-1940').getAttribute('opacity')"), '0.00');
+ok('Quellenzeile wieder still', await js("document.getElementById('eb-quelle').hidden"), true);
+/* Zweimal geladen waere ein Fehler: das Bild haengt am href und bleibt. */
+ok('kein zweiter Abruf von 1940', req.filter(u=>/plan-1940-ebene/.test(u)).length, 1);
 
-/* ── Regler auf null heisst aus ── */
-await js("ebeneDeckung('1940', 0)"); await sleep(500);
-ok('auf null gezogen: Schalter aus', await js("document.getElementById('eb-an-1940').getAttribute('aria-checked')"), 'false');
-ok('auf null gezogen: Quellenzeile weg', await js("document.getElementById('eb-quelle').hidden"), true);
-await js("ebeneSchalten('1940')"); await sleep(600);
-ok('wieder an: nicht bei null stehengeblieben', await js("EBENEN['1940'].wert"), 60);
-await js("ebeneDeckung('1940', 40)"); await sleep(600);
-ok('40 Prozent', await js("document.getElementById('ov-1940').getAttribute('opacity')"), '0.40');
-ok('Anzeige stimmt', await js("document.getElementById('eb-zahl-1940').textContent"), '40 %');
-await knipse('Q2_stapel.png');
-
-/* ── dreisprachig ── */
-for (const [l,t] of [['nl','Vandaag'],['en','Today']]){
+/* ── dreisprachig, in beiden Staenden ── */
+for (const [l,heute,alt] of [['nl','Vandaag','Stad 1940'],['en','Today','City 1940']]){
   await js(`setLang('${l}')`); await sleep(500);
-  ok(`${l}: Heute`, await js("document.getElementById('eb-an-heute').textContent"), t);
+  ok(`${l}: Knopf zeigt nach 1940`, await js("document.getElementById('eb-zeit').textContent"), '\u2192 '+alt);
+  await js("document.getElementById('eb-zeit').click()"); await sleep(600);
+  ok(`${l}: Knopf zeigt nach heute`, await js("document.getElementById('eb-zeit').textContent"), '\u2192 '+heute);
+  ok(`${l}: Quellenzeile mitgewandert`, await js("document.getElementById('eb-quelle').textContent"),
+     t=>typeof t==='string' && t.length>40);
+  await js("document.getElementById('eb-zeit').click()"); await sleep(500);
 }
 await js("setLang('de')"); await sleep(400);
+ok('Name fuer Hilfsmittel', await js("document.getElementById('eb-zeit').getAttribute('aria-label')"),
+   t=>typeof t==='string' && t.length>8);
 
 /* ── Was kostet die Seite im Leerlauf? ── */
 const metrik = async () => {
@@ -89,14 +95,13 @@ async function ruhe(sekunden){
            stil:(b.RecalcStyleDuration-a.RecalcStyleDuration)/sekunden,
            gesamt:(b.TaskDuration-a.TaskDuration)/sekunden };
 }
-await js("ebeneSchalten('1940')"); await sleep(600);   /* beide Schichten aus bis auf heute */
 const leer = await ruhe(8);
-P.push(`     Leerlauf, nur heute:   Skript ${(leer.skript*1000).toFixed(1)} ms/s, Layout ${(leer.layout*1000).toFixed(1)}, Stil ${(leer.stil*1000).toFixed(1)}, gesamt ${(leer.gesamt*100).toFixed(2)} % einer CPU`);
-await js("ebeneDeckung('1940', 60)"); await sleep(1200);
-const beide = await ruhe(8);
-P.push(`     Leerlauf, zwei Schichten: Skript ${(beide.skript*1000).toFixed(1)} ms/s, Layout ${(beide.layout*1000).toFixed(1)}, Stil ${(beide.stil*1000).toFixed(1)}, gesamt ${(beide.gesamt*100).toFixed(2)} % einer CPU`);
-ok('Leerlauf kostet fast nichts', Math.max(leer.gesamt, beide.gesamt), v=>v < 0.02);
-ok('kein Dauerlaeufer im Skript', Math.max(leer.skript, beide.skript), v=>v < 0.01);
+P.push(`     Leerlauf, heute:  Skript ${(leer.skript*1000).toFixed(1)} ms/s, Layout ${(leer.layout*1000).toFixed(1)}, Stil ${(leer.stil*1000).toFixed(1)}, gesamt ${(leer.gesamt*100).toFixed(2)} % einer CPU`);
+await js("document.getElementById('eb-zeit').click()"); await sleep(1200);
+const alt = await ruhe(8);
+P.push(`     Leerlauf, 1940:   Skript ${(alt.skript*1000).toFixed(1)} ms/s, Layout ${(alt.layout*1000).toFixed(1)}, Stil ${(alt.stil*1000).toFixed(1)}, gesamt ${(alt.gesamt*100).toFixed(2)} % einer CPU`);
+ok('Leerlauf kostet fast nichts', Math.max(leer.gesamt, alt.gesamt), v=>v < 0.02);
+ok('kein Dauerlaeufer im Skript', Math.max(leer.skript, alt.skript), v=>v < 0.01);
 
 ok('keine Konsolenfehler', errs, a=>a.length===0);
 console.log(P.join('\n'));
