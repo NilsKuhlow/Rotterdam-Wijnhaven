@@ -799,11 +799,17 @@ body.at-end #track-btn, body.at-end #nav-crumb, body.at-end #drawer { opacity:0 
   -webkit-tap-highlight-color:transparent; touch-action:manipulation;
   transition:background .18s;
 }
-.eb-zeit { background:var(--accent); font-weight:600; }
+.eb-zeit { background:var(--accent); font-weight:600; min-width:11.9em; }
 .eb-schalt:hover, .eb-schalt:focus-visible { outline:none; box-shadow:inset 0 0 0 2px var(--ink-1); }
-/* Die Herkunft der Schichten. Schmal, leise, aber da. */
+/* Die Herkunft des gezeigten Standes. Schmal, leise, aber da. Sie
+   steht ueber der Leiste und ausserhalb von deren Fluss: als eigene
+   Reihe darin hat sie beim Umschalten alle Knoepfe nach oben geschoben,
+   denn die Leiste haengt am unteren Rand und waechst nach oben. Die
+   Breite bleibt rechts von der Zoomspalte, mit der sie sich sonst auf
+   schmalen Geraeten ins Gehege kaeme. */
 .eb-quelle {
-  flex-basis:100%; margin:0; max-width:46ch;
+  position:absolute; left:0; bottom:100%; margin:0 0 .5rem;
+  width:max-content; max-width:min(46ch, calc(100vw - 5.4rem));
   font-family:var(--font-mono); font-size:.5rem; line-height:1.7;
   letter-spacing:.06em; color:var(--ink-1);
   background:var(--paper-0); border:1px solid var(--ink-1);

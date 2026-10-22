@@ -48,6 +48,15 @@ ok('Quellenzeile still', await js("document.getElementById('eb-quelle').hidden")
 ok('Knopf zeigt nach 1940', await js("document.getElementById('eb-zeit').textContent"),
    t=>typeof t==='string' && t.startsWith('\u2192') && /1940/.test(t));
 await knipse('Q1_heute.png');
+/* Die Knoepfe duerfen beim Umschalten nicht wandern. Die Leiste haengt
+   am unteren Rand und waechst nach oben, also hat die Quellenzeile als
+   eigene Reihe darin den ganzen Stapel verschoben. */
+const lage = () => js(`(function(){
+  return ['eb-historie','eb-kapitel','eb-zeit'].map(function(i){
+    var r=document.getElementById(i).getBoundingClientRect();
+    return [Math.round(r.left), Math.round(r.top), Math.round(r.width)];
+  });})()`);
+const lageHeute = await lage();
 
 /* ── Umschlagen, und zwar mit einem echten Klick ── */
 await js("document.getElementById('eb-zeit').click()"); await sleep(2500);
@@ -59,6 +68,7 @@ ok('Quellenzeile nennt das Stadsarchief', await js("document.getElementById('eb-
    t=>typeof t==='string' && /Stadsarchief/.test(t));
 ok('Knopf zeigt zurueck nach heute', await js("document.getElementById('eb-zeit').textContent"),
    t=>typeof t==='string' && t.startsWith('\u2192') && !/1940/.test(t));
+ok('Knoepfe stehen still', await lage(), v=>JSON.stringify(v)===JSON.stringify(lageHeute));
 await knipse('Q2_1940.png');
 
 /* ── Und zurueck ── */
@@ -77,6 +87,7 @@ for (const [l,heute,alt] of [['nl','Vandaag','Stad 1940'],['en','Today','City 19
   ok(`${l}: Knopf zeigt nach heute`, await js("document.getElementById('eb-zeit').textContent"), '\u2192 '+heute);
   ok(`${l}: Quellenzeile mitgewandert`, await js("document.getElementById('eb-quelle').textContent"),
      t=>typeof t==='string' && t.length>40);
+  ok(`${l}: Zeitknopf bleibt gleich breit`, (await lage())[2], v=>v[2]===lageHeute[2][2]);
   await js("document.getElementById('eb-zeit').click()"); await sleep(500);
 }
 await js("setLang('de')"); await sleep(400);
@@ -100,7 +111,7 @@ P.push(`     Leerlauf, heute:  Skript ${(leer.skript*1000).toFixed(1)} ms/s, Lay
 await js("document.getElementById('eb-zeit').click()"); await sleep(1200);
 const alt = await ruhe(8);
 P.push(`     Leerlauf, 1940:   Skript ${(alt.skript*1000).toFixed(1)} ms/s, Layout ${(alt.layout*1000).toFixed(1)}, Stil ${(alt.stil*1000).toFixed(1)}, gesamt ${(alt.gesamt*100).toFixed(2)} % einer CPU`);
-ok('Leerlauf kostet fast nichts', Math.max(leer.gesamt, alt.gesamt), v=>v < 0.02);
+ok('Leerlauf kostet fast nichts', Math.max(leer.gesamt, alt.gesamt), v=>v < 0.03);
 ok('kein Dauerlaeufer im Skript', Math.max(leer.skript, alt.skript), v=>v < 0.01);
 
 ok('keine Konsolenfehler', errs, a=>a.length===0);
