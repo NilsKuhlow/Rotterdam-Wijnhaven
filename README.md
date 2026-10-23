@@ -5,7 +5,7 @@ arbeitenden Hafenkante ein Wohnquartier wurde,
 vom Witte Huis (1898) bis CasaNova. Mobile-first Progressive Web App mit scroll-geführter Karte,
 GPS-Tracker und einem Tagebuch-Layout (eigene Einträge, Stimmen vom Ort, interaktive 3D-Modelle).
 
-Wahlpflichtmodul „Stadt + Raum“, Hochschule Wismar, WiSe 2026/27, Thema *Waterfront in Motion*.
+Wahlpflichtmodul „Waterfront in Motion“, Hochschule Wismar, WiSe 2026/27.
 Gruppe 4. Nils Kuhlow & Kai-Lars Ehrich.
 
 ## Stationen (Route, ca. 3 h)
