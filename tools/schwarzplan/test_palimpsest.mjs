@@ -25,14 +25,19 @@ await js('window.scrollTo(0, Math.round(getIntroH()*0.95))'); await sleep(2000);
 
 ok('Knopf da', await js("!!document.getElementById('eb-palimpsest')"), true);
 ok('zuerst aus', await js("document.getElementById('eb-palimpsest').getAttribute('aria-pressed')"), 'false');
-ok('Fuellungen noch nicht geladen', req.filter(u=>/palimpsest\.webp/.test(u)).length, 0);
+ok('Fuellungen noch nicht geladen', req.filter(u=>/palimpsest\.svg/.test(u)).length, 0);
+ok('Gruppe zuerst leer', await js("document.getElementById('ov-palimpsest').childElementCount"), 0);
 
 await js("document.getElementById('eb-palimpsest').click()"); await sleep(3000);
 ok('gedrueckt', await js("document.getElementById('eb-palimpsest').getAttribute('aria-pressed')"), 'true');
 ok('heute bleibt voll', await js("document.getElementById('ov-heute').getAttribute('opacity')"), '1.00');
 ok('Fuellungen bei 70 Prozent', await js("document.getElementById('ov-palimpsest').getAttribute('opacity')"), '0.70');
 ok('alte Vollkarte bleibt aus', await js("document.getElementById('ov-1940').getAttribute('opacity')"), '0.00');
-ok('Fuellungen jetzt geladen', req.filter(u=>/palimpsest\.webp/.test(u)).length, n=>n>=1);
+ok('Fuellungen jetzt geholt', req.filter(u=>/palimpsest\.svg/.test(u)).length, n=>n>=1);
+ok('Zeichnung eingehaengt', await js("document.getElementById('ov-palimpsest').childElementCount"), n=>n>=2);
+ok('Flaechen vorhanden', await js("document.querySelectorAll('#ov-palimpsest path').length"), n=>n>=2);
+/* Vektor und kein Bild: beim Zoomen bleibt er scharf. */
+ok('kein Rasterbild in der Ebene', await js("document.querySelectorAll('#ov-palimpsest image').length"), 0);
 /* Die Fuellungen liegen ueber dem heutigen Plan und unter der Route. */
 ok('Reihenfolge im Stapel', await js(`(function(){
   var n=[...document.getElementById('mapSvg').children].map(function(c){return c.id||c.tagName});
