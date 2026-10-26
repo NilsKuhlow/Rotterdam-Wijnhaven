@@ -26,7 +26,7 @@ ok('Ueberschrift DE', await js("document.querySelector('.st-title').textContent"
 ok('Lead gefuellt', await js("document.querySelector('.st-lead').textContent.length"), n=>n>80);
 ok('Hinweis gefuellt', await js("document.querySelector('.st-note').textContent.length"), n=>n>150);
 ok('Anker je Stimme', await js("[...document.querySelectorAll('#stimmen .st-item')].every(function(f){return /^stimme-/.test(f.id)})"), true);
-ok('erstes Zitat DE', await js("document.querySelector('#stimme-shyvanna blockquote').textContent"), s=>/weniger gewohnt als gearbeitet/.test(String(s)));
+ok('erstes Zitat DE', await js("document.querySelector('#stimme-shyvanna blockquote').textContent"), s=>/weniger gelebt als gearbeitet/.test(String(s)));
 
 await js("setLang('en')"); await sleep(400);
 ok('Ueberschrift EN', await js("document.querySelector('.st-title').textContent"), 'Voices from the quarter');
