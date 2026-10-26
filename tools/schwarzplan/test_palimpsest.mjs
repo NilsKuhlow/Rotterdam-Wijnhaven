@@ -25,13 +25,19 @@ await js('window.scrollTo(0, Math.round(getIntroH()*0.95))'); await sleep(2000);
 
 ok('Knopf da', await js("!!document.getElementById('eb-palimpsest')"), true);
 ok('zuerst aus', await js("document.getElementById('eb-palimpsest').getAttribute('aria-pressed')"), 'false');
-ok('1940 noch nicht geladen', req.filter(u=>/plan-1940-ebene/.test(u)).length, 0);
+ok('Fuellungen noch nicht geladen', req.filter(u=>/palimpsest\.webp/.test(u)).length, 0);
 
 await js("document.getElementById('eb-palimpsest').click()"); await sleep(3000);
 ok('gedrueckt', await js("document.getElementById('eb-palimpsest').getAttribute('aria-pressed')"), 'true');
 ok('heute bleibt voll', await js("document.getElementById('ov-heute').getAttribute('opacity')"), '1.00');
-ok('1940 bei 70 Prozent', await js("document.getElementById('ov-1940').getAttribute('opacity')"), '0.70');
-ok('1940 jetzt geladen', req.filter(u=>/plan-1940-ebene/.test(u)).length, n=>n>=1);
+ok('Fuellungen bei 70 Prozent', await js("document.getElementById('ov-palimpsest').getAttribute('opacity')"), '0.70');
+ok('alte Vollkarte bleibt aus', await js("document.getElementById('ov-1940').getAttribute('opacity')"), '0.00');
+ok('Fuellungen jetzt geladen', req.filter(u=>/palimpsest\.webp/.test(u)).length, n=>n>=1);
+/* Die Fuellungen liegen ueber dem heutigen Plan und unter der Route. */
+ok('Reihenfolge im Stapel', await js(`(function(){
+  var n=[...document.getElementById('mapSvg').children].map(function(c){return c.id||c.tagName});
+  return [n.indexOf('ov-heute'), n.indexOf('ov-palimpsest'), n.indexOf('routeTrail')];})()`),
+   v=>Array.isArray(v) && v[0] < v[1] && v[1] < v[2]);
 ok('Quellenzeile da', await js("document.getElementById('eb-quelle').hidden"), false);
 ok('Quellenzeile nennt den Palimpsest', await js("document.getElementById('eb-quelle').textContent"),
    t=>typeof t==='string' && /Palimpsest/.test(t));
@@ -45,10 +51,10 @@ ok('danach genau ein Stand', await js("[document.getElementById('ov-heute').getA
 
 /* Wieder an, dann wieder aus. */
 await js("document.getElementById('eb-palimpsest').click()"); await sleep(900);
-ok('wieder an', await js("document.getElementById('ov-1940').getAttribute('opacity')"), '0.70');
+ok('wieder an', await js("document.getElementById('ov-palimpsest').getAttribute('opacity')"), '0.70');
 await js("document.getElementById('eb-palimpsest').click()"); await sleep(900);
 ok('wieder aus', await js("document.getElementById('eb-palimpsest').getAttribute('aria-pressed')"), 'false');
-ok('aus: nur ein Stand', await js("document.getElementById('ov-1940').getAttribute('opacity')"), o=>o==='0.00'||o==='1.00');
+ok('aus: Fuellungen weg', await js("document.getElementById('ov-palimpsest').getAttribute('opacity')"), '0.00');
 
 /* dreisprachig */
 for (const [l,w] of [['de','Palimpsest'],['nl','Palimpsest'],['en','Palimpsest']]){
