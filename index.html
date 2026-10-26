@@ -1940,12 +1940,13 @@ body.anim-paused *, body.anim-paused *::before, body.anim-paused *::after {
 <image class="plan-bild" href="img/schwarzplan.svg" x="0" y="0" width="3010" height="2175" preserveAspectRatio="none"/>
 <g id="plan-vektor" aria-hidden="true"></g>
     </g>
-<!-- Die Fuellungen der Stadt von 1940, auf durchsichtigem Grund. Sie
-     liegt ueber dem heutigen Plan und unter Route und Marken, denn
-     der Palimpsest soll den Weg nicht zudecken. Geladen wird sie erst,
-     wenn der Knopf gedrueckt wird. -->
-<image id="ov-palimpsest" x="0" y="0" width="3010" height="2175" opacity="0"
-       preserveAspectRatio="none" aria-hidden="true"/>
+<!-- Die Fuellungen der Stadt von 1940. Sie liegen ueber dem heutigen
+     Plan und unter Route und Marken, denn der Palimpsest soll den Weg
+     nicht zudecken. Die Gruppe bleibt leer, bis der Knopf gedrueckt
+     wird; dann wird die Zeichnung geholt und hier eingehaengt. Inline
+     und nicht als verwiesenes Bild: ob ein Browser ein verwiesenes SVG
+     beim Zoomen neu rastert, ist nicht garantiert. -->
+<g id="ov-palimpsest" opacity="0" aria-hidden="true"></g>
     <path class="route-trail" id="routeTrail" d=""/>
     <g id="stop-markers"></g>
     <g id="gps-group" opacity="0">
@@ -6230,7 +6231,25 @@ var KARTEN_STAND = 'heute';
    Schichten zugleich, die alte mit 70 Prozent Deckung. */
 var PALIMPSEST = false;
 var PALIMPSEST_DECKUNG = 0.70;
-var PALIMPSEST_QUELLE = 'img/palimpsest.webp';
+var PALIMPSEST_QUELLE = 'img/palimpsest.svg';
+var _palimpsestLaeuft = false;
+
+/* Die Zeichnung einmal holen und in die Gruppe haengen. Ihre viewBox
+   ist dieselbe wie die der Karte, also braucht es keine Umrechnung. */
+function _palimpsestLaden(){
+  var g = document.getElementById('ov-palimpsest');
+  if (!g || _palimpsestLaeuft || g.childElementCount) return;
+  _palimpsestLaeuft = true;
+  fetch(PALIMPSEST_QUELLE)
+    .then(function(r){ return r.text(); })
+    .then(function(txt){
+      var doc = new DOMParser().parseFromString(txt, 'image/svg+xml');
+      var teile = doc.documentElement.querySelectorAll('g');
+      for (var i = 0; i < teile.length; i++)
+        g.appendChild(document.importNode(teile[i], true));
+    })
+    .catch(function(){ _palimpsestLaeuft = false; });
+}
 var KARTEN_STAENDE = {
   'heute': { knoten:'ov-heute' },
   '1940':  { knoten:'ov-1940', quelle:'img/plan-1940-ebene.webp',
@@ -6255,11 +6274,10 @@ function _standAnwenden(){
       n.setAttribute('href', e.quelle);
     n.setAttribute('opacity', deckung.toFixed(2));
   }
-  /* Die Fuellungsebene, 1,2 MB, deshalb ebenfalls erst auf Verlangen. */
+  /* Die Fuellungsebene wird erst auf Verlangen geholt. */
   var pal = document.getElementById('ov-palimpsest');
   if (pal){
-    if (PALIMPSEST && !pal.getAttribute('href'))
-      pal.setAttribute('href', PALIMPSEST_QUELLE);
+    if (PALIMPSEST) _palimpsestLaden();
     pal.setAttribute('opacity', PALIMPSEST ? PALIMPSEST_DECKUNG.toFixed(2) : '0.00');
   }
   /* Der Knopf nennt, was der naechste Druck zeigt, mit Pfeil davor:
