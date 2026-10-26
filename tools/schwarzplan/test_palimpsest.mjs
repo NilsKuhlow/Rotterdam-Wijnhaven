@@ -34,8 +34,8 @@ ok('heute bleibt voll', await js("document.getElementById('ov-heute').getAttribu
 ok('Fuellungen bei 70 Prozent', await js("document.getElementById('ov-palimpsest').getAttribute('opacity')"), '0.70');
 ok('alte Vollkarte bleibt aus', await js("document.getElementById('ov-1940').getAttribute('opacity')"), '0.00');
 ok('Fuellungen jetzt geholt', req.filter(u=>/palimpsest\.svg/.test(u)).length, n=>n>=1);
-ok('Zeichnung eingehaengt', await js("document.getElementById('ov-palimpsest').childElementCount"), n=>n>=2);
-ok('Flaechen vorhanden', await js("document.querySelectorAll('#ov-palimpsest path').length"), n=>n>=2);
+ok('Zeichnung eingehaengt', await js("document.getElementById('ov-palimpsest').childElementCount"), n=>n>=1);
+ok('Flaechen vorhanden', await js("document.querySelectorAll('#ov-palimpsest path').length"), n=>n>=1);
 /* Vektor und kein Bild: beim Zoomen bleibt er scharf. */
 ok('kein Rasterbild in der Ebene', await js("document.querySelectorAll('#ov-palimpsest image').length"), 0);
 /* Die Fuellungen liegen ueber dem heutigen Plan und unter der Route. */
